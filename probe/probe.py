@@ -4,10 +4,14 @@ Za svaki URL bilježi status, veličinu, znakove zaštite od botova i strukturu
 stranice, te sprema sažeti HTML u probe/results/samples/ za izradu parsera.
 """
 
+import csv
 import gzip
+import io
 import json
 import re
+import sys
 import time
+from collections import Counter
 from datetime import datetime, timezone
 from pathlib import Path
 
@@ -18,7 +22,8 @@ try:
 except ImportError:
     cffi_requests = None
 
-OUT = Path(__file__).parent / "results"
+ROUND = sys.argv[1] if len(sys.argv) > 1 else "2"
+OUT = Path(__file__).parent / "results" / ("" if ROUND == "1" else f"round{ROUND}")
 SAMPLES = OUT / "samples"
 MAX_SAVE = 5_000_000
 
@@ -79,6 +84,29 @@ OTHER = {
     "novilist": ["https://www.novilist.hr/"],
 }
 
+# Drugi krug: stvarne stranice s oglasima, izvoz FINA-e i API-ji.
+ROUND2 = {
+    "fina_csv": ["https://ponip.fina.hr/ocevidnik-web/preuzmi/csv"],
+    "fina_najava": ["https://ponip.fina.hr/ocevidnik-web/pregled/nadmetanja-u-najavi"],
+    "fina_vrste": ["https://ponip.fina.hr/ocevidnik-web/get/vrsta/objekta/prodaje/nekretnine/list"],
+    "nekretnine_hr": [
+        "https://www.nekretnine.hr/prodaja-stambene-nekretnine/primorsko-goranska-zupanija/opcina/",
+        "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/",
+        "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/",
+    ],
+    "index_oglasi": ["https://www.index.hr/oglasi/static/js/main.2c0cd421.js"],
+    "trazimstan": ["https://trazimstan.hr/sitemap.xml"],
+    "oglasnik": ["https://www.oglasnik.hr/kuce-prodaja", "https://www.oglasnik.hr/zemljista-prodajem"],
+    "oglasi_hr": ["https://oglasi.hr/kuce-prodaja", "https://oglasi.hr/vikendice-prodaja", "https://oglasi.hr/nekretnine"],
+    "nekretnine24": ["https://www.nekretnine24.hr/kuce", "https://www.nekretnine24.hr/zemljista"],
+    "vender": ["https://vender.hr/sitemap.rss"],
+    "gohome": ["https://www.gohome.hr/nekretnine.aspx?q=kuca%20krk%20prodaja"],
+    "ekvadrat": ["https://ekvadrat.hr/", "http://www.ekvadrat.hr/"],
+}
+
+# Stupci CSV-a za koje bilježimo najčešće vrijednosti (bez osobnih podataka).
+CSV_SUMMARY_COLUMNS = re.compile(r"vrsta|zupan|župan|opcin|općin|grad|naselj|status|valut|nacin|način", re.I)
+
 BOT_MARKERS = {
     "cloudflare": ["just a moment", "cf-chl", "challenge-platform", "cf_chl_opt"],
     "radware": ["perfdrive", "shieldsquare", "radware"],
@@ -131,6 +159,21 @@ def fetch(session_get, url: str) -> dict:
         }
 
 
+def summarise_csv(body: str) -> str:
+    """Sažetak CSV-a FINA-e: zaglavlje, broj redaka i česte vrijednosti stupaca s
+    vrstom i lokacijom. Retci se ne spremaju jer mogu sadržavati osobne podatke."""
+    sample = body[:5000]
+    delimiter = max(";,\t|", key=sample.count)
+    rows = list(csv.reader(io.StringIO(body), delimiter=delimiter))
+    header, data = (rows[0], rows[1:]) if rows else ([], [])
+    summary = {"delimiter": delimiter, "header": header, "rows": len(data), "columns": {}}
+    for i, col in enumerate(header):
+        if CSV_SUMMARY_COLUMNS.search(col):
+            counts = Counter(r[i] for r in data if i < len(r))
+            summary["columns"][col] = counts.most_common(40)
+    return json.dumps(summary, ensure_ascii=False, indent=2)
+
+
 def probe(name: str, url: str, save: bool) -> dict:
     result = fetch(requests.get, url)
     blocked = result["status"] != 200 or analyse(result["body"])["bot_markers"]
@@ -142,6 +185,8 @@ def probe(name: str, url: str, save: bool) -> dict:
             result["body"] = alt["body"]
     body = result.pop("body")
     result["analysis"] = analyse(body) if body else None
+    if body and name == "fina_csv":
+        body = summarise_csv(body)
     if save and body:
         slug = re.sub(r"[^a-z0-9]+", "_", url.lower().split("//", 1)[-1]).strip("_")[:80]
         path = SAMPLES / f"{name}__{slug}.html.gz"
@@ -166,7 +211,10 @@ def main() -> None:
     except Exception as exc:  # noqa: BLE001
         egress = {"error": str(exc)}
 
-    groups = [("portal", PORTALS, True), ("fina", FINA, True), ("other", OTHER, True)]
+    if ROUND == "1":
+        groups = [("portal", PORTALS, True), ("fina", FINA, True), ("other", OTHER, True)]
+    else:
+        groups = [("round2", ROUND2, True)]
     for group, targets, save in groups:
         for name, urls in targets.items():
             for url in urls:
@@ -176,7 +224,7 @@ def main() -> None:
                 results.append({"group": "robots", **probe(name, robots_url(urls[0]), True)})
                 time.sleep(2)
 
-    for name, domain in MUNICIPALITIES.items():
+    for name, domain in MUNICIPALITIES.items() if ROUND == "1" else []:
         home = probe(name, f"https://{domain}/", True)
         results.append({"group": "municipality", **home})
         base = home.get("final_url") or f"https://{domain}/"
@@ -190,7 +238,7 @@ def main() -> None:
     )
 
     lines = [
-        "# Rezultati testa izvedivosti",
+        f"# Rezultati testa izvedivosti – krug {ROUND}",
         "",
         f"Vrijeme: {datetime.now(timezone.utc):%Y-%m-%d %H:%M} UTC  ",
         f"Izlazna IP adresa: {egress}",
