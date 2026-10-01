@@ -1,0 +1,1657 @@
+{
+  "egress": {
+    "country": "US",
+    "region": "California",
+    "city": "San Jose",
+    "org": "AS8075 Microsoft Corporation"
+  },
+  "results": [
+    {
+      "group": "portal",
+      "status": 200,
+      "final_url": "https://www.njuskalo.hr/",
+      "bytes": 122874,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 1.0,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.njuskalo.hr/",
+        "bytes": 123046,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 1.0
+      },
+      "analysis": {
+        "title": "Njuskalo.hr oglasnik",
+        "generator": "",
+        "bot_markers": [
+          "radware",
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 1,
+        "euro_mentions": 90,
+        "links": 142,
+        "feeds": []
+      },
+      "sample": "samples/njuskalo__www_njuskalo_hr.html.gz",
+      "name": "njuskalo",
+      "url": "https://www.njuskalo.hr/"
+    },
+    {
+      "group": "portal",
+      "status": 200,
+      "final_url": "https://validate.perfdrive.com/9423d102072b5d7d382cd3fdbf2d7552/?ssa=bccfe800-a24a-4904-a9c2-69e8b8a9aea7&ssb=27761286377&ssc=http%3A%2F%2Fwww.njuskalo.hr%3A81%2Fprodaja-kuca%2Fprimorsko-goranska&ssi=b00b5225-851d-433f-8f08-5d3433962924&ssk=block@njuskalo.hr&ssm=78392575753276853105385983506287&ssn=46771cfad951625eac9c6790bc825ad7e2ac29759b7e-34f8-4e3c-940778&sso=1d90a02e-10c12d5a5e607e09b72fa8307fb932eb65ff7bd503106683&ssp=05659190281790817412179087926950355&ssq=75931258950608583547789506776351093856959&ssr=NTIuMTU3LjMzLjE2Nw==&sst=Mozilla/5.0%20(Windows%20NT%2010.0;%20Win64;%20x64)%20AppleWebKit/537.36%20(KHTML,%20like%20Gecko)%20Chrome/129.0.0.0%20Safari/537.36&ssu=&ssv=&ssw=&ssx=W10=",
+      "bytes": 17424,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 1.0,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.njuskalo.hr/prodaja-kuca/primorsko-goranska",
+        "bytes": 313318,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 1.2
+      },
+      "analysis": {
+        "title": "ShieldSquare Captcha",
+        "generator": "",
+        "bot_markers": [
+          "radware",
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 2,
+        "feeds": []
+      },
+      "sample": "samples/njuskalo__www_njuskalo_hr_prodaja_kuca_primorsko_goranska.html.gz",
+      "name": "njuskalo",
+      "url": "https://www.njuskalo.hr/prodaja-kuca/primorsko-goranska"
+    },
+    {
+      "group": "robots",
+      "status": 200,
+      "final_url": "https://www.njuskalo.hr/robots.txt",
+      "bytes": 6997,
+      "content_type": "text/plain; charset=UTF-8",
+      "seconds": 1.1,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/njuskalo__www_njuskalo_hr_robots_txt.html.gz",
+      "name": "njuskalo",
+      "url": "https://www.njuskalo.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 200,
+      "final_url": "https://oglasnik.hr/",
+      "bytes": 311873,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 0.8,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://oglasnik.hr/",
+        "bytes": 311873,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 0.4
+      },
+      "analysis": {
+        "title": "Plavi oglasnik: besplatni mali oglasi",
+        "generator": "",
+        "bot_markers": [
+          "cloudflare",
+          "access_denied"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 41,
+        "links": 54,
+        "feeds": []
+      },
+      "sample": "samples/oglasnik__www_oglasnik_hr.html.gz",
+      "name": "oglasnik",
+      "url": "https://www.oglasnik.hr/"
+    },
+    {
+      "group": "robots",
+      "status": 200,
+      "final_url": "https://oglasnik.hr/robots.txt",
+      "bytes": 377,
+      "content_type": "text/plain",
+      "seconds": 0.1,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/oglasnik__www_oglasnik_hr_robots_txt.html.gz",
+      "name": "oglasnik",
+      "url": "https://www.oglasnik.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 200,
+      "final_url": "https://www.index.hr/oglasi/",
+      "bytes": 8073,
+      "content_type": "text/html",
+      "seconds": 0.4,
+      "analysis": {
+        "title": "Index Oglasi",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/index_oglasi__www_index_hr_oglasi.html.gz",
+      "name": "index_oglasi",
+      "url": "https://www.index.hr/oglasi/"
+    },
+    {
+      "group": "robots",
+      "status": 200,
+      "final_url": "https://www.index.hr/robots.txt",
+      "bytes": 27,
+      "content_type": "text/plain",
+      "seconds": 0.1,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/index_oglasi__www_index_hr_robots_txt.html.gz",
+      "name": "index_oglasi",
+      "url": "https://www.index.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 103,
+      "final_url": "https://www.nekretnine.hr/",
+      "bytes": 0,
+      "content_type": "",
+      "seconds": 0.5,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.nekretnine.hr/",
+        "bytes": 228562,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 0.9
+      },
+      "body_from": "impersonated",
+      "analysis": {
+        "title": "Prodaja kuća u Hrvatskoj - Nekretnine.hr",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": true,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 68,
+        "links": 57,
+        "feeds": []
+      },
+      "sample": "samples/nekretnine_hr__www_nekretnine_hr.html.gz",
+      "name": "nekretnine_hr",
+      "url": "https://www.nekretnine.hr/"
+    },
+    {
+      "group": "robots",
+      "status": 103,
+      "final_url": "https://www.nekretnine.hr/robots.txt",
+      "bytes": 0,
+      "content_type": "",
+      "seconds": 0.5,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.nekretnine.hr/robots.txt",
+        "bytes": 405,
+        "content_type": "text/plain",
+        "seconds": 0.5
+      },
+      "body_from": "impersonated",
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/nekretnine_hr__www_nekretnine_hr_robots_txt.html.gz",
+      "name": "nekretnine_hr",
+      "url": "https://www.nekretnine.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 403,
+      "final_url": "https://www.crozilla.com/",
+      "bytes": 919,
+      "content_type": "text/html",
+      "seconds": 0.1,
+      "impersonated": {
+        "status": 403,
+        "final_url": "https://www.crozilla.com/",
+        "bytes": 919,
+        "content_type": "text/html",
+        "seconds": 0.0
+      },
+      "analysis": {
+        "title": "ERROR: The request could not be satisfied",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/crozilla__www_crozilla_com.html.gz",
+      "name": "crozilla",
+      "url": "https://www.crozilla.com/"
+    },
+    {
+      "group": "portal",
+      "status": 403,
+      "final_url": "https://www.crozilla.com/prodaja-kuca/primorsko-goranska/",
+      "bytes": 919,
+      "content_type": "text/html",
+      "seconds": 0.0,
+      "impersonated": {
+        "status": 403,
+        "final_url": "https://www.crozilla.com/prodaja-kuca/primorsko-goranska/",
+        "bytes": 919,
+        "content_type": "text/html",
+        "seconds": 0.1
+      },
+      "analysis": {
+        "title": "ERROR: The request could not be satisfied",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/crozilla__www_crozilla_com_prodaja_kuca_primorsko_goranska.html.gz",
+      "name": "crozilla",
+      "url": "https://www.crozilla.com/prodaja-kuca/primorsko-goranska/"
+    },
+    {
+      "group": "robots",
+      "status": 403,
+      "final_url": "https://www.crozilla.com/robots.txt",
+      "bytes": 919,
+      "content_type": "text/html",
+      "seconds": 0.1,
+      "impersonated": {
+        "status": 403,
+        "final_url": "https://www.crozilla.com/robots.txt",
+        "bytes": 919,
+        "content_type": "text/html",
+        "seconds": 0.0
+      },
+      "analysis": {
+        "title": "ERROR: The request could not be satisfied",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/crozilla__www_crozilla_com_robots_txt.html.gz",
+      "name": "crozilla",
+      "url": "https://www.crozilla.com/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 403,
+      "final_url": "https://www.indomio.hr/",
+      "bytes": 919,
+      "content_type": "text/html",
+      "seconds": 0.1,
+      "impersonated": {
+        "status": 403,
+        "final_url": "https://www.indomio.hr/",
+        "bytes": 919,
+        "content_type": "text/html",
+        "seconds": 0.1
+      },
+      "analysis": {
+        "title": "ERROR: The request could not be satisfied",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/indomio__www_indomio_hr.html.gz",
+      "name": "indomio",
+      "url": "https://www.indomio.hr/"
+    },
+    {
+      "group": "portal",
+      "status": 403,
+      "final_url": "https://www.indomio.hr/prodaja-kuca/primorsko-goranska/",
+      "bytes": 919,
+      "content_type": "text/html",
+      "seconds": 0.1,
+      "impersonated": {
+        "status": 403,
+        "final_url": "https://www.indomio.hr/prodaja-kuca/primorsko-goranska/",
+        "bytes": 919,
+        "content_type": "text/html",
+        "seconds": 0.2
+      },
+      "analysis": {
+        "title": "ERROR: The request could not be satisfied",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/indomio__www_indomio_hr_prodaja_kuca_primorsko_goranska.html.gz",
+      "name": "indomio",
+      "url": "https://www.indomio.hr/prodaja-kuca/primorsko-goranska/"
+    },
+    {
+      "group": "robots",
+      "status": 403,
+      "final_url": "https://www.indomio.hr/robots.txt",
+      "bytes": 919,
+      "content_type": "text/html",
+      "seconds": 0.1,
+      "impersonated": {
+        "status": 403,
+        "final_url": "https://www.indomio.hr/robots.txt",
+        "bytes": 919,
+        "content_type": "text/html",
+        "seconds": 0.1
+      },
+      "analysis": {
+        "title": "ERROR: The request could not be satisfied",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/indomio__www_indomio_hr_robots_txt.html.gz",
+      "name": "indomio",
+      "url": "https://www.indomio.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 200,
+      "final_url": "https://www.gohome.hr/",
+      "bytes": 6854,
+      "content_type": "text/html; charset=iso-8859-2",
+      "seconds": 1.4,
+      "analysis": {
+        "title": "Nekretnine GoHome.hr - tražilica za nekretnine Hrvatska - Oglasi za prodaja, najam - sve na jednom mjestu",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 29,
+        "feeds": []
+      },
+      "sample": "samples/gohome__www_gohome_hr.html.gz",
+      "name": "gohome",
+      "url": "https://www.gohome.hr/"
+    },
+    {
+      "group": "robots",
+      "status": 200,
+      "final_url": "https://www.gohome.hr/robots.txt",
+      "bytes": 1270,
+      "content_type": "text/plain",
+      "seconds": 1.1,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/gohome__www_gohome_hr_robots_txt.html.gz",
+      "name": "gohome",
+      "url": "https://www.gohome.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 200,
+      "final_url": "https://www.trazimstan.hr/",
+      "bytes": 173175,
+      "content_type": "text/html;charset=utf-8",
+      "seconds": 1.4,
+      "analysis": {
+        "title": "Tražim Stan — Najam i kupnja nekretnina u Hrvatskoj",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": true,
+        "json_ld": 1,
+        "euro_mentions": 8,
+        "links": 31,
+        "feeds": []
+      },
+      "sample": "samples/trazimstan__www_trazimstan_hr.html.gz",
+      "name": "trazimstan",
+      "url": "https://www.trazimstan.hr/"
+    },
+    {
+      "group": "robots",
+      "status": 200,
+      "final_url": "https://www.trazimstan.hr/robots.txt",
+      "bytes": 433,
+      "content_type": "text/plain; charset=utf-8",
+      "seconds": 0.4,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/trazimstan__www_trazimstan_hr_robots_txt.html.gz",
+      "name": "trazimstan",
+      "url": "https://www.trazimstan.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 403,
+      "final_url": "https://www.realitica.com/",
+      "bytes": 919,
+      "content_type": "text/html",
+      "seconds": 0.1,
+      "impersonated": {
+        "status": 403,
+        "final_url": "https://www.realitica.com/",
+        "bytes": 919,
+        "content_type": "text/html",
+        "seconds": 0.0
+      },
+      "analysis": {
+        "title": "ERROR: The request could not be satisfied",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/realitica__www_realitica_com.html.gz",
+      "name": "realitica",
+      "url": "https://www.realitica.com/"
+    },
+    {
+      "group": "robots",
+      "status": 403,
+      "final_url": "https://www.realitica.com/robots.txt",
+      "bytes": 919,
+      "content_type": "text/html",
+      "seconds": 0.1,
+      "impersonated": {
+        "status": 403,
+        "final_url": "https://www.realitica.com/robots.txt",
+        "bytes": 919,
+        "content_type": "text/html",
+        "seconds": 0.0
+      },
+      "analysis": {
+        "title": "ERROR: The request could not be satisfied",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/realitica__www_realitica_com_robots_txt.html.gz",
+      "name": "realitica",
+      "url": "https://www.realitica.com/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 200,
+      "final_url": "https://vender.hr/",
+      "bytes": 668552,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 2.3,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://vender.hr/",
+        "bytes": 668552,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 1.7
+      },
+      "analysis": {
+        "title": "VENDER besplatni oglasnik nekretnina - Vender.hr",
+        "generator": "All in One SEO (AIOSEO) 5.0.1.1",
+        "bot_markers": [
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 1,
+        "euro_mentions": 66,
+        "links": 298,
+        "feeds": [
+          "https://vender.hr/feed/"
+        ]
+      },
+      "sample": "samples/vender__www_vender_hr.html.gz",
+      "name": "vender",
+      "url": "https://www.vender.hr/"
+    },
+    {
+      "group": "robots",
+      "status": 200,
+      "final_url": "https://vender.hr/robots.txt",
+      "bytes": 151,
+      "content_type": "text/plain; charset=utf-8",
+      "seconds": 1.4,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/vender__www_vender_hr_robots_txt.html.gz",
+      "name": "vender",
+      "url": "https://www.vender.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 200,
+      "final_url": "https://oglasi.hr:/",
+      "bytes": 51930,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 1.0,
+      "analysis": {
+        "title": "Oglasi.HR - besplatni mali oglasnik",
+        "generator": "Osclass 3.8.0",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 7,
+        "links": 150,
+        "feeds": []
+      },
+      "sample": "samples/oglasi_hr__www_oglasi_hr.html.gz",
+      "name": "oglasi_hr",
+      "url": "https://www.oglasi.hr/"
+    },
+    {
+      "group": "robots",
+      "status": 200,
+      "final_url": "https://www.oglasi.hr/robots.txt",
+      "bytes": 180,
+      "content_type": "text/plain",
+      "seconds": 0.2,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/oglasi_hr__www_oglasi_hr_robots_txt.html.gz",
+      "name": "oglasi_hr",
+      "url": "https://www.oglasi.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": 200,
+      "final_url": "https://www.nekretnine24.hr/",
+      "bytes": 22569,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 1.5,
+      "analysis": {
+        "title": "Foto i video oglasnik za nekretnine | Nekretnine 24",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 7,
+        "links": 40,
+        "feeds": []
+      },
+      "sample": "samples/nekretnine24__www_nekretnine24_hr.html.gz",
+      "name": "nekretnine24",
+      "url": "https://www.nekretnine24.hr/"
+    },
+    {
+      "group": "robots",
+      "status": 200,
+      "final_url": "https://www.nekretnine24.hr/robots.txt",
+      "bytes": 21,
+      "content_type": "text/plain",
+      "seconds": 1.0,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/nekretnine24__www_nekretnine24_hr_robots_txt.html.gz",
+      "name": "nekretnine24",
+      "url": "https://www.nekretnine24.hr/robots.txt"
+    },
+    {
+      "group": "portal",
+      "status": null,
+      "error": "ConnectionError: HTTPSConnectionPool(host='www.ekvadrat.hr', port=443): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPSConnection(host='www.ekvadrat.hr', port=443): Failed to resolve 'www.ekvadr",
+      "seconds": 2.0,
+      "impersonated": {
+        "status": null,
+        "error": "DNSError: Failed to perform, curl: (6) Could not resolve host: www.ekvadrat.hr. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.",
+        "seconds": 1.9
+      },
+      "analysis": null,
+      "name": "ekvadrat",
+      "url": "https://www.ekvadrat.hr/"
+    },
+    {
+      "group": "robots",
+      "status": null,
+      "error": "ConnectionError: HTTPSConnectionPool(host='www.ekvadrat.hr', port=443): Max retries exceeded with url: /robots.txt (Caused by NameResolutionError(\"HTTPSConnection(host='www.ekvadrat.hr', port=443): Failed to resolve '",
+      "seconds": 1.5,
+      "impersonated": {
+        "status": null,
+        "error": "DNSError: Failed to perform, curl: (6) Could not resolve host: www.ekvadrat.hr. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.",
+        "seconds": 1.4
+      },
+      "analysis": null,
+      "name": "ekvadrat",
+      "url": "https://www.ekvadrat.hr/robots.txt"
+    },
+    {
+      "group": "fina",
+      "status": 200,
+      "final_url": "https://ponip.fina.hr/ocevidnik-web/pocetna",
+      "bytes": 4721593,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 8.1,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://ponip.fina.hr/ocevidnik-web/pocetna",
+        "bytes": 4721593,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 7.7
+      },
+      "analysis": {
+        "title": "FINA - Očevidnik nekretnina i pokretnina",
+        "generator": "",
+        "bot_markers": [
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 28,
+        "links": 28,
+        "feeds": []
+      },
+      "sample": "samples/fina_ocevidnik__ponip_fina_hr_ocevidnik_web_pocetna.html.gz",
+      "name": "fina_ocevidnik",
+      "url": "https://ponip.fina.hr/ocevidnik-web/pocetna"
+    },
+    {
+      "group": "fina",
+      "status": 200,
+      "final_url": "https://data.gov.hr/ckan/api/3/action/package_show?id=ocevidnik-nekretnina-i-pokretnina",
+      "bytes": 3083,
+      "content_type": "application/json;charset=utf-8",
+      "seconds": 0.9,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 2,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/fina_datagov__data_gov_hr_ckan_api_3_action_package_show_id_ocevidnik_nekretnina_i_pokretnina.html.gz",
+      "name": "fina_datagov",
+      "url": "https://data.gov.hr/ckan/api/3/action/package_show?id=ocevidnik-nekretnina-i-pokretnina"
+    },
+    {
+      "group": "other",
+      "status": 200,
+      "final_url": "https://www.pgz.hr/",
+      "bytes": 150625,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 3.2,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.pgz.hr/",
+        "bytes": 150625,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 2.8
+      },
+      "analysis": {
+        "title": "Primorsko-goranska županija",
+        "generator": "WordPress 6.7.9",
+        "bot_markers": [
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 208,
+        "feeds": [
+          "https://www.pgz.hr/feed/"
+        ]
+      },
+      "sample": "samples/pgz__www_pgz_hr.html.gz",
+      "name": "pgz",
+      "url": "https://www.pgz.hr/"
+    },
+    {
+      "group": "other",
+      "status": 200,
+      "final_url": "https://mpgi.gov.hr/",
+      "bytes": 27627,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 1.1,
+      "analysis": {
+        "title": "Ministarstvo prostornoga uređenja, graditeljstva i državne imovine - Naslovna",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 118,
+        "feeds": []
+      },
+      "sample": "samples/mpgi__mpgi_gov_hr.html.gz",
+      "name": "mpgi",
+      "url": "https://mpgi.gov.hr/"
+    },
+    {
+      "group": "other",
+      "status": 200,
+      "final_url": "https://www.cerp.hr/",
+      "bytes": 19848,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 1.3,
+      "analysis": {
+        "title": "Centar za restrukturiranje i prodaju - Naslovna",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 74,
+        "feeds": []
+      },
+      "sample": "samples/cerp__www_cerp_hr.html.gz",
+      "name": "cerp",
+      "url": "https://www.cerp.hr/"
+    },
+    {
+      "group": "other",
+      "status": 200,
+      "final_url": "https://www.novilist.hr/",
+      "bytes": 605545,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 0.3,
+      "analysis": {
+        "title": "Početna - Novi list",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 1,
+        "euro_mentions": 0,
+        "links": 292,
+        "feeds": [
+          "https://www.novilist.hr/feed/",
+          "https://www.novilist.hr/comments/feed/"
+        ]
+      },
+      "sample": "samples/novilist__www_novilist_hr.html.gz",
+      "name": "novilist",
+      "url": "https://www.novilist.hr/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://www.baska.hr/",
+      "bytes": 249714,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 1.7,
+      "analysis": {
+        "title": "Općina Baška - Službene web stranice",
+        "generator": "WordPress 6.6.9",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 1,
+        "euro_mentions": 0,
+        "links": 307,
+        "feeds": [
+          "https://www.baska.hr/feed/",
+          "https://www.baska.hr/comments/feed/",
+          "https://www.baska.hr/pocetna-stranica/feed/"
+        ]
+      },
+      "sample": "samples/baska__baska_hr.html.gz",
+      "name": "baska",
+      "url": "https://baska.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://www.baska.hr/feed/",
+      "bytes": 37075,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 0.8,
+      "analysis": {
+        "title": "Općina Baška",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 57,
+        "feeds": []
+      },
+      "sample": "samples/baska__www_baska_hr_feed.html.gz",
+      "name": "baska",
+      "url": "https://www.baska.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://dobrinj.hr/",
+      "bytes": 122857,
+      "content_type": "text/html",
+      "seconds": 4.7,
+      "analysis": {
+        "title": "OpÄina Dobrinj",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 236,
+        "feeds": []
+      },
+      "sample": "samples/dobrinj__dobrinj_hr.html.gz",
+      "name": "dobrinj",
+      "url": "https://dobrinj.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 404,
+      "final_url": "https://dobrinj.hr/feed/",
+      "bytes": 103,
+      "content_type": "text/html",
+      "seconds": 1.4,
+      "impersonated": {
+        "status": 404,
+        "final_url": "https://dobrinj.hr/feed/",
+        "bytes": 103,
+        "content_type": "text/html",
+        "seconds": 0.7
+      },
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/dobrinj__dobrinj_hr_feed.html.gz",
+      "name": "dobrinj",
+      "url": "https://dobrinj.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://kostrena.hr/",
+      "bytes": 131746,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 1.6,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://kostrena.hr/",
+        "bytes": 131746,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 1.5
+      },
+      "analysis": {
+        "title": "Općina Kostrena - Službene stranice Općine Kostrena",
+        "generator": "WordPress 7.1.2",
+        "bot_markers": [
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 1,
+        "euro_mentions": 0,
+        "links": 220,
+        "feeds": []
+      },
+      "sample": "samples/kostrena__kostrena_hr.html.gz",
+      "name": "kostrena",
+      "url": "https://kostrena.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://kostrena.hr/feed/",
+      "bytes": 43869,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 0.9,
+      "analysis": {
+        "title": "Općina Kostrena",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 72,
+        "feeds": []
+      },
+      "sample": "samples/kostrena__kostrena_hr_feed.html.gz",
+      "name": "kostrena",
+      "url": "https://kostrena.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://lovran.hr/",
+      "bytes": 215355,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 2.1,
+      "analysis": {
+        "title": "Općina Lovran &#8211; Službene stranice Općine Lovran",
+        "generator": "WordPress 6.7.9",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 167,
+        "feeds": [
+          "https://lovran.hr/feed/",
+          "https://lovran.hr/comments/feed/"
+        ]
+      },
+      "sample": "samples/lovran__lovran_hr.html.gz",
+      "name": "lovran",
+      "url": "https://lovran.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://lovran.hr/feed/",
+      "bytes": 45686,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 0.9,
+      "analysis": {
+        "title": "Općina Lovran",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 7,
+        "feeds": []
+      },
+      "sample": "samples/lovran__lovran_hr_feed.html.gz",
+      "name": "lovran",
+      "url": "https://lovran.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://www.malinska.hr/",
+      "bytes": 911874,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 4.8,
+      "analysis": {
+        "title": "Općina Malinska &#8211; Dubašnica",
+        "generator": "WordPress 7.1.2",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 3,
+        "links": 540,
+        "feeds": [
+          "https://www.malinska.hr/feed/",
+          "https://www.malinska.hr/comments/feed/"
+        ]
+      },
+      "sample": "samples/malinska__malinska_hr.html.gz",
+      "name": "malinska",
+      "url": "https://malinska.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://www.malinska.hr/feed/",
+      "bytes": 8188,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 1.7,
+      "analysis": {
+        "title": "Općina Malinska &#8211; Dubašnica",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/malinska__www_malinska_hr_feed.html.gz",
+      "name": "malinska",
+      "url": "https://www.malinska.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://moscenicka-draga.hr/",
+      "bytes": 193282,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 2.4,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://moscenicka-draga.hr/",
+        "bytes": 193282,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 2.0
+      },
+      "analysis": {
+        "title": "Općina Mošćenička Draga &#8211; Službene internetske stranice Općine Mošćenička Draga",
+        "generator": "WordPress 7.1.2",
+        "bot_markers": [
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 4,
+        "euro_mentions": 0,
+        "links": 275,
+        "feeds": [
+          "https://moscenicka-draga.hr/feed/",
+          "https://moscenicka-draga.hr/comments/feed/"
+        ]
+      },
+      "sample": "samples/moscenicka_draga__moscenicka_draga_hr.html.gz",
+      "name": "moscenicka_draga",
+      "url": "https://moscenicka-draga.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://moscenicka-draga.hr/feed/",
+      "bytes": 19978,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 1.7,
+      "analysis": {
+        "title": "Općina Mošćenička Draga",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 13,
+        "feeds": []
+      },
+      "sample": "samples/moscenicka_draga__moscenicka_draga_hr_feed.html.gz",
+      "name": "moscenicka_draga",
+      "url": "https://moscenicka-draga.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://omisalj.hr/",
+      "bytes": 113754,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 1.0,
+      "analysis": {
+        "title": "Općina Omišalj",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": true,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 6,
+        "links": 36,
+        "feeds": []
+      },
+      "sample": "samples/omisalj__omisalj_hr.html.gz",
+      "name": "omisalj",
+      "url": "https://omisalj.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://omisalj.hr/feed",
+      "bytes": 12248,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 0.9,
+      "analysis": {
+        "title": "Općina Omišalj",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": true,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 8,
+        "feeds": []
+      },
+      "sample": "samples/omisalj__omisalj_hr_feed.html.gz",
+      "name": "omisalj",
+      "url": "https://omisalj.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://punat.hr/",
+      "bytes": 28369,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 3.5,
+      "analysis": {
+        "title": "Početna | Općina Punat",
+        "generator": "Drupal 9 (https://www.drupal.org)",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 86,
+        "feeds": []
+      },
+      "sample": "samples/punat__punat_hr.html.gz",
+      "name": "punat",
+      "url": "https://punat.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 404,
+      "final_url": "https://punat.hr/feed/",
+      "bytes": 18569,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 3.1,
+      "impersonated": {
+        "status": 404,
+        "final_url": "https://punat.hr/feed/",
+        "bytes": 18569,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 2.7
+      },
+      "analysis": {
+        "title": "Stranica nije pronađena | Općina Punat",
+        "generator": "Drupal 9 (https://www.drupal.org)",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 50,
+        "feeds": []
+      },
+      "sample": "samples/punat__punat_hr_feed.html.gz",
+      "name": "punat",
+      "url": "https://punat.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://www.opcina-vrbnik.hr/",
+      "bytes": 168866,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 4.3,
+      "analysis": {
+        "title": "Općina Vrbnik &#8211; Web stranica Općine Vrbnik",
+        "generator": "WordPress 7.1.2",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 252,
+        "feeds": [
+          "https://www.opcina-vrbnik.hr/feed/",
+          "https://www.opcina-vrbnik.hr/comments/feed/"
+        ]
+      },
+      "sample": "samples/vrbnik__opcina_vrbnik_hr.html.gz",
+      "name": "vrbnik",
+      "url": "https://opcina-vrbnik.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://www.opcina-vrbnik.hr/feed/",
+      "bytes": 21672,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 1.6,
+      "analysis": {
+        "title": "Općina Vrbnik",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 7,
+        "feeds": []
+      },
+      "sample": "samples/vrbnik__www_opcina_vrbnik_hr_feed.html.gz",
+      "name": "vrbnik",
+      "url": "https://www.opcina-vrbnik.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://www.crikvenica.hr/",
+      "bytes": 561511,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 5.5,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.crikvenica.hr/",
+        "bytes": 561511,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 3.6
+      },
+      "analysis": {
+        "title": "Grad Crikvenica",
+        "generator": "All in One SEO (AIOSEO) 5.0.1.1",
+        "bot_markers": [
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 1,
+        "euro_mentions": 1,
+        "links": 370,
+        "feeds": [
+          "https://www.crikvenica.hr/feed/",
+          "https://www.crikvenica.hr/comments/feed/"
+        ]
+      },
+      "sample": "samples/crikvenica__crikvenica_hr.html.gz",
+      "name": "crikvenica",
+      "url": "https://crikvenica.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://www.crikvenica.hr/feed/",
+      "bytes": 48938,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 1.8,
+      "analysis": {
+        "title": "Grad Crikvenica",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 4,
+        "links": 54,
+        "feeds": []
+      },
+      "sample": "samples/crikvenica__www_crikvenica_hr_feed.html.gz",
+      "name": "crikvenica",
+      "url": "https://www.crikvenica.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://www.kraljevica.hr/",
+      "bytes": 237506,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 4.7,
+      "analysis": {
+        "title": "Naslovnica - Grad Kraljevica",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 1,
+        "euro_mentions": 0,
+        "links": 195,
+        "feeds": [
+          "https://www.kraljevica.hr/feed/"
+        ]
+      },
+      "sample": "samples/kraljevica__kraljevica_hr.html.gz",
+      "name": "kraljevica",
+      "url": "https://kraljevica.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://www.kraljevica.hr/feed/",
+      "bytes": 41802,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 1.6,
+      "analysis": {
+        "title": "Grad Kraljevica",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 62,
+        "feeds": []
+      },
+      "sample": "samples/kraljevica__www_kraljevica_hr_feed.html.gz",
+      "name": "kraljevica",
+      "url": "https://www.kraljevica.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://grad-krk.hr/",
+      "bytes": 138412,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 3.2,
+      "analysis": {
+        "title": "Grad Krk | grad povijesti i kulture",
+        "generator": "Drupal 7 (http://drupal.org)",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 369,
+        "feeds": [
+          "https://www.grad-krk.hr/rss.xml"
+        ]
+      },
+      "sample": "samples/krk__grad_krk_hr.html.gz",
+      "name": "krk",
+      "url": "https://grad-krk.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 404,
+      "final_url": "https://grad-krk.hr/feed/",
+      "bytes": 66406,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 7.7,
+      "impersonated": {
+        "status": 404,
+        "final_url": "https://grad-krk.hr/feed/",
+        "bytes": 66406,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 4.9
+      },
+      "analysis": {
+        "title": "Stranica nije pronađena. | Grad Krk",
+        "generator": "Drupal 7 (http://drupal.org)",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 86,
+        "feeds": []
+      },
+      "sample": "samples/krk__grad_krk_hr_feed.html.gz",
+      "name": "krk",
+      "url": "https://grad-krk.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://novi-vinodolski.hr/",
+      "bytes": 372446,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 1.9,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://novi-vinodolski.hr/",
+        "bytes": 372059,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 1.7
+      },
+      "analysis": {
+        "title": "Novi Vinodolski – Službene stranice grada",
+        "generator": "Elementor 3.35.5; features: additional_custom_breakpoints; settings: css_print_method-external, google_font-enabled, font_display-auto",
+        "bot_markers": [
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 2,
+        "euro_mentions": 0,
+        "links": 300,
+        "feeds": [
+          "https://novi-vinodolski.hr/feed/",
+          "https://novi-vinodolski.hr/comments/feed/"
+        ]
+      },
+      "sample": "samples/novi_vinodolski__novi_vinodolski_hr.html.gz",
+      "name": "novi_vinodolski",
+      "url": "https://novi-vinodolski.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://novi-vinodolski.hr/feed/",
+      "bytes": 17291,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 0.7,
+      "analysis": {
+        "title": "Novi Vinodolski &#8211; Službene stranice grada",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 10,
+        "feeds": []
+      },
+      "sample": "samples/novi_vinodolski__novi_vinodolski_hr_feed.html.gz",
+      "name": "novi_vinodolski",
+      "url": "https://novi-vinodolski.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://opatija.hr/",
+      "bytes": 477524,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 1.2,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://opatija.hr/",
+        "bytes": 477524,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 1.1
+      },
+      "analysis": {
+        "title": "Grad Opatija",
+        "generator": "WordPress 7.0.6",
+        "bot_markers": [
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 1,
+        "euro_mentions": 0,
+        "links": 389,
+        "feeds": [
+          "https://opatija.hr/feed/"
+        ]
+      },
+      "sample": "samples/opatija__opatija_hr.html.gz",
+      "name": "opatija",
+      "url": "https://opatija.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://opatija.hr/feed/",
+      "bytes": 66158,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 1.4,
+      "analysis": {
+        "title": "Grad Opatija",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 10,
+        "feeds": []
+      },
+      "sample": "samples/opatija__opatija_hr_feed.html.gz",
+      "name": "opatija",
+      "url": "https://opatija.hr/feed/"
+    },
+    {
+      "group": "municipality",
+      "status": 200,
+      "final_url": "https://www.rijeka.hr/",
+      "bytes": 112847,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 2.6,
+      "analysis": {
+        "title": "Grad Rijeka – Portal grada Rijeke",
+        "generator": "WordPress 7.1.2",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 1,
+        "euro_mentions": 0,
+        "links": 207,
+        "feeds": [
+          "https://www.rijeka.hr/feed/",
+          "https://www.rijeka.hr/comments/feed/"
+        ]
+      },
+      "sample": "samples/rijeka__rijeka_hr.html.gz",
+      "name": "rijeka",
+      "url": "https://rijeka.hr/"
+    },
+    {
+      "group": "municipality_feed",
+      "status": 200,
+      "final_url": "https://www.rijeka.hr/feed/",
+      "bytes": 63633,
+      "content_type": "application/rss+xml; charset=UTF-8",
+      "seconds": 1.3,
+      "analysis": {
+        "title": "Grad Rijeka",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 69,
+        "feeds": []
+      },
+      "sample": "samples/rijeka__www_rijeka_hr_feed.html.gz",
+      "name": "rijeka",
+      "url": "https://www.rijeka.hr/feed/"
+    }
+  ]
+}
