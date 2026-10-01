@@ -30,16 +30,23 @@ kriterijima stiže obavijest na mobitel (Telegram). PC ne mora biti upaljen.
 
 ## Izvori
 
-| Izvor | Način | Napomena |
+| Izvor | Način | Napomena (rezultat faze 0) |
 |---|---|---|
-| njuskalo.hr | spremljene pretrage u Njuškalo aplikaciji | postavlja korisnik; Njuškalo blokira strane IP adrese |
-| crozilla.com **ili** indomio.hr | scraper | ista grupa (Indomio); koristi se jedan, drugi je rezerva |
-| oglasnik.hr, index.hr/oglasi, nekretnine.hr, gohome.hr, realitica.com, oglasi.hr, nekretnine24.hr, ekvadrat.hr, vender.hr | scraper | izvedivost se provjerava u fazi 0 |
-| trazimstan.hr | scraper | samo ako ima kuće i zemljišta |
-| FINA Očevidnik | službeni API (data.gov.hr) | **samo građevinska zemljišta** |
-| Stranice 15 općina i gradova | jednom dnevno, ključne riječi | natječaji za prodaju; obavijest s linkom |
-| PGŽ, Ministarstvo državne imovine, CERP | jednom dnevno, ključne riječi | natječaji za prodaju |
-| Novi list (mali oglasi) | provjera | ako postoji online izdanje |
+| njuskalo.hr | spremljene pretrage u Njuškalo aplikaciji | postavlja korisnik; iz oblaka blokirano (ShieldSquare captcha) |
+| nekretnine.hr | scraper (strukturirani JSON) | ista grupa i platforma kao Crozilla i Indomio; radi iz oblaka i **zamjenjuje ih** |
+| crozilla.com, indomio.hr | rezerva, s Redmija | iz oblaka blokirano (403) |
+| realitica.com | s Redmija (faza 2) | iz oblaka blokirano (403) |
+| oglasnik.hr | scraper | radi iz oblaka; popis oglasa učitava JavaScript |
+| index.hr/oglasi | scraper (njihov interni API) | radi iz oblaka; React aplikacija |
+| gohome.hr | scraper | radi iz oblaka; tražilica koja skuplja oglase s drugih stranica |
+| vender.hr | RSS | radi iz oblaka |
+| oglasi.hr, nekretnine24.hr | scraper | rade iz oblaka |
+| trazimstan.hr | scraper (preglednik) | radi iz oblaka; aplikacija koja oglase učitava JavaScriptom |
+| ekvadrat.hr | — | domena se ne učitava; izgleda ugašeno |
+| FINA Očevidnik | dnevni CSV izvoz (svi predmeti, ~11.000 redaka) | **samo građevinska zemljišta**; lokacija iz opisa (katastarska općina) |
+| Stranice 15 općina i gradova | RSS, jednom dnevno, ključne riječi | 12 od 15 ima RSS; Dobrinj, Punat i Krk se čitaju sa stranice |
+| PGŽ, Ministarstvo državne imovine, CERP | jednom dnevno, ključne riječi | rade iz oblaka |
+| Novi list (mali oglasi) | provjera | stranica radi; treba naći oglasnik |
 | Lokalne agencije | faza 4 | 10–15 najaktivnijih, izdvojenih iz podataka s portala |
 | Banke i leasing kuće | kasnije | prodaja preuzetih nekretnina |
 | Facebook Marketplace i grupe | ručno | ugrađene FB obavijesti („Sve objave” u grupama); bez automatizacije |
@@ -86,11 +93,12 @@ bez stotina poruka.
 
 ## Faze
 
-0. **Test izvedivosti** (u tijeku): GitHub Actions dohvaća svaki izvor i bilježi
-   što radi iz oblaka (`probe/`).
+0. **Test izvedivosti** (gotovo): rezultati su u `probe/results/`. GitHub poslužitelji
+   izlaze s američkih IP adresa; blokirani su Njuškalo, Crozilla, Indomio i Realitica.
 1. Jezgra (konfiguracija, filter, lokacije, baza), Telegram, e-mail, pregledni
-   izvještaj, GitHub Actions, FINA i 3–4 najveća portala.
-2. Ostali portali.
+   izvještaj, GitHub Actions, FINA, nekretnine.hr, oglasnik.hr, index.hr/oglasi.
+2. Ostali portali; Redmi Note 9S (Termux) za Realiticu, a za Crozillu samo ako nekretnine.hr
+   ne pokriva iste oglase.
 3. Općine, gradovi, PGŽ, Ministarstvo, CERP.
 4. Agencije.
 5. Dorade: duplikati među portalima, snižene cijene, tjedni izvještaj.
