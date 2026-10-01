@@ -1,0 +1,489 @@
+{
+  "egress": {
+    "country": "US",
+    "region": "Wyoming",
+    "city": "Cheyenne",
+    "org": "AS8075 Microsoft Corporation"
+  },
+  "results": [
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://ponip.fina.hr/ocevidnik-web/preuzmi/csv",
+      "bytes": 10364127,
+      "content_type": "text/csv;charset=UTF-8",
+      "seconds": 13.3,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 1247,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/fina_csv__ponip_fina_hr_ocevidnik_web_preuzmi_csv.html.gz",
+      "name": "fina_csv",
+      "url": "https://ponip.fina.hr/ocevidnik-web/preuzmi/csv"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://ponip.fina.hr/ocevidnik-web/pregled/nadmetanja-u-najavi",
+      "bytes": 26607,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 0.7,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://ponip.fina.hr/ocevidnik-web/pregled/nadmetanja-u-najavi",
+        "bytes": 26607,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 1.1
+      },
+      "analysis": {
+        "title": "FINA - Očevidnik nekretnina i pokretnina",
+        "generator": "",
+        "bot_markers": [
+          "captcha"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 26,
+        "feeds": []
+      },
+      "sample": "samples/fina_najava__ponip_fina_hr_ocevidnik_web_pregled_nadmetanja_u_najavi.html.gz",
+      "name": "fina_najava",
+      "url": "https://ponip.fina.hr/ocevidnik-web/pregled/nadmetanja-u-najavi"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://ponip.fina.hr/ocevidnik-web/get/vrsta/objekta/prodaje/nekretnine/list",
+      "bytes": 6752,
+      "content_type": "application/json;charset=UTF-8",
+      "seconds": 0.7,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/fina_vrste__ponip_fina_hr_ocevidnik_web_get_vrsta_objekta_prodaje_nekretnine_list.html.gz",
+      "name": "fina_vrste",
+      "url": "https://ponip.fina.hr/ocevidnik-web/get/vrsta/objekta/prodaje/nekretnine/list"
+    },
+    {
+      "group": "round2",
+      "status": 103,
+      "final_url": "https://www.nekretnine.hr/prodaja-stambene-nekretnine/primorsko-goranska-zupanija/opcina/",
+      "bytes": 0,
+      "content_type": "",
+      "seconds": 0.5,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.nekretnine.hr/prodaja-stambene-nekretnine/primorsko-goranska-zupanija/opcina/",
+        "bytes": 217590,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 0.8
+      },
+      "body_from": "impersonated",
+      "analysis": {
+        "title": "Gradovi i općine s oglasima za prodaju kuće u županiji Primorsko-goranska - Nekretnine.hr",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": true,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 68,
+        "links": 52,
+        "feeds": []
+      },
+      "sample": "samples/nekretnine_hr__www_nekretnine_hr_prodaja_stambene_nekretnine_primorsko_goranska_zupanija_opcina.html.gz",
+      "name": "nekretnine_hr",
+      "url": "https://www.nekretnine.hr/prodaja-stambene-nekretnine/primorsko-goranska-zupanija/opcina/"
+    },
+    {
+      "group": "round2",
+      "status": 103,
+      "final_url": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/",
+      "bytes": 0,
+      "content_type": "",
+      "seconds": 1.2,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/",
+        "bytes": 489129,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 0.9
+      },
+      "body_from": "impersonated",
+      "analysis": {
+        "title": "Prodaja samostojećih kuća Primorsko-goranska županija - Nekretnine.hr",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": true,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 146,
+        "links": 88,
+        "feeds": []
+      },
+      "sample": "samples/nekretnine_hr__www_nekretnine_hr_prodaja_samostojeca_kuce_primorsko_goranska_zupanija.html.gz",
+      "name": "nekretnine_hr",
+      "url": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/"
+    },
+    {
+      "group": "round2",
+      "status": 103,
+      "final_url": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/",
+      "bytes": 0,
+      "content_type": "",
+      "seconds": 0.6,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/",
+        "bytes": 393909,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 0.8
+      },
+      "body_from": "impersonated",
+      "analysis": {
+        "title": "Prodaja zemljišta Primorsko-goranska županija - Nekretnine.hr",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": true,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 141,
+        "links": 79,
+        "feeds": []
+      },
+      "sample": "samples/nekretnine_hr__www_nekretnine_hr_prodaja_zemljista_primorsko_goranska_zupanija.html.gz",
+      "name": "nekretnine_hr",
+      "url": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://www.index.hr/oglasi/static/js/main.2c0cd421.js",
+      "bytes": 7619241,
+      "content_type": "text/javascript",
+      "seconds": 0.4,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://www.index.hr/oglasi/static/js/main.2c0cd421.js",
+        "bytes": 7619241,
+        "content_type": "text/javascript",
+        "seconds": 0.3
+      },
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [
+          "captcha",
+          "access_denied"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 4,
+        "links": 45,
+        "feeds": []
+      },
+      "sample": "samples/index_oglasi__www_index_hr_oglasi_static_js_main_2c0cd421_js.html.gz",
+      "name": "index_oglasi",
+      "url": "https://www.index.hr/oglasi/static/js/main.2c0cd421.js"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://trazimstan.hr/sitemap.xml",
+      "bytes": 25058,
+      "content_type": "application/xml; charset=utf-8",
+      "seconds": 0.9,
+      "analysis": {
+        "title": "",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/trazimstan__trazimstan_hr_sitemap_xml.html.gz",
+      "name": "trazimstan",
+      "url": "https://trazimstan.hr/sitemap.xml"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://oglasnik.hr/kuce-prodaja",
+      "bytes": 265551,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 0.7,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://oglasnik.hr/kuce-prodaja",
+        "bytes": 265551,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 0.4
+      },
+      "analysis": {
+        "title": "Plavi oglasnik: besplatni mali oglasi",
+        "generator": "",
+        "bot_markers": [
+          "cloudflare",
+          "access_denied"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 27,
+        "feeds": []
+      },
+      "sample": "samples/oglasnik__www_oglasnik_hr_kuce_prodaja.html.gz",
+      "name": "oglasnik",
+      "url": "https://www.oglasnik.hr/kuce-prodaja"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://oglasnik.hr/zemljista-prodajem",
+      "bytes": 265924,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 0.5,
+      "impersonated": {
+        "status": 200,
+        "final_url": "https://oglasnik.hr/zemljista-prodajem",
+        "bytes": 265587,
+        "content_type": "text/html; charset=utf-8",
+        "seconds": 0.5
+      },
+      "analysis": {
+        "title": "Plavi oglasnik: besplatni mali oglasi",
+        "generator": "",
+        "bot_markers": [
+          "cloudflare",
+          "access_denied"
+        ],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 27,
+        "feeds": []
+      },
+      "sample": "samples/oglasnik__www_oglasnik_hr_zemljista_prodajem.html.gz",
+      "name": "oglasnik",
+      "url": "https://www.oglasnik.hr/zemljista-prodajem"
+    },
+    {
+      "group": "round2",
+      "status": 404,
+      "final_url": "https://oglasi.hr/kuce-prodaja",
+      "bytes": 25356,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 0.7,
+      "impersonated": {
+        "status": 404,
+        "final_url": "https://oglasi.hr/kuce-prodaja",
+        "bytes": 25356,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 0.5
+      },
+      "analysis": {
+        "title": "Oglasi.HR - besplatni mali oglasnik - kuće - prodaja",
+        "generator": "Osclass 3.8.0",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 19,
+        "feeds": []
+      },
+      "sample": "samples/oglasi_hr__oglasi_hr_kuce_prodaja.html.gz",
+      "name": "oglasi_hr",
+      "url": "https://oglasi.hr/kuce-prodaja"
+    },
+    {
+      "group": "round2",
+      "status": 404,
+      "final_url": "https://oglasi.hr/vikendice-prodaja",
+      "bytes": 25397,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 0.5,
+      "impersonated": {
+        "status": 404,
+        "final_url": "https://oglasi.hr/vikendice-prodaja",
+        "bytes": 25396,
+        "content_type": "text/html; charset=UTF-8",
+        "seconds": 0.5
+      },
+      "analysis": {
+        "title": "Oglasi.HR - besplatni mali oglasnik - vikendice - prodaja",
+        "generator": "Osclass 3.8.0",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 19,
+        "feeds": []
+      },
+      "sample": "samples/oglasi_hr__oglasi_hr_vikendice_prodaja.html.gz",
+      "name": "oglasi_hr",
+      "url": "https://oglasi.hr/vikendice-prodaja"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://oglasi.hr/nekretnine",
+      "bytes": 28130,
+      "content_type": "text/html; charset=UTF-8",
+      "seconds": 0.5,
+      "analysis": {
+        "title": "Oglasi.HR - besplatni mali oglasnik - nekretnine",
+        "generator": "Osclass 3.8.0",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 1,
+        "links": 27,
+        "feeds": []
+      },
+      "sample": "samples/oglasi_hr__oglasi_hr_nekretnine.html.gz",
+      "name": "oglasi_hr",
+      "url": "https://oglasi.hr/nekretnine"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://www.nekretnine24.hr/kuce",
+      "bytes": 22547,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 1.4,
+      "analysis": {
+        "title": "Kuće - oglasi za kuće | Nekretnine 24",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 7,
+        "links": 40,
+        "feeds": []
+      },
+      "sample": "samples/nekretnine24__www_nekretnine24_hr_kuce.html.gz",
+      "name": "nekretnine24",
+      "url": "https://www.nekretnine24.hr/kuce"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://www.nekretnine24.hr/zemljista",
+      "bytes": 22600,
+      "content_type": "text/html; charset=utf-8",
+      "seconds": 1.3,
+      "analysis": {
+        "title": "Oglasi za građevinska i poljoprivredna zemljišta | Nekretnine 24",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 7,
+        "links": 40,
+        "feeds": []
+      },
+      "sample": "samples/nekretnine24__www_nekretnine24_hr_zemljista.html.gz",
+      "name": "nekretnine24",
+      "url": "https://www.nekretnine24.hr/zemljista"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://vender.hr/sitemap.rss",
+      "bytes": 19617,
+      "content_type": "text/xml; charset=UTF-8",
+      "seconds": 1.4,
+      "analysis": {
+        "title": "Vender",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 0,
+        "links": 0,
+        "feeds": []
+      },
+      "sample": "samples/vender__vender_hr_sitemap_rss.html.gz",
+      "name": "vender",
+      "url": "https://vender.hr/sitemap.rss"
+    },
+    {
+      "group": "round2",
+      "status": 200,
+      "final_url": "https://www.gohome.hr/nekretnine.aspx?q=kuca%20krk%20prodaja",
+      "bytes": 164089,
+      "content_type": "text/html; charset=iso-8859-2",
+      "seconds": 4.4,
+      "analysis": {
+        "title": "kuca krk prodaja - GoHome",
+        "generator": "",
+        "bot_markers": [],
+        "next_data": false,
+        "nuxt": false,
+        "json_ld": 0,
+        "euro_mentions": 42,
+        "links": 269,
+        "feeds": []
+      },
+      "sample": "samples/gohome__www_gohome_hr_nekretnine_aspx_q_kuca_20krk_20prodaja.html.gz",
+      "name": "gohome",
+      "url": "https://www.gohome.hr/nekretnine.aspx?q=kuca%20krk%20prodaja"
+    },
+    {
+      "group": "round2",
+      "status": null,
+      "error": "ConnectionError: HTTPSConnectionPool(host='ekvadrat.hr', port=443): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPSConnection(host='ekvadrat.hr', port=443): Failed to resolve 'ekvadrat.hr' ([Err",
+      "seconds": 2.3,
+      "impersonated": {
+        "status": null,
+        "error": "DNSError: Failed to perform, curl: (6) Could not resolve host: ekvadrat.hr. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.",
+        "seconds": 1.2
+      },
+      "analysis": null,
+      "name": "ekvadrat",
+      "url": "https://ekvadrat.hr/"
+    },
+    {
+      "group": "round2",
+      "status": null,
+      "error": "ConnectionError: HTTPConnectionPool(host='www.ekvadrat.hr', port=80): Max retries exceeded with url: / (Caused by NameResolutionError(\"HTTPConnection(host='www.ekvadrat.hr', port=80): Failed to resolve 'www.ekvadrat.h",
+      "seconds": 0.9,
+      "impersonated": {
+        "status": null,
+        "error": "DNSError: Failed to perform, curl: (6) Could not resolve host: www.ekvadrat.hr. See https://curl.se/libcurl/c/libcurl-errors.html first for more details.",
+        "seconds": 1.1
+      },
+      "analysis": null,
+      "name": "ekvadrat",
+      "url": "http://www.ekvadrat.hr/"
+    }
+  ]
+}
