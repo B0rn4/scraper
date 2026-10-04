@@ -1,0 +1,108 @@
+# Redmi: Njuškalo i Realitica (faza 2b)
+
+Njuškalo i Realitica blokiraju GitHubove poslužitelje (američke IP adrese). Redmi na
+kućnom Wi-Fiju portalima izgleda kao običan posjetitelj iz Hrvatske. Programi se
+vrte u Ubuntuu unutar Termuxa jer sam Termux ne može pokrenuti potrebne biblioteke.
+
+Naredbe kopiraj s ove stranice (gumb za kopiranje u kutu bloka) i zalijepi u Termux
+dugim pritiskom na zaslon → **Paste**. Svaki blok zalijepi i pričekaj da završi
+prije sljedećeg.
+
+## Korak 1: proba (oko 30–40 min, većinom čekanje)
+
+Cilj: vidjeti prolaze li Njuškalo i Realitica s kućne mreže. Ništa se još ne
+pokreće automatski. Proba šalje svega nekoliko zahtjeva svakom portalu.
+
+### 1.1 Termux
+
+1. Spoji Redmi na kućni Wi-Fi i na punjač.
+2. U pregledniku otvori **f-droid.org**, preuzmi i instaliraj F-Droid (dopusti
+   instalaciju iz tog izvora kad Android pita).
+3. U F-Droidu potraži **Termux** i instaliraj ga. Termux iz Trgovine Play je
+   zastario i ne radi kako treba.
+4. Otvori Termux.
+
+### 1.2 GitHub token
+
+Token služi da Redmi pošalje rezultate probe na GitHub, gdje ih ja čitam. Najlakše ga
+je napraviti na samom Redmiju, u pregledniku:
+**github.com/settings/personal-access-tokens/new**
+
+- Token name: `redmi-scraper`
+- Expiration: **No expiration**
+- Repository access: **Only select repositories** → `B0rn4/scraper`
+- Permissions → Repository permissions → **Contents: Read and write**
+- **Generate token**, zatim ga kopiraj.
+
+Token zalijepi samo u Termux kad ga skripta zatraži (korak 1.4). Ne šalji ga meni.
+Isti token trebat će i za automatska pokretanja u koraku 2. Ako ga ne spremiš
+(npr. u upravitelj lozinki), tada se jednostavno napravi novi.
+
+### 1.3 Ubuntu unutar Termuxa
+
+U Termuxu:
+
+```
+termux-wake-lock
+pkg update -y && pkg upgrade -y
+```
+
+`termux-wake-lock` sprječava da Android uspava Termux; u obavijestima se pojavi
+oznaka. Ako `pkg upgrade` pita nešto o konfiguracijskoj datoteci, samo pritisni Enter.
+
+```
+pkg install -y proot-distro
+proot-distro install ubuntu
+```
+
+```
+proot-distro login ubuntu
+```
+
+Odzivnik se promijeni u `root@localhost`. Sada si u Ubuntuu.
+
+### 1.4 Scraper i proba
+
+```
+apt update && apt install -y python3 python3-venv git
+```
+
+```
+git clone -b claude/real-estate-scraper-primorska-jrlscq https://github.com/B0rn4/scraper.git
+cd scraper
+python3 -m venv ~/venv && . ~/venv/bin/activate
+pip install -r requirements.txt
+```
+
+```
+python tools/redmi_probe.py
+```
+
+Skripta za svaku stranicu ispiše **PROLAZI** ili **NE PROLAZI** i na kraju zatraži
+token. Zalijepi ga (ne prikazuje se dok ga lijepiš) i pritisni Enter. Kad ispiše
+„Gotovo”, javi mi; rezultate čitam s GitHuba. Ako nešto zapne, pošalji snimku zaslona.
+
+**Povratak kasnije:** otvori Termux pa upiši
+
+```
+proot-distro login ubuntu
+cd scraper && . ~/venv/bin/activate
+```
+
+## Korak 1b: pravi preglednik (samo ako ti javim; oko 15 min)
+
+Ako Njuškalo ne prolazi bez preglednika, probat ćemo s Chromiumom:
+
+```
+pip install playwright
+python -m playwright install --with-deps chromium
+python tools/redmi_probe.py --playwright
+```
+
+## Korak 2: automatsko pokretanje (nakon probe; oko 15 min)
+
+Kad napišem čitanje Njuškala i Realitice prema rezultatima probe, ovdje će biti
+upute za automatsko pokretanje svakih 20 minuta od 7 do 23 h. Uključuje Termux:Boot
+za pokretanje nakon ponovnog paljenja te postavke baterije u MIUI-ju (Termux bez
+ograničenja baterije, automatsko pokretanje uključeno). Plan je da GitHub primijeti
+ako Redmi prestane javljati i pošalje mail.

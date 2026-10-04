@@ -101,10 +101,6 @@ class Runner:
             for src in self.enabled_sources():
                 if src.daily and state.meta_get(f"daily:{src.name}") == today:
                     continue
-                last = state.meta_get(f"last_run:{src.name}")
-                if getattr(src, "interval_minutes", 0) and last and \
-                        self.now - datetime.fromisoformat(last) < timedelta(minutes=src.interval_minutes - 5):
-                    continue
                 first = state.meta_get(f"baseline:{src.name}") is None
                 mode = FULL if first else INCREMENTAL
                 self.log(f"{src.label}: dohvat ({'početni, cijelo područje' if first else 'najnoviji'})")
@@ -132,7 +128,6 @@ class Runner:
                     state.meta_set(f"baseline:{src.name}", self.stamp)
                 if src.daily:
                     state.meta_set(f"daily:{src.name}", today)
-                state.meta_set(f"last_run:{src.name}", self.stamp)
                 state.conn.commit()
 
             if baseline:

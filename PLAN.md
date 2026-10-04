@@ -37,8 +37,8 @@ kriterijima stiže obavijest na mobitel (Telegram). PC ne mora biti upaljen.
 | realitica.com | s Redmija (faza 2), probno | iz oblaka blokirano (403); ostaje samo ako donosi oglase kojih nema drugdje |
 | oglasnik.hr | scraper | radi iz oblaka; popis oglasa učitava JavaScript |
 | index.hr/oglasi | scraper (njihov interni API) | radi iz oblaka; React aplikacija |
-| gohome.hr | scraper | radi iz oblaka; tražilica koja skuplja oglase s drugih stranica |
-| vender.hr | RSS | radi iz oblaka |
+| gohome.hr | izostavljen | tražilica; mjerenje 4. 10.: Njuškalo kasni 0–3 dana, index.hr i oglasnik.hr ne prati, ~95 % oglasa agencija već je na našim portalima |
+| vender.hr | scraper (WordPress API) | radi iz oblaka |
 | oglasi.hr, nekretnine24.hr | scraper | rade iz oblaka |
 | trazimstan.hr | scraper (preglednik) | radi iz oblaka; aplikacija koja oglase učitava JavaScriptom |
 | FINA Očevidnik | dnevni CSV izvoz (svi predmeti, ~11.000 redaka) | **samo građevinska zemljišta**; lokacija iz slobodnog opisa (vidi niže) |
@@ -127,15 +127,16 @@ bez stotina poruka.
    Kod je u `scraper/`, upute u README.md. Početni popis poslan 4. 10. 2026.
    (15.894 oglasa). Poznato: isti oglas na više portala stiže više puta (rješava faza 5);
    GitHub raspored se nije sam pokrenuo – rješenje u README.md („Raspored ne radi”).
-2. **2a (gotovo 4. 10. 2026.)** Ostali portali s GitHuba: vender.hr (WordPress API) i
-   gohome.hr (tražilica, samo oglasi s portala koje ne pratimo izravno – većinom Njuškalo
-   i agencije; privremeno isključen dok se ne izmjere kašnjenje i pokrivenost). Izostavljeni: nekretnine24.hr (0 oglasa za područje),
-   oglasi.hr (1 oglas), trazimstan.hr (većinom najam, robots.txt zabranjuje /api/).
+2. **2a (gotovo 4. 10. 2026.)** Ostali portali s GitHuba: vender.hr (WordPress API).
+   Izostavljeni: nekretnine24.hr (0 oglasa za područje), oglasi.hr (1 oglas),
+   trazimstan.hr (većinom najam, robots.txt zabranjuje /api/), gohome.hr (vidi tablicu
+   izvora; mjerni alat `tools/discover9.py`).
    **2b** Redmi Note 9S (Termux) za Njuškalo i Realiticu. Napomena iz starog
    scrapera (stan-alert): Njuškalo je s kućne IP adrese prolazio uz pravi preglednik
    (Playwright, selektori `li.EntityList-item--Regular`, URL parametri `sort=new`,
-   `price[max]`, `livingArea[min]`). Termux ne pokreće Playwright, pa treba provjeriti
-   prolazi li običan zahtjev s hrvatske IP adrese ili tražiti drugi način.
+   `price[max]`, `livingArea[min]`). Termux sam ne pokreće Playwright, pa se radi
+   Ubuntu unutar Termuxa (proot-distro): prvo proba s curl_cffi (`tools/redmi_probe.py`),
+   Playwright tek ako to ne prolazi. Upute u REDMI.md.
 3. Općine, gradovi, PGŽ, Ministarstvo, CERP.
 4. Agencije.
 5. Dorade: duplikati među portalima, snižene cijene, tjedni izvještaj.

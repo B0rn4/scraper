@@ -21,12 +21,12 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 | oglasnik.hr | podaci sa stranice | svakih 20 min |
 | FINA Očevidnik (samo građevinska zemljišta) | dnevni CSV izvoz | jednom dnevno |
 | vender.hr | njihov API | svakih 20 min |
-| gohome.hr – samo oglasi s portala koje ne pratimo izravno (Njuškalo, agencije) | tražilica | privremeno isključen (mjeri se kašnjenje i pokrivenost) |
 
-GoHome ne mora vidjeti svaki Njuškalo oglas niti ga vidjeti odmah (oglase indeksira
-sam), pa nije zamjena za izravno praćenje. Njuškalo i Realitica izravno dolaze u fazi 2b (preko Redmija).
+Njuškalo i Realitica dolaze u fazi 2b (preko Redmija, upute u [REDMI.md](REDMI.md)).
 Provjereni i izostavljeni: nekretnine24.hr (nema oglasa za područje), oglasi.hr
-(gotovo prazan), trazimstan.hr (većinom najam, zabranjuje automatsko čitanje).
+(gotovo prazan), trazimstan.hr (većinom najam, zabranjuje automatsko čitanje),
+gohome.hr (tražilica: Njuškalo osvježava svakih nekoliko dana, index.hr i oglasnik.hr
+ne prati, a oglasi agencija gotovo su svi već na našim portalima).
 
 ## Ručno pokretanje
 
