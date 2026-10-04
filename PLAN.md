@@ -122,8 +122,9 @@ bez stotina poruka.
 
 0. **Test izvedivosti** (gotovo): rezultati su u `probe/results/`. GitHub poslužitelji
    izlaze s američkih IP adresa; blokirani su Njuškalo, Crozilla, Indomio i Realitica.
-1. Jezgra (konfiguracija, filter, lokacije, baza), Telegram, e-mail, pregledni
-   izvještaj, GitHub Actions, FINA, nekretnine.hr, oglasnik.hr, index.hr/oglasi.
+1. **(u tijeku)** Jezgra (konfiguracija, filter, lokacije, baza), Telegram, e-mail,
+   pregledni izvještaj, GitHub Actions, FINA, nekretnine.hr, oglasnik.hr, index.hr/oglasi.
+   Kod je u `scraper/`, upute u README.md. Raspored se uključuje nakon provjere.
 2. Ostali portali; Redmi Note 9S (Termux) za Realiticu, a za Crozillu samo ako nekretnine.hr
    ne pokriva iste oglase.
 3. Općine, gradovi, PGŽ, Ministarstvo, CERP.
