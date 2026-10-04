@@ -53,3 +53,9 @@ klikni **Kopiraj označene**. Zalijepi popis Claudeu u razgovor.
 - Testovi: `python -m pytest`.
 - Tajne (GitHub Secrets): `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `SMTP_USER`,
   `SMTP_PASSWORD`, `EMAIL_TO`.
+
+## Raspored ne radi?
+
+GitHub ponekad ne pokrene novi raspored. Rješenje: **Actions → Scraper nekretnina → ⋯
+(gore desno) → Disable workflow**, pa odmah **Enable workflow**. Ako ni to ne pomogne,
+pokretanje se može prepustiti vanjskom servisu (cron-job.org) ili Redmiju (faza 2).

@@ -124,7 +124,9 @@ bez stotina poruka.
    izlaze s američkih IP adresa; blokirani su Njuškalo, Crozilla, Indomio i Realitica.
 1. **(u tijeku)** Jezgra (konfiguracija, filter, lokacije, baza), Telegram, e-mail,
    pregledni izvještaj, GitHub Actions, FINA, nekretnine.hr, oglasnik.hr, index.hr/oglasi.
-   Kod je u `scraper/`, upute u README.md. Raspored je uključen.
+   Kod je u `scraper/`, upute u README.md. Početni popis poslan 4. 10. 2026.
+   (15.894 oglasa). Poznato: isti oglas na više portala stiže više puta (rješava faza 5);
+   GitHub raspored se nije sam pokrenuo – rješenje u README.md („Raspored ne radi”).
 2. Ostali portali; Redmi Note 9S (Termux) za Realiticu, a za Crozillu samo ako nekretnine.hr
    ne pokriva iste oglase.
 3. Općine, gradovi, PGŽ, Ministarstvo, CERP.
