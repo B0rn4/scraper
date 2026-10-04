@@ -84,3 +84,15 @@ def test_price_per_m2_is_converted(ctx):
     assert d.status == WARN and any("po m²" in w for w in d.warnings)
     d = evaluate(land(price=900, area=815), *ctx)  # ≈ 733.500 € > 300.000 €
     assert d.status == REJECT
+
+
+def test_placeholder_price_means_not_given(ctx):
+    d = evaluate(land(price=100, area=600), *ctx)  # "100 €" = cijena na upit
+    assert d.status == WARN and "cijena nije navedena" in d.warnings
+
+
+def test_fina_small_price_is_total(ctx):
+    x = land(price=633.6, area=582)
+    x.extra["ukupna_cijena"] = True
+    d = evaluate(x, *ctx)
+    assert d.status == PASS

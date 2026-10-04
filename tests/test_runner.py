@@ -39,3 +39,43 @@ def test_report_html(tmp_path):
     text = path.read_text()
     assert "Kopiraj označene" in text and "Kuća Punat" in text and "za dlaku" in text
     assert entries[1]["cat"] == ["cijena"]
+
+
+class FakeSource:
+    name, label, daily = "fake", "fake", False
+    batches = []
+
+    def __init__(self, *a, **k):
+        pass
+
+    def fetch(self, mode, known_ids):
+        FakeSource.modes.append(mode)
+        return FakeSource.batches.pop(0)
+
+    def search_links(self):
+        return []
+
+
+def test_baseline_then_incremental(tmp_path, monkeypatch):
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    FakeSource.modes = []
+    FakeSource.batches = [[listing(sid="1"), listing(900_000, "2")],          # početni popis
+                          [listing(sid="1"), listing(sid="3"), listing(380_000, "2")]]  # novi + snižen
+    sent = []
+
+    def run_once():
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r._send_report = lambda *a, **k: sent.append(("report", a[1]))
+        r._send_notifications = lambda state, items: sent.extend(("msg", x.source_id, h) for x, d, h in items)
+        r.run(force=True)
+
+    run_once()
+    assert FakeSource.modes == ["full"] and [s[0] for s in sent] == ["report"]
+    sent.clear()
+    run_once()
+    assert FakeSource.modes == ["full", "incremental"]
+    msgs = {s[1]: s[2] for s in sent}
+    assert set(msgs) == {"2", "3"} and "📉" in msgs["2"] and msgs["3"] == ""

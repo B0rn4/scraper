@@ -106,8 +106,11 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
 
     # --- cijena ---
     price = listing.price if listing.price and listing.price > 1000 else None
-    if price is None and listing.price and listing.price > 1 and listing.area:
-        # Mala "cijena" (npr. 35 €) je obično cijena po m².
+    if listing.extra.get("ukupna_cijena") and listing.price:
+        price = listing.price  # FINA: početna cijena je uvijek ukupna, i kad je mala
+    elif price is None and listing.price and listing.price > 100 and listing.area:
+        # Cijena između 100 i 1.000 € je obično cijena po m². Do 100 € (1, 10, 100)
+        # portali koriste kao zamjenu za "cijena na upit".
         price = listing.price * listing.area
         warnings.append(f"cijena {fmt_eur(listing.price)} je vjerojatno po m² – ukupno ≈ {fmt_eur(price)}")
     if price is None:

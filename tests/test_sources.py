@@ -91,3 +91,16 @@ def test_fina_bankruptcy_elsewhere_warns(fina):
 def test_fina_unrelated_items_skipped(fina):
     assert fina.to_listing(row("Općinski sud u Osijeku", "građevinsko zemljište k.o. Tenja, 800 m2")) is None
     assert fina.to_listing(row("Općinski sud u Rijeci", "stan u Rijeci, 54 m2")) is None
+
+
+def test_fina_partial_cadastral_name_not_matched(fina):
+    # "Donje Polje" (Šibenik) nije Dobrinjsko naselje Polje.
+    x = fina.to_listing(row("Općinski sud u Šibeniku", "građevinsko zemljište, k.o. Donje Polje u prizemlju, 500 m2"))
+    assert x is None
+
+
+def test_fina_cadastral_variants(fina):
+    x = fina.to_listing(row("Općinski sud u Rijeci", "građevinsko zemljište k.o. Kostrena-Lucija, 450 m2"))
+    assert x.municipality == "Kostrena" and x.title.count("k.o.") == 1
+    x = fina.to_listing(row("Općinski sud u Crikvenici, Stalna služba u Krku", "građevinsko zemljište k.o. Omišalj-Njivice, 700 m2"))
+    assert x.municipality == "Omišalj"

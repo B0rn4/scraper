@@ -48,7 +48,8 @@ def entry(listing: Listing, decision: Decision) -> dict:
         "nm": decision.near_miss,
         "obn": bool(listing.extra.get("za_obnovu")),
         "img": listing.image_url,
-        "d": desc[:600],
+        # Opis samo gdje pomaže provjeri, da datoteka ostane mala.
+        "d": desc[:600] if decision.status != REJECT or decision.near_miss else "",
         "pub": listing.published,
     }
 

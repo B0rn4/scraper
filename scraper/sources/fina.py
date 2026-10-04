@@ -24,7 +24,7 @@ SEARCH_URL = "https://ponip.fina.hr/ocevidnik-web/pretrazivanje/nekretnina"
 
 _KO = re.compile(
     r"(?:\b[kK]\.\s?[oO]\.?|katastarsk\w*\s+općin\w*)\s*:?\s*"
-    r"([A-ZČĆŽŠĐ][\w]*(?:(?:\s*-\s*|\s+)(?:[A-ZČĆŽŠĐ][\w]*|na|u|pri|kod)){0,3})"
+    r"([A-ZČĆŽŠĐ][\w]*(?:(?:\s*-\s*|\s+)(?:[A-ZČĆŽŠĐ][\w]*|na(?=\s+[A-ZČĆŽŠĐ]))){0,3})"
 )
 _BUILDING = re.compile(r"gradevinsk")
 _LAND = re.compile(r"zemljist|cestic|parcel")
@@ -95,22 +95,23 @@ class Fina(Source):
                 ko_names.append(full)  # npr. "Baška Voda" – nije naša Baška
                 continue
             words = re.split(r"(\s*-\s*|\s+)", full)
-            # Najduži prefiks koji postoji u tablicama: "Puži na" → "Puži".
+            # Najduži prefiks koji je točno ime k.o., naselja ili općine:
+            # "Omišalj-Njivice", pa "Omišalj". Bez djelomičnih pogodaka
+            # ("Donje Polje" nije Dobrinjsko naselje Polje).
             for end in range(len(words), 0, -1):
                 name = "".join(words[:end]).strip(" -")
-                if not name:
+                if not name or name.lower() == "na":
                     continue
                 key = fold(name)
-                jls = self.locator.cadastral.get(key)
-                hits = [jls] if jls else self.locator.by_settlement(name)
-                if not hits:
-                    hits = [j for j, _ in self.locator.scan_text(name)]
+                hits = [self.locator.cadastral[key]] if key in self.locator.cadastral else self.locator.by_settlement(name)
+                if not hits and self.locator.by_name(name):
+                    hits = [self.locator.by_name(name)]
                 if hits:
                     ko_names.append(name)
                     places.extend((j.name, j.included) for j in hits)
                     break
             else:
-                ko_names.append(m.group(1).strip())
+                ko_names.append(full)
         if not places:
             places = [(j.name, j.included) for j, _ in self.locator.scan_text(opis)]
         return ko_names, places
@@ -121,10 +122,15 @@ class Fina(Source):
         court = (row.get("Nadležno tijelo") or "").strip()
         court_class = self.court_class(court)
         ko_names, places = self.locate(opis)
+        ko_names = list(dict.fromkeys(ko_names))
         included = sorted({name for name, inc in places if inc})
         excluded = sorted({name for name, inc in places if not inc})
 
-        # Predmeti bez ikakve veze s regijom ne idu ni u izvještaj.
+        # Predmeti bez ikakve veze s regijom ne idu ni u izvještaj. Kod ovrhe je
+        # nadležan sud prema mjestu nekretnine, pa ovrha pred sudom izvan regije
+        # znači istoimeno mjesto drugdje (Baška Voda, Mošćenica kod Petrinje…).
+        if court_class == "drugdje":
+            return None
         if court_class not in ("regija", "druga_regija") and not included:
             return None
         if not _LAND.search(folded) and not _BUILDING.search(folded):
@@ -151,8 +157,6 @@ class Fina(Source):
                 warnings.append(f"opis spominje i: {', '.join(excluded)}")
             if court_class == "stecaj_drugdje":
                 warnings.append(f"stečaj pred sudom izvan regije ({court}) – provjeri lokaciju")
-            elif court_class == "drugdje":
-                reject.append(f"ovrha pred sudom izvan regije ({court}) – vjerojatno istoimeno mjesto drugdje")
             elif court_class == "druga_regija":
                 warnings.append(f"sud za drugo područje ({court}) – provjeri lokaciju")
         elif excluded:
@@ -196,7 +200,7 @@ class Fina(Source):
             municipality=municipality,
             location_text="; ".join(f"k.o. {k}" for k in ko_names),
             description=f"{opis}\n\n{detail_text}",
-            extra={"warnings": warnings, "reject": reject, "location_note": location_note,
+            extra={"warnings": warnings, "reject": reject, "location_note": location_note, "ukupna_cijena": True,
                    "sud": court, "spis": row.get("Poslovni broj spisa") or ""},
         )
 

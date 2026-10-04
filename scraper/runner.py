@@ -75,7 +75,9 @@ class Runner:
         self.log(f"Izvještaj: {path} ({len(entries)} oglasa)")
         return path
 
-    def _send_report(self, path: Path, caption: str, subject: str, mail: bool = True) -> None:
+    def _send_report(self, path: Path, caption: str, subject: str, mail: bool = False) -> None:
+        """Izvještaj ide na Telegram; mail samo ako je izričito traženo (mail je za
+        tjedni izvještaj i greške)."""
         if self.telegram:
             try:
                 self.telegram.send_document(path, caption)
