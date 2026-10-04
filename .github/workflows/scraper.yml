@@ -1,12 +1,12 @@
 name: Scraper nekretnina
 
 on:
-  # Raspored se uključuje nakon provjere (faza 1). Svakih 20 minuta; GitHub
-  # raspored je u UTC-u pa je raspon širi, a skripta radi samo 7–23 h po
-  # zagrebačkom vremenu. Tjedni izvještaj ponedjeljkom ujutro.
-  # schedule:
-  #   - cron: "2,22,42 5-22 * * *"
-  #   - cron: "17 6 * * 1"
+  schedule:
+    # Svakih 20 minuta. GitHub raspored je u UTC-u, pa je raspon širi;
+    # skripta sama radi samo od 7 do 23 h po zagrebačkom vremenu.
+    - cron: "2,22,42 5-22 * * *"
+    # Tjedni izvještaj: ponedjeljkom ujutro.
+    - cron: "17 6 * * 1"
   workflow_dispatch:
     inputs:
       naredba:
