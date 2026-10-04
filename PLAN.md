@@ -127,7 +127,11 @@ bez stotina poruka.
    Kod je u `scraper/`, upute u README.md. Početni popis poslan 4. 10. 2026.
    (15.894 oglasa). Poznato: isti oglas na više portala stiže više puta (rješava faza 5);
    GitHub raspored se nije sam pokrenuo – rješenje u README.md („Raspored ne radi”).
-2. Ostali portali; Redmi Note 9S (Termux) za Njuškalo i Realiticu. Napomena iz starog
+2. **2a (gotovo 4. 10. 2026.)** Ostali portali s GitHuba: vender.hr (WordPress API) i
+   gohome.hr (tražilica, samo oglasi s portala koje ne pratimo izravno – većinom Njuškalo
+   i agencije; privremeno isključen dok se ne izmjere kašnjenje i pokrivenost). Izostavljeni: nekretnine24.hr (0 oglasa za područje),
+   oglasi.hr (1 oglas), trazimstan.hr (većinom najam, robots.txt zabranjuje /api/).
+   **2b** Redmi Note 9S (Termux) za Njuškalo i Realiticu. Napomena iz starog
    scrapera (stan-alert): Njuškalo je s kućne IP adrese prolazio uz pravi preglednik
    (Playwright, selektori `li.EntityList-item--Regular`, URL parametri `sort=new`,
    `price[max]`, `livingArea[min]`). Termux ne pokreće Playwright, pa treba provjeriti
