@@ -1,0 +1,40 @@
+name: Faza 0 – analiza FINA CSV-a
+
+on:
+  push:
+    paths:
+      - "probe/fina_analysis.py"
+      - ".github/workflows/fina-analysis.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: probe
+  cancel-in-progress: false
+
+jobs:
+  analyse:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instaliraj ovisnosti
+        run: pip install requests
+
+      - name: Analiziraj CSV
+        run: python probe/fina_analysis.py
+
+      - name: Spremi rezultate u repozitorij
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add probe/results/fina
+          git commit -m "Faza 0: analiza FINA CSV-a" || exit 0
+          git push
