@@ -1,0 +1,45 @@
+name: Razvoj – otkrivanje izvora podataka
+
+on:
+  push:
+    paths:
+      - "tools/discover.py"
+      - ".github/workflows/discover.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: debug-branch
+  cancel-in-progress: false
+
+jobs:
+  discover:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Instaliraj ovisnosti
+        run: |
+          pip install requests curl_cffi playwright
+          python -m playwright install --with-deps chromium
+
+      - name: Otkrij izvore
+        run: python tools/discover.py debug-out
+
+      - name: Spremi na granu debug
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          cd debug-out
+          git init -q
+          git checkout -q -b debug
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "Otkrivanje izvora podataka"
+          git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" debug
