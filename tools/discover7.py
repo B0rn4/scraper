@@ -25,7 +25,7 @@ def save(name, text):
 
 
 def get(s, url, **kw):
-    return s.get(url, timeout=40, **kw)
+    return s.get(url, timeout=30, **kw)
 
 
 def vender(s, summary):
@@ -102,15 +102,21 @@ def gohome(s, summary):
             summary[f"gohome_{i}"] = {"q": q, "error": str(exc)[:200]}
 
 
+def s_get_text(url):
+    return cffi.get(url, impersonate="chrome", timeout=30).text
+
+
 def trazimstan(summary):
     with sync_playwright() as pw:
         browser = pw.chromium.launch()
         page = browser.new_context(user_agent=UA, locale="hr-HR").new_page()
+        page.set_default_timeout(30_000)
         calls = []
         page.on("response", lambda r: calls.append({"url": r.url, "status": r.status, "ct": r.headers.get("content-type", "")})
                 if r.request.resource_type in ("xhr", "fetch") else None)
         try:
-            page.goto("https://trazimstan.hr/search", wait_until="networkidle", timeout=60_000)
+            page.goto("https://trazimstan.hr/search", wait_until="domcontentloaded", timeout=60_000)
+            page.wait_for_timeout(8000)
             page.wait_for_timeout(3000)
             page.screenshot(path=str(OUT / "trazimstan.png"))
             text = page.inner_text("body")
@@ -119,29 +125,33 @@ def trazimstan(summary):
                 "text": text[:2000],
                 "links": sorted(set(page.eval_on_selector_all("a[href]", "els => els.map(e => e.href)")))[:80],
             }
-            for c in calls:
-                if "trazimstan" in c["url"] and "json" in c["ct"]:
-                    try:
-                        body = page.evaluate("async (u) => (await fetch(u)).text()", c["url"])
-                        save("trazimstan_" + re.sub(r"[^a-z0-9]+", "_", c["url"].lower())[-60:] + ".json.gz", body)
-                    except Exception:  # noqa: BLE001
-                        pass
+            for c in [c for c in calls if "trazimstan" in c["url"] and "json" in c["ct"]][:6]:
+                try:
+                    body = s_get_text(c["url"])
+                    save("trazimstan_" + re.sub(r"[^a-z0-9]+", "_", c["url"].lower())[-60:] + ".json.gz", body)
+                except Exception:  # noqa: BLE001
+                    pass
         except Exception as exc:  # noqa: BLE001
             summary["trazimstan_error"] = str(exc)[:300]
         browser.close()
+
+
+def dump(summary):
+    (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     summary = {}
     s = cffi.Session(impersonate="chrome")
-    for fn in (vender, oglasi, gohome):
+    for fn in (gohome, vender, oglasi):
         try:
             fn(s, summary)
         except Exception as exc:  # noqa: BLE001
             summary[f"{fn.__name__}_error"] = str(exc)[:300]
+        dump(summary)
     trazimstan(summary)
-    (OUT / "summary.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
+    dump(summary)
     print(json.dumps(summary, ensure_ascii=False, indent=1)[:4000])
 
 

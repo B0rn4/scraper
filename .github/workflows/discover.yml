@@ -36,9 +36,11 @@ jobs:
           python -m playwright install --with-deps chromium
 
       - name: Otkrij izvore
+        timeout-minutes: 12
         run: python tools/discover7.py debug-out
 
       - name: Spremi na granu debug
+        if: always()
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
