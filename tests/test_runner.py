@@ -79,3 +79,15 @@ def test_baseline_then_incremental(tmp_path, monkeypatch):
     assert FakeSource.modes == ["full", "incremental"]
     msgs = {s[1]: s[2] for s in sent}
     assert set(msgs) == {"2", "3"} and "📉" in msgs["2"] and msgs["3"] == ""
+
+
+def test_weekly_excludes_baseline(tmp_path):
+    state = State(tmp_path / "s.db")
+    near = Decision(REJECT, ["cijena 420.000 € > 400.000 €"], near_miss=True)
+    state.upsert(listing(420_000, "1"), near, "2026-10-04T17:00:00+02:00")       # početni popis
+    state.meta_set("baseline:t", "2026-10-04T17:00:00+02:00")
+    state.upsert(listing(410_000, "2"), near, "2026-10-05T07:00:00+02:00")       # nov oglas
+    since = "2026-09-28T00:00:00+02:00"
+    assert [r["source_id"] for r in state.near_misses_since(since)] == ["2"]
+    assert state.counts_since(since) == {"t": {REJECT: 1}}
+    state.close()

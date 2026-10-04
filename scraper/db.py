@@ -101,26 +101,34 @@ class State:
             "UPDATE listings SET notified_at = ?, notified_price = ? WHERE key = ?", (now, price, key)
         )
 
-    def near_misses_since(self, since: str) -> list[dict]:
+    # Izvještaji ne uključuju oglase iz početnog popisa izvora (oni nisu "novi").
+
+    def _baselines(self) -> dict[str, str]:
+        rows = self.conn.execute("SELECT key, value FROM meta WHERE key LIKE 'baseline:%'")
+        return {key.split(":", 1)[1]: value for key, value in rows}
+
+    def _new_since(self, since: str, where: str = "1=1") -> list[dict]:
+        baselines = self._baselines()
         rows = self.conn.execute(
-            "SELECT * FROM listings WHERE near_miss = 1 AND first_seen >= ? ORDER BY first_seen", (since,)
+            f"SELECT * FROM listings WHERE first_seen >= ? AND {where} ORDER BY first_seen", (since,)
         )
-        return [dict(r) for r in rows]
+        return [dict(r) for r in rows if r["first_seen"] > baselines.get(r["source"], "")]
+
+    def near_misses_since(self, since: str) -> list[dict]:
+        return self._new_since(since, "near_miss = 1")
 
     def notified_since(self, since: str) -> list[dict]:
         rows = self.conn.execute(
-            "SELECT * FROM listings WHERE notified_at >= ? ORDER BY notified_at", (since,)
+            "SELECT * FROM listings WHERE notified_at >= ? AND notified_at NOT LIKE 'zbirno:%' ORDER BY notified_at",
+            (since,),
         )
         return [dict(r) for r in rows]
 
     def counts_since(self, since: str) -> dict[str, dict[str, int]]:
-        rows = self.conn.execute(
-            "SELECT source, status, COUNT(*) AS n FROM listings WHERE first_seen >= ? GROUP BY source, status",
-            (since,),
-        )
         out: dict[str, dict[str, int]] = {}
-        for r in rows:
-            out.setdefault(r["source"], {})[r["status"]] = r["n"]
+        for r in self._new_since(since):
+            out.setdefault(r["source"], {}).setdefault(r["status"], 0)
+            out[r["source"]][r["status"]] += 1
         return out
 
     # --- zdravlje izvora ---
