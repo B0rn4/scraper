@@ -5,8 +5,11 @@ kućnom Wi-Fiju portalima izgleda kao običan posjetitelj iz Hrvatske. Programi 
 vrte u Ubuntuu unutar Termuxa jer sam Termux ne može pokrenuti potrebne biblioteke.
 
 Naredbe kopiraj s ove stranice (gumb za kopiranje u kutu bloka) i zalijepi u Termux
-dugim pritiskom na zaslon → **Paste**. Svaki blok zalijepi i pričekaj da završi
-prije sljedećeg.
+dugim pritiskom na zaslon → **Paste**. Cijeli blok možeš zalijepiti odjednom; retci se
+izvršavaju jedan za drugim. Prije sljedećeg bloka pričekaj da se opet pojavi
+odzivnik (`$` u Termuxu, `#` u Ubuntuu). Ako naredba usred bloka nešto pita, ostatak
+zalijepljenog teksta može se upisati kao odgovor. Zato su takve naredbe izdvojene
+ili postavljene da ne pitaju.
 
 ## Korak 1: proba (oko 30–40 min, većinom čekanje)
 
@@ -81,7 +84,7 @@ Odzivnik se promijeni u `root@localhost`. Sada si u Ubuntuu.
 ### 1.4 Scraper i proba
 
 ```
-apt update && apt install -y python3 python3-venv git
+apt update && DEBIAN_FRONTEND=noninteractive apt install -y python3 python3-venv git
 ```
 
 ```
