@@ -5,6 +5,7 @@ on:
     paths:
       - "tools/discover.py"
       - "tools/discover2.py"
+      - "tools/discover3.py"
       - ".github/workflows/discover.yml"
   workflow_dispatch:
 
@@ -32,7 +33,7 @@ jobs:
           python -m playwright install --with-deps chromium
 
       - name: Otkrij izvore
-        run: python tools/discover2.py debug-out
+        run: python tools/discover3.py debug-out
 
       - name: Spremi na granu debug
         env:
