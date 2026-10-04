@@ -127,8 +127,11 @@ bez stotina poruka.
    Kod je u `scraper/`, upute u README.md. Početni popis poslan 4. 10. 2026.
    (15.894 oglasa). Poznato: isti oglas na više portala stiže više puta (rješava faza 5);
    GitHub raspored se nije sam pokrenuo – rješenje u README.md („Raspored ne radi”).
-2. Ostali portali; Redmi Note 9S (Termux) za Realiticu, a za Crozillu samo ako nekretnine.hr
-   ne pokriva iste oglase.
+2. Ostali portali; Redmi Note 9S (Termux) za Njuškalo i Realiticu. Napomena iz starog
+   scrapera (stan-alert): Njuškalo je s kućne IP adrese prolazio uz pravi preglednik
+   (Playwright, selektori `li.EntityList-item--Regular`, URL parametri `sort=new`,
+   `price[max]`, `livingArea[min]`). Termux ne pokreće Playwright, pa treba provjeriti
+   prolazi li običan zahtjev s hrvatske IP adrese ili tražiti drugi način.
 3. Općine, gradovi, PGŽ, Ministarstvo, CERP.
 4. Agencije.
 5. Dorade: duplikati među portalima, snižene cijene, tjedni izvještaj.
