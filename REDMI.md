@@ -7,7 +7,8 @@ vrte u Ubuntuu unutar Termuxa jer sam Termux ne može pokrenuti potrebne bibliot
 Naredbe kopiraj s ove stranice (gumb za kopiranje u kutu bloka) i zalijepi u Termux
 dugim pritiskom na zaslon → **Paste**. Cijeli blok možeš zalijepiti odjednom; retci se
 izvršavaju jedan za drugim. Prije sljedećeg bloka pričekaj da se opet pojavi
-odzivnik (`$` u Termuxu, `#` u Ubuntuu). Ako naredba usred bloka nešto pita, ostatak
+odzivnik: tekst na početku retka u koji upisuješ naredbe (`~ $` u Termuxu,
+`root@localhost:~#` u Ubuntuu). Ako naredba usred bloka nešto pita, ostatak
 zalijepljenog teksta može se upisati kao odgovor. Zato su takve naredbe izdvojene
 ili postavljene da ne pitaju.
 
@@ -79,7 +80,9 @@ proot-distro install ubuntu
 proot-distro login ubuntu
 ```
 
-Odzivnik se promijeni u `root@localhost`. Sada si u Ubuntuu.
+Ovo sam ne mijenjaš; promijeni se samo. Početak retka u koji pišeš više nije `~ $`
+nego `root@localhost:~#`, a to znači da si sada u Ubuntuu. Sve daljnje naredbe idu
+ondje.
 
 ### 1.4 Scraper i proba
 
