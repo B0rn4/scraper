@@ -32,32 +32,59 @@ kriterijima stiže obavijest na mobitel (Telegram). PC ne mora biti upaljen.
 
 | Izvor | Način | Napomena (rezultat faze 0) |
 |---|---|---|
-| njuskalo.hr | spremljene pretrage u Njuškalo aplikaciji | postavlja korisnik; iz oblaka blokirano (ShieldSquare captcha) |
-| nekretnine.hr | scraper (strukturirani JSON) | ista grupa i platforma kao Crozilla i Indomio; radi iz oblaka i **zamjenjuje ih** |
-| crozilla.com, indomio.hr | rezerva, s Redmija | iz oblaka blokirano (403) |
-| realitica.com | s Redmija (faza 2) | iz oblaka blokirano (403) |
+| njuskalo.hr | s Redmija (faza 2); do tada i kao rezerva spremljene pretrage u aplikaciji | iz oblaka blokirano (ShieldSquare captcha); prolaz s hrvatske IP adrese treba provjeriti |
+| nekretnine.hr | scraper (strukturirani JSON) | ista grupa kao Crozilla i Indomio, isti oglasi (korisnik provjerio); **zamjenjuje ih** |
+| realitica.com | s Redmija (faza 2), probno | iz oblaka blokirano (403); ostaje samo ako donosi oglase kojih nema drugdje |
 | oglasnik.hr | scraper | radi iz oblaka; popis oglasa učitava JavaScript |
 | index.hr/oglasi | scraper (njihov interni API) | radi iz oblaka; React aplikacija |
 | gohome.hr | scraper | radi iz oblaka; tražilica koja skuplja oglase s drugih stranica |
 | vender.hr | RSS | radi iz oblaka |
 | oglasi.hr, nekretnine24.hr | scraper | rade iz oblaka |
 | trazimstan.hr | scraper (preglednik) | radi iz oblaka; aplikacija koja oglase učitava JavaScriptom |
-| ekvadrat.hr | — | domena se ne učitava; izgleda ugašeno |
-| FINA Očevidnik | dnevni CSV izvoz (svi predmeti, ~11.000 redaka) | **samo građevinska zemljišta**; lokacija iz opisa (katastarska općina) |
-| Stranice 15 općina i gradova | RSS, jednom dnevno, ključne riječi | 12 od 15 ima RSS; Dobrinj, Punat i Krk se čitaju sa stranice |
+| FINA Očevidnik | dnevni CSV izvoz (svi predmeti, ~11.000 redaka) | **samo građevinska zemljišta**; lokacija iz slobodnog opisa (vidi niže) |
+| Stranice 15 općina i gradova | RSS, jednom dnevno, ključne riječi | 12 od 15 ima RSS; Dobrinj („Javni pozivi i natječaji”), Punat (Novosti → Natječaj) i Krk („Natječaji”) čitaju se izravno s tih odjeljaka |
 | PGŽ, Ministarstvo državne imovine, CERP | jednom dnevno, ključne riječi | rade iz oblaka |
 | Novi list (mali oglasi) | provjera | stranica radi; treba naći oglasnik |
 | Lokalne agencije | faza 4 | 10–15 najaktivnijih, izdvojenih iz podataka s portala |
 | Banke i leasing kuće | kasnije | prodaja preuzetih nekretnina |
 | Facebook Marketplace i grupe | ručno | ugrađene FB obavijesti („Sve objave” u grupama); bez automatizacije |
 
+### FINA: prepoznavanje lokacije
+
+Analiza CSV-a (`probe/results/fina/analysis.json`): opis je slobodan tekst (medijan 225 znakova),
+87 % opisa navodi katastarsku općinu („k.o. …”), a 95 % površinu (m², čhv, ha).
+
+- **Katastarske općine nisu isto što i općine.** Rijeka se u opisima javlja kao k.o. Sušak, Kozala,
+  Srdoči, Zamet, Drenova ili Trsat; Opatija kao Ičići, Volosko ili Veprinac; Punat kao Stara Baška;
+  Omišalj kao Omišalj-Njivice; Novi Vinodolski kao Ledenice. Zato se koristi službena tablica svih
+  katastarskih općina i naselja u 15 jedinica (DGU, DZS).
+- **Padeži:** za svaki naziv generiraju se svi oblici, uključujući nepostojano a (Punat → Puntu,
+  Omišalj → Omišlju, Bakar → Bakru) i promjenu k → c (Rijeka → Rijeci). Crtice, razmaci i
+  dijakritici se normaliziraju („Kostrena-Lucija” = „Kostrena Lucija”).
+- **Samo osnova riječi nije dovoljna.** U stvarnim podacima osnova riječi pogrešno hvata: Baška Voda,
+  Mošćenica kod Petrinje, Vrbnik kod Knina, rijeku Krku, prezime Bakarić, riječ „Riječ”. Zato se
+  koriste točni oblici i pravila isključenja, a nejasni slučajevi idu s ⚠.
+- **Sud nije pouzdan filter.** Sudovi u regiji: Općinski sud u Rijeci (i stalne službe u Opatiji,
+  Crikvenici, Rabu, Malom Lošinju i Delnicama), Općinski sud u Crikvenici (i stalne službe u Krku i
+  Rabu) i Trgovački sud u Rijeci. U stečaju je nadležan sud prema sjedištu tvrtke, pa se Crikvenica
+  spominje u 23 predmeta pred sudovima izvan regije. Pretražuju se svi predmeti u Hrvatskoj, a sud
+  služi samo kao pomoćni podatak.
+- **Obujam:** od oko 1.600 aktivnih predmeta nekretnina u Hrvatskoj, pred sudovima u regiji je 103, a
+  od toga samo 6 spominje građevinsko zemljište (cijela regija, uključujući Rab, Lošinj i Gorski
+  kotar). Kriterij je zato širok: bolje nekoliko ⚠ previše nego propušten predmet.
+
 ## Izvršavanje i obavijesti
 
-- **GitHub Actions** (javni repozitorij, bez ograničenja minuta), svakih 30 minuta,
-  cijeli dan. GitHub pokretanja po rasporedu znaju kasniti 5–15 minuta.
-- Od 23 do 7 h obavijesti stižu bez zvuka (tiha Telegram poruka).
-- **Rezerva:** izvori koji blokiraju strane IP adrese pokreću se sa starog Androida
-  (Redmi Note 9S, Termux) s hrvatskom IP adresom. Isti kod radi na oba mjesta.
+- **GitHub Actions** (javni repozitorij, bez ograničenja minuta), **svakih 20 minuta od 7 do 23 h**
+  po hrvatskom vremenu; noću ne radi, pa oglasi objavljeni noću stižu prvim pokretanjem u 7 h.
+  GitHub raspored radi po UTC-u, pa se workflow pokreće u širem rasponu, a skripta provjerava
+  zagrebačko vrijeme (ljetno i zimsko računanje). GitHub pokretanja znaju kasniti 5–15 minuta.
+- FINA, općine i natječaji provjeravaju se jednom dnevno, ujutro.
+- Stanje (baza viđenih oglasa) čuva se na zasebnoj grani bez povijesti, da repozitorij ne raste.
+- **Redmi Note 9S (Termux), hibridno:** na Redmiju radi samo ono što je blokirano iz oblaka
+  (Njuškalo, Realitica), a sve ostalo ostaje na GitHubu. Redmi kod preuzima s GitHuba prije svakog
+  pokretanja, pa se izmjene ne rade na mobitelu. GitHub nadzire Redmi: ako se ne javi 2 sata,
+  stiže mail.
 - **Telegram bot** šalje obavijest za svaki oglas: fotografija, vrsta, cijena, m², €/m²,
   lokacija, izvor, oznake (⚠, 📉, „za obnovu”) i gumb za otvaranje oglasa.
 - **E-mail** šalje tjedni izvještaj (broj oglasa po izvoru, „za dlaku promašeni”)
