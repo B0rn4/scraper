@@ -113,7 +113,7 @@ def parse_page(page: str, kind: str) -> list[Listing]:
 class GoHome(Source):
     name = "gohome"
     label = "gohome.hr (Njuškalo i agencije)"
-    interval_minutes = 120  # tražilica kasni za portalima; dovoljno svaka 2 sata
+    interval_minutes = 120  # tražilica sama indeksira portale; češće nema smisla
 
     def fetch(self, mode, known_ids):
         period = "zadnjih 30 dana" if mode == FULL else "zadnjih 7 dana"

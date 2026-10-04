@@ -24,7 +24,7 @@ izvori:
   oglasnik: true
   fina: true
   vender: true
-  gohome: true
+  gohome: false     # privremeno: mjeri se kašnjenje i pokrivenost
 
 obavijesti:
   telegram: true

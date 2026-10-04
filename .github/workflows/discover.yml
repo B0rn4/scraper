@@ -10,6 +10,7 @@ on:
       - "tools/discover5.py"
       - "tools/discover7.py"
       - "tools/discover8.py"
+      - "tools/discover9.py"
       - ".github/workflows/discover.yml"
   workflow_dispatch:
 
@@ -23,7 +24,7 @@ concurrency:
 jobs:
   discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v4
 
@@ -32,13 +33,11 @@ jobs:
           python-version: "3.12"
 
       - name: Instaliraj ovisnosti
-        run: |
-          pip install requests curl_cffi playwright
-          python -m playwright install --with-deps chromium
+        run: pip install -r requirements.txt
 
       - name: Otkrij izvore
-        timeout-minutes: 12
-        run: python tools/discover8.py debug-out
+        timeout-minutes: 22
+        run: python tools/discover9.py debug-out
 
       - name: Spremi na granu debug
         if: always()
