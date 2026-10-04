@@ -14,6 +14,8 @@ from .base import FULL, Source
 API = "https://vender.hr/wp-json/wp/v2/properties"
 STATE_PGZ = 10350
 STATUS_SALE = 32
+PER_PAGE = 30
+FIELDS = "id,date,link,title,content,property_type,property_meta,_links,_embedded"
 HOUSE_TYPES = {62: "Kuća", 19277: "Samostojeća kuća", 19278: "Dvojna kuća", 19280: "Kuća u nizu",
                19251: "Vila", 20002: "Kuće", 19572: "Luksuzne vile", 19282: "Stambeno-poslovna kuća"}
 LAND_TYPES = {19276: "Građevinsko zemljište", 120: "Zemljište", 20004: "Zemljišta", 19281: "Poljoprivredno zemljište"}
@@ -84,11 +86,14 @@ class Vender(Source):
     def fetch(self, mode, known_ids):
         types = ",".join(str(i) for i in [*HOUSE_TYPES, *LAND_TYPES])
         found: dict[str, Listing] = {}
-        max_pages = 40 if mode == FULL else 1
+        max_pages = 100 if mode == FULL else 1
         page = 1
         while page <= max_pages:
+            # Puni zapis ima ~70 kB (SEO i statistika), pa se traže samo potrebna polja;
+            # 100 oglasa po stranici nije stiglo u 40 s.
             url = (f"{API}?property_state={STATE_PGZ}&property_status={STATUS_SALE}&property_type={types}"
-                   f"&orderby=date&order=desc&per_page=100&page={page}&_embed=wp:term,wp:featuredmedia")
+                   f"&orderby=date&order=desc&per_page={PER_PAGE}&page={page}&_fields={FIELDS}"
+                   f"&_embed=wp:term,wp:featuredmedia")
             resp = self.http.get(url)
             for x in parse_items(resp.json()):
                 found.setdefault(x.source_id, x)

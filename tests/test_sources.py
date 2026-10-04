@@ -147,3 +147,18 @@ def test_gohome_evaluated_as_krk():
     items = parse_page(read("gohome_zemljiste_krk.html.gz"), LAND)
     d = evaluate(items[1], cfg["kriteriji"], locator)  # 130.000 €, 528 m², Krk
     assert d.jls == "Krk"
+
+
+@pytest.mark.parametrize("url, desc, kind, expected", [
+    ("https://www.njuskalo.hr/nekretnine/lovran-veliki-stan-pogledom-more-oglas-1", "", HOUSE, (HOUSE, "stan")),
+    ("https://www.njuskalo.hr/nekretnine/kuca-dva-apartmana-oglas-2", "Na prodaju je stan s tri sobe", HOUSE, (HOUSE, "stan")),
+    ("https://www.njuskalo.hr/nekretnine/lovran-dvojna-starina-oglas-3", "", HOUSE, (HOUSE, "dvojna kuća")),
+    ("https://www.c21futura.com/kuca/krk-kuca-s-dva-odvojena-stana", "Prodaje se kuća koja ima stan u prizemlju",
+     HOUSE, (HOUSE, "Kuća")),
+    ("https://www.smart-invest.hr/zemljiste/moscenicka-draga-teren-za-gradnju-vile", "", HOUSE, (LAND, "Zemljište")),
+    ("https://euro-immobilien.hr/zemljiste/krk-zemljiste-s-projektom-za-kucu-s-3-stana", "", LAND, (LAND, "Zemljište")),
+])
+def test_gohome_classify(url, desc, kind, expected):
+    from scraper.sources.gohome import _classify
+
+    assert _classify(url, desc, kind, "Kuća" if kind == HOUSE else "Zemljište") == expected
