@@ -1,0 +1,1193 @@
+{
+  "redaka_ukupno": 11099,
+  "nekretnina": 10279,
+  "nekretnina_aktivnih": 1586,
+  "zaglavlje": [
+    "Nadležno tijelo",
+    "Poslovni broj spisa",
+    "Opis",
+    "Vrsta predmeta prodaje",
+    "Složenost PP / opseg imovine",
+    "Utvrđena vrijednost",
+    "Napomena uz detalje predmeta prodaje",
+    "Način prodaje",
+    "ID nadmetanja",
+    "Oznaka EJD",
+    "Datum odluke o prodaji",
+    "Datum i vrijeme početka",
+    "Datum i vrijeme početka nadmetanja",
+    "Datum i vrijeme završetka nadmetanja",
+    "Mogućnost produljenja nadmetanja (za dodatnih 10 minuta)",
+    "Ostali uvjeti prodaje",
+    "Minimalna zakonska cijena ispod koje se predmet prodaje ne može prodati",
+    "Početna cijena za nadmetanje",
+    "Iznos dražbenog koraka",
+    "Rok u kojem je kupac dužan položiti kupovninu",
+    "Iznos jamčevine",
+    "Ostali uvjeti za jamčevinu",
+    "Razgledavanje",
+    "Napomena uz uvjete prodaje",
+    "Stanje na dan",
+    "Datum valute jamčevine"
+  ],
+  "nadlezna_tijela_top": [
+    [
+      "Trgovački sud u Zagrebu",
+      1186
+    ],
+    [
+      "Općinski građanski sud u Zagrebu",
+      556
+    ],
+    [
+      "Trgovački sud u Splitu",
+      425
+    ],
+    [
+      "Trgovački sud u Zagrebu, Stalna služba u Karlovcu",
+      421
+    ],
+    [
+      "Općinski sud u Čakovcu",
+      323
+    ],
+    [
+      "Općinski sud u Slavonskom Brodu",
+      308
+    ],
+    [
+      "Trgovački sud u Varaždinu",
+      299
+    ],
+    [
+      "Općinski sud u Zadru",
+      263
+    ],
+    [
+      "Općinski sud u Varaždinu",
+      244
+    ],
+    [
+      "Općinski sud u Rijeci",
+      201
+    ],
+    [
+      "Općinski sud u Osijeku, Stalna služba u Belom Manastiru",
+      194
+    ],
+    [
+      "Općinski sud u Puli - Pola",
+      190
+    ],
+    [
+      "Općinski sud u Novom Zagrebu",
+      187
+    ],
+    [
+      "Trgovački sud u Pazinu",
+      182
+    ],
+    [
+      "Općinski sud u Vinkovcima",
+      176
+    ],
+    [
+      "Trgovački sud u Bjelovaru",
+      171
+    ],
+    [
+      "Općinski sud u Zlataru, Stalna služba u Zaboku",
+      170
+    ],
+    [
+      "Trgovački sud u Osijeku",
+      168
+    ],
+    [
+      "Općinski sud u Splitu",
+      166
+    ],
+    [
+      "Općinski sud u Koprivnici",
+      149
+    ],
+    [
+      "Trgovački sud u Rijeci",
+      137
+    ],
+    [
+      "Općinski sud u Bjelovaru",
+      137
+    ],
+    [
+      "Općinski sud u Sisku",
+      135
+    ],
+    [
+      "Općinski sud u Koprivnici, Stalna služba u Đurđevcu",
+      133
+    ],
+    [
+      "Općinski sud u Gospiću",
+      132
+    ],
+    [
+      "Trgovački sud u Zadru",
+      121
+    ],
+    [
+      "(javni bilježnik)",
+      121
+    ],
+    [
+      "Općinski sud u Pazinu",
+      121
+    ],
+    [
+      "Općinski sud u Virovitici, Stalna služba u Slatini",
+      120
+    ],
+    [
+      "Općinski sud u Sesvetama, Stalna služba u Vrbovcu",
+      115
+    ],
+    [
+      "Općinski sud u Osijeku",
+      114
+    ],
+    [
+      "Općinski sud u Pazinu, Stalna služba u Bujama - Buie",
+      111
+    ],
+    [
+      "Općinski sud u Karlovcu",
+      108
+    ],
+    [
+      "Općinski sud u Vukovaru",
+      102
+    ],
+    [
+      "Općinski sud u Virovitici",
+      100
+    ],
+    [
+      "Općinski sud u Slavonskom Brodu, Stalna služba u Novoj Gradiški",
+      96
+    ],
+    [
+      "Općinski sud u Novom Zagrebu, Stalna služba u Zaprešiću",
+      94
+    ],
+    [
+      "Općinski sud u Novom Zagrebu, Stalna služba u Samoboru",
+      93
+    ],
+    [
+      "Općinski sud u Sesvetama",
+      93
+    ],
+    [
+      "Općinski sud u Pazinu, Stalna služba u Poreču - Parenzo",
+      88
+    ],
+    [
+      "Općinski sud u Osijeku, Stalna služba u Valpovu",
+      87
+    ],
+    [
+      "Općinski sud u Požegi",
+      82
+    ],
+    [
+      "Općinski sud u Đakovu",
+      82
+    ],
+    [
+      "(stečajni upravitelj)",
+      78
+    ],
+    [
+      "Općinski sud u Varaždinu, Stalna služba u Ivancu",
+      77
+    ],
+    [
+      "Općinski sud u Šibeniku",
+      74
+    ],
+    [
+      "Općinski sud u Velikoj Gorici",
+      72
+    ],
+    [
+      "Općinski sud u Velikoj Gorici, Stalna služba u Ivanić-Gradu",
+      72
+    ],
+    [
+      "Općinski sud u Kutini",
+      72
+    ],
+    [
+      "Općinski sud u Rijeci, Stalna služba u Opatiji",
+      68
+    ],
+    [
+      "Općinski sud u Bjelovaru, Stalna služba u Križevcima",
+      62
+    ],
+    [
+      "Općinski sud u Vinkovcima, Stalna služba u Županji",
+      58
+    ],
+    [
+      "Trgovački sud u Dubrovniku",
+      57
+    ],
+    [
+      "Općinski sud u Bjelovaru, Stalna služba u Čazmi",
+      53
+    ],
+    [
+      "Općinski sud u Zlataru, Stalna služba u Krapini",
+      52
+    ],
+    [
+      "Trgovački sud u Osijeku, Stalna služba u Slavonskom Brodu",
+      52
+    ],
+    [
+      "Općinski sud u Metkoviću",
+      51
+    ],
+    [
+      "Općinski sud u Šibeniku, Stalna služba u Kninu",
+      51
+    ],
+    [
+      "Općinski sud u Zlataru",
+      48
+    ],
+    [
+      "Općinski sud u Karlovcu, Stalna služba u Ogulinu",
+      46
+    ]
+  ],
+  "nadlezna_tijela_regija": [
+    [
+      "Općinski sud u Rijeci",
+      201
+    ],
+    [
+      "Trgovački sud u Rijeci",
+      137
+    ],
+    [
+      "Općinski sud u Rijeci, Stalna služba u Opatiji",
+      68
+    ],
+    [
+      "Općinski sud u Crikvenici",
+      45
+    ],
+    [
+      "Općinski sud u Crikvenici, Stalna služba u Rabu",
+      43
+    ],
+    [
+      "Općinski sud u Crikvenici, Stalna služba u Krku",
+      34
+    ],
+    [
+      "Općinski sud u Rijeci, Stalna služba u Malom Lošinju",
+      21
+    ],
+    [
+      "Općinski sud u Rijeci, Stalna služba u Rabu",
+      20
+    ],
+    [
+      "Općinski sud u Rijeci, Stalna služba u Delnicama",
+      17
+    ],
+    [
+      "Općinski sud u Rijeci, Stalna služba u Crikvenici",
+      12
+    ]
+  ],
+  "nekretnina_sud_u_regiji": 598,
+  "nekretnina_sud_u_regiji_aktivnih": 103,
+  "regija_gradjevinsko_aktivnih": 6,
+  "opis_duljina_medijan": 225,
+  "opis_s_oznakom_ko_udio": 0.874,
+  "opis_s_povrsinom_udio": 0.951,
+  "ko_regija_top": [
+    [
+      "Kastav",
+      45
+    ],
+    [
+      "Plešce",
+      32
+    ],
+    [
+      "Kampor",
+      26
+    ],
+    [
+      "Crikvenica",
+      22
+    ],
+    [
+      "Tuliševica",
+      18
+    ],
+    [
+      "Vrbovsko",
+      18
+    ],
+    [
+      "Lovran",
+      14
+    ],
+    [
+      "Sv",
+      13
+    ],
+    [
+      "Puži",
+      13
+    ],
+    [
+      "Lopar",
+      12
+    ],
+    [
+      "Rab-Mundanije",
+      12
+    ],
+    [
+      "Marčelji",
+      11
+    ],
+    [
+      "Novi",
+      11
+    ],
+    [
+      "Lič",
+      11
+    ],
+    [
+      "Sušak",
+      10
+    ],
+    [
+      "Blažići",
+      9
+    ],
+    [
+      "Rijeka",
+      9
+    ],
+    [
+      "Kozala",
+      9
+    ],
+    [
+      "Matulji",
+      9
+    ],
+    [
+      "Srdoči",
+      9
+    ],
+    [
+      "Cernik-Čavle",
+      8
+    ],
+    [
+      "Puži na",
+      8
+    ],
+    [
+      "Banjol",
+      7
+    ],
+    [
+      "Viškovo",
+      7
+    ],
+    [
+      "Kraljevica",
+      7
+    ],
+    [
+      "Supetarska Draga",
+      7
+    ],
+    [
+      "Punat",
+      7
+    ],
+    [
+      "Jelenje",
+      6
+    ],
+    [
+      "Zamet",
+      6
+    ],
+    [
+      "Omišalj",
+      6
+    ],
+    [
+      "Plase",
+      6
+    ],
+    [
+      "Omišalj-Njivice",
+      6
+    ],
+    [
+      "Sveti Anton",
+      5
+    ],
+    [
+      "Cres",
+      5
+    ],
+    [
+      "Bribir",
+      5
+    ],
+    [
+      "Selce",
+      5
+    ],
+    [
+      "Veli Lošinj",
+      5
+    ],
+    [
+      "Ičići",
+      5
+    ],
+    [
+      "Rovinj",
+      5
+    ],
+    [
+      "Sušak-Nova",
+      5
+    ],
+    [
+      "Senj",
+      5
+    ],
+    [
+      "Divjake",
+      5
+    ],
+    [
+      "Stara Baška",
+      5
+    ],
+    [
+      "Podvežica",
+      4
+    ],
+    [
+      "Ledenice",
+      4
+    ],
+    [
+      "Drenova",
+      4
+    ],
+    [
+      "Gomirsko Vrbovsko",
+      4
+    ],
+    [
+      "Mali Lošinj",
+      3
+    ],
+    [
+      "Rupa",
+      3
+    ],
+    [
+      "Dražice",
+      3
+    ],
+    [
+      "Hosti",
+      3
+    ],
+    [
+      "Kostrena-Lucija",
+      3
+    ],
+    [
+      "Mali Lošinj-grad",
+      3
+    ],
+    [
+      "Jablanac",
+      3
+    ],
+    [
+      "Soline",
+      3
+    ],
+    [
+      "Moravice",
+      3
+    ],
+    [
+      "Malinska-Dubašnica",
+      3
+    ],
+    [
+      "Jablanac na",
+      3
+    ],
+    [
+      "Rupa u",
+      3
+    ],
+    [
+      "Poljica",
+      3
+    ],
+    [
+      "Trsat-Sušak",
+      2
+    ],
+    [
+      "Volosko",
+      2
+    ],
+    [
+      "Miholjice",
+      2
+    ],
+    [
+      "Krk",
+      2
+    ],
+    [
+      "Brgud",
+      2
+    ],
+    [
+      "Barbat",
+      2
+    ],
+    [
+      "Kostrena Lucija",
+      2
+    ],
+    [
+      "Škalnica",
+      2
+    ],
+    [
+      "Rab",
+      2
+    ],
+    [
+      "Selce-nova",
+      2
+    ],
+    [
+      "Otočac",
+      2
+    ],
+    [
+      "Bogovići",
+      2
+    ],
+    [
+      "Ćunski",
+      2
+    ],
+    [
+      "Bregi",
+      2
+    ],
+    [
+      "Bregi na",
+      2
+    ],
+    [
+      "Belej",
+      2
+    ],
+    [
+      "Ravna Gora",
+      2
+    ],
+    [
+      "Trnjani",
+      2
+    ],
+    [
+      "Selna",
+      2
+    ],
+    [
+      "Belgrad",
+      2
+    ],
+    [
+      "Mali-Lošinj-grad",
+      2
+    ],
+    [
+      "Sveti Juraj",
+      2
+    ],
+    [
+      "Vrata",
+      2
+    ],
+    [
+      "Kupjak",
+      2
+    ],
+    [
+      "Komarna-Duboka",
+      2
+    ],
+    [
+      "Ustrine",
+      2
+    ],
+    [
+      "Praputnjak",
+      1
+    ],
+    [
+      "Opatija",
+      1
+    ],
+    [
+      "Supetarska",
+      1
+    ],
+    [
+      "Novigrad",
+      1
+    ],
+    [
+      "Ližnjan",
+      1
+    ],
+    [
+      "Poljane",
+      1
+    ],
+    [
+      "Bakar",
+      1
+    ],
+    [
+      "Trget",
+      1
+    ],
+    [
+      "Hreljin",
+      1
+    ],
+    [
+      "Garica",
+      1
+    ],
+    [
+      "Klana",
+      1
+    ],
+    [
+      "Jasenak",
+      1
+    ],
+    [
+      "Brod na Kupi",
+      1
+    ],
+    [
+      "Drivenik",
+      1
+    ],
+    [
+      "Vasanska",
+      1
+    ],
+    [
+      "Veprinac",
+      1
+    ],
+    [
+      "Jelenje u",
+      1
+    ],
+    [
+      "Brajakovo",
+      1
+    ],
+    [
+      "Kornić",
+      1
+    ],
+    [
+      "Sušak Nova",
+      1
+    ],
+    [
+      "Osijek",
+      1
+    ],
+    [
+      "Prozorje",
+      1
+    ],
+    [
+      "Udbina",
+      1
+    ],
+    [
+      "Pazin",
+      1
+    ],
+    [
+      "Momjan",
+      1
+    ],
+    [
+      "Starigrad",
+      1
+    ],
+    [
+      "Slavonski Brod",
+      1
+    ],
+    [
+      "Županja",
+      1
+    ],
+    [
+      "Godinjak",
+      1
+    ],
+    [
+      "Vrbnik",
+      1
+    ],
+    [
+      "Stinica",
+      1
+    ],
+    [
+      "Punta Križa",
+      1
+    ],
+    [
+      "Prizna",
+      1
+    ],
+    [
+      "Žejane",
+      1
+    ],
+    [
+      "Vrbovsko na",
+      1
+    ],
+    [
+      "Draga",
+      1
+    ],
+    [
+      "Vrh",
+      1
+    ],
+    [
+      "Dobrinj",
+      1
+    ],
+    [
+      "Brseč",
+      1
+    ],
+    [
+      "Blato",
+      1
+    ],
+    [
+      "Pula",
+      1
+    ],
+    [
+      "Medulin",
+      1
+    ],
+    [
+      "Peroj",
+      1
+    ],
+    [
+      "Okoli",
+      1
+    ],
+    [
+      "Krnica",
+      1
+    ],
+    [
+      "Peršaves",
+      1
+    ],
+    [
+      "Zdenac",
+      1
+    ],
+    [
+      "Koritna",
+      1
+    ],
+    [
+      "Karlovac",
+      1
+    ],
+    [
+      "Ika-Oprić",
+      1
+    ]
+  ],
+  "mjesta": {
+    "Baška": {
+      "redaka_s_pojmom": 13,
+      "od_toga_sud_u_regiji": 7,
+      "od_toga_sud_izvan_regije": 6,
+      "oblici_rijeci": [
+        [
+          "Baška",
+          10
+        ],
+        [
+          "Bašćinska",
+          5
+        ],
+        [
+          "Baškoj",
+          5
+        ],
+        [
+          "Bašćanska",
+          2
+        ],
+        [
+          "Bašća",
+          1
+        ]
+      ]
+    },
+    "Dobrinj": {
+      "redaka_s_pojmom": 2,
+      "od_toga_sud_u_regiji": 2,
+      "od_toga_sud_izvan_regije": 0,
+      "oblici_rijeci": [
+        [
+          "Dobrinj",
+          2
+        ]
+      ]
+    },
+    "Kostrena": {
+      "redaka_s_pojmom": 7,
+      "od_toga_sud_u_regiji": 6,
+      "od_toga_sud_izvan_regije": 1,
+      "oblici_rijeci": [
+        [
+          "Kostrena",
+          10
+        ],
+        [
+          "Kostreni",
+          1
+        ]
+      ]
+    },
+    "Lovran": {
+      "redaka_s_pojmom": 20,
+      "od_toga_sud_u_regiji": 19,
+      "od_toga_sud_izvan_regije": 1,
+      "oblici_rijeci": [
+        [
+          "Lovran",
+          21
+        ],
+        [
+          "Lovranska",
+          1
+        ],
+        [
+          "Lovranu",
+          1
+        ]
+      ]
+    },
+    "Malinska-Dubašnica": {
+      "redaka_s_pojmom": 9,
+      "od_toga_sud_u_regiji": 8,
+      "od_toga_sud_izvan_regije": 1,
+      "oblici_rijeci": [
+        [
+          "Malinska",
+          10
+        ],
+        [
+          "Dubašnica",
+          5
+        ]
+      ]
+    },
+    "Mošćenička Draga": {
+      "redaka_s_pojmom": 6,
+      "od_toga_sud_u_regiji": 0,
+      "od_toga_sud_izvan_regije": 6,
+      "oblici_rijeci": [
+        [
+          "Mošćenica",
+          4
+        ],
+        [
+          "Mošćenička",
+          2
+        ]
+      ]
+    },
+    "Omišalj": {
+      "redaka_s_pojmom": 12,
+      "od_toga_sud_u_regiji": 11,
+      "od_toga_sud_izvan_regije": 1,
+      "oblici_rijeci": [
+        [
+          "Omišalj",
+          16
+        ],
+        [
+          "Omišlju",
+          1
+        ]
+      ]
+    },
+    "Punat": {
+      "redaka_s_pojmom": 10,
+      "od_toga_sud_u_regiji": 8,
+      "od_toga_sud_izvan_regije": 2,
+      "oblici_rijeci": [
+        [
+          "Punat",
+          8
+        ],
+        [
+          "Puntu",
+          4
+        ],
+        [
+          "Punta",
+          2
+        ],
+        [
+          "Punte",
+          1
+        ]
+      ]
+    },
+    "Vrbnik": {
+      "redaka_s_pojmom": 4,
+      "od_toga_sud_u_regiji": 2,
+      "od_toga_sud_izvan_regije": 2,
+      "oblici_rijeci": [
+        [
+          "Vrbnik",
+          5
+        ],
+        [
+          "Vrbnička",
+          2
+        ],
+        [
+          "Vrbnika",
+          1
+        ]
+      ]
+    },
+    "Crikvenica": {
+      "redaka_s_pojmom": 44,
+      "od_toga_sud_u_regiji": 21,
+      "od_toga_sud_izvan_regije": 23,
+      "oblici_rijeci": [
+        [
+          "Crikvenica",
+          56
+        ],
+        [
+          "Crikvenici",
+          31
+        ]
+      ]
+    },
+    "Kraljevica": {
+      "redaka_s_pojmom": 7,
+      "od_toga_sud_u_regiji": 7,
+      "od_toga_sud_izvan_regije": 0,
+      "oblici_rijeci": [
+        [
+          "Kraljevica",
+          11
+        ],
+        [
+          "Kraljevici",
+          2
+        ]
+      ]
+    },
+    "Krk": {
+      "redaka_s_pojmom": 20,
+      "od_toga_sud_u_regiji": 9,
+      "od_toga_sud_izvan_regije": 11,
+      "oblici_rijeci": [
+        [
+          "Krk",
+          18
+        ],
+        [
+          "Krkleca",
+          8
+        ],
+        [
+          "Krku",
+          1
+        ]
+      ]
+    },
+    "Novi Vinodolski": {
+      "redaka_s_pojmom": 12,
+      "od_toga_sud_u_regiji": 10,
+      "od_toga_sud_izvan_regije": 2,
+      "oblici_rijeci": [
+        [
+          "Novi Vinodolski",
+          11
+        ],
+        [
+          "Novom Vinodolskom",
+          4
+        ]
+      ]
+    },
+    "Opatija": {
+      "redaka_s_pojmom": 21,
+      "od_toga_sud_u_regiji": 14,
+      "od_toga_sud_izvan_regije": 7,
+      "oblici_rijeci": [
+        [
+          "Opatija",
+          25
+        ],
+        [
+          "Opatiji",
+          2
+        ],
+        [
+          "Opatijska",
+          1
+        ]
+      ]
+    },
+    "Rijeka": {
+      "redaka_s_pojmom": 122,
+      "od_toga_sud_u_regiji": 76,
+      "od_toga_sud_izvan_regije": 46,
+      "oblici_rijeci": [
+        [
+          "Rijeka",
+          81
+        ],
+        [
+          "Rijeci",
+          47
+        ],
+        [
+          "Riječka",
+          20
+        ],
+        [
+          "Riječ",
+          2
+        ]
+      ]
+    },
+    "Bakar (isključen)": {
+      "redaka_s_pojmom": 2,
+      "od_toga_sud_u_regiji": 1,
+      "od_toga_sud_izvan_regije": 1,
+      "oblici_rijeci": [
+        [
+          "Bakar",
+          2
+        ],
+        [
+          "Bakarić",
+          1
+        ]
+      ]
+    }
+  },
+  "primjeri_cijena": [
+    "633.60",
+    "15780.00",
+    "99600.00",
+    "64200.00",
+    "7560.00",
+    "2115.00",
+    "120000.00",
+    "20000.00"
+  ],
+  "primjeri_utvrdjene_vrijednosti": [
+    "1056.00",
+    "26300.00",
+    "166000.00",
+    "107000.00",
+    "12600.00",
+    "3525.00",
+    "200000.00",
+    "40000.00"
+  ],
+  "nacin_prodaje_regija_aktivni": [
+    [
+      "Sudska e-Dražba",
+      65
+    ],
+    [
+      "Neposredna pogodba",
+      13
+    ],
+    [
+      "Prikupljanje pisanih ponuda",
+      11
+    ],
+    [
+      "Usmena javna dražba",
+      7
+    ],
+    [
+      "Nadležno tijelo nije dostavilo podatke",
+      7
+    ]
+  ]
+}
