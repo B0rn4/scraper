@@ -2,13 +2,19 @@
 
 Pokreće se u Ubuntuu unutar Termuxa, u mapi scraper (upute u REDMI.md):
 
-    python tools/redmi_probe.py               # curl_cffi (bez preglednika)
-    python tools/redmi_probe.py --playwright  # pravi preglednik, ako curl_cffi ne prolazi
-    python tools/redmi_probe.py --posalji     # samo ponovno pošalji već spremljene rezultate
+    python tools/redmi_probe.py                   # Njuškalo i Realitica bez preglednika (curl_cffi)
+    python tools/redmi_probe.py --samo-realitica  # samo Realitica (Njuškalo se ne dira)
+    python tools/redmi_probe.py --provjeri-preglednik  # radi li Chromium (otvara Realiticu, ne Njuškalo)
+    python tools/redmi_probe.py --playwright      # Njuškalo pravim preglednikom (Chromium)
+    python tools/redmi_probe.py --posalji         # samo ponovno pošalji spremljene rezultate
 
-Ispisuje kratak sažetak, sprema uzorke stranica u redmi-out/ i šalje ih na granu
-debug (mapa redmi/) preko GitHub API-ja. Token se upisuje kad skripta pita;
-ne sprema se nigdje. Po izvoru se šalje svega nekoliko zahtjeva, s razmakom."""
+Ispisuje kratak sažetak, sprema uzorke stranica u redmi-out/ (naziv počinje vremenom
+probe, pa se ništa ne prepisuje) i šalje ih na granu debug (mapa redmi/) preko GitHub
+API-ja. Token se upisuje kad skripta pita; ne sprema se nigdje.
+
+Njuškalo štiti ShieldSquare (Radware): prvi zahtjevi bez preglednika prolaze, a nakon
+nekoliko uzastopnih dolazi stranica "ShieldSquare Captcha". Zato se Njuškalu šalje
+najviše jedan zahtjev po kategoriji, s razmakom."""
 
 import base64
 import getpass
@@ -23,109 +29,132 @@ from pathlib import Path
 from urllib.parse import urljoin
 
 OUT = Path("redmi-out")
+PROFILE = Path.home() / ".njuskalo-profil"  # kolačići preglednika ostaju između pokretanja
 REPO = "B0rn4/scraper"
 BRANCH = "debug"
+STAMP = time.strftime("%m%d-%H%M")
 
 NJUSKALO = {
     "njuskalo_kuce": "https://www.njuskalo.hr/prodaja-kuca/primorsko-goranska?sort=new",
     "njuskalo_zemljista": "https://www.njuskalo.hr/prodaja-zemljista/primorsko-goranska?sort=new",
 }
-REALITICA_HOME = "https://www.realitica.com/"
-REALITICA_GUESSES = {
-    "realitica_trazi": "https://www.realitica.com/?cur_page=0&for=Prodaja&pZpa=Primorsko-Goranska"
-                       "&pState=Hrvatska&type%5B%5D=Home&lng=hr",
+REALITICA = "https://www.realitica.com"
+REALITICA_PAGES = {
+    "realitica_kuce": f"{REALITICA}/index.php?for=Prodaja&pZpa=Primorje-Gorski+Kotar&pState=Hrvatska"
+                      "&type%5B%5D=Home&qob=p-new&lng=hr",
+    "realitica_gradevinska": f"{REALITICA}/index.php?for=Prodaja&pZpa=Primorje-Gorski+Kotar&pState=Hrvatska"
+                             "&type%5B%5D=Residential_lot&qob=p-new&lng=hr",
+    "realitica_regija": f"{REALITICA}/nekretnine/Primorje-Gorski%20Kotar/",
 }
-BLOCK_MARKERS = ["captcha", "shieldsquare", "radware", "perfdrive", "px-captcha", "access denied",
-                 "cf-chl", "request unsuccessful", "the request could not be satisfied", "are you a robot",
-                 "potvrdite da niste robot"]
+LISTING = re.compile(r'href="((?:https://www\.realitica\.com)?/(?:hr/)?listing/\d+)"')
+CHROME_UA = ("Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) "
+             "Chrome/131.0.0.0 Safari/537.36")
 
 
 def analyse(name: str, status, body: bytes, seconds: float) -> dict:
     text = body.decode("utf-8", "replace")
-    low = text.lower()
-    info = {
-        "status": status,
-        "kB": round(len(body) / 1024),
-        "s": round(seconds, 1),
-        "title": (re.findall(r"<title[^>]*>\s*([^<]{0,120})", text) or [""])[0].strip(),
-        "blokada": [m for m in BLOCK_MARKERS if m in low],
-    }
+    title = (re.findall(r"<title[^>]*>\s*([^<]{0,120})", text) or [""])[0].strip()
+    info = {"status": status, "kB": round(len(body) / 1024), "s": round(seconds, 1), "title": title}
     if name.startswith("njuskalo"):
         info["oglasa"] = text.count("EntityList-item--Regular") + text.count("EntityList-item--VauVau")
-        info["next_data"] = "__NEXT_DATA__" in text
+        info["captcha"] = "captcha" in title.lower()
     else:
-        info["poveznica_na_oglas"] = len(set(re.findall(r'href="([^"]*/listing/\d+[^"]*)"', text)))
+        info["oglasa"] = len(set(LISTING.findall(text)))
+        m = re.search(r"od ukupno(?:&nbsp;|\s|<[^>]+>)*([\d.]+)", text)
+        info["ukupno"] = m.group(1) if m else None
     return info
 
 
-def ok(info: dict) -> bool:
-    if info.get("status") != 200 or info["blokada"]:
+def passed(name: str, info: dict) -> bool:
+    if info.get("status") != 200 or info.get("captcha"):
         return False
-    return info.get("oglasa", 1) > 0 if "oglasa" in info else info["kB"] > 5
+    return info["oglasa"] > 0 or name.endswith("_oglas")
 
 
 def save(name: str, body: bytes) -> None:
     OUT.mkdir(exist_ok=True)
-    (OUT / f"{name}.html.gz").write_bytes(gzip.compress(body))
+    (OUT / f"{STAMP}_{name}.html.gz").write_bytes(gzip.compress(body))
 
 
-def fetch_cffi(url: str, impersonate: str):
+def fetch_cffi(url: str):
     from curl_cffi import requests as cffi
 
     t = time.monotonic()
-    r = cffi.get(url, impersonate=impersonate, timeout=40,
-                 headers={"Accept-Language": "hr-HR,hr;q=0.9,en;q=0.8"})
+    r = cffi.get(url, impersonate="chrome", timeout=40, headers={"Accept-Language": "hr-HR,hr;q=0.9,en;q=0.8"})
     return r.status_code, r.content, time.monotonic() - t
 
 
-def fetch_playwright(url: str, wait_selector: str | None):
-    from playwright.sync_api import sync_playwright
+class Browser:
+    """Chromium s trajnim profilom: kolačići zaštite ostaju kao kod običnog posjetitelja."""
 
-    t = time.monotonic()
-    with sync_playwright() as p:
-        browser = p.chromium.launch(headless=True, args=["--no-sandbox", "--disable-dev-shm-usage"])
-        page = browser.new_page(locale="hr-HR", viewport={"width": 1280, "height": 900})
+    def __init__(self):
+        from playwright.sync_api import sync_playwright
+
+        self._pw = sync_playwright().start()
+        options = dict(headless=True, locale="hr-HR", user_agent=CHROME_UA, viewport={"width": 1366, "height": 900},
+                       args=["--no-sandbox", "--disable-dev-shm-usage", "--disable-blink-features=AutomationControlled"])
+        try:  # "novi" headless način je teže prepoznati
+            self.ctx = self._pw.chromium.launch_persistent_context(str(PROFILE), channel="chromium", **options)
+        except Exception:  # noqa: BLE001
+            self.ctx = self._pw.chromium.launch_persistent_context(str(PROFILE), **options)
+
+    def fetch(self, url: str, wait_selector: str):
+        t = time.monotonic()
+        page = self.ctx.new_page()
         resp = page.goto(url, wait_until="domcontentloaded", timeout=60000)
-        if wait_selector:
-            try:
-                page.wait_for_selector(wait_selector, timeout=20000)
-            except Exception:  # noqa: BLE001 – stranica se svejedno sprema
-                pass
-        body = page.content().encode("utf-8")
-        status = resp.status if resp else None
-        browser.close()
-    return status, body, time.monotonic() - t
-
-
-def try_methods(name: str, url: str, methods: list, results: dict) -> bytes | None:
-    """Pokušava redom dok jedan način ne prođe; tako se šalje što manje zahtjeva."""
-    for label, fn in methods:
         try:
-            status, body, seconds = fn(url)
-        except Exception as exc:  # noqa: BLE001
-            results[f"{name} [{label}]"] = {"greška": f"{type(exc).__name__}: {exc}"[:300]}
-            print(f"  {name} [{label}]: greška – {type(exc).__name__}: {str(exc)[:120]}")
-            continue
-        info = analyse(name, status, body, seconds)
-        results[f"{name} [{label}]"] = info
-        save(f"{name}__{label}", body)
-        print(f"  {name} [{label}]: {'PROLAZI' if ok(info) else 'NE PROLAZI'} – {info}")
-        time.sleep(4)
-        if ok(info):
-            return body
-    return None
+            page.wait_for_selector(wait_selector, timeout=20000)
+        except Exception:  # noqa: BLE001 – stranica se svejedno sprema
+            pass
+        body = page.content().encode("utf-8")
+        page.close()
+        return (resp.status if resp else None), body, time.monotonic() - t
+
+    def close(self):
+        self.ctx.close()
+        self._pw.stop()
 
 
-def realitica_links(body: bytes) -> dict:
-    """Iz naslovnice Realitice: obrasci pretrage, izbor županije i RSS poveznice."""
-    text = body.decode("utf-8", "replace")
-    forms = re.findall(r"<form[^>]*>", text, re.I)
-    selects = {}
-    for m in re.finditer(r'<select[^>]*name="([^"]+)"[^>]*>(.*?)</select>', text, re.I | re.S):
-        options = re.findall(r'<option[^>]*value="([^"]*)"[^>]*>([^<]*)', m.group(2))
-        selects[m.group(1)] = [o for o in options if re.search(r"primorsk|prodaj|kuć|kuc|zemlj|house|land", " ".join(o), re.I)][:15]
-    rss = sorted(set(re.findall(r'href="([^"]*rss[^"]*)"', text, re.I)))[:10]
-    return {"forms": forms[:5], "selects": selects, "rss": rss}
+def probe(name: str, url: str, fetch, label: str, results: dict, pause: float) -> bytes | None:
+    key = f"{name} [{label}]"
+    try:
+        status, body, seconds = fetch(url)
+    except Exception as exc:  # noqa: BLE001
+        results[key] = {"greška": f"{type(exc).__name__}: {exc}"[:300]}
+        print(f"  {key}: greška – {type(exc).__name__}: {str(exc)[:150]}")
+        return None
+    info = analyse(name, status, body, seconds)
+    results[key] = info
+    save(f"{name}__{label}", body)
+    print(f"  {key}: {'PROLAZI' if passed(name, info) else 'NE PROLAZI'} – {info}")
+    time.sleep(pause)
+    return body if passed(name, info) else None
+
+
+def run_njuskalo(results: dict, use_playwright: bool) -> None:
+    print("Njuškalo:")
+    if use_playwright:
+        browser = Browser()
+        try:
+            for name, url in NJUSKALO.items():
+                probe(name, url, lambda u: browser.fetch(u, "li.EntityList-item"), "playwright", results, 20)
+        finally:
+            browser.close()
+    else:
+        for name, url in NJUSKALO.items():
+            probe(name, url, fetch_cffi, "chrome", results, 20)
+
+
+def run_realitica(results: dict) -> None:
+    print("Realitica:")
+    first = None
+    for name, url in REALITICA_PAGES.items():
+        body = probe(name, url, fetch_cffi, "chrome", results, 4)
+        if body and not first:
+            links = LISTING.findall(body.decode("utf-8", "replace"))
+            first = links[0] if links else None
+    if first:
+        probe("realitica_oglas", urljoin(REALITICA, first), fetch_cffi, "chrome", results, 0)
 
 
 def upload(token: str, files: dict[str, bytes]) -> int:
@@ -160,18 +189,19 @@ def upload(token: str, files: dict[str, bytes]) -> int:
     return failed
 
 
-def send(use_playwright: bool) -> None:
-    summaries = sorted(OUT.glob("sazetak*.json"))
-    if not summaries:
-        print("Nema spremljenih rezultata u redmi-out/. Prvo pokreni probu.")
+def send() -> None:
+    sent_log = OUT / ".poslano"
+    sent = set(sent_log.read_text().split()) if sent_log.exists() else set()
+    files = {p.name: p.read_bytes() for p in sorted(OUT.glob("*sazetak*.json")) + sorted(OUT.glob("*.html.gz"))
+             if p.name not in sent}
+    if not files:
+        print("Nema novih rezultata za slanje.")
         return
     token = os.environ.get("GITHUB_TOKEN") or getpass.getpass(
         "Zalijepi GitHub token za slanje rezultata (ne prikazuje se; Enter = ne šalji): ").strip()
     if not token:
         print("Ništa nije poslano. Kasnije pošalji s: python tools/redmi_probe.py --posalji")
         return
-    files = {p.name: p.read_bytes() for p in summaries}
-    files.update({p.name: p.read_bytes() for p in sorted(OUT.glob("*.html.gz"))})
     try:
         failed = upload(token, files)
     except Exception as exc:  # noqa: BLE001
@@ -181,42 +211,32 @@ def send(use_playwright: bool) -> None:
         print(f"\nSLANJE NIJE USPJELO ({failed} od {len(files)} datoteka). Pošalji mi snimku zaslona;"
               " kad popravimo, ponovi s: python tools/redmi_probe.py --posalji")
     else:
+        sent_log.write_text("\n".join(sorted(sent | set(files))))
         print("\nGotovo, rezultati su poslani. Javi mi.")
 
 
 def main() -> None:
-    if "--posalji" in sys.argv:
-        send(False)
+    args = set(sys.argv[1:])
+    if "--posalji" in args:
+        send()
         return
-    use_playwright = "--playwright" in sys.argv
     results = {"vrijeme": time.strftime("%Y-%m-%d %H:%M:%S"), "python": sys.version.split()[0],
-               "sustav": platform.platform(), "nacin": "playwright" if use_playwright else "curl_cffi"}
-    if use_playwright:
-        methods = lambda sel: [("playwright", lambda u: fetch_playwright(u, sel))]  # noqa: E731
-    else:
-        methods = lambda sel: [("chrome", lambda u: fetch_cffi(u, "chrome")),  # noqa: E731
-                               ("safari_ios", lambda u: fetch_cffi(u, "safari_ios"))]
-
-    print("Njuškalo:")
-    for name, url in NJUSKALO.items():
-        try_methods(name, url, methods("li.EntityList-item"), results)
-
-    print("Realitica:")
-    home = try_methods("realitica_naslovnica", REALITICA_HOME, methods(None), results)
-    if home:
-        links = realitica_links(home)
-        results["realitica_obrasci"] = links
-        targets = dict(REALITICA_GUESSES)
-        if links["rss"]:
-            targets["realitica_rss"] = urljoin(REALITICA_HOME, links["rss"][0])
-        for name, url in targets.items():
-            try_methods(name, url, methods(None), results)
-
+               "sustav": platform.platform(), "argumenti": sorted(args)}
+    if "--provjeri-preglednik" in args:
+        print("Chromium:")
+        browser = Browser()
+        try:
+            probe("realitica_naslovnica", f"{REALITICA}/", lambda u: browser.fetch(u, "body"), "playwright", results, 0)
+        finally:
+            browser.close()
+    elif "--samo-realitica" not in args:
+        run_njuskalo(results, "--playwright" in args)
+    if not args & {"--playwright", "--provjeri-preglednik"}:
+        run_realitica(results)
     OUT.mkdir(exist_ok=True)
-    summary = json.dumps(results, ensure_ascii=False, indent=1).encode("utf-8")
-    (OUT / ("sazetak_playwright.json" if use_playwright else "sazetak.json")).write_bytes(summary)
+    (OUT / f"{STAMP}_sazetak.json").write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")
     print("\nRezultati su spremljeni u redmi-out/.")
-    send(use_playwright)
+    send()
 
 
 if __name__ == "__main__":

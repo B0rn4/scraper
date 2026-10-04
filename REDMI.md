@@ -112,15 +112,51 @@ proot-distro login ubuntu
 cd scraper && . ~/venv/bin/activate
 ```
 
-## Korak 1b: pravi preglednik (samo ako ti javim; oko 15 min)
+## Korak 1b: Realitica i pravi preglednik (oko 15–20 min)
 
-Ako Njuškalo ne prolazi bez preglednika, probat ćemo s Chromiumom:
+Rezultat prve probe (5. 10. u 1 h):
+- **Realitica** prolazi bez preglednika.
+- **Njuškalo** je prvi put vratio prave stranice (31 oglas), a tri minute kasnije
+  zaštita (ShieldSquare) je na sve zahtjeve vratila stranicu s captchom. Zato
+  Njuškalo ne diramo nekoliko sati i probamo s pravim preglednikom, koji zaštiti
+  izgleda kao običan posjetitelj.
+
+Prvo osvježi scraper (svaki put kad nastavljaš):
+
+```
+cd ~/scraper && . ~/venv/bin/activate && git pull
+```
+
+**1. Realitica (odmah):** pretraga kuća i građevinskih zemljišta u PGŽ te jedan oglas.
+
+```
+python tools/redmi_probe.py --samo-realitica
+```
+
+**2. Instalacija Chromiuma (odmah; ništa ne šalje Njuškalu).** Preuzima nekoliko
+stotina MB.
 
 ```
 pip install playwright
 python -m playwright install --with-deps chromium
+```
+
+```
+python tools/redmi_probe.py --provjeri-preglednik
+```
+
+Zadnja naredba otvori Realiticu u Chromiumu i provjeri radi li preglednik unutar
+Ubuntua. Ako javi grešku, pošalji snimku zaslona.
+
+**3. Njuškalo preglednikom (najranije nekoliko sati nakon captche, npr. sutra
+popodne):**
+
+```
 python tools/redmi_probe.py --playwright
 ```
+
+Svaka naredba na kraju sama traži token i šalje rezultate. Ako slanje ne uspije,
+ponovi ga s `python tools/redmi_probe.py --posalji`.
 
 ## Korak 2: automatsko pokretanje (nakon probe; oko 15 min)
 
