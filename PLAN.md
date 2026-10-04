@@ -34,7 +34,7 @@ kriterijima stiže obavijest na mobitel (Telegram). PC ne mora biti upaljen.
 |---|---|---|
 | njuskalo.hr | s Redmija (faza 2); do tada i kao rezerva spremljene pretrage u aplikaciji | iz oblaka blokirano (ShieldSquare captcha); prolaz s hrvatske IP adrese treba provjeriti |
 | nekretnine.hr | scraper (strukturirani JSON) | ista grupa kao Crozilla i Indomio, isti oglasi (korisnik provjerio); **zamjenjuje ih** |
-| realitica.com | s Redmija (faza 2), probno | iz oblaka blokirano (403); ostaje samo ako donosi oglase kojih nema drugdje |
+| realitica.com | s Redmija radi bez preglednika; **predlaže se izostaviti** | iz oblaka blokirano (403). Proba 5. 10.: 50 najnovijih oglasa u PGŽ (kuće i građevinska zemljišta) sve su agencije, 49 ih je već na index.hr/nekretnine.hr/oglasnik.hr |
 | oglasnik.hr | scraper | radi iz oblaka; popis oglasa učitava JavaScript |
 | index.hr/oglasi | scraper (njihov interni API) | radi iz oblaka; React aplikacija |
 | gohome.hr | izostavljen | tražilica; mjerenje 4. 10.: Njuškalo kasni 0–3 dana, index.hr i oglasnik.hr ne prati, ~95 % oglasa agencija već je na našim portalima |
