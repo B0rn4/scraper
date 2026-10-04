@@ -63,7 +63,8 @@ def build(entries: list[dict], title: str, generated: str, sources: list[dict], 
         err = f'<div class="err">⚠ {html.escape(s["error"])}</div>' if s.get("error") else ""
         src_rows.append(
             f"<tr><td><b>{html.escape(s['label'])}</b>{err}</td><td>{s.get('total', 0)}</td>"
-            f"<td>{s.get(PASS, 0)}</td><td>{s.get(WARN, 0)}</td><td>{s.get(REJECT, 0)}</td>"
+            f"<td>{s.get(PASS, 0)}</td><td>{s.get(WARN, 0)}</td><td>{s.get('za_dlaku', 0)}</td>"
+            f"<td>{s.get(REJECT, 0) - s.get('za_dlaku', 0)}</td>"
             f"<td class='links'>{links or '—'}</td></tr>"
         )
     return TEMPLATE.format(
@@ -89,9 +90,9 @@ TEMPLATE = """<!doctype html>
 <title>{title}</title>
 <style>
 :root {{ --bg:#f6f7f9; --card:#fff; --text:#1d2330; --muted:#667085; --line:#e4e7ec;
-  --pass:#12805c; --warn:#b54708; --rej:#b42318; --accent:#175cd3; }}
+  --pass:#12805c; --warn:#b54708; --rej:#b42318; --near:#7a5af8; --accent:#175cd3; }}
 @media (prefers-color-scheme: dark) {{ :root {{ --bg:#111418; --card:#1b2027; --text:#e6e8eb; --muted:#9aa4b2;
-  --line:#2c333d; --pass:#47cd89; --warn:#fdb022; --rej:#f97066; --accent:#84adff; }} }}
+  --line:#2c333d; --pass:#47cd89; --warn:#fdb022; --rej:#f97066; --near:#bdb4fe; --accent:#84adff; }} }}
 * {{ box-sizing:border-box; }}
 body {{ margin:0; font:15px/1.45 -apple-system,Segoe UI,Roboto,sans-serif; background:var(--bg); color:var(--text); }}
 header {{ padding:16px; }}
@@ -111,6 +112,7 @@ input[type=search] {{ flex:1 1 160px; min-width:0; }}
 main {{ padding:12px 16px 90px; display:grid; gap:10px; grid-template-columns:repeat(auto-fill,minmax(320px,1fr)); }}
 .card {{ background:var(--card); border:1px solid var(--line); border-left:5px solid var(--line); border-radius:10px; padding:10px; display:flex; gap:10px; }}
 .card.prolazi {{ border-left-color:var(--pass); }} .card.upozorenje {{ border-left-color:var(--warn); }} .card.odbijen {{ border-left-color:var(--rej); }}
+.card.zadlaku {{ border-left-color:var(--near); }}
 .card.marked {{ outline:2px solid var(--accent); }}
 .card img {{ width:96px; height:72px; object-fit:cover; border-radius:6px; flex:none; background:var(--line); }}
 .body {{ min-width:0; flex:1; }}
@@ -118,7 +120,7 @@ main {{ padding:12px 16px 90px; display:grid; gap:10px; grid-template-columns:re
 .t a {{ color:inherit; }}
 .facts {{ font-size:13px; }}
 .st {{ font-size:12px; font-weight:700; }}
-.st.prolazi {{ color:var(--pass); }} .st.upozorenje {{ color:var(--warn); }} .st.odbijen {{ color:var(--rej); }}
+.st.prolazi {{ color:var(--pass); }} .st.upozorenje {{ color:var(--warn); }} .st.odbijen {{ color:var(--rej); }} .st.zadlaku {{ color:var(--near); }}
 .reason {{ font-size:12px; margin-top:2px; }}
 .reason.r {{ color:var(--rej); }} .reason.w {{ color:var(--warn); }}
 details {{ font-size:12px; color:var(--muted); margin-top:4px; }}
@@ -137,15 +139,15 @@ textarea#out {{ position:fixed; left:-9999px; }}
   <div class="muted">Izrađeno: {generated}</div>
   {note}
   <div class="wrap"><table>
-    <tr><th>Izvor</th><th>Ukupno</th><th>✅</th><th>⚠</th><th>❌</th><th>Ista pretraga na portalu (za usporedbu)</th></tr>
+    <tr><th>Izvor</th><th>Ukupno</th><th>✅</th><th>⚠</th><th>≈ za dlaku</th><th>❌</th><th>Ista pretraga na portalu (za usporedbu)</th></tr>
     {src_rows}
   </table></div>
 </header>
 <div class="bar">
-  <label class="chip"><input type="checkbox" class="f-st" value="prolazi" checked>✅ prolazi</label>
-  <label class="chip"><input type="checkbox" class="f-st" value="upozorenje" checked>⚠ upozorenje</label>
-  <label class="chip"><input type="checkbox" class="f-st" value="odbijen" checked>❌ odbijen</label>
-  <label class="chip"><input type="checkbox" id="f-nm">samo za dlaku</label>
+  <label class="chip"><input type="checkbox" class="f-st" value="prolazi" checked>✅ prolazi <span class="muted" data-n="prolazi"></span></label>
+  <label class="chip"><input type="checkbox" class="f-st" value="upozorenje" checked>⚠ upozorenje <span class="muted" data-n="upozorenje"></span></label>
+  <label class="chip"><input type="checkbox" class="f-st" value="zadlaku" checked>≈ za dlaku <span class="muted" data-n="zadlaku"></span></label>
+  <label class="chip"><input type="checkbox" class="f-st" value="odbijen" checked>❌ odbijen <span class="muted" data-n="odbijen"></span></label>
   <select id="f-cat"><option value="">svi razlozi</option><option>lokacija</option><option>cijena</option><option>površina</option><option>vrsta</option><option>ostalo</option></select>
   <select id="f-src"><option value="">svi izvori</option></select>
   <select id="f-kind"><option value="">kuće i zemljišta</option><option value="kuća">kuće</option><option value="zemljište">zemljišta</option></select>
@@ -167,14 +169,17 @@ const $ = s => document.querySelector(s);
 const esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}})[c]);
 const eur = v => v ? Math.round(v).toLocaleString("hr-HR") + " €" : "—";
 const m2 = v => v ? Math.round(v).toLocaleString("hr-HR") + " m²" : "—";
-const LABEL = {{prolazi:"✅ prolazi", upozorenje:"⚠ upozorenje", odbijen:"❌ odbijen"}};
+const LABEL = {{prolazi:"✅ prolazi", upozorenje:"⚠ upozorenje", zadlaku:"≈ za dlaku (odbijen, malo promašuje cijenu ili površinu)", odbijen:"❌ odbijen"}};
+// "Za dlaku" je zasebna skupina: odbijeni oglasi koji malo promašuju cijenu ili površinu.
+DATA.forEach(e => {{ e.b = e.st === "odbijen" && e.nm ? "zadlaku" : e.st; }});
+Object.keys(LABEL).forEach(b => {{ const el = document.querySelector(`[data-n="${{b}}"]`); if (el) el.textContent = DATA.filter(e => e.b === b).length; }});
 [...new Set(DATA.map(e => e.s))].sort().forEach(s => $("#f-src").insertAdjacentHTML("beforeend", `<option>${{esc(s)}}</option>`));
 
 function filtered() {{
   const st = [...document.querySelectorAll(".f-st:checked")].map(x => x.value);
-  const nm = $("#f-nm").checked, cat = $("#f-cat").value, src = $("#f-src").value, kind = $("#f-kind").value;
+  const cat = $("#f-cat").value, src = $("#f-src").value, kind = $("#f-kind").value;
   const q = $("#f-q").value.trim().toLowerCase();
-  return DATA.filter(e => st.includes(e.st) && (!nm || e.nm) && (!cat || e.cat.includes(cat)) && (!src || e.s === src)
+  return DATA.filter(e => st.includes(e.b) && (!cat || e.cat.includes(cat)) && (!src || e.s === src)
     && (!kind || e.kind === kind)
     && (!q || [e.t, e.loc, e.jls, e.sub, ...e.r, ...e.w].join(" ").toLowerCase().includes(q)));
 }}
@@ -182,10 +187,10 @@ function filtered() {{
 function card(e, i) {{
   const m = marked.get(e.k);
   const price = e.pp && e.p && e.pp > e.p ? `${{eur(e.p)}} <span class="muted">(prije ${{eur(e.pp)}})</span>` : eur(e.p);
-  return `<article class="card ${{e.st}} ${{m ? "marked" : ""}}">
+  return `<article class="card ${{e.b}} ${{m ? "marked" : ""}}">
     ${{e.img ? `<img loading="lazy" src="${{esc(e.img)}}" alt="">` : ""}}
     <div class="body">
-      <div class="st ${{e.st}}">${{LABEL[e.st]}}${{e.nm ? " · za dlaku" : ""}}${{e.obn ? " · 🔨 za obnovu" : ""}}</div>
+      <div class="st ${{e.b}}">${{LABEL[e.b]}}${{e.obn ? " · 🔨 za obnovu" : ""}}</div>
       <p class="t"><a href="${{esc(e.u)}}" target="_blank" rel="noopener">${{esc(e.t)}}</a></p>
       <div class="facts">${{esc(e.kind)}}${{e.sub ? " · " + esc(e.sub) : ""}} · ${{price}} · ${{m2(e.a)}}${{e.pa ? " · okućnica " + m2(e.pa) : ""}}</div>
       <div class="facts muted">📍 ${{esc(e.loc)}} → <b>${{esc(e.jls || "?")}}</b> · ${{esc(e.s)}}</div>
@@ -226,7 +231,7 @@ $("#clear").onclick = () => {{ marked.clear(); $("#marked").textContent = "Ozna�
 $("#copy").onclick = async () => {{
   if (!marked.size) {{ alert("Nema označenih oglasa."); return; }}
   const lines = [...marked.values()].map(({{e, note}}) =>
-    `[${{e.st}}] ${{e.k}} | ${{e.t}} | ${{eur(e.p)}} | ${{m2(e.a)}} | ${{e.loc}} → ${{e.jls || "?"}} | ${{[...e.r, ...e.w].join("; ") || "bez napomena"}}${{note ? " | NAPOMENA: " + note : ""}} | ${{e.u}}`);
+    `[${{e.b}}] ${{e.k}} | ${{e.t}} | ${{eur(e.p)}} | ${{m2(e.a)}} | ${{e.loc}} → ${{e.jls || "?"}} | ${{[...e.r, ...e.w].join("; ") || "bez napomena"}}${{note ? " | NAPOMENA: " + note : ""}} | ${{e.u}}`);
   const text = "Pogrešno označeni oglasi ({title}):\\n" + lines.join("\\n");
   try {{ await navigator.clipboard.writeText(text); }}
   catch (_) {{ const ta = $("#out"); ta.value = text; ta.select(); document.execCommand("copy"); }}

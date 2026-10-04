@@ -203,6 +203,7 @@ class Runner:
         out = {"label": src.label, "total": len(decided), "links": src.search_links()}
         for s in (PASS, WARN, REJECT):
             out[s] = sum(1 for _, d in decided if d.status == s)
+        out["za_dlaku"] = sum(1 for _, d in decided if d.status == REJECT and d.near_miss)
         return out
 
     def _source_failed(self, state: State, src, exc: Exception) -> None:
