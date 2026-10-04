@@ -63,7 +63,9 @@ pkg update -y && pkg upgrade -y
 ```
 
 `termux-wake-lock` sprječava da Android uspava Termux; u obavijestima se pojavi
-oznaka. Ako `pkg upgrade` pita nešto o konfiguracijskoj datoteci, samo pritisni Enter.
+oznaka. Ako `pkg upgrade` pita što učiniti s konfiguracijskom datotekom (npr.
+`openssl.cnf ... [default=N] ?`), upiši **Y** i Enter: Termux je nov, pa nema tvojih
+izmjena koje bi trebalo čuvati. Isto odgovori ako pita više puta.
 
 ```
 pkg install -y proot-distro
