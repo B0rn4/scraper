@@ -54,8 +54,17 @@ klikni **Kopiraj označene**. Zalijepi popis Claudeu u razgovor.
 - Tajne (GitHub Secrets): `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `SMTP_USER`,
   `SMTP_PASSWORD`, `EMAIL_TO`.
 
-## Raspored ne radi?
+## Automatsko pokretanje (cron-job.org)
 
-GitHub ponekad ne pokrene novi raspored. Rješenje: **Actions → Scraper nekretnina → ⋯
-(gore desno) → Disable workflow**, pa odmah **Enable workflow**. Ako ni to ne pomogne,
-pokretanje se može prepustiti vanjskom servisu (cron-job.org) ili Redmiju (faza 2).
+GitHub raspored za ovaj repozitorij ne pokreće workflow, pa ga pokreće besplatni
+servis cron-job.org, svakih 20 minuta od 7 do 23 h, preko GitHub API-ja.
+
+- Adresa: `https://api.github.com/repos/B0rn4/scraper/actions/workflows/scraper.yml/dispatches`
+- Metoda: `POST`
+- Zaglavlja: `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`,
+  `X-GitHub-Api-Version: 2022-11-28`
+- Tijelo: `{"ref":"claude/real-estate-scraper-primorska-jrlscq","inputs":{"naredba":"raspored"}}`
+- Tjedni izvještaj: isti poziv ponedjeljkom u 7:15 s `"naredba":"tjedni"`.
+- Token: GitHub fine-grained token samo za ovaj repozitorij, dozvola **Actions: Read and write**.
+
+`raspored` poštuje radno vrijeme 7–23 h, a ručni `run` radi odmah.

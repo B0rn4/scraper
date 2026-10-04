@@ -10,9 +10,9 @@ on:
   workflow_dispatch:
     inputs:
       naredba:
-        description: "run = redovno, pregled = pregledni izvještaj, test = probna poruka i mail, tjedni = tjedni izvještaj"
+        description: "run = redovno odmah, raspored = redovno ali samo 7–23 h (za vanjski servis), pregled = pregledni izvještaj, test = probna poruka i mail, tjedni = tjedni izvještaj"
         type: choice
-        options: [run, pregled, test, tjedni]
+        options: [run, raspored, pregled, test, tjedni]
         default: run
       izvori:
         description: "Samo ovi izvori (npr. nekretnine_hr,fina); prazno = svi"
@@ -74,7 +74,10 @@ jobs:
           ARGS=""
           if [ -n "${{ github.event.inputs.izvori }}" ]; then ARGS="$ARGS --izvori ${{ github.event.inputs.izvori }}"; fi
           if [ "${{ github.event.inputs.bez_slanja }}" = "true" ]; then ARGS="$ARGS --bez-slanja"; fi
-          if [ "$CMD" = "run" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then ARGS="$ARGS --force"; fi
+          # "raspored" dolazi s vanjskog servisa (cron-job.org): redovno pokretanje
+          # koje poštuje radno vrijeme. Ručni "run" radi odmah, i izvan radnog vremena.
+          if [ "$CMD" = "raspored" ]; then CMD=run
+          elif [ "$CMD" = "run" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then ARGS="$ARGS --force"; fi
           python -m scraper $CMD $ARGS
 
       - name: Spremi stanje
