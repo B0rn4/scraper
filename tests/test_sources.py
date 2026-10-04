@@ -104,3 +104,46 @@ def test_fina_cadastral_variants(fina):
     assert x.municipality == "Kostrena" and x.title.count("k.o.") == 1
     x = fina.to_listing(row("Općinski sud u Crikvenici, Stalna služba u Krku", "građevinsko zemljište k.o. Omišalj-Njivice, 700 m2"))
     assert x.municipality == "Omišalj"
+
+
+def test_vender_items():
+    from scraper.sources.vender import parse_items
+
+    items = {x.source_id: x for x in parse_items(json.loads(gzip.open(FIX / "vender_pgz.json.gz").read()))}
+    assert len(items) == 20
+    drenova = items["789991"]
+    assert drenova.kind == HOUSE and drenova.subtype == "Kuća u nizu"
+    assert drenova.price == 499000 and drenova.area == 148 and drenova.plot_area == 52
+    assert drenova.municipality == "Rijeka" and drenova.settlement == "Drenova"
+    assert items["790712"].settlement == "Barbat Na Rabu" and items["790712"].area is None
+    assert sum(x.kind == HOUSE for x in items.values()) == 5
+
+
+def test_gohome_houses():
+    from scraper.sources.gohome import COVERED, parse_page
+
+    items = parse_page(read("gohome_kuca_krk.html.gz"), HOUSE)
+    assert len(items) == 42
+    x = items[0]
+    assert x.title.startswith("Kuća, KRK") and x.extra["izvor"] == "njuskalo.hr"
+    assert x.price == 495000 and x.area == pytest.approx(126.65) and x.municipality == "Krk"
+    assert x.url.startswith("https://www.njuskalo.hr/nekretnine/")
+    assert any(i.extra["izvor"] in COVERED for i in items)
+
+
+def test_gohome_source_url_variants():
+    items = __import__("scraper.sources.gohome", fromlist=["parse_page"]).parse_page(
+        read("gohome_zemljiste_krk.html.gz"), LAND)
+    assert len(items) == 42 and not any("gohome.hr" in i.url for i in items)
+    assert items[0].url.startswith("https://premium-nekretnine.com/zemljiste/")
+
+
+def test_gohome_evaluated_as_krk():
+    from scraper.filters import evaluate
+    from scraper.sources.gohome import parse_page
+
+    cfg = load_config()
+    locator = Locator()
+    items = parse_page(read("gohome_zemljiste_krk.html.gz"), LAND)
+    d = evaluate(items[1], cfg["kriteriji"], locator)  # 130.000 €, 528 m², Krk
+    assert d.jls == "Krk"

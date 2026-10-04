@@ -12,6 +12,7 @@ class Source:
     name = ""          # ključ u konfiguraciji i bazi
     label = ""         # naziv za prikaz
     daily = False      # True: provjerava se jednom dnevno
+    interval_minutes = 0  # >0: ne češće od ovoga (npr. tražilica koja ionako kasni)
 
     def __init__(self, http: Http, locator: Locator, criteria: dict):
         self.http = http

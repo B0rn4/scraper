@@ -18,6 +18,8 @@ SOURCE_LABELS = {
     "index_oglasi": "index.hr/oglasi",
     "oglasnik": "oglasnik.hr",
     "fina": "FINA Očevidnik",
+    "vender": "vender.hr",
+    "gohome": "gohome.hr",
 }
 
 

@@ -23,6 +23,8 @@ izvori:
   index_oglasi: true
   oglasnik: true
   fina: true
+  vender: true
+  gohome: true
 
 obavijesti:
   telegram: true
