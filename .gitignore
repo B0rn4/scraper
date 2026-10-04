@@ -1,3 +1,6 @@
 __pycache__/
 *.pyc
 .venv/
+state.db
+out/
+debug-out/

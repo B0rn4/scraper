@@ -1,0 +1,706 @@
+# GENERIRANO: tools/build_locations.py iz data/sources/index_locations_pgz.json.
+# Ne mijenjaj ručno; ručni dodaci idu u data/locations_extra.yaml.
+zupanija: Primorsko-goranska
+jls:
+- naziv: Bakar
+  vrsta: grad
+  naselja:
+  - Bakar
+  - Hreljin
+  - Krasica
+  - Kukuljanovo
+  - Plosna
+  - Ponikve
+  - Praputnjak
+  - Zlobin
+  - Škrljevo
+- naziv: Baška
+  vrsta: općina
+  naselja:
+  - Batomalj
+  - Baška
+  - Draga Bašćanska
+  - Jurandvor
+- naziv: Brod Moravice
+  vrsta: općina
+  naselja:
+  - Brod Moravice
+  - Colnari
+  - Delači
+  - Doluš
+  - Donja Dobra
+  - Donja Lamana Draga
+  - Donji Šajn
+  - Donji Šehovac
+  - Goliki
+  - Gornja Lamana Draga
+  - Gornji Kuti
+  - Gornji Šajn
+  - Gornji Šehovac
+  - Goršeti
+  - Kavrani
+  - Klepeće Selo
+  - Kocijani
+  - Lokvica
+  - Maklen
+  - Male Drage
+  - Moravička Sela
+  - Naglići
+  - Nove Hiže
+  - Novi Lazi
+  - Pauci
+  - Planica
+  - Podgorani
+  - Podstene
+  - Razdrto
+  - Smišljak
+  - Stari Lazi
+  - Vele Drage
+  - Zahrt
+  - Zavrh
+  - Završje
+  - Čučak
+  - Šepci Podstenski
+  - Šimatovo
+- naziv: Cres
+  vrsta: grad
+  naselja:
+  - Beli
+  - Cres
+  - Dragozetići
+  - Filozići
+  - Grmov
+  - Ivanje
+  - Loznati
+  - Lubenice
+  - Mali Podol
+  - Martinšćica
+  - Merag
+  - Miholašćica
+  - Orlec
+  - Pernat
+  - Porozina
+  - Predošćica
+  - Stanić
+  - Stivan
+  - Sveti Petar
+  - Valun
+  - Važminec
+  - Vidovići
+  - Vodice
+  - Vrana
+  - Zbičina
+  - Zbišina
+- naziv: Crikvenica
+  vrsta: grad
+  naselja:
+  - Crikvenica
+  - Dramalj
+  - Jadranovo
+  - Selce
+- naziv: Delnice
+  vrsta: grad
+  naselja:
+  - Bela Vodica
+  - Belo
+  - Biljevina
+  - Brod na Kupi
+  - Crni Lug
+  - Dedin
+  - Delnice
+  - Donja Krašićevica
+  - Donje Tihovo
+  - Donji Ložac
+  - Donji Okrug
+  - Donji Turni
+  - Gašparci
+  - Golik
+  - Gornja Krašićevica
+  - Gornje Tihovo
+  - Gornji Ložac
+  - Gornji Okrug
+  - Gornji Turni
+  - Grbajel
+  - Gusti Laz
+  - Guče Selo
+  - Hrvatsko
+  - Iševnica
+  - Kalić
+  - Kočičin
+  - Krivac
+  - Kupa
+  - Kuželj
+  - Leska
+  - Lučice
+  - Mala Lešnica
+  - Malo Selo
+  - Marija Trošt
+  - Plajzi
+  - Podgora Turkovska
+  - Požar
+  - Radočaj Brodski
+  - Raskrižje Tihovo
+  - Razloge
+  - Razloški Okrug
+  - Sedalce
+  - Srednja Krašićevica
+  - Suhor
+  - Turke
+  - Vela Voda
+  - Velika Lešnica
+  - Zagolik
+  - Zakrajc Turkovski
+  - Zalesina
+  - Zamost Brodski
+  - Zapolje Brodsko
+  - Zelin Crnoluški
+  - Čedanj
+  - Ševalj
+- naziv: Dobrinj
+  vrsta: općina
+  naselja:
+  - Dobrinj
+  - Dolovo
+  - Gabonjin
+  - Gostinjac
+  - Hlapa
+  - Klanice
+  - Klimno
+  - Kras
+  - Polje
+  - Rasopasno
+  - Rudine
+  - Soline
+  - Sužan
+  - Sveti Ivan Dobrinjski
+  - Sveti Vid Dobrinjski
+  - Tribulje
+  - Čižići
+  - Šilo
+  - Žestilac
+  - Županje
+- naziv: Fužine
+  vrsta: općina
+  naselja:
+  - Banovina
+  - Belo Selo
+  - Benkovac Fužinski
+  - Fužine
+  - Lič
+  - Pirovište
+  - Potkobiljak
+  - Slavica
+  - Vrata
+- naziv: Jelenje
+  vrsta: općina
+  naselja:
+  - Baštijani
+  - Brnelići
+  - Drastin
+  - Dražice
+  - Jelenje
+  - Kukuljani
+  - Lopača
+  - Lubarska
+  - Lukeži
+  - Martinovo Selo
+  - Milaši
+  - Podhum
+  - Podkilavac
+  - Ratulje
+  - Trnovica
+  - Valići
+  - Zoretići
+- naziv: Kastav
+  vrsta: grad
+  naselja:
+  - Belići
+  - Brestovice
+  - Brnčići
+  - Frlani
+  - Jurčići
+  - Kastav
+  - Rešetari
+  - Rubeši
+  - Spinčići
+  - Tometići
+  - Trinajstići
+  - Tuhtani
+  - Ćikovići
+  - Žegoti
+- naziv: Klana
+  vrsta: općina
+  naselja:
+  - Breza
+  - Klana
+  - Lisac
+  - Studena
+  - Škalnica
+- naziv: Kostrena
+  vrsta: općina
+  naselja:
+  - Doričići
+  - Dujmići
+  - Glavani
+  - Kostrena
+  - Kostrena Sveta Barbara
+  - Kostrena Sveta Lucija
+  - Maračići
+  - Martinšćica
+  - Paveki
+  - Perovići
+  - Plešići
+  - Randići
+  - Rožići
+  - Rožmanići
+  - Urinj
+  - Vrh Martinšćice
+  - Šodići
+  - Šoići
+  - Žuknica
+  - Žurkovo
+- naziv: Kraljevica
+  vrsta: grad
+  naselja:
+  - Bakarac
+  - Kraljevica
+  - Križišće
+  - Mali Dol
+  - Veli Dol
+  - Šmrika
+- naziv: Krk
+  vrsta: grad
+  naselja:
+  - Bajčići
+  - Brusići
+  - Brzac
+  - Kornić
+  - Krk
+  - Lakmartin
+  - Linardići
+  - Milohnići
+  - Muraj
+  - Nenadići
+  - Pinezići
+  - Poljica
+  - Skrbčići
+  - Vrh
+  - Žgaljići
+- naziv: Lokve
+  vrsta: općina
+  naselja:
+  - Homer
+  - Lazac Lokvarski
+  - Lokve
+  - Mrzla Vodica
+  - Sljeme
+  - Sopač
+  - Zelin Mrzlovodički
+- naziv: Lopar
+  vrsta: općina
+  naselja:
+  - Lopar
+- naziv: Lovran
+  vrsta: općina
+  naselja:
+  - Liganj
+  - Lovran
+  - Lovranska Draga
+  - Medveja
+  - Tuliševica
+- naziv: Mali Lošinj
+  vrsta: grad
+  naselja:
+  - Artatore
+  - Belej
+  - Ilovik
+  - Male Srakane
+  - Mali Lošinj
+  - Nerezine
+  - Osor
+  - Punta Križa
+  - Susak
+  - Sveti Jakov
+  - Unije
+  - Ustrine
+  - Vele Srakane
+  - Veli Lošinj
+  - Ćunski
+- naziv: Malinska-Dubašnica
+  vrsta: općina
+  naselja:
+  - Barušići
+  - Bogovići
+  - Kremenići
+  - Ljutići
+  - Malinska
+  - Maršići
+  - Milovčići
+  - Milčetići
+  - Oštrobradić
+  - Porat
+  - Radići
+  - Sabljići
+  - Sršići
+  - Strilčići
+  - Sveti Anton
+  - Sveti Ivan
+  - Sveti Vid-Miholjice
+  - Turčić
+  - Vantačići
+  - Zidarići
+  - Žgombići
+- naziv: Matulji
+  vrsta: općina
+  naselja:
+  - Brdce
+  - Bregi
+  - Brešca
+  - Jurdani
+  - Jušići
+  - Kučeli
+  - Lipa
+  - Male Mune
+  - Mali Brgud
+  - Matulji
+  - Mihotići
+  - Mučići
+  - Pasjak
+  - Permani
+  - Rukavac
+  - Rupa
+  - Ružići
+  - Vele Mune
+  - Veli Brgud
+  - Zaluki
+  - Zvoneća
+  - Šapjane
+  - Žejane
+- naziv: Mošćenička Draga
+  vrsta: općina
+  naselja:
+  - Brseč
+  - Donji Kraj
+  - Golovik
+  - Grabrova
+  - Kalac
+  - Martina
+  - Mošćenice
+  - Mošćenička Draga
+  - Obrš
+  - Sučići
+  - Sveta Jelena
+  - Sveti Anton
+  - Sveti Petar
+  - Zagore
+- naziv: Mrkopalj
+  vrsta: općina
+  naselja:
+  - Begovo Razdolje
+  - Brestova Draga
+  - Mrkopalj
+  - Sunger
+  - Tuk Mrkopaljski
+  - Tuk Vojni
+- naziv: Novi Vinodolski
+  vrsta: grad
+  naselja:
+  - Bater
+  - Bile
+  - Breze
+  - Crno
+  - Donji Zagon
+  - Drinak
+  - Gornji Zagon
+  - Jakov Polje
+  - Javorje
+  - Klenovica
+  - Krmpotske Vodice
+  - Ledenice
+  - Luka Krmpotska
+  - Novi Vinodolski
+  - Podmelnik
+  - Povile
+  - Ruševo Krmpotsko
+  - Sibinj Krmpotski
+  - Smokvica Krmpotska
+  - Zabukovac
+- naziv: Omišalj
+  vrsta: općina
+  naselja:
+  - Njivice
+  - Omišalj
+- naziv: Opatija
+  vrsta: grad
+  naselja:
+  - Dobreć
+  - Ika
+  - Ičići
+  - Kosićevo
+  - Lipovica
+  - Mala Učka
+  - Opatija
+  - Oprić
+  - Plahuti
+  - Pobri
+  - Poljane
+  - Punta Kolova
+  - Tošina
+  - Vela Učka
+  - Veprinac
+  - Volosko
+  - Vrutki
+  - Zora
+- naziv: Punat
+  vrsta: općina
+  naselja:
+  - Punat
+  - Stara Baška
+- naziv: Rab
+  vrsta: grad
+  naselja:
+  - Banjol
+  - Barbat na Rabu
+  - Kampor
+  - Mundanije
+  - Palit
+  - Rab
+  - Supetarska Draga
+- naziv: Ravna Gora
+  vrsta: općina
+  naselja:
+  - Kupjak
+  - Leskova Draga
+  - Ravna Gora
+  - Stara Sušica
+  - Stari Laz
+  - Šije
+- naziv: Rijeka
+  vrsta: grad
+  naselja:
+  - Banderovo
+  - Belveder
+  - Bivio
+  - Brajda
+  - Brašćine
+  - Bulevard
+  - Centar
+  - Costabella
+  - Donja Vežica
+  - Draga
+  - Drenova
+  - Gornja Vežica
+  - Grbci
+  - Hosti
+  - Kantrida
+  - Kozala
+  - Krimeja
+  - Krnjevo
+  - Martinkovac
+  - Marčeljeva Draga
+  - Mlaka
+  - Orehovica
+  - Pašac
+  - Pehlin
+  - Pećine
+  - Podmurvice
+  - Potok
+  - Preluk
+  - Pulac
+  - Rastočine
+  - Rujevica
+  - Srdoči
+  - Stari Grad
+  - Sušak
+  - Sveti Kuzam
+  - Svilno
+  - Trsat
+  - Turnić
+  - Vojak
+  - Zamet
+  - Školjić
+  - Škurinje
+  - Škurinjska Draga
+- naziv: Skrad
+  vrsta: općina
+  naselja:
+  - Belski Ravan
+  - Brezje Dobransko
+  - Bukov Vrh
+  - Bukovac Podvrški
+  - Buzin
+  - Divjake
+  - Gorani
+  - Gorica Skradska
+  - Gornja Dobra
+  - Gramalj
+  - Hlevci
+  - Hosnik
+  - Hribac
+  - Mala Dobra
+  - Malo Selce
+  - Pećišće
+  - Planina Skradska
+  - Podslemeni Lazi
+  - Podstena
+  - Pucak
+  - Raskrižje
+  - Rasohe
+  - Resnatac
+  - Rogi
+  - Skrad
+  - Sleme Skradsko
+  - Trški Lazi
+  - Tusti Vrh
+  - Veliko Selce
+  - Vrh Brodski
+  - Zakrajc Brodski
+  - Žrnovac
+- naziv: Vinodolska općina
+  vrsta: općina
+  naselja:
+  - Bribir
+  - Drivenik
+  - Grižane-Belgrad
+  - Tribalj
+- naziv: Viškovo
+  vrsta: općina
+  naselja:
+  - Kosi
+  - Marinići
+  - Marčelji
+  - Mladenići
+  - Saršoni
+  - Sroki
+  - Viškovo
+- naziv: Vrbnik
+  vrsta: općina
+  naselja:
+  - Garica
+  - Kampelje
+  - Risika
+  - Vrbnik
+- naziv: Vrbovsko
+  vrsta: grad
+  naselja:
+  - Blaževci
+  - Bunjevci
+  - Carevići
+  - Damalj
+  - Dokmanovići
+  - Dolenci
+  - Donji Vukšići
+  - Donji Vučkovići
+  - Draga Lukovdolska
+  - Dragovići
+  - Gomirje
+  - Gorenci
+  - Gornji Vukšići
+  - Gornji Vučkovići
+  - Hajdine
+  - Hambarište
+  - Jablan
+  - Jakšići
+  - Kamensko
+  - Klanac
+  - Komlenići
+  - Lesci
+  - Liplje
+  - Ljubošina
+  - Lukovdol
+  - Majer
+  - Mali Jadrč
+  - Matići
+  - Međedi
+  - Mlinari
+  - Moravice
+  - Močile
+  - Musulini
+  - Nadvučnik
+  - Nikšići
+  - Osojnik
+  - Petrovići
+  - Plemenitaš
+  - Plešivica
+  - Podvučnik
+  - Poljana
+  - Presika
+  - Radigojna
+  - Radočaj
+  - Radoševići
+  - Rim
+  - Rtić
+  - Severin na Kupi
+  - Smišljak
+  - Stubica
+  - Tići
+  - Tomići
+  - Topolovica
+  - Tuk
+  - Veliki Jadrč
+  - Vrbovsko
+  - Vujnovići
+  - Vukelići
+  - Vučinići
+  - Vučnik
+  - Zapeć
+  - Zaumol
+  - Zdihovo
+  - Štefanci
+  - Žakule
+- naziv: Čabar
+  vrsta: grad
+  naselja:
+  - Bazli
+  - Brinjeva Draga
+  - Crni Lazi
+  - Donji Žagari
+  - Fažonci
+  - Frbežari
+  - Gerovo
+  - Gerovski Kraj
+  - Gorači
+  - Gornji Žagari
+  - Hrib
+  - Kamenski Hrib
+  - Kozji Vrh
+  - Kraljev Vrh
+  - Kranjci
+  - Lautari
+  - Lazi
+  - Makov Hrib
+  - Mali Lug
+  - Mandli
+  - Okrivje
+  - Parg
+  - Plešce
+  - Podstene
+  - Požarnica
+  - Prezid
+  - Prhci
+  - Prhutova Draga
+  - Pršleti
+  - Ravnice
+  - Selo
+  - Smrekari
+  - Smrečje
+  - Sokoli
+  - Srednja Draga
+  - Tropeti
+  - Tršće
+  - Vode
+  - Vrhovci
+  - Zamost
+  - Čabar
+- naziv: Čavle
+  vrsta: općina
+  naselja:
+  - Buzdohanj
+  - Cernik
+  - Grobnik
+  - Mavrinci
+  - Podrvanj
+  - Podčudnič
+  - Soboli
+  - Zastenice
+  - Čavle

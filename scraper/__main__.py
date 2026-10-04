@@ -1,0 +1,39 @@
+"""Pokretanje:
+
+  python -m scraper run        redovno (svakih 20 min); --force ignorira radno vrijeme
+  python -m scraper pregled    pregledni izvještaj cijelog područja (bez promjene stanja)
+  python -m scraper test       probna poruka na Telegram i probni mail
+  python -m scraper tjedni     tjedni izvještaj mailom
+
+Opcije: --db state.db  --out out  --izvori nekretnine_hr,fina  --bez-slanja
+"""
+
+import argparse
+from pathlib import Path
+
+from .runner import Runner
+
+
+def main() -> None:
+    parser = argparse.ArgumentParser(prog="scraper", description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
+    parser.add_argument("naredba", choices=["run", "pregled", "test", "tjedni"])
+    parser.add_argument("--db", default="state.db", type=Path)
+    parser.add_argument("--out", default="out", type=Path)
+    parser.add_argument("--izvori", default="", help="samo ovi izvori, odvojeni zarezom")
+    parser.add_argument("--bez-slanja", action="store_true", help="ne šalji ništa na Telegram ni mail")
+    parser.add_argument("--force", action="store_true", help="radi i izvan radnog vremena")
+    args = parser.parse_args()
+    only = [s.strip() for s in args.izvori.split(",") if s.strip()] or None
+    runner = Runner(args.db, args.out, send=not args.bez_slanja, only=only)
+    if args.naredba == "run":
+        runner.run(force=args.force)
+    elif args.naredba == "pregled":
+        runner.review()
+    elif args.naredba == "test":
+        runner.test()
+    else:
+        runner.weekly()
+
+
+if __name__ == "__main__":
+    main()

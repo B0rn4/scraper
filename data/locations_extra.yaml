@@ -1,0 +1,128 @@
+# Ručno održavani podaci o lokacijama. Popis naselja je u locations.yaml (generiran).
+
+# Gradovi i općine s kojih se šalju obavijesti.
+ukljuceno:
+  - Baška
+  - Dobrinj
+  - Kostrena
+  - Lovran
+  - Malinska-Dubašnica
+  - Mošćenička Draga
+  - Omišalj
+  - Punat
+  - Vrbnik
+  - Crikvenica
+  - Kraljevica
+  - Krk
+  - Novi Vinodolski
+  - Opatija
+  - Rijeka
+
+# Dodatni nazivi (kvartovi, stari nazivi, nazivi katastarskih općina) koji se
+# prepoznaju bilo gdje u tekstu.
+dodatno:
+  Rijeka: [Podvežica, Vežica, Sušak Nova, Trsat Sušak, Rijeka Grad]
+  Kostrena: [Kostrena Lucija, Kostrena Barbara]
+  Omišalj: [Omišalj Njivice]
+  Malinska-Dubašnica: [Dubašnica, Miholjice, Sveti Vid Miholjice]
+  Krk: [Krk Grad]
+  Crikvenica: [Selce Nova]
+  Matulji: [Brgud]
+  Rab: [Barbat, Rab Mundanije]
+  Vinodolska općina: [Belgrad, Grižane]
+  Mali Lošinj: [Mali Lošinj Grad, Lošinj]
+  Vrbovsko: [Gomirsko Vrbovsko]
+  Čavle: [Cernik Čavle]
+
+# Drugi nazivi za grad/općinu (strukturirana polja portala i tekst).
+sinonimi:
+  Malinska: Malinska-Dubašnica
+  Grad Krk: Krk
+  Otok Krk: Krk
+  Opatija Okolica: Opatija
+  Vinodolska: Vinodolska općina
+  Općina Vinodolska: Vinodolska općina
+
+# Katastarske općine koje nisu ujedno naselje ili kvart. Prepoznaju se samo
+# iza oznake "k.o." (npr. "k.o. Novi" je Novi Vinodolski, a "novi" je i obična riječ).
+katastarske_opcine:
+  Novi: Novi Vinodolski
+  Rupa: Matulji
+  Brgud: Matulji
+
+# Nazivi naselja koji su ujedno obične riječi. U slobodnom tekstu broje se samo
+# ako su napisani velikim početnim slovom.
+obicne_rijeci:
+  - Kraj
+  - Donji Kraj
+  - Polje
+  - Jakov Polje
+  - Kras
+  - Vrh
+  - Martina
+  - Porat
+  - Soline
+  - Draga
+  - Rupa
+  - Breze
+  - Breza
+  - Bile
+  - Lipa
+  - Crno
+  - Centar
+  - Potok
+  - Mlaka
+  - Pećine
+  - Brajda
+  - Bulevard
+  - Stari Grad
+  - Vojak
+  - Zora
+  - Selo
+  - Kupa
+  - Belo
+  - Vode
+  - Lazi
+  - Hrib
+  - Tuk
+  - Rim
+  - Kosi
+  - Poljana
+  - Klanac
+  - Lesci
+  - Leska
+  - Krivac
+  - Planica
+  - Kamensko
+  - Brzac
+  - Muraj
+  - Vrata
+  - Plahuti
+  - Lipovica
+  - Zamost
+  - Sleme
+  - Jablan
+  - Presika
+  - Podstena
+  - Podstene
+  - Raskrižje
+  - Sveti Petar
+
+# Fraze koje sadrže naziv našeg mjesta, ali znače nešto drugo. Pronađeni dio
+# teksta se preskače.
+lazni_pogoci:
+  - Baška Voda
+  - Baške Vode
+  - Baškoj Vodi
+  - NP Krka
+  - nacionalni park Krka
+  - nacionalnog parka Krka
+  - rijeka Krka
+  - rijeke Krke
+  - slapovi Krke
+  - Krka d.d.
+  - Rijeka Dubrovačka
+  - Rijeci Dubrovačkoj
+  - Rijeke Dubrovačke
+  - riječ
+  - Bakarić

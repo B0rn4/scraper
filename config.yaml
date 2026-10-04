@@ -1,0 +1,35 @@
+# Postavke scrapera. Ove vrijednosti možeš mijenjati bez diranja koda.
+
+vrijeme:
+  zona: Europe/Zagreb
+  od_sata: 7        # prvo pokretanje u danu
+  do_sata: 23       # nakon ovog sata scraper ne radi
+
+kriteriji:
+  kuca:
+    max_cijena: 400000     # €
+    min_povrsina: 70       # m² stambene površine
+  zemljiste:
+    max_cijena: 300000     # €
+    min_povrsina: 300      # m²
+  # Oglasi koji promaše kriterij za najviše ovoliko posto idu u tjedni
+  # izvještaj kao "za dlaku promašeni".
+  za_dlaku_posto: 15
+
+# Područje je definirano u data/locations.yaml (polje "ukljuceno").
+
+izvori:
+  nekretnine_hr: true
+  index_oglasi: true
+  oglasnik: true
+  fina: true
+
+obavijesti:
+  telegram: true
+  email: true
+  # Ako u jednom pokretanju stigne više novih oglasa od ovoga, umjesto
+  # pojedinačnih poruka šalje se jedan zbirni izvještaj (zaštita od poplave poruka).
+  max_poruka_po_pokretanju: 30
+
+nadzor:
+  greske_prije_upozorenja: 3

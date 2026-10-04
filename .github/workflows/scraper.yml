@@ -1,0 +1,107 @@
+name: Scraper nekretnina
+
+on:
+  # Raspored se uključuje nakon provjere (faza 1). Svakih 20 minuta; GitHub
+  # raspored je u UTC-u pa je raspon širi, a skripta radi samo 7–23 h po
+  # zagrebačkom vremenu. Tjedni izvještaj ponedjeljkom ujutro.
+  # schedule:
+  #   - cron: "2,22,42 5-22 * * *"
+  #   - cron: "17 6 * * 1"
+  workflow_dispatch:
+    inputs:
+      naredba:
+        description: "run = redovno, pregled = pregledni izvještaj, test = probna poruka i mail, tjedni = tjedni izvještaj"
+        type: choice
+        options: [run, pregled, test, tjedni]
+        default: run
+      izvori:
+        description: "Samo ovi izvori (npr. nekretnine_hr,fina); prazno = svi"
+        type: string
+        default: ""
+      bez_slanja:
+        description: "Ne šalji ništa na Telegram ni mail"
+        type: boolean
+        default: false
+      debug:
+        description: "Spremi rezultate pregleda na granu debug (za razvoj)"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
+
+concurrency:
+  group: scraper
+  cancel-in-progress: false
+
+jobs:
+  scraper:
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    env:
+      TELEGRAM_BOT_TOKEN: ${{ secrets.TELEGRAM_BOT_TOKEN }}
+      TELEGRAM_CHAT_ID: ${{ secrets.TELEGRAM_CHAT_ID }}
+      SMTP_USER: ${{ secrets.SMTP_USER }}
+      SMTP_PASSWORD: ${{ secrets.SMTP_PASSWORD }}
+      EMAIL_TO: ${{ secrets.EMAIL_TO }}
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instaliraj ovisnosti
+        run: pip install -r requirements.txt
+
+      - name: Učitaj stanje
+        run: |
+          if git fetch -q --depth=1 origin state 2>/dev/null; then
+            git show FETCH_HEAD:state.db > state.db
+            echo "Stanje učitano ($(stat -c %s state.db) B)"
+          else
+            echo "Nema spremljenog stanja – prvo pokretanje."
+          fi
+
+      - name: Pokreni
+        run: |
+          CMD="${{ github.event.inputs.naredba }}"
+          if [ -z "$CMD" ]; then
+            if [ "${{ github.event.schedule }}" = "17 6 * * 1" ]; then CMD=tjedni; else CMD=run; fi
+          fi
+          ARGS=""
+          if [ -n "${{ github.event.inputs.izvori }}" ]; then ARGS="$ARGS --izvori ${{ github.event.inputs.izvori }}"; fi
+          if [ "${{ github.event.inputs.bez_slanja }}" = "true" ]; then ARGS="$ARGS --bez-slanja"; fi
+          if [ "$CMD" = "run" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then ARGS="$ARGS --force"; fi
+          python -m scraper $CMD $ARGS
+
+      - name: Spremi stanje
+        if: always()
+        run: |
+          [ -f state.db ] || exit 0
+          rm -rf /tmp/state && mkdir -p /tmp/state && cp state.db /tmp/state/
+          cd /tmp/state
+          git init -q && git checkout -q -b state && git add state.db
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -qm "Stanje $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" state
+
+      - name: Spremi izvještaje kao artefakt
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: izvjestaji
+          path: out/
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Razvoj – rezultati pregleda na granu debug
+        if: always() && github.event.inputs.debug == 'true'
+        run: |
+          python tools/debug_export.py out debug-out
+          cd debug-out
+          git init -q && git checkout -q -b debug && git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" commit -qm "Rezultati pregleda"
+          git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" debug

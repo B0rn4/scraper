@@ -1,0 +1,3192 @@
+{
+ "id": "95c57539-6835-4b89-8ddd-a5de2100686e",
+ "name": "Primorsko-goranska",
+ "children": [
+  {
+   "id": "7c09b091-82bc-4d6a-90f0-456968312871",
+   "name": "Bakar",
+   "children": [
+    {
+     "id": "3eafefb7-f85e-44b0-9399-97219b91ea8b",
+     "name": "Bakar-dio",
+     "children": []
+    },
+    {
+     "id": "dfe3664a-41d4-42e3-9846-dbf86dfbfa00",
+     "name": "Hreljin",
+     "children": []
+    },
+    {
+     "id": "139fa2b6-f0ce-49af-91cb-a8afb44187c3",
+     "name": "Krasica",
+     "children": []
+    },
+    {
+     "id": "409cc183-a1e8-454a-83d6-d129a60c0f33",
+     "name": "Kukuljanovo",
+     "children": []
+    },
+    {
+     "id": "7e375f02-11c3-4293-8953-5dcae7a171b4",
+     "name": "Plosna",
+     "children": []
+    },
+    {
+     "id": "c2f641dc-becb-4324-9d5b-e5e2478be75c",
+     "name": "Ponikve",
+     "children": []
+    },
+    {
+     "id": "27849d14-c341-4aee-b373-5c5ef6f21363",
+     "name": "Praputnjak",
+     "children": []
+    },
+    {
+     "id": "78163f4f-dbd0-49a0-ad9f-5ea815a04f9e",
+     "name": "Škrljevo",
+     "children": []
+    },
+    {
+     "id": "1b48aedd-d597-4d87-88e9-81257949e921",
+     "name": "Zlobin",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "be39bb7d-f9bf-4b80-b807-8f90f8bd2821",
+   "name": "Baška",
+   "children": [
+    {
+     "id": "f800df25-013c-4142-8673-07d95bcca4d5",
+     "name": "Baška",
+     "children": []
+    },
+    {
+     "id": "0efe298b-0048-46a9-9651-455e4800d715",
+     "name": "Batomalj",
+     "children": []
+    },
+    {
+     "id": "3a6b1563-7e7e-4c3a-becd-dd95849495e7",
+     "name": "Draga Bašćanska",
+     "children": []
+    },
+    {
+     "id": "08d51053-ed09-4925-ab1e-dc35243c4bee",
+     "name": "Jurandvor",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "32dbe0d8-e66d-442a-a5a9-a14695d01a20",
+   "name": "Brod Moravice",
+   "children": [
+    {
+     "id": "97ce78d7-d3c4-454f-97ff-4e7d66f7e81f",
+     "name": "Brod Moravice",
+     "children": []
+    },
+    {
+     "id": "674097f0-6762-47dc-aae8-19fa7ee66615",
+     "name": "Colnari",
+     "children": []
+    },
+    {
+     "id": "afb8a059-80c0-4277-8cc0-f9900a17a6f4",
+     "name": "Čučak",
+     "children": []
+    },
+    {
+     "id": "17ee1e21-07e8-4d69-ae5a-fbcd0ddd102a",
+     "name": "Delači",
+     "children": []
+    },
+    {
+     "id": "3400fb02-dd2a-4504-92ac-9f7f6c5b2715",
+     "name": "Doluš",
+     "children": []
+    },
+    {
+     "id": "01e73c4d-abc5-4d0c-8463-4d2a8b156833",
+     "name": "Donja Dobra",
+     "children": []
+    },
+    {
+     "id": "16dcc06a-ed71-49e6-a690-adc8367c8d8b",
+     "name": "Donja Lamana Draga",
+     "children": []
+    },
+    {
+     "id": "eb7c9e63-b858-4364-b19d-7ac642395c3a",
+     "name": "Donji Šajn",
+     "children": []
+    },
+    {
+     "id": "6c7df86e-f803-427e-b725-de0e33688eb8",
+     "name": "Donji Šehovac",
+     "children": []
+    },
+    {
+     "id": "e77e8875-db27-41b9-93d7-2043bb2fae9c",
+     "name": "Goliki",
+     "children": []
+    },
+    {
+     "id": "e34d334b-48ac-453b-a2cb-4124ba47956e",
+     "name": "Gornja Lamana Draga",
+     "children": []
+    },
+    {
+     "id": "22f768e6-e0b2-4678-80ef-cd7ef26026a7",
+     "name": "Gornji Kuti",
+     "children": []
+    },
+    {
+     "id": "54bc86c4-5eef-46ac-99a5-330f66513eb8",
+     "name": "Gornji Šajn",
+     "children": []
+    },
+    {
+     "id": "2e57c0a1-8f52-432b-b519-e51e5ee3ab6c",
+     "name": "Gornji Šehovac",
+     "children": []
+    },
+    {
+     "id": "c9ffcb70-32a5-486c-a6a9-d7d39323131c",
+     "name": "Goršeti",
+     "children": []
+    },
+    {
+     "id": "f34654f8-6648-4da0-811b-e62343d15d84",
+     "name": "Kavrani",
+     "children": []
+    },
+    {
+     "id": "96fd3578-c63c-4287-8803-6b0cbdd8a6a8",
+     "name": "Klepeće Selo",
+     "children": []
+    },
+    {
+     "id": "a06d4596-7c69-4892-9fc5-f165a877f290",
+     "name": "Kocijani",
+     "children": []
+    },
+    {
+     "id": "0107b66f-2959-4f7d-b33f-ceb79f8dc204",
+     "name": "Lokvica",
+     "children": []
+    },
+    {
+     "id": "46567bc3-3434-4062-9a66-82773ed2257b",
+     "name": "Maklen",
+     "children": []
+    },
+    {
+     "id": "e367958b-6284-41c1-94f6-1256b7960f94",
+     "name": "Male Drage",
+     "children": []
+    },
+    {
+     "id": "c5b37415-f7fe-4da1-868a-88757bea8816",
+     "name": "Moravička Sela",
+     "children": []
+    },
+    {
+     "id": "bfb0e884-e73a-4515-a679-3c26c40109c4",
+     "name": "Naglići",
+     "children": []
+    },
+    {
+     "id": "8a00716d-362b-42d9-bff5-a448e0afd5b4",
+     "name": "Nove Hiže",
+     "children": []
+    },
+    {
+     "id": "16ccf3c3-afcc-4354-b45c-52b04c7f31df",
+     "name": "Novi Lazi",
+     "children": []
+    },
+    {
+     "id": "2f34ac5a-7e8f-4cf1-a1a5-aa341da88960",
+     "name": "Pauci",
+     "children": []
+    },
+    {
+     "id": "7ad13822-9224-481f-8c5c-4da334f7bc3a",
+     "name": "Planica",
+     "children": []
+    },
+    {
+     "id": "d03657b9-2b26-4832-a646-db6793040f05",
+     "name": "Podgorani",
+     "children": []
+    },
+    {
+     "id": "5366a168-10fe-42ff-b1f6-bf41dc8216d1",
+     "name": "Podstene",
+     "children": []
+    },
+    {
+     "id": "344d27de-4c01-4474-b568-6baba841b24c",
+     "name": "Razdrto",
+     "children": []
+    },
+    {
+     "id": "49f439a2-d2ac-4d1d-8ed5-5d0a384aaebe",
+     "name": "Smišljak",
+     "children": []
+    },
+    {
+     "id": "73369a08-40f4-4134-ba34-ac200935e935",
+     "name": "Stari Lazi",
+     "children": []
+    },
+    {
+     "id": "af1b9094-e2d2-43ea-abe3-5fe1c882cb42",
+     "name": "Šepci Podstenski",
+     "children": []
+    },
+    {
+     "id": "dbfce614-5821-459d-b85c-10cc8c4ce2b3",
+     "name": "Šimatovo",
+     "children": []
+    },
+    {
+     "id": "e50de9ba-4507-4f0d-8adc-f2c2109a36e3",
+     "name": "Vele Drage",
+     "children": []
+    },
+    {
+     "id": "5958f9eb-b5f3-4520-b50b-b8dc21e0a3f5",
+     "name": "Zahrt",
+     "children": []
+    },
+    {
+     "id": "f7be4d1d-4090-4493-bcd5-adef738647cd",
+     "name": "Zavrh",
+     "children": []
+    },
+    {
+     "id": "6c59faf0-859a-4d8c-ac8e-58d1789384da",
+     "name": "Završje",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "925154f3-7bef-4ddb-858f-bb21ef9c1131",
+   "name": "Cres",
+   "children": [
+    {
+     "id": "9503132d-1613-46ad-97e4-af4cbe9b1f29",
+     "name": "Beli",
+     "children": []
+    },
+    {
+     "id": "7914a172-0b90-4222-adb1-8013ad5cd96b",
+     "name": "Cres",
+     "children": []
+    },
+    {
+     "id": "682d9715-a77f-4838-9359-a5b052a5d02c",
+     "name": "Dragozetići",
+     "children": []
+    },
+    {
+     "id": "dfc7c81e-1033-42b3-a9a8-0df47d55693c",
+     "name": "Filozići",
+     "children": []
+    },
+    {
+     "id": "ea79faef-207e-448f-b504-a4e4d64b28c4",
+     "name": "Grmov",
+     "children": []
+    },
+    {
+     "id": "8f555d6e-8119-46bb-abdc-51b6608fe60c",
+     "name": "Ivanje",
+     "children": []
+    },
+    {
+     "id": "8007c778-22c6-47e6-b437-e1b9f89009f5",
+     "name": "Loznati",
+     "children": []
+    },
+    {
+     "id": "10fb2189-0608-4992-985c-dc15fbac35f8",
+     "name": "Lubenice",
+     "children": []
+    },
+    {
+     "id": "50615b22-46e4-4f62-8717-7ccd4be991ef",
+     "name": "Mali Podol",
+     "children": []
+    },
+    {
+     "id": "d91b66cb-26cf-47b1-97a7-6ad26be70f40",
+     "name": "Martinšćica",
+     "children": []
+    },
+    {
+     "id": "ec50ad20-e804-4cd1-951e-e06a483c56db",
+     "name": "Merag",
+     "children": []
+    },
+    {
+     "id": "6254ec2a-9138-4d11-8696-5782c3577f58",
+     "name": "Miholašćica",
+     "children": []
+    },
+    {
+     "id": "3c63cddc-6678-4258-97d1-2a273b619939",
+     "name": "Orlec",
+     "children": []
+    },
+    {
+     "id": "fc80d22d-34fc-41e4-861c-630a34cbb345",
+     "name": "Pernat",
+     "children": []
+    },
+    {
+     "id": "a9dbc36e-b761-4f8e-8159-53bce5951bde",
+     "name": "Porozina",
+     "children": []
+    },
+    {
+     "id": "27075831-8eac-492d-9e6d-f72231961bcc",
+     "name": "Predošćica",
+     "children": []
+    },
+    {
+     "id": "be691abf-8b7f-42d4-9a7a-cd9c0ca49f6a",
+     "name": "Stanić",
+     "children": []
+    },
+    {
+     "id": "6eb4e4b8-5553-41c1-842f-290e13d7a6df",
+     "name": "Stivan",
+     "children": []
+    },
+    {
+     "id": "2753ecd2-2677-4fc9-8eac-ec48e976ac0b",
+     "name": "Sveti Petar",
+     "children": []
+    },
+    {
+     "id": "b2fe08cd-ed55-487c-8844-535a7d5aafce",
+     "name": "Valun",
+     "children": []
+    },
+    {
+     "id": "08b3e065-3645-485b-ab9f-c02efcd866ab",
+     "name": "Važminec",
+     "children": []
+    },
+    {
+     "id": "336f6f4a-925f-45d1-bb28-8c1085c157e8",
+     "name": "Vidovići",
+     "children": []
+    },
+    {
+     "id": "901248e9-88a0-4a63-b7bb-68487e03e51d",
+     "name": "Vodice",
+     "children": []
+    },
+    {
+     "id": "ecfea9c2-c261-4ddd-9da2-06d499dee232",
+     "name": "Vrana",
+     "children": []
+    },
+    {
+     "id": "bfef8c37-3257-415d-8dc1-f3a1c85df3b0",
+     "name": "Zbičina",
+     "children": []
+    },
+    {
+     "id": "da3bbd4b-1293-4a43-abc1-fbbe6705f61b",
+     "name": "Zbišina",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "d176f157-39a6-48a0-af0f-dbdffa2a1bb6",
+   "name": "Crikvenica",
+   "children": [
+    {
+     "id": "89a0f24e-c506-4c16-9587-1b0552f568cd",
+     "name": "Crikvenica",
+     "children": []
+    },
+    {
+     "id": "0a55bc12-ff91-4777-bb28-84c985c527e0",
+     "name": "Dramalj",
+     "children": []
+    },
+    {
+     "id": "c7490702-0316-495a-896c-977a82498f44",
+     "name": "Jadranovo",
+     "children": []
+    },
+    {
+     "id": "1cb5f336-1450-48ce-aa85-5824900f1e70",
+     "name": "Selce",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "7162b704-c344-4b7a-8882-051190f98814",
+   "name": "Čabar",
+   "children": [
+    {
+     "id": "322b5ce6-ef83-4cdd-8f6d-ae5a860bd280",
+     "name": "Bazli",
+     "children": []
+    },
+    {
+     "id": "2d7cacc0-bb76-4075-8c66-01780e6534e1",
+     "name": "Brinjeva Draga",
+     "children": []
+    },
+    {
+     "id": "a6fa5519-3297-45dd-ae5e-418afbfa4ce5",
+     "name": "Crni Lazi",
+     "children": []
+    },
+    {
+     "id": "2c6e9398-a709-4e80-bdfe-bc2b4b3c9e07",
+     "name": "Čabar",
+     "children": []
+    },
+    {
+     "id": "fb499559-9299-4e38-81e2-8e444cc2a3a1",
+     "name": "Donji Žagari",
+     "children": []
+    },
+    {
+     "id": "b4252387-c8e6-4467-b9d2-b367749769f0",
+     "name": "Fažonci",
+     "children": []
+    },
+    {
+     "id": "ab9dd6bc-bed7-44c7-88a7-7323d30576a1",
+     "name": "Frbežari",
+     "children": []
+    },
+    {
+     "id": "bb81a2e2-9ccf-43d2-9171-3e3f81684fc0",
+     "name": "Gerovo",
+     "children": []
+    },
+    {
+     "id": "4eefbe80-1f69-4ae4-a16a-71313b49892a",
+     "name": "Gerovski Kraj",
+     "children": []
+    },
+    {
+     "id": "679e9179-d7aa-4b07-bb5a-476a508f90d2",
+     "name": "Gorači",
+     "children": []
+    },
+    {
+     "id": "7e96394f-46e3-4e4f-bb06-4f2b4b30fd43",
+     "name": "Gornji Žagari",
+     "children": []
+    },
+    {
+     "id": "f18f035e-ba13-4b1f-8b77-78e243108f54",
+     "name": "Hrib",
+     "children": []
+    },
+    {
+     "id": "dcd652bd-dc8e-4ed5-b4f3-9ef7ec91b0fc",
+     "name": "Kamenski Hrib",
+     "children": []
+    },
+    {
+     "id": "b2e564cc-dcb6-4442-bfee-9e8c8dc446f3",
+     "name": "Kozji Vrh",
+     "children": []
+    },
+    {
+     "id": "34d0eddb-6b98-46ff-bfff-00ca4b967057",
+     "name": "Kraljev Vrh",
+     "children": []
+    },
+    {
+     "id": "61f8beb7-f9ca-4b17-bb9a-943f2373cb19",
+     "name": "Kranjci",
+     "children": []
+    },
+    {
+     "id": "4092cdc5-5e01-4b6c-a492-e719da349396",
+     "name": "Lautari",
+     "children": []
+    },
+    {
+     "id": "056967bc-a805-462e-b921-b58c95e7acb7",
+     "name": "Lazi",
+     "children": []
+    },
+    {
+     "id": "39f27ff1-1e21-45ab-997c-b18b45aaac20",
+     "name": "Makov Hrib",
+     "children": []
+    },
+    {
+     "id": "d8238802-b490-4554-80ca-43a81ae9162e",
+     "name": "Mali Lug",
+     "children": []
+    },
+    {
+     "id": "0a3b4713-14a9-4664-838c-ca12f2c51357",
+     "name": "Mandli",
+     "children": []
+    },
+    {
+     "id": "a4671650-56d1-405d-aaa8-10c69e4ee794",
+     "name": "Okrivje",
+     "children": []
+    },
+    {
+     "id": "55af243a-074b-4b7b-ac1e-46bbafa51bd2",
+     "name": "Parg",
+     "children": []
+    },
+    {
+     "id": "e2a7a9f1-c1dc-40f3-b3cb-e35213507c98",
+     "name": "Plešce",
+     "children": []
+    },
+    {
+     "id": "cb2bbe6a-6fde-48f1-aeb1-5e8700e22e28",
+     "name": "Podstene",
+     "children": []
+    },
+    {
+     "id": "a7abce24-509e-4d30-a37b-889c2a713546",
+     "name": "Požarnica",
+     "children": []
+    },
+    {
+     "id": "b24d02a3-04ee-421a-83d1-b86b4f2e4e46",
+     "name": "Prezid",
+     "children": []
+    },
+    {
+     "id": "ae2c9277-4d6e-4eef-b783-df70c376a84b",
+     "name": "Prhci",
+     "children": []
+    },
+    {
+     "id": "ec6124d5-6fe7-45f9-b203-573db7cd3f09",
+     "name": "Prhutova Draga",
+     "children": []
+    },
+    {
+     "id": "3c5b0c5e-dd23-423b-8515-7a421abf3884",
+     "name": "Pršleti",
+     "children": []
+    },
+    {
+     "id": "374f27a9-27d1-49ec-bf2e-c70c8c0293ae",
+     "name": "Ravnice",
+     "children": []
+    },
+    {
+     "id": "7af4b12f-7630-4e11-b8ac-ef0c1e925ec1",
+     "name": "Selo",
+     "children": []
+    },
+    {
+     "id": "2d9d8a5a-9538-4c02-9268-c493087bdc76",
+     "name": "Smrečje",
+     "children": []
+    },
+    {
+     "id": "0d5bb9c4-b9a4-4966-980a-618bd31cbd49",
+     "name": "Smrekari",
+     "children": []
+    },
+    {
+     "id": "73c51020-e5c6-484f-b496-18961a34b188",
+     "name": "Sokoli",
+     "children": []
+    },
+    {
+     "id": "4a53bfbe-abca-4d4d-bc9e-b29b9075f8ae",
+     "name": "Srednja Draga",
+     "children": []
+    },
+    {
+     "id": "73ecee54-00e7-4295-9b6e-f552fe0ebb4c",
+     "name": "Tropeti",
+     "children": []
+    },
+    {
+     "id": "41594526-9a7c-40f4-a07d-44f7e53f0670",
+     "name": "Tršće",
+     "children": []
+    },
+    {
+     "id": "dc99a8ee-7366-4433-8570-e9c4ccf7e3dc",
+     "name": "Vode",
+     "children": []
+    },
+    {
+     "id": "f658e0b3-253a-4fe1-9a72-123f61d5ffd0",
+     "name": "Vrhovci",
+     "children": []
+    },
+    {
+     "id": "55104f65-63c4-4936-8d1e-20ae34cd343b",
+     "name": "Zamost",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "75529031-239f-4ac6-8e08-645bb777ce70",
+   "name": "Čavle",
+   "children": [
+    {
+     "id": "ddebdadc-18b5-415e-8992-e01e932bb92d",
+     "name": "Buzdohanj",
+     "children": []
+    },
+    {
+     "id": "8f1bb53b-10ef-47f6-9dec-142112997132",
+     "name": "Cernik",
+     "children": []
+    },
+    {
+     "id": "9bf09335-2e2a-4b31-a866-aad398c4fc47",
+     "name": "Čavle",
+     "children": []
+    },
+    {
+     "id": "68bb0715-5cbc-439b-b6d2-7be0e15595a3",
+     "name": "Grobnik",
+     "children": []
+    },
+    {
+     "id": "81f4ff38-1539-409a-bdde-0142e49dd7f0",
+     "name": "Mavrinci",
+     "children": []
+    },
+    {
+     "id": "7f290645-ea86-4705-ac7a-b714dfc1c16d",
+     "name": "Podčudnič",
+     "children": []
+    },
+    {
+     "id": "86fd3b34-6de4-4d97-b345-c07033955950",
+     "name": "Podrvanj",
+     "children": []
+    },
+    {
+     "id": "cc70e270-9cfe-442e-bef7-5dbc89df6c3b",
+     "name": "Soboli",
+     "children": []
+    },
+    {
+     "id": "27f007d3-74d4-4e15-a2c5-3898f8e05aa9",
+     "name": "Zastenice",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "957a4129-4077-43f4-a4e5-d07a322a5cb9",
+   "name": "Delnice",
+   "children": [
+    {
+     "id": "15ab1c87-6a0a-4676-8711-121877ffd2eb",
+     "name": "Bela Vodica",
+     "children": []
+    },
+    {
+     "id": "74f7ae17-19cd-433d-9132-004670f7dcc5",
+     "name": "Belo",
+     "children": []
+    },
+    {
+     "id": "50ccf831-fb6a-414b-aabb-7340f234ebe7",
+     "name": "Biljevina",
+     "children": []
+    },
+    {
+     "id": "073e9b5d-4f99-403e-8634-f4e944a4b0f0",
+     "name": "Brod na Kupi",
+     "children": []
+    },
+    {
+     "id": "f2dad679-1150-4d92-863b-6366d8af2141",
+     "name": "Crni Lug",
+     "children": []
+    },
+    {
+     "id": "adc0c3d7-93f3-46ea-93c0-20b050b04773",
+     "name": "Čedanj",
+     "children": []
+    },
+    {
+     "id": "8b97c65b-a045-4ec1-a749-d7d582143268",
+     "name": "Dedin",
+     "children": []
+    },
+    {
+     "id": "cd901f7a-5098-4c3c-95fe-237087305db9",
+     "name": "Delnice",
+     "children": []
+    },
+    {
+     "id": "82d9f5b2-5e87-4dc0-9854-6f2f39fb6c97",
+     "name": "Donja Krašićevica",
+     "children": []
+    },
+    {
+     "id": "5e72920c-4a87-4b68-a278-0d1d24c0ab27",
+     "name": "Donje Tihovo",
+     "children": []
+    },
+    {
+     "id": "2ff52f49-2c2d-4c58-9b22-c8d440b24461",
+     "name": "Donji Ložac",
+     "children": []
+    },
+    {
+     "id": "8ede8291-1dc9-4c6d-9dd8-8dee2780257a",
+     "name": "Donji Okrug",
+     "children": []
+    },
+    {
+     "id": "0e781cdb-8d14-449d-bd41-58ef67e2d57f",
+     "name": "Donji Turni",
+     "children": []
+    },
+    {
+     "id": "2e3178f2-b725-4c77-a557-691472e60b64",
+     "name": "Gašparci",
+     "children": []
+    },
+    {
+     "id": "4fad8ef5-ec07-4f14-8215-1f0ea12de930",
+     "name": "Golik",
+     "children": []
+    },
+    {
+     "id": "885ca811-ca8f-460b-8d5d-6e58ab872b12",
+     "name": "Gornja Krašićevica",
+     "children": []
+    },
+    {
+     "id": "d367c1ca-5f1e-4ce8-91be-90f77652e311",
+     "name": "Gornje Tihovo",
+     "children": []
+    },
+    {
+     "id": "66a6b041-7a85-457d-a41d-5f4340f28581",
+     "name": "Gornji Ložac",
+     "children": []
+    },
+    {
+     "id": "71d3ed53-942d-4f8d-9323-7d8aff60af82",
+     "name": "Gornji Okrug",
+     "children": []
+    },
+    {
+     "id": "9417557d-d029-4474-a57b-844a83407a48",
+     "name": "Gornji Turni",
+     "children": []
+    },
+    {
+     "id": "982ff055-e5ae-4138-b65f-dd9bf0a5ae1b",
+     "name": "Grbajel",
+     "children": []
+    },
+    {
+     "id": "f26fab88-9961-4527-9423-12fc50a2d857",
+     "name": "Guče Selo",
+     "children": []
+    },
+    {
+     "id": "41305e7b-da60-47fc-bbeb-b36bfd9c064b",
+     "name": "Gusti Laz",
+     "children": []
+    },
+    {
+     "id": "b2dd2f10-b7d1-4529-8ff3-aba1ea3b8be8",
+     "name": "Hrvatsko",
+     "children": []
+    },
+    {
+     "id": "7e27dfe1-6f58-45c0-87ae-a2715d54610b",
+     "name": "Iševnica",
+     "children": []
+    },
+    {
+     "id": "67f01ef5-6509-464e-9412-c07307c02b3a",
+     "name": "Kalić",
+     "children": []
+    },
+    {
+     "id": "9ea9ff1c-096a-42e7-a149-f715aa3edcd1",
+     "name": "Kočičin",
+     "children": []
+    },
+    {
+     "id": "299bd432-b20c-4858-a367-2523819c1676",
+     "name": "Krivac",
+     "children": []
+    },
+    {
+     "id": "a25fd9d1-9631-41e7-8841-82fcd6f67a44",
+     "name": "Kupa",
+     "children": []
+    },
+    {
+     "id": "a674fe6f-c7ab-49f9-95ca-23fc1558e011",
+     "name": "Kuželj",
+     "children": []
+    },
+    {
+     "id": "73feaab0-97d3-4b97-b852-893030bba6b1",
+     "name": "Leska",
+     "children": []
+    },
+    {
+     "id": "8de95436-311a-4b9e-a33d-27cc147f9222",
+     "name": "Lučice",
+     "children": []
+    },
+    {
+     "id": "43f14eb1-26eb-4b68-aa01-07d25b41e96a",
+     "name": "Mala Lešnica",
+     "children": []
+    },
+    {
+     "id": "9e73bdc4-9e53-4b07-97d0-f4286f29d3f1",
+     "name": "Malo Selo",
+     "children": []
+    },
+    {
+     "id": "88336add-5247-4d04-b952-15ac16f0254a",
+     "name": "Marija Trošt",
+     "children": []
+    },
+    {
+     "id": "57290530-2fa6-461b-86f8-ca5dcdb85663",
+     "name": "Plajzi",
+     "children": []
+    },
+    {
+     "id": "7e326b22-ce8c-43df-b5e3-c0ab992ddbbe",
+     "name": "Podgora Turkovska",
+     "children": []
+    },
+    {
+     "id": "4fa46125-e518-421d-9346-48c2c1703766",
+     "name": "Požar",
+     "children": []
+    },
+    {
+     "id": "f1c21c58-7890-4d31-8e7a-c202dfd4583d",
+     "name": "Radočaj Brodski",
+     "children": []
+    },
+    {
+     "id": "bbee6f33-98fb-497d-be0c-27a6389da266",
+     "name": "Raskrižje Tihovo",
+     "children": []
+    },
+    {
+     "id": "4e25056b-5019-42e0-8624-bb9fc96f167c",
+     "name": "Razloge",
+     "children": []
+    },
+    {
+     "id": "399d15d6-a54e-4527-a440-9157f8dc59de",
+     "name": "Razloški Okrug",
+     "children": []
+    },
+    {
+     "id": "9bafe997-6bd2-43ea-85c0-250fd7642b2d",
+     "name": "Sedalce",
+     "children": []
+    },
+    {
+     "id": "e0474b6f-9f9d-4f05-bcf1-d844fc74b38f",
+     "name": "Srednja Krašićevica",
+     "children": []
+    },
+    {
+     "id": "a281f632-d644-4a70-b8e1-4283ac362219",
+     "name": "Suhor",
+     "children": []
+    },
+    {
+     "id": "af2586d7-f0af-4e29-a858-dbf783ed1f5c",
+     "name": "Ševalj",
+     "children": []
+    },
+    {
+     "id": "bf883e3d-870b-4524-a8df-42022b02d6fc",
+     "name": "Turke",
+     "children": []
+    },
+    {
+     "id": "89e402ca-d2ac-4b37-9ac3-4c4427c8717e",
+     "name": "Vela Voda",
+     "children": []
+    },
+    {
+     "id": "7c9394d3-3636-41a3-8611-0923f1529c31",
+     "name": "Velika Lešnica",
+     "children": []
+    },
+    {
+     "id": "73161bab-e36a-43f4-aea1-a05514973f25",
+     "name": "Zagolik",
+     "children": []
+    },
+    {
+     "id": "8943d87a-9730-4e0c-b4d5-72a6e8be1e5b",
+     "name": "Zakrajc Turkovski",
+     "children": []
+    },
+    {
+     "id": "e44db9d9-1c48-4b6e-aa33-fc5386a842bb",
+     "name": "Zalesina",
+     "children": []
+    },
+    {
+     "id": "d01c5298-fa65-4669-a9f3-35fdcd84cbdc",
+     "name": "Zamost Brodski",
+     "children": []
+    },
+    {
+     "id": "3bc3574a-1c4a-4aab-a69d-95f852e415cc",
+     "name": "Zapolje Brodsko",
+     "children": []
+    },
+    {
+     "id": "b69ef0ad-a639-4f9a-9e75-b500c0604e3a",
+     "name": "Zelin Crnoluški",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "84408878-6c27-41b9-9acc-d6c6511512b6",
+   "name": "Dobrinj",
+   "children": [
+    {
+     "id": "6a8603e6-f7e0-402b-ac35-859b7004db6f",
+     "name": "Čižići",
+     "children": []
+    },
+    {
+     "id": "e89956cd-553f-42e5-9eb9-78dcc6367468",
+     "name": "Dobrinj",
+     "children": []
+    },
+    {
+     "id": "20238ff8-f7d6-4de3-851f-4f7bd606a22a",
+     "name": "Dolovo",
+     "children": []
+    },
+    {
+     "id": "da4e3ca3-3057-4c03-a2cf-a1de60db91dc",
+     "name": "Gabonjin",
+     "children": []
+    },
+    {
+     "id": "ffe8e4dd-1544-4e3e-9f53-d0bb36c47ed9",
+     "name": "Gostinjac",
+     "children": []
+    },
+    {
+     "id": "5697d839-91ac-46e5-b1fb-21bc316f8e6f",
+     "name": "Hlapa",
+     "children": []
+    },
+    {
+     "id": "3ff94068-62ae-4939-b8db-a531df013bcc",
+     "name": "Klanice",
+     "children": []
+    },
+    {
+     "id": "119cdbc6-057e-4921-8f29-0991adc9ef98",
+     "name": "Klimno",
+     "children": []
+    },
+    {
+     "id": "c39dca54-08d7-4a8e-b31f-8a4ca9b1ba61",
+     "name": "Kras",
+     "children": []
+    },
+    {
+     "id": "ba60be72-bd56-42d3-ab06-2a2bb23c2558",
+     "name": "Polje",
+     "children": []
+    },
+    {
+     "id": "d76e508d-37a7-4d65-a664-457e178e7932",
+     "name": "Rasopasno",
+     "children": []
+    },
+    {
+     "id": "9d6945b7-fe52-4847-9a22-aa74e855b15d",
+     "name": "Rudine",
+     "children": []
+    },
+    {
+     "id": "541e07ff-bde9-4f70-aebf-03c15ce4655b",
+     "name": "Soline",
+     "children": []
+    },
+    {
+     "id": "dd41df38-67df-4bf1-8c52-608548e6fac5",
+     "name": "Sužan",
+     "children": []
+    },
+    {
+     "id": "bee9f7cd-94c0-4582-bc28-5e1fd293aeb0",
+     "name": "Sveti Ivan Dobrinjski",
+     "children": []
+    },
+    {
+     "id": "805c669d-5791-40d4-808b-f5a85a008e72",
+     "name": "Sveti Vid Dobrinjski",
+     "children": []
+    },
+    {
+     "id": "67aca848-b363-43ca-9205-25da87cd240d",
+     "name": "Šilo",
+     "children": []
+    },
+    {
+     "id": "21fa1373-5226-4796-90eb-770117609637",
+     "name": "Tribulje",
+     "children": []
+    },
+    {
+     "id": "048bcf3e-9fbd-4ba6-833d-72a544be188a",
+     "name": "Žestilac",
+     "children": []
+    },
+    {
+     "id": "d121bc02-9ae0-4b93-b4fb-887ee035294a",
+     "name": "Županje",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "7fdc782e-ae70-4cfb-861d-6c5911f70293",
+   "name": "Fužine",
+   "children": [
+    {
+     "id": "12182798-cd17-4ce9-a304-271c71c6eb2a",
+     "name": "Banovina",
+     "children": []
+    },
+    {
+     "id": "3fba0691-bd39-4087-bce4-75b45b2a67c2",
+     "name": "Belo Selo",
+     "children": []
+    },
+    {
+     "id": "1384cc59-3ad0-454e-add9-b09b8ef6f0a3",
+     "name": "Benkovac Fužinski",
+     "children": []
+    },
+    {
+     "id": "e7a11b76-9840-47c8-9cbb-78cc9618b6ff",
+     "name": "Fužine",
+     "children": []
+    },
+    {
+     "id": "5cc88da8-a097-4a1d-89af-eb3140d71127",
+     "name": "Lič",
+     "children": []
+    },
+    {
+     "id": "3ce072d3-6cc5-417e-93d1-bb92bf9055c5",
+     "name": "Pirovište",
+     "children": []
+    },
+    {
+     "id": "0573b765-0ae2-4db8-992c-8adefe497b06",
+     "name": "Potkobiljak",
+     "children": []
+    },
+    {
+     "id": "b44b3847-3679-48ab-9cb1-93c675556fa5",
+     "name": "Slavica",
+     "children": []
+    },
+    {
+     "id": "4f9b7c4d-6667-4a21-ab05-4610f766be83",
+     "name": "Vrata",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "3303106e-0e24-4630-9059-04055b6f57c4",
+   "name": "Jelenje",
+   "children": [
+    {
+     "id": "867385bf-61ab-406f-984c-3de653f0ff20",
+     "name": "Baštijani",
+     "children": []
+    },
+    {
+     "id": "8200b6e7-53ef-49e1-89d9-1ac330e1d05c",
+     "name": "Brnelići",
+     "children": []
+    },
+    {
+     "id": "419f4f73-3921-4983-b180-1a62df4db6e3",
+     "name": "Drastin",
+     "children": []
+    },
+    {
+     "id": "c8deae52-0b8f-49c5-b87d-b76230857927",
+     "name": "Dražice",
+     "children": []
+    },
+    {
+     "id": "ac26b369-c927-4ef1-b0c6-ae9d006a7533",
+     "name": "Jelenje",
+     "children": []
+    },
+    {
+     "id": "907e3113-8086-4176-9ab0-d5eac846d39d",
+     "name": "Kukuljani",
+     "children": []
+    },
+    {
+     "id": "650a1197-360a-4432-aa6d-23551ba49971",
+     "name": "Lopača",
+     "children": []
+    },
+    {
+     "id": "89e7f65e-66e6-49dc-9517-f37afd7ecb6c",
+     "name": "Lubarska",
+     "children": []
+    },
+    {
+     "id": "69b551bc-1451-4c20-9e89-04fadb429274",
+     "name": "Lukeži",
+     "children": []
+    },
+    {
+     "id": "90e1d0da-b98c-41f8-bca4-3091d5ba0939",
+     "name": "Martinovo Selo",
+     "children": []
+    },
+    {
+     "id": "6e9e805b-4e45-4bb5-9e4f-8dcdeab3f68f",
+     "name": "Milaši",
+     "children": []
+    },
+    {
+     "id": "992172aa-adae-41a3-956b-2a1db1bc2471",
+     "name": "Podhum",
+     "children": []
+    },
+    {
+     "id": "05e25a1f-c82c-427a-916b-7af99d494ae1",
+     "name": "Podkilavac",
+     "children": []
+    },
+    {
+     "id": "5d1f74dc-5121-4a77-9ff4-9e095c20e0cb",
+     "name": "Ratulje",
+     "children": []
+    },
+    {
+     "id": "9d639587-4926-438c-97e4-8586871f6c8c",
+     "name": "Trnovica",
+     "children": []
+    },
+    {
+     "id": "abdda673-4433-499e-a418-80e5db211ae3",
+     "name": "Valići",
+     "children": []
+    },
+    {
+     "id": "83f415c1-9039-44ee-8e40-e9f0af1cce74",
+     "name": "Zoretići",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "1fe788b7-013d-4282-b6c3-4986be8e77cb",
+   "name": "Kastav",
+   "children": [
+    {
+     "id": "850e1a29-fb1a-4c0d-abda-afd521bac5fd",
+     "name": "Belići",
+     "children": []
+    },
+    {
+     "id": "5e9343f1-72dc-41a0-8763-0055d5e21800",
+     "name": "Brestovice",
+     "children": []
+    },
+    {
+     "id": "38330789-bfa9-45f4-8b5e-60b6d577b565",
+     "name": "Brnčići",
+     "children": []
+    },
+    {
+     "id": "c975d5ec-2b15-47c9-912f-ae6831547dfe",
+     "name": "Ćikovići",
+     "children": []
+    },
+    {
+     "id": "4009e4f9-8644-428b-ab5e-812560df681f",
+     "name": "Frlani",
+     "children": []
+    },
+    {
+     "id": "8e5568bb-3c73-4e89-9613-a4d46e2efde3",
+     "name": "Jurčići",
+     "children": []
+    },
+    {
+     "id": "7ef1d067-04d3-478d-a715-0459dc76fa91",
+     "name": "Kastav",
+     "children": []
+    },
+    {
+     "id": "658d32f6-b46c-4776-9139-6f8326c41c69",
+     "name": "Rešetari",
+     "children": []
+    },
+    {
+     "id": "87740292-0645-43a9-99a8-d931ea745e79",
+     "name": "Rubeši",
+     "children": []
+    },
+    {
+     "id": "7806f3f1-e29b-4933-9feb-4e7d9d0581c2",
+     "name": "Spinčići",
+     "children": []
+    },
+    {
+     "id": "e38605a0-a71c-403b-8824-39e2635f3f27",
+     "name": "Tometići",
+     "children": []
+    },
+    {
+     "id": "d2ed1e8c-539c-4927-850d-7b18a46493f5",
+     "name": "Trinajstići",
+     "children": []
+    },
+    {
+     "id": "f5f47beb-c298-43a2-95fc-9cb05c9fcd8b",
+     "name": "Tuhtani",
+     "children": []
+    },
+    {
+     "id": "e923e651-92fd-4ce8-8727-d6d593e39e00",
+     "name": "Žegoti",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "68aae8ff-b1c8-44bc-8c42-69916762da8e",
+   "name": "Klana",
+   "children": [
+    {
+     "id": "5f47d780-a8ab-4b91-a51c-064c8d908858",
+     "name": "Breza",
+     "children": []
+    },
+    {
+     "id": "60057ddc-68d6-44f7-8334-07cf029dd867",
+     "name": "Klana",
+     "children": []
+    },
+    {
+     "id": "35fd0685-10a3-4a6c-9b60-611ccac96586",
+     "name": "Lisac",
+     "children": []
+    },
+    {
+     "id": "1a22907b-21b4-4d33-bc1a-2b579a5bad52",
+     "name": "Studena",
+     "children": []
+    },
+    {
+     "id": "0f2c0abf-0951-4aa9-82ea-ddb728d4783e",
+     "name": "Škalnica",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "d0a44061-2065-4062-90be-aac95217c288",
+   "name": "Kostrena",
+   "children": [
+    {
+     "id": "1e31ee08-970c-4e50-be23-f1c053e3b25c",
+     "name": "Doričići",
+     "children": []
+    },
+    {
+     "id": "d0dbc9ef-1024-43b1-85ec-d65a507c89a4",
+     "name": "Dujmići",
+     "children": []
+    },
+    {
+     "id": "56c41490-a5ac-4f00-8c22-5f0c9b32914d",
+     "name": "Glavani",
+     "children": []
+    },
+    {
+     "id": "901a6ccf-c0c8-42b0-ad24-1a00d6617cfb",
+     "name": "Kostrena",
+     "children": []
+    },
+    {
+     "id": "8453a2a7-6106-4d0e-b92f-32571da6f01c",
+     "name": "Kostrena Sveta Barbara",
+     "children": []
+    },
+    {
+     "id": "5ce9f71a-9b64-469b-a89f-003b79f6dbdd",
+     "name": "Kostrena Sveta Lucija",
+     "children": []
+    },
+    {
+     "id": "f7fa373d-dbd2-4067-8e88-11ce993fca2d",
+     "name": "Maračići",
+     "children": []
+    },
+    {
+     "id": "5fabd00e-d5da-4767-a997-656f66ae6882",
+     "name": "Martinšćica",
+     "children": []
+    },
+    {
+     "id": "9187e62d-b51a-45ea-9561-f5cd86f68a89",
+     "name": "Paveki",
+     "children": []
+    },
+    {
+     "id": "b90f64c5-454e-4fd9-b85b-2ef967f7fb83",
+     "name": "Perovići",
+     "children": []
+    },
+    {
+     "id": "f07ca019-6e32-463c-a8ea-379f10b91bd6",
+     "name": "Plešići",
+     "children": []
+    },
+    {
+     "id": "61fac082-41a0-4b2b-9e70-8f4d08cc1cf3",
+     "name": "Randići",
+     "children": []
+    },
+    {
+     "id": "f7979f5e-2c27-4706-abe4-459206168b49",
+     "name": "Rožići",
+     "children": []
+    },
+    {
+     "id": "86eefea6-f080-4454-bdc3-13a8099f8b6c",
+     "name": "Rožmanići",
+     "children": []
+    },
+    {
+     "id": "6ba4c2bc-bcb6-4951-a5d4-43bbbccfc5d8",
+     "name": "Šodići",
+     "children": []
+    },
+    {
+     "id": "20df132f-7414-4ea2-8eaf-a1fd4469e0a3",
+     "name": "Šoići",
+     "children": []
+    },
+    {
+     "id": "4650c7e4-7047-42d0-af8b-f1d7ebe4cb4a",
+     "name": "Urinj",
+     "children": []
+    },
+    {
+     "id": "9f16162a-d260-4dce-9c75-e1ead770fe05",
+     "name": "Vrh Martinšćice",
+     "children": []
+    },
+    {
+     "id": "4a1933cc-e018-4007-b881-afe7c895a0a7",
+     "name": "Žuknica",
+     "children": []
+    },
+    {
+     "id": "64e59332-ef35-4a7c-b204-d41895888487",
+     "name": "Žurkovo",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "11ca77af-2614-48fc-a105-b78dacb48ed9",
+   "name": "Kraljevica",
+   "children": [
+    {
+     "id": "7378ae82-3f1e-4b17-871c-8f0a88d43a99",
+     "name": "Bakarac",
+     "children": []
+    },
+    {
+     "id": "aaadeddb-ed98-4858-8006-afd8608eb41d",
+     "name": "Kraljevica",
+     "children": []
+    },
+    {
+     "id": "0903a93f-ea79-4adf-8a73-2cf1cd100386",
+     "name": "Križišće",
+     "children": []
+    },
+    {
+     "id": "8236167c-12b2-4e57-ad46-b4989727850f",
+     "name": "Mali Dol",
+     "children": []
+    },
+    {
+     "id": "207e57e5-d953-436e-a17b-7253f945d2e9",
+     "name": "Šmrika",
+     "children": []
+    },
+    {
+     "id": "7acecc2a-5e48-43aa-a517-6ae9de6b7304",
+     "name": "Veli Dol",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+   "name": "Krk",
+   "children": [
+    {
+     "id": "6d6cc87a-7873-470a-8d67-4a7e3072c61e",
+     "name": "Bajčići",
+     "children": []
+    },
+    {
+     "id": "e80b58ce-122f-4cfe-be15-e0ae791ddeed",
+     "name": "Brusići",
+     "children": []
+    },
+    {
+     "id": "6b38e82b-11f1-4022-81fa-14b8fcd487e3",
+     "name": "Brzac",
+     "children": []
+    },
+    {
+     "id": "40147e97-3b96-4327-83fe-0de0099f96e7",
+     "name": "Kornić",
+     "children": []
+    },
+    {
+     "id": "d25ac76a-fb3d-4dfb-b26e-6fdc56057f5b",
+     "name": "Krk",
+     "children": []
+    },
+    {
+     "id": "eb393f61-3e22-4e9a-9a1a-971421e67042",
+     "name": "Lakmartin",
+     "children": []
+    },
+    {
+     "id": "bc6713bd-385b-4a7a-84fb-f528ce3e4cf2",
+     "name": "Linardići",
+     "children": []
+    },
+    {
+     "id": "266d8e55-5b9c-4702-a383-4a6f10f9ab0a",
+     "name": "Milohnići",
+     "children": []
+    },
+    {
+     "id": "7a8b821f-113b-4112-81aa-280d12760307",
+     "name": "Muraj",
+     "children": []
+    },
+    {
+     "id": "e64390ff-3193-44bb-9e1e-b9c4c238e6f2",
+     "name": "Nenadići",
+     "children": []
+    },
+    {
+     "id": "b62e6a14-c903-413f-9d1a-6e5671720a01",
+     "name": "Pinezići",
+     "children": []
+    },
+    {
+     "id": "fb1378bb-589d-47d9-ae86-44bbbfbfae7f",
+     "name": "Poljica",
+     "children": []
+    },
+    {
+     "id": "74b91587-2324-4631-8a0b-2d5fdd8d5c63",
+     "name": "Skrbčići",
+     "children": []
+    },
+    {
+     "id": "18177a5f-d1f1-4a52-8706-840bce7e4ec8",
+     "name": "Vrh",
+     "children": []
+    },
+    {
+     "id": "e2f61779-66e1-4db0-8826-79cb4ceb4da5",
+     "name": "Žgaljići",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "2dd2d200-3372-4a83-8f73-7266c678d8d6",
+   "name": "Lokve",
+   "children": [
+    {
+     "id": "89ece4f7-80a1-4ce9-9a92-becb0588e5ce",
+     "name": "Homer",
+     "children": []
+    },
+    {
+     "id": "071f2d6d-8a91-487a-b414-f1eb54edc534",
+     "name": "Lazac Lokvarski",
+     "children": []
+    },
+    {
+     "id": "42087ef0-dc06-42a5-b7f5-4d91763c8ae9",
+     "name": "Lokve",
+     "children": []
+    },
+    {
+     "id": "6ed8133e-3b5f-4467-937a-4930e0a85735",
+     "name": "Mrzla Vodica",
+     "children": []
+    },
+    {
+     "id": "f87c236b-398b-47d2-844e-c0a2a4268531",
+     "name": "Sljeme",
+     "children": []
+    },
+    {
+     "id": "a4f0fc6e-825c-4642-9a92-43437e8e1b3b",
+     "name": "Sopač",
+     "children": []
+    },
+    {
+     "id": "90f45735-de62-4ccd-9165-457a5b9f2ae5",
+     "name": "Zelin Mrzlovodički",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "27d87653-402b-464e-844d-5c4bd9c1e4c3",
+   "name": "Lovran",
+   "children": [
+    {
+     "id": "00efc1ec-4a1d-4161-ae39-364289917a2d",
+     "name": "Liganj",
+     "children": []
+    },
+    {
+     "id": "a2eed01c-78c2-4cd6-8782-947c3548ff18",
+     "name": "Lovran",
+     "children": []
+    },
+    {
+     "id": "c40830c9-ec44-4e25-8cc2-62fb819ab5cc",
+     "name": "Lovranska Draga",
+     "children": []
+    },
+    {
+     "id": "8052797b-7419-40ce-ab88-75bf12ca4d52",
+     "name": "Medveja",
+     "children": []
+    },
+    {
+     "id": "3d8879a5-c75f-4039-b1a9-7291de2b9ed3",
+     "name": "Tuliševica",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "21a57a53-5e8a-4640-baa1-2428432f253f",
+   "name": "Mali Lošinj",
+   "children": [
+    {
+     "id": "4b6b63a9-74bf-4da7-b4ae-b339890e81e3",
+     "name": "Artatore",
+     "children": []
+    },
+    {
+     "id": "55df1553-f2aa-4c61-aac1-0c08507bbe10",
+     "name": "Belej",
+     "children": []
+    },
+    {
+     "id": "933a9c6f-3b7e-4e5d-817c-160c7a185cd8",
+     "name": "Ćunski",
+     "children": []
+    },
+    {
+     "id": "c0a6acd0-9e0d-40ec-a018-9f38ebb13ac4",
+     "name": "Ilovik",
+     "children": []
+    },
+    {
+     "id": "ccced773-f28e-4ac3-99bd-898fb8c32db1",
+     "name": "Male Srakane",
+     "children": []
+    },
+    {
+     "id": "4a42380a-ad02-49c9-b0ac-c9567e1b8167",
+     "name": "Mali Lošinj",
+     "children": []
+    },
+    {
+     "id": "8c0e989d-7197-433e-b550-84f5e37ca74a",
+     "name": "Nerezine",
+     "children": []
+    },
+    {
+     "id": "d217c56e-70eb-45e4-95cf-d3d364ebfd6f",
+     "name": "Osor",
+     "children": []
+    },
+    {
+     "id": "3e2bcd56-5ee9-4e8e-aa2e-88d05e1b1f04",
+     "name": "Punta Križa",
+     "children": []
+    },
+    {
+     "id": "368e3721-67c6-4ed3-9e69-aa48624a49bb",
+     "name": "Susak",
+     "children": []
+    },
+    {
+     "id": "f0bf6ab8-2795-43ef-be0f-66632479d545",
+     "name": "Sveti Jakov",
+     "children": []
+    },
+    {
+     "id": "b0e08714-aa96-4ba9-907a-8a3ca4d6eb9f",
+     "name": "Unije",
+     "children": []
+    },
+    {
+     "id": "c2b91c7f-8127-4506-beae-21038d671bee",
+     "name": "Ustrine",
+     "children": []
+    },
+    {
+     "id": "a213ab6c-94ea-4217-b442-bf8eca2caa25",
+     "name": "Vele Srakane",
+     "children": []
+    },
+    {
+     "id": "75659d5a-bc08-4953-95c8-19c8903afc12",
+     "name": "Veli Lošinj",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "e9c26dc0-6ddb-4e0e-b71c-690df71b3010",
+   "name": "Malinska-Dubašnica",
+   "children": [
+    {
+     "id": "d3c84b71-2878-48f8-93ad-ba3c906b446e",
+     "name": "Barušići",
+     "children": []
+    },
+    {
+     "id": "4db10638-216f-4e87-bf8e-42da734570b1",
+     "name": "Bogovići",
+     "children": []
+    },
+    {
+     "id": "ccb91a4d-63a6-4d02-b0ec-caf27af55be2",
+     "name": "Kremenići",
+     "children": []
+    },
+    {
+     "id": "34560d64-338b-4639-8335-9cb2e5f89661",
+     "name": "Ljutići",
+     "children": []
+    },
+    {
+     "id": "462c0c7e-f5bd-46c7-a9c3-b16c6cb0504f",
+     "name": "Malinska",
+     "children": []
+    },
+    {
+     "id": "09a8de93-19c7-4ff2-b955-71c7302b4f5d",
+     "name": "Maršići",
+     "children": []
+    },
+    {
+     "id": "3b2124a1-ea5d-4d4d-9dec-95155721c1d8",
+     "name": "Milčetići",
+     "children": []
+    },
+    {
+     "id": "23e40e77-fdc4-4ec5-90b2-7b35045d1809",
+     "name": "Milovčići",
+     "children": []
+    },
+    {
+     "id": "71f17c6b-17bf-4d30-91b5-98cbfd877b54",
+     "name": "Oštrobradić",
+     "children": []
+    },
+    {
+     "id": "5e2099aa-0a83-4d5a-b118-4837631bcc87",
+     "name": "Porat",
+     "children": []
+    },
+    {
+     "id": "5c6ab9a9-cb8d-4d09-b514-7984400f05ac",
+     "name": "Radići",
+     "children": []
+    },
+    {
+     "id": "f641f254-073c-4209-a943-6439e816e019",
+     "name": "Sabljići",
+     "children": []
+    },
+    {
+     "id": "eece339b-2bdf-4784-8fa6-7db70d967b08",
+     "name": "Sršići",
+     "children": []
+    },
+    {
+     "id": "c68f2bce-fac7-4619-9277-d9eeef8caa47",
+     "name": "Strilčići",
+     "children": []
+    },
+    {
+     "id": "498116d1-5f07-4821-83b4-6315274c6e7b",
+     "name": "Sveti Anton",
+     "children": []
+    },
+    {
+     "id": "d44e112d-eb71-4f4d-bcd0-3c81a3f62499",
+     "name": "Sveti Ivan",
+     "children": []
+    },
+    {
+     "id": "dc917b91-9f52-467c-b999-3792c8e991cb",
+     "name": "Sveti Vid-Miholjice",
+     "children": []
+    },
+    {
+     "id": "978777b1-7b6b-414b-ba19-6f05735cf0c2",
+     "name": "Turčić",
+     "children": []
+    },
+    {
+     "id": "ee93d721-2f2f-47e3-aab8-a465413844d0",
+     "name": "Vantačići",
+     "children": []
+    },
+    {
+     "id": "0bb66062-1a88-4003-94ac-4c10bc379752",
+     "name": "Zidarići",
+     "children": []
+    },
+    {
+     "id": "08402e0c-969c-48b7-a102-5bbe5b4a52be",
+     "name": "Žgombići",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "762fcd90-c987-4e62-8cf3-f23b8bb1c886",
+   "name": "Matulji",
+   "children": [
+    {
+     "id": "3215c18d-beca-4584-96de-d660d14dd9ce",
+     "name": "Brdce",
+     "children": []
+    },
+    {
+     "id": "c1e32569-7ff0-48e7-9032-597bde447702",
+     "name": "Bregi",
+     "children": []
+    },
+    {
+     "id": "611544f4-34ab-4683-9695-0bd273fbcb31",
+     "name": "Brešca",
+     "children": []
+    },
+    {
+     "id": "d86889eb-35a0-4a57-ace4-b23e6863cc75",
+     "name": "Jurdani",
+     "children": []
+    },
+    {
+     "id": "52aab8a4-e311-4b72-ada6-1dae5452f647",
+     "name": "Jušići",
+     "children": []
+    },
+    {
+     "id": "46afb1c9-58ca-4445-ab70-85f6410ce1fd",
+     "name": "Kučeli",
+     "children": []
+    },
+    {
+     "id": "26f5f49e-1a83-4cdb-9d53-302a50483539",
+     "name": "Lipa",
+     "children": []
+    },
+    {
+     "id": "716f44e1-2261-49af-8fba-ac86ce93c7f4",
+     "name": "Male Mune",
+     "children": []
+    },
+    {
+     "id": "802458c0-3c34-4c1d-9383-9bd2ff6faee5",
+     "name": "Mali Brgud",
+     "children": []
+    },
+    {
+     "id": "a04f4149-9402-4d2c-9905-1f4779d0fd0d",
+     "name": "Matulji",
+     "children": []
+    },
+    {
+     "id": "8c291d9b-6508-4e67-912b-9a968a378ea9",
+     "name": "Mihotići",
+     "children": []
+    },
+    {
+     "id": "0d991684-a0f4-4be2-8ce4-97f4979ca3e8",
+     "name": "Mučići",
+     "children": []
+    },
+    {
+     "id": "98879de0-8ebc-46cb-9a94-c6f3df9b79bf",
+     "name": "Pasjak",
+     "children": []
+    },
+    {
+     "id": "f093ae40-5276-4916-bd8a-aa514239b001",
+     "name": "Permani",
+     "children": []
+    },
+    {
+     "id": "00f298d8-c50d-4a2c-a600-22e0f549354f",
+     "name": "Rukavac",
+     "children": []
+    },
+    {
+     "id": "956e077d-928b-40db-9291-1a6fd0b379c2",
+     "name": "Rupa",
+     "children": []
+    },
+    {
+     "id": "3f392e00-8333-4a2f-96d6-eaae0cbfeb36",
+     "name": "Ružići",
+     "children": []
+    },
+    {
+     "id": "d87f0eda-e0a0-4ca0-9915-96baaec1886a",
+     "name": "Šapjane",
+     "children": []
+    },
+    {
+     "id": "c6c28e43-d3be-47d4-a910-b96e6aba8145",
+     "name": "Vele Mune",
+     "children": []
+    },
+    {
+     "id": "f0680f14-f34a-4bb8-92b7-8a7a5df7d95a",
+     "name": "Veli Brgud",
+     "children": []
+    },
+    {
+     "id": "aced48cc-2545-487f-bb30-992b280c8099",
+     "name": "Zaluki",
+     "children": []
+    },
+    {
+     "id": "3f3ce23d-72d8-4044-9926-5ce24cdb5b65",
+     "name": "Zvoneća",
+     "children": []
+    },
+    {
+     "id": "8312c934-1394-4c5e-9b54-c8f2c0f18677",
+     "name": "Žejane",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "7276d1fa-f644-405c-8116-a09473701697",
+   "name": "Mošćenička Draga",
+   "children": [
+    {
+     "id": "da05f0f1-9617-449d-b5ae-8b599ccef725",
+     "name": "Brseč",
+     "children": []
+    },
+    {
+     "id": "83625cd7-048b-48ac-b5a7-f6147ba187aa",
+     "name": "Donji Kraj",
+     "children": []
+    },
+    {
+     "id": "b5178a0f-7471-4560-bcdc-8b0c4a1bcce9",
+     "name": "Golovik",
+     "children": []
+    },
+    {
+     "id": "a90a744c-1f5a-4c83-81f6-817e9394873d",
+     "name": "Grabrova",
+     "children": []
+    },
+    {
+     "id": "b2e773de-c798-493c-89a8-e7cb80e8e7e9",
+     "name": "Kalac",
+     "children": []
+    },
+    {
+     "id": "d3efd277-b6d7-40d7-a8a5-cdc62fb950d4",
+     "name": "Martina",
+     "children": []
+    },
+    {
+     "id": "ec3faba7-3809-43e1-9bcc-0a8f8a1ca1db",
+     "name": "Mošćenice",
+     "children": []
+    },
+    {
+     "id": "c10eec4d-9f2a-4f80-af05-f78619636e1b",
+     "name": "Mošćenička Draga",
+     "children": []
+    },
+    {
+     "id": "a70830f7-57b7-4f06-ac1a-b75811fea838",
+     "name": "Obrš",
+     "children": []
+    },
+    {
+     "id": "e6dbc333-d974-4745-b2c7-51b2468e291b",
+     "name": "Sučići",
+     "children": []
+    },
+    {
+     "id": "da1753b6-a90f-4861-a62f-cef272f0a957",
+     "name": "Sveta Jelena",
+     "children": []
+    },
+    {
+     "id": "197b3822-fdf2-4ff6-a383-1689785e6ec9",
+     "name": "Sveti Anton",
+     "children": []
+    },
+    {
+     "id": "d84cb927-7d8c-4098-8065-a45f1ea08886",
+     "name": "Sveti Petar",
+     "children": []
+    },
+    {
+     "id": "6a6f631e-1e74-4e44-a825-67990ef4f525",
+     "name": "Zagore",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "cf3dd75e-16d3-47cb-9c91-6d5de03cd013",
+   "name": "Mrkopalj",
+   "children": [
+    {
+     "id": "f07cd0d8-07f2-4637-af07-415c0d44b2a3",
+     "name": "Begovo Razdolje",
+     "children": []
+    },
+    {
+     "id": "e51008c8-cd38-4acc-be5c-663354c53c26",
+     "name": "Brestova Draga",
+     "children": []
+    },
+    {
+     "id": "0c331863-de59-4783-8bbe-c845e7fede9e",
+     "name": "Mrkopalj",
+     "children": []
+    },
+    {
+     "id": "ad553c93-b9cb-4e11-b7d0-bb0f16b184d6",
+     "name": "Sunger",
+     "children": []
+    },
+    {
+     "id": "47b5af9b-cb6d-49d2-bf52-1163af81bdf1",
+     "name": "Tuk Mrkopaljski",
+     "children": []
+    },
+    {
+     "id": "98c6ed6b-dd53-4205-9c26-2d05d70e0fab",
+     "name": "Tuk Vojni",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "6a64a40a-36c1-4135-bd3a-537ba3bb2486",
+   "name": "Novi Vinodolski",
+   "children": [
+    {
+     "id": "1053050b-bdcb-44b6-9fda-792bb8e998bd",
+     "name": "Bater",
+     "children": []
+    },
+    {
+     "id": "17f54e7e-e81a-49f1-8a21-79cc4f685851",
+     "name": "Bile",
+     "children": []
+    },
+    {
+     "id": "cc70bce5-ecba-489a-9d09-b6100a6502ee",
+     "name": "Breze",
+     "children": []
+    },
+    {
+     "id": "c3fa49df-93a9-4473-803f-268ff63d4be3",
+     "name": "Crno",
+     "children": []
+    },
+    {
+     "id": "f507cbea-4faa-4d8e-9418-a2e61956414e",
+     "name": "Donji Zagon",
+     "children": []
+    },
+    {
+     "id": "4f42de4e-806e-459c-ab7c-58690596540f",
+     "name": "Drinak",
+     "children": []
+    },
+    {
+     "id": "5dff99fb-2a29-4789-9cf9-a517d6751042",
+     "name": "Gornji Zagon",
+     "children": []
+    },
+    {
+     "id": "75333c42-8a97-45cc-b2e5-974903a94a21",
+     "name": "Jakov Polje",
+     "children": []
+    },
+    {
+     "id": "6bcf161b-1d38-4b2f-bee5-0a757091716a",
+     "name": "Javorje",
+     "children": []
+    },
+    {
+     "id": "87eb4db0-b262-4127-83b0-88ca2e3220c3",
+     "name": "Klenovica",
+     "children": []
+    },
+    {
+     "id": "2301c713-3d81-4668-aa6e-efa51e9c7ec3",
+     "name": "Krmpotske Vodice",
+     "children": []
+    },
+    {
+     "id": "e3ea2cb5-509b-4082-8fb2-aca584b0b5c4",
+     "name": "Ledenice",
+     "children": []
+    },
+    {
+     "id": "2ec6c509-4aa8-4b6b-a289-1256acd0b44d",
+     "name": "Luka Krmpotska",
+     "children": []
+    },
+    {
+     "id": "53b0d6a6-43d7-4b2f-90fb-9522a2113840",
+     "name": "Novi Vinodolski",
+     "children": []
+    },
+    {
+     "id": "1a73febb-25d5-46ac-936d-f03d17a47812",
+     "name": "Podmelnik",
+     "children": []
+    },
+    {
+     "id": "1fc7a6c9-0952-4435-84ae-4835b0630eec",
+     "name": "Povile",
+     "children": []
+    },
+    {
+     "id": "b21d25e3-d6de-4d27-86d7-9f16050f8871",
+     "name": "Ruševo Krmpotsko",
+     "children": []
+    },
+    {
+     "id": "80e8ab6d-12ef-4501-bfc1-4876242ae754",
+     "name": "Sibinj Krmpotski",
+     "children": []
+    },
+    {
+     "id": "117d69c0-5348-4104-bcfb-e3b31ea4fe57",
+     "name": "Smokvica Krmpotska",
+     "children": []
+    },
+    {
+     "id": "6cb169e8-199b-46e6-b0ca-15fa1b0fb74d",
+     "name": "Zabukovac",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "a7ab4761-71f1-44ec-befb-aeed49cfe090",
+   "name": "Omišalj",
+   "children": [
+    {
+     "id": "a81f5f0b-6b5a-4a7c-a2fb-05123a9b67bf",
+     "name": "Njivice",
+     "children": []
+    },
+    {
+     "id": "8fa798cb-9f2d-4d4c-84aa-ea8ece10455f",
+     "name": "Omišalj",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "7b2c1ce8-a44a-4c69-a005-b6d44341c1b2",
+   "name": "Opatija",
+   "children": [
+    {
+     "id": "cf227cc1-8143-49f8-aa0f-967d456ff5bc",
+     "name": "Kosićevo",
+     "children": []
+    },
+    {
+     "id": "d5c3d851-ceea-4b3f-8662-7178d621f27e",
+     "name": "Lipovica",
+     "children": []
+    },
+    {
+     "id": "eb58ff63-a2b5-4dcc-8d8c-1c9d57a497e7",
+     "name": "Opatija - Centar",
+     "children": []
+    },
+    {
+     "id": "212995ca-8e49-4186-9dcb-8ec8ff04df7f",
+     "name": "Plahuti",
+     "children": []
+    },
+    {
+     "id": "95d30417-95de-4b60-a2c7-30d98c4f234f",
+     "name": "Punta Kolova",
+     "children": []
+    },
+    {
+     "id": "2b2a409b-e22c-454b-91b2-5482536d8b1a",
+     "name": "Tošina",
+     "children": []
+    },
+    {
+     "id": "0036b8fa-ec5c-409c-ab9c-85f393084ddc",
+     "name": "Volosko",
+     "children": []
+    },
+    {
+     "id": "d083a425-0321-43a6-989e-2d1905965826",
+     "name": "Vrutki",
+     "children": []
+    },
+    {
+     "id": "f6b73820-354c-4286-8daa-c0cf90021c73",
+     "name": "Zora",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "98f82c8b-1ecb-429a-b8af-dbaebb69d7ea",
+   "name": "Opatija - Okolica",
+   "children": [
+    {
+     "id": "b27d73fc-c8e2-40d3-bf7d-a9126ed43f57",
+     "name": "Dobreć",
+     "children": []
+    },
+    {
+     "id": "844a304d-0e35-457f-8585-534b2856cff0",
+     "name": "Ičići",
+     "children": []
+    },
+    {
+     "id": "8b75f8e1-7cb0-47e6-a8e9-afc63e2d15d4",
+     "name": "Ika",
+     "children": []
+    },
+    {
+     "id": "416bfdaf-c03c-4fb2-b2d1-1280c1218e23",
+     "name": "Mala Učka",
+     "children": []
+    },
+    {
+     "id": "6e67aaf6-099c-461a-8dcf-52e13fe50006",
+     "name": "Oprić",
+     "children": []
+    },
+    {
+     "id": "16bf9a99-69f0-4550-8002-7700b1d8c567",
+     "name": "Pobri",
+     "children": []
+    },
+    {
+     "id": "8f341943-2e53-465a-8208-1df83fa69b1d",
+     "name": "Poljane",
+     "children": []
+    },
+    {
+     "id": "78c41716-b6e4-4f50-8b43-8ca4ee6ec1ec",
+     "name": "Vela Učka",
+     "children": []
+    },
+    {
+     "id": "504b6c3e-d917-4a23-8ee9-3b1094c3c3d1",
+     "name": "Veprinac",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "049ed303-4b28-4235-93a4-ac1ba0a116ac",
+   "name": "Punat",
+   "children": [
+    {
+     "id": "bd456b64-4a8a-4c16-8d50-396fa2419bda",
+     "name": "Punat",
+     "children": []
+    },
+    {
+     "id": "0336d9a3-f7a8-4e7a-b6f0-7d9412953872",
+     "name": "Stara Baška",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "3d75306c-ebd1-459f-8a74-2be0275753a3",
+   "name": "Rab",
+   "children": [
+    {
+     "id": "16679de5-0afe-4bee-a60e-735fddc56997",
+     "name": "Banjol",
+     "children": []
+    },
+    {
+     "id": "4add044e-8c6d-4d9b-a923-96ccd9fa9e86",
+     "name": "Barbat na Rabu",
+     "children": []
+    },
+    {
+     "id": "ffc7491d-69ca-49f8-9c7c-eaad89b875c3",
+     "name": "Kampor",
+     "children": []
+    },
+    {
+     "id": "14fe8073-7466-4a96-8dec-f474d0ca377a",
+     "name": "Lopar",
+     "children": []
+    },
+    {
+     "id": "5f471901-a4e9-417a-8549-b22dccf7fb36",
+     "name": "Mundanije",
+     "children": []
+    },
+    {
+     "id": "b8c2260e-03b7-43ca-8060-dbd8d0be6a9c",
+     "name": "Palit",
+     "children": []
+    },
+    {
+     "id": "07ab87bb-810d-4102-b05d-55fdc617b7c6",
+     "name": "Rab",
+     "children": []
+    },
+    {
+     "id": "f58f915d-1210-4384-988a-11adcb49115e",
+     "name": "Supetarska Draga",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "7c03a20c-77ad-4edf-bdf2-3a87f005b136",
+   "name": "Ravna Gora",
+   "children": [
+    {
+     "id": "9cffb3ff-c52a-4fa3-9125-0425aa229d0a",
+     "name": "Kupjak",
+     "children": []
+    },
+    {
+     "id": "cb27482f-8a90-4c33-80eb-6e98ce089163",
+     "name": "Leskova Draga",
+     "children": []
+    },
+    {
+     "id": "45d6c402-964f-45ff-be15-a664b98519f6",
+     "name": "Ravna Gora",
+     "children": []
+    },
+    {
+     "id": "155a9bb6-527e-4607-9c2c-f037d049a5ef",
+     "name": "Stara Sušica",
+     "children": []
+    },
+    {
+     "id": "91cebff3-3a2c-4724-bca5-391bda6fef22",
+     "name": "Stari Laz",
+     "children": []
+    },
+    {
+     "id": "331e36ac-065d-4310-80d7-923157936064",
+     "name": "Šije",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "36bd1dbc-f301-4ae7-988e-171765d599f7",
+   "name": "Rijeka",
+   "children": [
+    {
+     "id": "659a07b1-a15d-402c-b88b-0693b5c04035",
+     "name": "Banderovo",
+     "children": []
+    },
+    {
+     "id": "270d6ced-5526-46c5-bf4b-f5c5d2a1b1ab",
+     "name": "Belveder",
+     "children": []
+    },
+    {
+     "id": "f2a8c2a2-1e6c-4d40-802a-5b09d513282a",
+     "name": "Bivio",
+     "children": []
+    },
+    {
+     "id": "55639f1b-545d-4878-8c90-783d72f7f56c",
+     "name": "Brajda",
+     "children": []
+    },
+    {
+     "id": "5aa7e5d7-df88-471d-9e39-de368c514ca8",
+     "name": "Brašćine",
+     "children": []
+    },
+    {
+     "id": "f1cef821-bec9-4abe-afda-e8f424c3ad03",
+     "name": "Bulevard",
+     "children": []
+    },
+    {
+     "id": "25d49dd4-252e-4168-a618-d059391ed08a",
+     "name": "Centar",
+     "children": []
+    },
+    {
+     "id": "4eeb3ec0-2080-407a-82d7-a579c80275fd",
+     "name": "Costabella",
+     "children": []
+    },
+    {
+     "id": "06da2dc8-4ff3-4c70-a6a9-ec68b88f9e26",
+     "name": "Donja Vežica",
+     "children": []
+    },
+    {
+     "id": "77d281ab-b398-4c2e-8384-c0ecd81165d6",
+     "name": "Draga",
+     "children": []
+    },
+    {
+     "id": "06321ad3-d208-407e-abf9-3fca0931d75e",
+     "name": "Drenova",
+     "children": []
+    },
+    {
+     "id": "0f6d728e-c736-4875-aa11-0e8b1a066713",
+     "name": "Gornja Vežica",
+     "children": []
+    },
+    {
+     "id": "c23ca524-c26a-4c08-a7c8-2ecd243f1a48",
+     "name": "Grbci",
+     "children": []
+    },
+    {
+     "id": "e302405b-9cf1-4669-9f7f-c8dea68b205e",
+     "name": "Hosti",
+     "children": []
+    },
+    {
+     "id": "ad39cec5-86dd-4d2f-a246-fb977bf63754",
+     "name": "Kantrida",
+     "children": []
+    },
+    {
+     "id": "028b8106-6f2a-491b-9706-669f515f4f70",
+     "name": "Kozala",
+     "children": []
+    },
+    {
+     "id": "2aeaa004-e119-428d-a06d-68a34dce3b60",
+     "name": "Krimeja",
+     "children": []
+    },
+    {
+     "id": "94cb979e-71a1-4ef8-8c11-329a05f65b5d",
+     "name": "Krnjevo",
+     "children": []
+    },
+    {
+     "id": "201d195f-54c2-420b-a25b-f227f2fe8946",
+     "name": "Marčeljeva Draga",
+     "children": []
+    },
+    {
+     "id": "1c78ece6-5098-4a36-adcd-6ece9f1f2746",
+     "name": "Martinkovac",
+     "children": []
+    },
+    {
+     "id": "109d5005-dad8-4833-bd44-3cabd11f1be8",
+     "name": "Mlaka",
+     "children": []
+    },
+    {
+     "id": "d2588661-ee7f-4ab0-879f-f09df62a8008",
+     "name": "Orehovica",
+     "children": []
+    },
+    {
+     "id": "0c287c17-f52a-415b-a3d3-2a2fae6747f4",
+     "name": "Pašac",
+     "children": []
+    },
+    {
+     "id": "2c4e6ada-07eb-4539-ad08-1ba3dfa54cf4",
+     "name": "Pećine",
+     "children": []
+    },
+    {
+     "id": "92019f1b-c3fd-41d7-b91d-34cd14dbd9d5",
+     "name": "Pehlin",
+     "children": []
+    },
+    {
+     "id": "84869d53-f263-4d43-852e-0e9fa7bca169",
+     "name": "Podmurvice",
+     "children": []
+    },
+    {
+     "id": "f275ecf8-d325-42b3-8b96-a32a1aef4d2e",
+     "name": "Potok",
+     "children": []
+    },
+    {
+     "id": "3fc95d63-16de-4b37-9e8c-6b3691bc0ca3",
+     "name": "Preluk",
+     "children": []
+    },
+    {
+     "id": "f182733f-4af6-4b25-9b34-8143f2754b6c",
+     "name": "Pulac",
+     "children": []
+    },
+    {
+     "id": "6c9a0d24-e695-4378-b66a-8c1dc5568fbb",
+     "name": "Rastočine",
+     "children": []
+    },
+    {
+     "id": "bc34d909-4405-40b9-b7d5-91ace4ec8f2f",
+     "name": "Rujevica",
+     "children": []
+    },
+    {
+     "id": "051d0ba3-e639-4b57-a3d9-52341a812203",
+     "name": "Srdoči",
+     "children": []
+    },
+    {
+     "id": "99afe714-bd95-4f1f-909d-e8d62fd5dde0",
+     "name": "Stari Grad",
+     "children": []
+    },
+    {
+     "id": "4df1ba1a-7103-4de5-8320-be04301504f0",
+     "name": "Sušak",
+     "children": []
+    },
+    {
+     "id": "3b0d85bb-e02b-4c6c-9b6e-3dbf0d4cd60f",
+     "name": "Sveti Kuzam",
+     "children": []
+    },
+    {
+     "id": "5942864c-b6e2-407e-91e0-f96a68b00b31",
+     "name": "Svilno",
+     "children": []
+    },
+    {
+     "id": "0c64f3ee-b48a-403a-888f-3e0aacd6d780",
+     "name": "Školjić",
+     "children": []
+    },
+    {
+     "id": "9863ce02-fee2-405b-b44c-3e813ec0da8e",
+     "name": "Škurinje",
+     "children": []
+    },
+    {
+     "id": "86a83520-a9f8-43dd-ba3a-1c0d88d762b3",
+     "name": "Škurinjska Draga",
+     "children": []
+    },
+    {
+     "id": "97f30b2a-47a5-4b25-b1b8-77efb74e60de",
+     "name": "Trsat",
+     "children": []
+    },
+    {
+     "id": "8ef64b00-3dab-4ead-8aa4-b76e2810f6ca",
+     "name": "Turnić",
+     "children": []
+    },
+    {
+     "id": "00c988a3-a1b1-4dc4-b757-9a5be85d3ba4",
+     "name": "Vojak",
+     "children": []
+    },
+    {
+     "id": "23a28c23-1317-45e5-9e4d-bf468d266fd1",
+     "name": "Zamet",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "1ac164f4-80a8-4e66-a83f-45019607a225",
+   "name": "Skrad",
+   "children": [
+    {
+     "id": "8edc93d9-946c-4ba4-ba47-2a6d137cb331",
+     "name": "Belski Ravan",
+     "children": []
+    },
+    {
+     "id": "f2c0f758-2fe8-4b96-885a-12e00e512d9f",
+     "name": "Brezje Dobransko",
+     "children": []
+    },
+    {
+     "id": "1bdffaa3-49e8-4488-b388-88a5e7d7eb6c",
+     "name": "Bukov Vrh",
+     "children": []
+    },
+    {
+     "id": "e2aebc7b-1889-4f46-b177-cb2b789a02f4",
+     "name": "Bukovac Podvrški",
+     "children": []
+    },
+    {
+     "id": "738ead3b-d8de-4fec-99b7-fe030d3d4700",
+     "name": "Buzin",
+     "children": []
+    },
+    {
+     "id": "9b1ecc00-7228-4963-b54a-a681f9974195",
+     "name": "Divjake",
+     "children": []
+    },
+    {
+     "id": "9679bbaf-f6f1-484e-93b4-c68cad2e8645",
+     "name": "Gorani",
+     "children": []
+    },
+    {
+     "id": "19f91982-33ea-4ad1-a0c3-21e5f16da41e",
+     "name": "Gorica Skradska",
+     "children": []
+    },
+    {
+     "id": "16782659-4de1-485f-8396-47ebbc359fe0",
+     "name": "Gornja Dobra",
+     "children": []
+    },
+    {
+     "id": "709f540c-923f-4906-b6d8-9f3ff275be2e",
+     "name": "Gramalj",
+     "children": []
+    },
+    {
+     "id": "e041c237-f4e9-40ba-9d81-385e7de08285",
+     "name": "Hlevci",
+     "children": []
+    },
+    {
+     "id": "c3114642-4934-4d22-add5-b73ce0e6e763",
+     "name": "Hosnik",
+     "children": []
+    },
+    {
+     "id": "5a9eb9f7-0105-453f-ac80-4c2cef0b73ca",
+     "name": "Hribac",
+     "children": []
+    },
+    {
+     "id": "76211b07-6260-49f5-90b2-3f4264273404",
+     "name": "Mala Dobra",
+     "children": []
+    },
+    {
+     "id": "77c6ed88-920b-4636-a82d-f68c1ce1c636",
+     "name": "Malo Selce",
+     "children": []
+    },
+    {
+     "id": "07b4ef0b-4521-40de-a632-d06fef0340c7",
+     "name": "Pećišće",
+     "children": []
+    },
+    {
+     "id": "78c22977-a2c6-4d2e-aa27-69108d218ae7",
+     "name": "Planina Skradska",
+     "children": []
+    },
+    {
+     "id": "94d84205-2cfb-4f00-9638-795b1644c860",
+     "name": "Podslemeni Lazi",
+     "children": []
+    },
+    {
+     "id": "2e99ede7-61b3-484f-88ea-1a84441a24e6",
+     "name": "Podstena",
+     "children": []
+    },
+    {
+     "id": "5c31a1ad-c0c2-4f3b-87a8-888a51153fff",
+     "name": "Pucak",
+     "children": []
+    },
+    {
+     "id": "5c1d071a-165d-441a-b0ed-572352cf71db",
+     "name": "Raskrižje",
+     "children": []
+    },
+    {
+     "id": "ee1e9325-1839-42e1-aa3a-5f068aae560c",
+     "name": "Rasohe",
+     "children": []
+    },
+    {
+     "id": "e9ceb0b9-547c-4876-812d-cbdac09daf84",
+     "name": "Resnatac",
+     "children": []
+    },
+    {
+     "id": "bdad2038-44cf-42a0-909d-74348fa0bde9",
+     "name": "Rogi",
+     "children": []
+    },
+    {
+     "id": "ce79277d-4771-4331-8672-403674a9b29f",
+     "name": "Skrad",
+     "children": []
+    },
+    {
+     "id": "bd3e01a4-8f7e-4ba9-9edd-1351b0aac3a4",
+     "name": "Sleme Skradsko",
+     "children": []
+    },
+    {
+     "id": "8de268af-06f7-41f1-9bcc-bb8e1440cfd9",
+     "name": "Trški Lazi",
+     "children": []
+    },
+    {
+     "id": "91e2180a-8cda-4679-9106-d013ffbf9591",
+     "name": "Tusti Vrh",
+     "children": []
+    },
+    {
+     "id": "56cc1ccd-a043-4c49-b06e-0800307f4d2f",
+     "name": "Veliko Selce",
+     "children": []
+    },
+    {
+     "id": "72547df8-0607-4901-9861-04c603ec0679",
+     "name": "Vrh Brodski",
+     "children": []
+    },
+    {
+     "id": "8b2805bb-f2f9-4808-81f4-29d0bf34d5d5",
+     "name": "Zakrajc Brodski",
+     "children": []
+    },
+    {
+     "id": "a0d5a003-8a28-45d1-a993-7ad9e5dba431",
+     "name": "Žrnovac",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "dd63ce70-6c7f-476d-be41-f96e5d1a5e9c",
+   "name": "Vinodolska Općina",
+   "children": [
+    {
+     "id": "e38d199a-31cf-4dfb-a64f-a7917bc6e842",
+     "name": "Bribir",
+     "children": []
+    },
+    {
+     "id": "df292a3f-9429-41fb-8dc2-2f7aa4a82326",
+     "name": "Drivenik",
+     "children": []
+    },
+    {
+     "id": "40ecbb36-fc63-4c53-876e-99d73607181b",
+     "name": "Grižane-Belgrad",
+     "children": []
+    },
+    {
+     "id": "48155c2e-a3e7-4b90-9f33-acb04e5f5b0c",
+     "name": "Tribalj",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "c18873e8-9f93-4638-b312-07908e7c7dc4",
+   "name": "Viškovo",
+   "children": [
+    {
+     "id": "92a4e636-19a1-4bb2-8aa0-b070fc31867c",
+     "name": "Kosi",
+     "children": []
+    },
+    {
+     "id": "bc1d076b-1a15-42c3-a937-204cdd9df392",
+     "name": "Marčelji",
+     "children": []
+    },
+    {
+     "id": "dbc9933e-efc8-4c31-97c0-603045afd634",
+     "name": "Marinići",
+     "children": []
+    },
+    {
+     "id": "20bc09d8-01be-41f4-a946-d2c29151256a",
+     "name": "Mladenići",
+     "children": []
+    },
+    {
+     "id": "e5e04586-835a-460f-8645-a794c7f1fc15",
+     "name": "Saršoni",
+     "children": []
+    },
+    {
+     "id": "81dc6a38-0ec6-4c62-8507-8cae92565f10",
+     "name": "Sroki",
+     "children": []
+    },
+    {
+     "id": "962efc0b-06e1-4cf9-8afd-e35c5a6a7a22",
+     "name": "Viškovo",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "daf4061c-d5c5-4607-8003-6d8a0fab414c",
+   "name": "Vrbnik",
+   "children": [
+    {
+     "id": "d7ea3d5f-6a99-4966-b35c-0cee7e7934c7",
+     "name": "Garica",
+     "children": []
+    },
+    {
+     "id": "72e1e18e-1c36-4b76-935d-1ec5abba0116",
+     "name": "Kampelje",
+     "children": []
+    },
+    {
+     "id": "d99b7b49-ed15-431e-8b28-19ead53c841f",
+     "name": "Risika",
+     "children": []
+    },
+    {
+     "id": "6b5622b9-37b1-4cbd-8c40-4219c4359ab3",
+     "name": "Vrbnik",
+     "children": []
+    }
+   ]
+  },
+  {
+   "id": "68714b3e-3c95-411d-a763-716e76452956",
+   "name": "Vrbovsko",
+   "children": [
+    {
+     "id": "c115e297-503a-4e1d-93b3-20d298ffd2bf",
+     "name": "Blaževci",
+     "children": []
+    },
+    {
+     "id": "33ca0e30-f778-4dc7-9b4f-3bb47f0cbb19",
+     "name": "Bunjevci",
+     "children": []
+    },
+    {
+     "id": "07649b28-8b59-4ada-adaf-3d3aa2041d32",
+     "name": "Carevići",
+     "children": []
+    },
+    {
+     "id": "f49c577f-707d-4299-b8b1-8b5b4d42032e",
+     "name": "Damalj",
+     "children": []
+    },
+    {
+     "id": "59543c01-37fc-47be-82ab-2e6fd35a0018",
+     "name": "Dokmanovići",
+     "children": []
+    },
+    {
+     "id": "f1e5f069-5c3c-44e9-b054-ffac710b4a31",
+     "name": "Dolenci",
+     "children": []
+    },
+    {
+     "id": "a22452ca-a957-4a7f-8faf-1ac27758871a",
+     "name": "Donji Vučkovići",
+     "children": []
+    },
+    {
+     "id": "5584ae6d-9ad2-4fca-ac39-2a028dc0f5c5",
+     "name": "Donji Vukšići",
+     "children": []
+    },
+    {
+     "id": "94235e35-b56d-4d64-9b46-5c9f0e82d6ed",
+     "name": "Draga Lukovdolska",
+     "children": []
+    },
+    {
+     "id": "470d839e-11e9-4a3e-a31d-eecd0bd24470",
+     "name": "Dragovići",
+     "children": []
+    },
+    {
+     "id": "fced33ad-0ad8-4e87-a846-49649aa359f2",
+     "name": "Gomirje",
+     "children": []
+    },
+    {
+     "id": "64de02a1-798e-4bcd-9adb-33fa18105d71",
+     "name": "Gorenci",
+     "children": []
+    },
+    {
+     "id": "732bf0f1-0df5-41e6-b5e0-f8e2b3d0118a",
+     "name": "Gornji Vučkovići",
+     "children": []
+    },
+    {
+     "id": "835d4427-6cda-438f-b618-a6f740e88d93",
+     "name": "Gornji Vukšići",
+     "children": []
+    },
+    {
+     "id": "4444e321-d478-4546-94cb-c29fb64f2d56",
+     "name": "Hajdine",
+     "children": []
+    },
+    {
+     "id": "e7ffe86f-7fcf-430a-ac4f-8a9ac0946253",
+     "name": "Hambarište",
+     "children": []
+    },
+    {
+     "id": "e5a85b98-c8e5-4d40-b3b6-1bb7cdcf35ae",
+     "name": "Jablan",
+     "children": []
+    },
+    {
+     "id": "f384e89f-5cce-4a5a-8e70-0c578e79fe8a",
+     "name": "Jakšići",
+     "children": []
+    },
+    {
+     "id": "45134874-ab80-4e49-a0b8-5e32e922b85b",
+     "name": "Kamensko",
+     "children": []
+    },
+    {
+     "id": "e5d8fc29-46ef-4ed1-beac-a8bd94207b6e",
+     "name": "Klanac",
+     "children": []
+    },
+    {
+     "id": "2c55aed5-22a1-4bb6-9eb2-fecda05fb1e1",
+     "name": "Komlenići",
+     "children": []
+    },
+    {
+     "id": "d93a0572-bd4a-4968-967d-715fb3dba76d",
+     "name": "Lesci",
+     "children": []
+    },
+    {
+     "id": "37d0698e-cc49-4292-9b04-0d258d7fb80e",
+     "name": "Liplje",
+     "children": []
+    },
+    {
+     "id": "0283c2cc-7b71-40ae-b89a-33804a433004",
+     "name": "Lukovdol",
+     "children": []
+    },
+    {
+     "id": "ad23f391-77ad-48b4-8981-ca1c660282ad",
+     "name": "Ljubošina",
+     "children": []
+    },
+    {
+     "id": "1a5f65b4-a927-4f10-8e8c-6befc722339f",
+     "name": "Majer",
+     "children": []
+    },
+    {
+     "id": "396ff0b1-61df-4cad-8349-15e2d7866334",
+     "name": "Mali Jadrč",
+     "children": []
+    },
+    {
+     "id": "5d7fd036-660f-440c-833c-d76cbbc0f084",
+     "name": "Matići",
+     "children": []
+    },
+    {
+     "id": "55812f68-2e88-4546-86d0-f576f1b9e143",
+     "name": "Međedi",
+     "children": []
+    },
+    {
+     "id": "69facbc4-5c58-4605-b9c7-70bb5f998d22",
+     "name": "Mlinari",
+     "children": []
+    },
+    {
+     "id": "906346b2-d264-4854-9ad4-0bb8d2a9baa5",
+     "name": "Močile",
+     "children": []
+    },
+    {
+     "id": "f5564d69-bdb6-43b4-a576-931d1d7d9da3",
+     "name": "Moravice",
+     "children": []
+    },
+    {
+     "id": "527aff27-5de8-4d6c-a27a-debbeb6bb82a",
+     "name": "Musulini",
+     "children": []
+    },
+    {
+     "id": "423c2b4b-6bc4-4c36-aa86-3902dd75a09a",
+     "name": "Nadvučnik",
+     "children": []
+    },
+    {
+     "id": "9449850b-de59-4bb0-9c11-b84dce086e01",
+     "name": "Nikšići",
+     "children": []
+    },
+    {
+     "id": "e1d88daf-3edb-441f-a974-bf52c22e3fa3",
+     "name": "Osojnik",
+     "children": []
+    },
+    {
+     "id": "15862fa3-33dc-4ca3-b837-9c37d2b19ae7",
+     "name": "Petrovići",
+     "children": []
+    },
+    {
+     "id": "1c8a82d1-76dc-4f7f-998b-16be84d6d49d",
+     "name": "Plemenitaš",
+     "children": []
+    },
+    {
+     "id": "0f057e81-c3a5-4ceb-aa5d-d954ca7b5a5a",
+     "name": "Plešivica",
+     "children": []
+    },
+    {
+     "id": "cb6d6c1c-6203-4d1f-8bb7-f3bdfd0bb257",
+     "name": "Podvučnik",
+     "children": []
+    },
+    {
+     "id": "072020a3-c2a3-496d-a2da-4d93a025b0b0",
+     "name": "Poljana",
+     "children": []
+    },
+    {
+     "id": "d2ee2788-e0ba-447f-8a39-eafd0e42f736",
+     "name": "Presika",
+     "children": []
+    },
+    {
+     "id": "50f7672f-af0c-4be4-82ba-05ec819bf502",
+     "name": "Radigojna",
+     "children": []
+    },
+    {
+     "id": "e1c2a73f-c239-456f-89ea-fe6fd0c8cf0d",
+     "name": "Radočaj",
+     "children": []
+    },
+    {
+     "id": "6f97dfda-38fe-44be-ae64-b742470313fa",
+     "name": "Radoševići",
+     "children": []
+    },
+    {
+     "id": "cf3accea-800c-4cfd-a5e8-4acae81adf19",
+     "name": "Rim",
+     "children": []
+    },
+    {
+     "id": "146461dc-1278-48be-9e48-d326e184a2e6",
+     "name": "Rtić",
+     "children": []
+    },
+    {
+     "id": "439a201b-fa21-4f36-bd5a-22a430797651",
+     "name": "Severin na Kupi",
+     "children": []
+    },
+    {
+     "id": "b2b94b08-89c4-462f-b882-bbb4cc7a738a",
+     "name": "Smišljak",
+     "children": []
+    },
+    {
+     "id": "4cf1223d-d148-4c88-b5a3-403b3b54197f",
+     "name": "Stubica",
+     "children": []
+    },
+    {
+     "id": "162d215f-5b00-418e-80cc-5eb2052825b8",
+     "name": "Štefanci",
+     "children": []
+    },
+    {
+     "id": "4debdd4e-8fe5-4ec3-9604-8145369d0f5b",
+     "name": "Tići",
+     "children": []
+    },
+    {
+     "id": "acdc9275-4c86-4666-bfed-9ebf1addb1af",
+     "name": "Tomići",
+     "children": []
+    },
+    {
+     "id": "868eec6c-e321-463e-bdf5-1ce7a9cb14d1",
+     "name": "Topolovica",
+     "children": []
+    },
+    {
+     "id": "35214bbe-f846-476d-841f-bbd797614205",
+     "name": "Tuk",
+     "children": []
+    },
+    {
+     "id": "39905244-1f9e-4357-b046-831001126e66",
+     "name": "Veliki Jadrč",
+     "children": []
+    },
+    {
+     "id": "ecfc13aa-4e5f-4588-8526-1679c067b031",
+     "name": "Vrbovsko",
+     "children": []
+    },
+    {
+     "id": "53ea2d6b-3593-4f8d-9203-0c99375f543e",
+     "name": "Vučinići",
+     "children": []
+    },
+    {
+     "id": "0e33f462-7e2e-45af-9fcd-9fa8216d0c53",
+     "name": "Vučnik",
+     "children": []
+    },
+    {
+     "id": "1d0492bd-b2c4-442b-bf0c-68d0c9257eff",
+     "name": "Vujnovići",
+     "children": []
+    },
+    {
+     "id": "b05a3f60-79da-468b-84b1-6933afb887a7",
+     "name": "Vukelići",
+     "children": []
+    },
+    {
+     "id": "dc6031dd-2ecb-487e-85d2-84e91f64eb2c",
+     "name": "Zapeć",
+     "children": []
+    },
+    {
+     "id": "fbef5c14-c6cc-4ff1-8ef0-c735f7135e96",
+     "name": "Zaumol",
+     "children": []
+    },
+    {
+     "id": "4c4da6bb-b6fe-422d-82b6-0ee297ca20d5",
+     "name": "Zdihovo",
+     "children": []
+    },
+    {
+     "id": "1d935859-d58a-4520-9176-143cfdf9477d",
+     "name": "Žakule",
+     "children": []
+    }
+   ]
+  }
+ ]
+}
