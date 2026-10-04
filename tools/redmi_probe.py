@@ -4,6 +4,7 @@ Pokreće se u Ubuntuu unutar Termuxa, u mapi scraper (upute u REDMI.md):
 
     python tools/redmi_probe.py               # curl_cffi (bez preglednika)
     python tools/redmi_probe.py --playwright  # pravi preglednik, ako curl_cffi ne prolazi
+    python tools/redmi_probe.py --posalji     # samo ponovno pošalji već spremljene rezultate
 
 Ispisuje kratak sažetak, sprema uzorke stranica u redmi-out/ i šalje ih na granu
 debug (mapa redmi/) preko GitHub API-ja. Token se upisuje kad skripta pita;
@@ -127,10 +128,20 @@ def realitica_links(body: bytes) -> dict:
     return {"forms": forms[:5], "selects": selects, "rss": rss}
 
 
-def upload(token: str, files: dict[str, bytes]) -> None:
+def upload(token: str, files: dict[str, bytes]) -> int:
+    """Vraća broj datoteka koje se nisu dale poslati."""
     import requests
 
     headers = {"Authorization": f"Bearer {token}", "Accept": "application/vnd.github+json"}
+    r = requests.get(f"https://api.github.com/repos/{REPO}", headers=headers, timeout=30)
+    if r.status_code != 200:
+        print(f"  GitHub ne prihvaća token: {r.status_code} {r.text[:200]}")
+        return len(files)
+    if not r.json().get("permissions", {}).get("push"):
+        print("  Token nema dozvolu pisanja: na GitHubu u postavkama tokena provjeri da je odabran"
+              " repozitorij B0rn4/scraper i Contents: Read and write.")
+        return len(files)
+    failed = 0
     for name, data in files.items():
         url = f"https://api.github.com/repos/{REPO}/contents/redmi/{name}"
         sha = None
@@ -141,10 +152,42 @@ def upload(token: str, files: dict[str, bytes]) -> None:
         if sha:
             body["sha"] = sha
         r = requests.put(url, headers=headers, json=body, timeout=60)
-        print(f"  poslano {name}: {'u redu' if r.status_code in (200, 201) else f'GREŠKA {r.status_code} {r.text[:150]}'}")
+        if r.status_code in (200, 201):
+            print(f"  poslano {name}: u redu")
+        else:
+            failed += 1
+            print(f"  poslano {name}: GREŠKA {r.status_code} {r.text[:200]}")
+    return failed
+
+
+def send(use_playwright: bool) -> None:
+    summaries = sorted(OUT.glob("sazetak*.json"))
+    if not summaries:
+        print("Nema spremljenih rezultata u redmi-out/. Prvo pokreni probu.")
+        return
+    token = os.environ.get("GITHUB_TOKEN") or getpass.getpass(
+        "Zalijepi GitHub token za slanje rezultata (ne prikazuje se; Enter = ne šalji): ").strip()
+    if not token:
+        print("Ništa nije poslano. Kasnije pošalji s: python tools/redmi_probe.py --posalji")
+        return
+    files = {p.name: p.read_bytes() for p in summaries}
+    files.update({p.name: p.read_bytes() for p in sorted(OUT.glob("*.html.gz"))})
+    try:
+        failed = upload(token, files)
+    except Exception as exc:  # noqa: BLE001
+        print(f"  slanje nije uspjelo: {type(exc).__name__}: {exc}")
+        failed = len(files)
+    if failed:
+        print(f"\nSLANJE NIJE USPJELO ({failed} od {len(files)} datoteka). Pošalji mi snimku zaslona;"
+              " kad popravimo, ponovi s: python tools/redmi_probe.py --posalji")
+    else:
+        print("\nGotovo, rezultati su poslani. Javi mi.")
 
 
 def main() -> None:
+    if "--posalji" in sys.argv:
+        send(False)
+        return
     use_playwright = "--playwright" in sys.argv
     results = {"vrijeme": time.strftime("%Y-%m-%d %H:%M:%S"), "python": sys.version.split()[0],
                "sustav": platform.platform(), "nacin": "playwright" if use_playwright else "curl_cffi"}
@@ -171,18 +214,9 @@ def main() -> None:
 
     OUT.mkdir(exist_ok=True)
     summary = json.dumps(results, ensure_ascii=False, indent=1).encode("utf-8")
-    (OUT / "sazetak.json").write_bytes(summary)
-    print("\nSažetak je u redmi-out/sazetak.json")
-
-    token = os.environ.get("GITHUB_TOKEN") or getpass.getpass(
-        "Zalijepi GitHub token za slanje rezultata (ne prikazuje se; Enter = ne šalji): ").strip()
-    if not token:
-        print("Ništa nije poslano. Javi mi što piše iznad (može i snimka zaslona).")
-        return
-    files = {("sazetak_playwright.json" if use_playwright else "sazetak.json"): summary}
-    files.update({p.name: p.read_bytes() for p in sorted(OUT.glob("*.html.gz"))})
-    upload(token, files)
-    print("Gotovo. Javi mi da je proba poslana.")
+    (OUT / ("sazetak_playwright.json" if use_playwright else "sazetak.json")).write_bytes(summary)
+    print("\nRezultati su spremljeni u redmi-out/.")
+    send(use_playwright)
 
 
 if __name__ == "__main__":
