@@ -22,6 +22,21 @@ pokreće automatski. Proba šalje svega nekoliko zahtjeva svakom portalu.
    zastario i ne radi kako treba.
 4. Otvori Termux.
 
+**Ako F-Droid javi `INSTALL_FAILED_INTERNAL_ERROR: Permission Denied`** (česta
+pojava na Xiaomiju: MIUI ne pušta F-Droidov način instalacije):
+
+- U pregledniku otvori **f-droid.org/packages/com.termux/**, kod najnovije verzije
+  preuzmi APK označen s **arm64-v8a** i otvori preuzetu datoteku. Instalira ga
+  Androidov instalacijski program, a ne F-Droid. Kad pita, dopusti pregledniku
+  instaliranje aplikacija.
+- Ako ni to ne prođe: Postavke → O telefonu → 7 puta dodirni **MIUI verzija**
+  (uključuje opcije za razvojne programere), zatim Postavke → Dodatne postavke →
+  Opcije za razvojne programere → isključi **Uključi MIUI optimizaciju**. Instaliraj
+  Termux pa optimizaciju možeš opet uključiti.
+
+Termux i njegove kasnije dodatke (Termux:Boot) treba instalirati iz istog izvora.
+Zato APK uzmi s F-Droidove stranice, a ne s GitHuba.
+
 ### 1.2 GitHub token
 
 Token služi da Redmi pošalje rezultate probe na GitHub, gdje ih ja čitam. Najlakše ga
