@@ -4,7 +4,7 @@ on:
   schedule:
     # Svakih 20 minuta. GitHub raspored je u UTC-u, pa je raspon širi;
     # skripta sama radi samo od 7 do 23 h po zagrebačkom vremenu.
-    - cron: "2,22,42 5-22 * * *"
+    - cron: "7,27,47 5-22 * * *"
     # Tjedni izvještaj: ponedjeljkom ujutro.
     - cron: "17 6 * * 1"
   workflow_dispatch:
