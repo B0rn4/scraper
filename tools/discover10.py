@@ -17,7 +17,9 @@ import time
 from pathlib import Path
 
 import requests
-import yaml
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+from scraper.locations import Locator  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = Path(sys.argv[1] if len(sys.argv) > 1 else "debug-out") / "discovery10"
@@ -48,24 +50,33 @@ def overpass(query: str) -> dict:
     raise RuntimeError(error)
 
 
-def municipalities() -> list[dict]:
-    """Granice gradova/općina (admin_level 7) na području Kvarnera: id i naziv."""
+def settlements(locator) -> tuple[list[dict], list[str]]:
+    """Točke naselja (place=*) na području Kvarnera; grad/općina prema našem popisu naselja
+    (data/locations.yaml). Naziv koji postoji u više gradova/općina dodjeljuje se onome
+    čija su ostala naselja najbliža."""
     s, w, n, e = BBOX
-    data = overpass(f'[out:json][timeout:120];rel["boundary"="administrative"]["admin_level"="7"]({s},{w},{n},{e});out tags;')
-    return [{"id": el["id"], "name": el["tags"].get("name", "")} for el in data["elements"]]
-
-
-def settlements(jls_rels: list[dict]) -> list[dict]:
-    """Naselja (place=*) unutar svakog grada/općine (područje po id-ju relacije)."""
-    out = []
-    for rel in jls_rels:
-        data = overpass(f'[out:json][timeout:120];node(area:{3600000000 + rel["id"]})["place"~"^({PLACES})$"];out body;')
-        for el in data["elements"]:
-            t = el.get("tags", {})
-            out.append({"jls_osm": rel["name"], "naselje": t.get("name", ""), "vrsta": t.get("place"),
-                        "lat": el["lat"], "lon": el["lon"], "stanovnika": t.get("population")})
-        time.sleep(5)
-    return out
+    data = overpass(f'[out:json][timeout:120];node["place"~"^({PLACES})$"]({s},{w},{n},{e});out body;')
+    nodes = [el for el in data["elements"] if el.get("tags", {}).get("name")]
+    rows, ambiguous = [], []
+    for el in nodes:
+        matches = [j for j in locator.by_settlement(el["tags"]["name"]) if j.included]
+        row = {"naselje": el["tags"]["name"], "vrsta": el["tags"].get("place"), "lat": el["lat"], "lon": el["lon"],
+               "stanovnika": el["tags"].get("population")}
+        if len(matches) == 1:
+            rows.append({**row, "jls": matches[0].name})
+        elif matches:
+            ambiguous.append((row, matches))
+    centers = {}
+    for r in rows:
+        centers.setdefault(r["jls"], []).append((r["lat"], r["lon"]))
+    centers = {k: (sum(a for a, _ in v) / len(v), sum(b for _, b in v) / len(v)) for k, v in centers.items()}
+    for row, matches in ambiguous:
+        best = min(matches, key=lambda j: math.dist((row["lat"], row["lon"]), centers.get(j.name, (0, 0))))
+        rows.append({**row, "jls": best.name, "dvoznacno": [j.name for j in matches]})
+    found = {(r["jls"], r["naselje"]) for r in rows}
+    missing = [f"{j.name}: {name}" for j in locator.jls.values() if j.included
+               for name in j.settlements if (j.name, name) not in found]
+    return rows, missing
 
 
 def coastline() -> list[list[tuple[float, float]]]:
@@ -128,15 +139,9 @@ def main():
 
 
 def run(summary: dict) -> None:
-    extra = yaml.safe_load((ROOT / "data" / "locations_extra.yaml").read_text(encoding="utf-8"))
-    included = set(extra["ukljuceno"])
-
-    rels = municipalities()
-    summary["jls_osm"] = sorted(r["name"] for r in rels)
-    ours = [r for r in rels if any(r["name"] in (f"Grad {n}", f"Općina {n}", n) for n in included)]
-    summary["jls_nasi"] = sorted(r["name"] for r in ours)
-    rows = settlements(ours)
+    rows, missing = settlements(Locator())
     summary["naselja_u_15_jls"] = len(rows)
+    summary["nema_u_osm"] = missing
     time.sleep(10)
 
     coast = coastline()
