@@ -39,26 +39,23 @@ def overpass(query: str) -> dict:
     r.raise_for_status()
 
 
-def settlements() -> list[dict]:
-    """Sva naselja (place=*) unutar gradova/općina PGŽ, s nazivom grada/općine."""
-    q = f"""[out:json][timeout:300];
-area["name"="Primorsko-goranska županija"]["admin_level"="6"]->.county;
-rel(area.county)["admin_level"="7"]["boundary"="administrative"];
-foreach->.r(
-  .r out tags;
-  .r map_to_area->.m;
-  node(area.m)["place"~"^({PLACES})$"];
-  out body;
-);"""
-    data = overpass(q)
-    out, jls = [], None
-    for el in data["elements"]:
-        if el["type"] == "relation":
-            jls = el["tags"].get("name", "")
-        elif el["type"] == "node" and jls:
+def municipalities() -> list[dict]:
+    """Granice gradova/općina (admin_level 7) na području Kvarnera: id i naziv."""
+    s, w, n, e = BBOX
+    data = overpass(f'[out:json][timeout:120];rel["boundary"="administrative"]["admin_level"="7"]({s},{w},{n},{e});out tags;')
+    return [{"id": el["id"], "name": el["tags"].get("name", "")} for el in data["elements"]]
+
+
+def settlements(jls_rels: list[dict]) -> list[dict]:
+    """Naselja (place=*) unutar svakog grada/općine (područje po id-ju relacije)."""
+    out = []
+    for rel in jls_rels:
+        data = overpass(f'[out:json][timeout:120];node(area:{3600000000 + rel["id"]})["place"~"^({PLACES})$"];out body;')
+        for el in data["elements"]:
             t = el.get("tags", {})
-            out.append({"jls_osm": jls, "naselje": t.get("name", ""), "vrsta": t.get("place"),
+            out.append({"jls_osm": rel["name"], "naselje": t.get("name", ""), "vrsta": t.get("place"),
                         "lat": el["lat"], "lon": el["lon"], "stanovnika": t.get("population")})
+        time.sleep(5)
     return out
 
 
@@ -114,10 +111,11 @@ def main():
     extra = yaml.safe_load((ROOT / "data" / "locations_extra.yaml").read_text(encoding="utf-8"))
     included = set(extra["ukljuceno"])
 
-    places = settlements()
-    summary["naselja_osm"] = len(places)
-    summary["jls_osm"] = sorted({p["jls_osm"] for p in places})
-    rows = [p for p in places if any(name in p["jls_osm"] for name in included)]
+    rels = municipalities()
+    summary["jls_osm"] = sorted(r["name"] for r in rels)
+    ours = [r for r in rels if any(r["name"] in (f"Grad {n}", f"Općina {n}", n) for n in included)]
+    summary["jls_nasi"] = sorted(r["name"] for r in ours)
+    rows = settlements(ours)
     summary["naselja_u_15_jls"] = len(rows)
     time.sleep(10)
 
