@@ -87,8 +87,11 @@ class State:
             )
         else:
             self.conn.execute(
-                """UPDATE listings SET last_seen = ?, title = ?, url = ?, price = ?, area = ?, jls = ?,
-                   status = ?, reasons = ?, near_miss = ?, settlement = ? WHERE key = ?""",
+                # Površina i naselje ostaju ako ih novi dohvat nema (npr. Njuškalo popis bez
+                # površine zemljišta, a stranica oglasa otvorena je samo prvi put).
+                """UPDATE listings SET last_seen = ?, title = ?, url = ?, price = ?, area = COALESCE(?, area),
+                   jls = ?, status = ?, reasons = ?, near_miss = ?, settlement = COALESCE(NULLIF(?, ''), settlement)
+                   WHERE key = ?""",
                 (now, listing.title, listing.url, listing.price, listing.area, decision.jls,
                  decision.status, reasons, int(decision.near_miss), listing.settlement, listing.key),
             )

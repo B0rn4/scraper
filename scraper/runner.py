@@ -124,6 +124,10 @@ class Runner:
                 decided = []
                 silent_baseline = first and not getattr(src, "baseline_report", True)
                 for x in listings:
+                    prev = state.get(x.key)
+                    if prev:  # podaci sa stranice oglasa iz ranijeg dohvata (popis ih nema)
+                        x.area = x.area or prev.get("area")
+                        x.settlement = x.settlement or prev.get("settlement") or ""
                     d = evaluate(x, self.criteria, self.locator)
                     old = state.upsert(x, d, self.stamp)
                     decided.append((x, d))
