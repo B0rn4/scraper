@@ -1,28 +1,32 @@
 """Korak 3.2 – tablica naselja: udaljenost od mora i vrijeme vožnje (do mora, Rijeke, Zagreba).
 
 Pokreće se na GitHubu (workflow discover.yml). Podaci:
-- naselja i granice gradova/općina: OpenStreetMap (Overpass API);
-- obalna crta: OpenStreetMap (natural=coastline);
+- naselja: GeoNames (HR.zip), grad/općina prema našem popisu naselja;
+- obalna crta: OpenStreetMap (natural=coastline), spremljena u data/sources/obala_kvarner.json.gz;
 - vrijeme vožnje: OSRM (router.project-osrm.org), bez prometa – stvarno je obično dulje.
 
 Rezultat: debug-out/discovery10/naselja.json.gz (svako naselje s koordinatama i
-mjerama), obala.json.gz (pojednostavljena obala za udaljenost iz koordinata oglasa)
-i sazetak.json. Zahtjevi su rijetki i s razmakom (javni servisi)."""
+mjerama) i sazetak.json. Zahtjevi su rijetki i s razmakom (javni servisi)."""
 
 import gzip
+import io
 import json
 import math
 import sys
 import time
+import zipfile
 from pathlib import Path
 
 import requests
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scraper.locations import Locator  # noqa: E402
+from scraper.text import fold  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = Path(sys.argv[1] if len(sys.argv) > 1 else "debug-out") / "discovery10"
+GEONAMES = "https://download.geonames.org/export/dump/HR.zip"
+COAST = ROOT / "data" / "sources" / "obala_kvarner.json.gz"
 OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
             "https://overpass.private.coffee/api/interpreter"]
 OSRM = "https://router.project-osrm.org"
@@ -51,38 +55,55 @@ def overpass(query: str) -> dict:
 
 
 def settlements(locator) -> tuple[list[dict], list[str]]:
-    """Točke naselja (place=*) na području Kvarnera; grad/općina prema našem popisu naselja
-    (data/locations.yaml). Naziv koji postoji u više gradova/općina dodjeljuje se onome
-    čija su ostala naselja najbliža."""
+    """Naselja iz GeoNamesa (gotova datoteka za Hrvatsku – Overpass je bio preopterećen);
+    grad/općina prema našem popisu naselja (data/locations.yaml). Naziv koji postoji u
+    više gradova/općina dodjeljuje se onome čija su ostala naselja najbliža."""
+    r = requests.get(GEONAMES, headers=HEADERS, timeout=120)
+    r.raise_for_status()
+    text = zipfile.ZipFile(io.BytesIO(r.content)).read("HR.txt").decode("utf-8")
     s, w, n, e = BBOX
-    data = overpass(f'[out:json][timeout:120];node["place"~"^({PLACES})$"]({s},{w},{n},{e});out body;')
-    nodes = [el for el in data["elements"] if el.get("tags", {}).get("name")]
-    rows, ambiguous = [], []
-    for el in nodes:
-        matches = [j for j in locator.by_settlement(el["tags"]["name"]) if j.included]
-        row = {"naselje": el["tags"]["name"], "vrsta": el["tags"].get("place"), "lat": el["lat"], "lon": el["lon"],
-               "stanovnika": el["tags"].get("population")}
+    rows, ambiguous, seen = [], [], set()
+    for line in text.splitlines():
+        f = line.split("\t")
+        if len(f) < 15 or f[6] != "P":
+            continue
+        lat, lon = float(f[4]), float(f[5])
+        if not (s <= lat <= n and w <= lon <= e):
+            continue
+        names = [f[1], f[2]]  # službeni naziv i ASCII oblik
+        matches = []
+        for name in names:
+            matches = [j for j in locator.by_settlement(name) if j.included]
+            if matches:
+                break
+        row = {"naselje": f[1], "vrsta": f[7], "lat": lat, "lon": lon, "stanovnika": int(f[14] or 0) or None}
         if len(matches) == 1:
             rows.append({**row, "jls": matches[0].name})
         elif matches:
             ambiguous.append((row, matches))
     centers = {}
-    for r in rows:
-        centers.setdefault(r["jls"], []).append((r["lat"], r["lon"]))
+    for r_ in rows:
+        centers.setdefault(r_["jls"], []).append((r_["lat"], r_["lon"]))
     centers = {k: (sum(a for a, _ in v) / len(v), sum(b for _, b in v) / len(v)) for k, v in centers.items()}
     for row, matches in ambiguous:
         best = min(matches, key=lambda j: math.dist((row["lat"], row["lon"]), centers.get(j.name, (0, 0))))
         rows.append({**row, "jls": best.name, "dvoznacno": [j.name for j in matches]})
-    found = {(r["jls"], r["naselje"]) for r in rows}
+    # Jedno naselje može imati više točaka (npr. dio naselja); zadrži onu s najviše stanovnika.
+    best_rows = {}
+    for r_ in rows:
+        key = (r_["jls"], fold(r_["naselje"]))
+        if key not in best_rows or (r_["stanovnika"] or 0) > (best_rows[key]["stanovnika"] or 0):
+            best_rows[key] = r_
+    rows = list(best_rows.values())
+    found = {(r_["jls"], fold(r_["naselje"])) for r_ in rows}
     missing = [f"{j.name}: {name}" for j in locator.jls.values() if j.included
-               for name in j.settlements if (j.name, name) not in found]
+               for name in j.settlements if (j.name, fold(name)) not in found]
     return rows, missing
 
 
 def coastline() -> list[list[tuple[float, float]]]:
-    s, w, n, e = BBOX
-    data = overpass(f'[out:json][timeout:300];way["natural"="coastline"]({s},{w},{n},{e});out geom;')
-    return [[(p["lat"], p["lon"]) for p in el["geometry"]] for el in data["elements"] if el.get("geometry")]
+    """Obalna crta Kvarnera (OpenStreetMap natural=coastline, preuzeto 5. 10. 2026.)."""
+    return json.loads(gzip.decompress(COAST.read_bytes()))
 
 
 def _xy(lat, lon):
@@ -141,7 +162,7 @@ def main():
 def run(summary: dict) -> None:
     rows, missing = settlements(Locator())
     summary["naselja_u_15_jls"] = len(rows)
-    summary["nema_u_osm"] = missing
+    summary["nema_u_geonames"] = missing
     time.sleep(10)
 
     coast = coastline()
@@ -151,13 +172,13 @@ def run(summary: dict) -> None:
         pts = [(*_xy(lat, lon), lat, lon) for lat, lon in line]
         segments += list(zip(pts, pts[1:]))
     summary["obala_segmenata"] = len(segments)
-    simplified = [[(round(lat, 5), round(lon, 5)) for lat, lon in line[::2] + line[-1:]] for line in coast]
-    (OUT / "obala.json.gz").write_bytes(gzip.compress(json.dumps(simplified).encode()))
 
     for p in rows:
         d, point = nearest_coast(p["lat"], p["lon"], segments)
         p["more_m"], p["obala_lat"], p["obala_lon"] = round(d), round(point[0], 5), round(point[1], 5)
 
+    save = lambda: (OUT / "naselja.json.gz").write_bytes(gzip.compress(json.dumps(rows, ensure_ascii=False).encode()))  # noqa: E731
+    save()  # djelomični rezultat, ako vožnja ne uspije
     coords = [(p["lat"], p["lon"]) for p in rows]
     for name, dest in (("rijeka_min", RIJEKA), ("zagreb_min", ZAGREB)):
         try:
@@ -169,10 +190,13 @@ def run(summary: dict) -> None:
         if p["more_m"] <= 300:
             p["more_min"] = 0.0
             continue
-        p["more_min"] = osrm_route((p["lat"], p["lon"]), (p["obala_lat"], p["obala_lon"]))
+        try:
+            p["more_min"] = osrm_route((p["lat"], p["lon"]), (p["obala_lat"], p["obala_lon"]))
+        except Exception as exc:  # noqa: BLE001
+            summary["greska_more_min"] = str(exc)[:300]
         time.sleep(1.1)
 
-    (OUT / "naselja.json.gz").write_bytes(gzip.compress(json.dumps(rows, ensure_ascii=False).encode()))
+    save()
     summary["primjer"] = rows[:5]
 
 
