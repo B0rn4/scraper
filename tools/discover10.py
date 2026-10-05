@@ -88,6 +88,11 @@ def settlements(locator) -> tuple[list[dict], list[str]]:
     for row, matches in ambiguous:
         best = min(matches, key=lambda j: math.dist((row["lat"], row["lon"]), centers.get(j.name, (0, 0))))
         rows.append({**row, "jls": best.name, "dvoznacno": [j.name for j in matches]})
+    # Istoimena točka daleko od ostalih naselja istog grada/općine je drugo mjesto.
+    for r_ in list(rows):
+        center = centers.get(r_["jls"])
+        if center and math.dist(_xy(*center), _xy(r_["lat"], r_["lon"])) > 15_000:
+            rows.remove(r_)
     # Jedno naselje može imati više točaka (npr. dio naselja); zadrži onu s najviše stanovnika.
     best_rows = {}
     for r_ in rows:
@@ -134,6 +139,24 @@ def osrm_table(sources: list[tuple[float, float]], dest: tuple[float, float]) ->
                          headers=HEADERS, timeout=120)
         r.raise_for_status()
         out += [None if row[0] is None else round(row[0] / 60, 1) for row in r.json()["durations"]]
+        time.sleep(2)
+    return out
+
+
+def osrm_nearest(sources: list[tuple[float, float]], dests: list[tuple[float, float]]) -> list[float | None]:
+    """Za svaki izvor: minute vožnje do najbližeg od odredišta (naselja uz more)."""
+    out = []
+    for i in range(0, len(sources), 40):
+        chunk = sources[i:i + 40]
+        coords = ";".join(f"{lon:.5f},{lat:.5f}" for lat, lon in chunk + dests)
+        r = requests.get(f"{OSRM}/table/v1/driving/{coords}",
+                         params={"sources": ";".join(map(str, range(len(chunk)))),
+                                 "destinations": ";".join(str(len(chunk) + j) for j in range(len(dests)))},
+                         headers=HEADERS, timeout=120)
+        r.raise_for_status()
+        for row in r.json()["durations"]:
+            values = [v for v in row if v is not None]
+            out.append(round(min(values) / 60, 1) if values else None)
         time.sleep(2)
     return out
 
@@ -186,15 +209,15 @@ def run(summary: dict) -> None:
                 p[name] = minutes
         except Exception as exc:  # noqa: BLE001
             summary[f"greska_{name}"] = str(exc)[:300]
-    for p in rows:  # do mora: ruta do najbliže točke obale (preskače se za naselja uz samo more)
-        if p["more_m"] <= 300:
-            p["more_min"] = 0.0
-            continue
-        try:
-            p["more_min"] = osrm_route((p["lat"], p["lon"]), (p["obala_lat"], p["obala_lon"]))
-        except Exception as exc:  # noqa: BLE001
-            summary["greska_more_min"] = str(exc)[:300]
-        time.sleep(1.1)
+    # Do mora: vožnja do najbližeg naselja uz more (najbliža točka obale je često stijena
+    # bez ceste, pa bi ruta išla okolo).
+    coastal = [(p["lat"], p["lon"]) for p in rows if p["more_m"] <= 300]
+    summary["naselja_uz_more"] = len(coastal)
+    try:
+        for p, minutes in zip(rows, osrm_nearest(coords, coastal)):
+            p["more_min"] = 0.0 if p["more_m"] <= 300 else minutes
+    except Exception as exc:  # noqa: BLE001
+        summary["greska_more_min"] = str(exc)[:300]
 
     save()
     summary["primjer"] = rows[:5]
