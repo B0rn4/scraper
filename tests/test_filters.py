@@ -114,3 +114,22 @@ def test_far_from_sea_settlement():
     in_text = Listing(source="t", source_id="3", url="", title="Vela Učka – kamena kuća", kind=HOUSE,
                       subtype="Samostojeća kuća", price=200_000, area=120, municipality="Opatija")
     assert "predaleko od mora" in " ".join(evaluate(in_text, crit, loc).reasons)
+
+
+def test_risky_phrases():
+    from scraper.locations import Locator
+    from scraper.models import HOUSE, Listing
+    from scraper.runner import load_config
+
+    loc, crit = Locator(), load_config()["kriteriji"]
+
+    def house(desc):
+        return Listing(source="t", source_id="1", url="", title="Kuća Krk", kind=HOUSE, subtype="Samostojeća kuća",
+                       price=250_000, area=120, municipality="Krk", description=desc)
+
+    share = evaluate(house("Prodajem svoj suvlasnički dio kuće. Lijep pogled."), crit, loc)
+    assert share.status == "odbijen" and "suvlasnički dio" in share.reasons[0]
+    heirs = evaluate(house("Kuća je u vlasništvu više nasljednika, svi su suglasni."), crit, loc)
+    assert heirs.status == "upozorenje" and any("nasljednici" in w and "„" in w for w in heirs.warnings)
+    clean = evaluate(house("Vlasništvo 1/1, bez tereta. Legalizirano. Kolni pristup i parking."), crit, loc)
+    assert clean.status == "prolazi"

@@ -2,6 +2,7 @@
 
 import re
 
+from . import risks
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
 from .text import fmt_eur, fmt_m2, fold
@@ -109,6 +110,14 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
         if far:
             reasons.append(f"{far}: predaleko od mora (popis naselja)")
             near_miss_only = False
+
+    # --- opasni izrazi (pravni problemi, pristup) ---
+    for rule, sentence in risks.scan(f"{listing.title}. {listing.description}", listing.source):
+        if rule.reject:
+            reasons.append(f"{rule.label}: „{sentence}”")
+            near_miss_only = False
+        else:
+            warnings.append(f"{rule.label}: „{sentence}”")
 
     # --- cijena ---
     price = listing.price if listing.price and listing.price > 1000 else None

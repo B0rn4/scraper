@@ -155,7 +155,10 @@ bez stotina poruka.
       Lokacija oglasa: koordinate (nekretnine.hr, vender.hr, Njuškalo – često
       približne), inače središte naselja; tekst („prvi red”, „200 m od mora”).
       Rijeka ravnopravna s ostalima. Izvan naselja / manje mjesto: samo oznaka.
-   3. Opasni izrazi (suvlasništvo, nasljednici, ostavina, bez papira, legalizacija,
+   3. **(gotovo 5. 10.)** `scraper/risks.py`. Opis imaju nekretnine.hr, oglasnik.hr,
+      vender.hr i novi oglasi s Njuškala; index.hr popis nema opis (ne provjerava se).
+      Na 268 stvarnih opisa iz testnih primjera nije bilo lažnih upozorenja.
+      Opasni izrazi (suvlasništvo, nasljednici, ostavina, bez papira, legalizacija,
       pravo stanovanja, plodouživanje, poljoprivredno, vanknjižno…): **odbija se samo
       nedvosmisleno** (npr. „prodaje se suvlasnički dio”), inače ⚠ s citiranom
       rečenicom. Niječni izrazi („bez tereta”, „legalizirano”, „1/1”) se izuzimaju.
