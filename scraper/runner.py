@@ -235,11 +235,18 @@ class Runner:
         bilježe bez poruke."""
         cfg = self.cfg.get("natjecaji") or {}
         today = self.now.date().isoformat()
-        if (not cfg.get("ukljuceno", True) or self.device != "github" or not self.telegram
-                or state.meta_get("daily:natjecaji") == today):
+        if not cfg.get("ukljuceno", True) or self.device != "github" or not self.telegram:
+            return
+        if not state.meta_get("natjecaji:pravilo2"):
+            # Jednokratno: prvi dan je prešutio i objave starije od 45 dana kojima rok još traje.
+            state.conn.execute("DELETE FROM tenders WHERE notified_at LIKE 'tiho:%'")
+            state.conn.execute("DELETE FROM meta WHERE key IN ('baseline:natjecaji', 'daily:natjecaji')")
+            state.meta_set("natjecaji:pravilo2", self.stamp)
+        if state.meta_get("daily:natjecaji") == today:
             return
         first = state.meta_get("baseline:natjecaji") is None
         cutoff = (self.now - timedelta(days=cfg.get("dana_unazad_prvi_put", 45))).date().isoformat()
+        oldest = (self.now - timedelta(days=cfg.get("najstarije_s_rokom", 180))).date().isoformat()
         reader = tenders.Reader(self.http, self.locator)
         new: list[tenders.Tender] = []
         for site in tenders.load_sites():
@@ -266,7 +273,10 @@ class Runner:
             info = tenders.details(t.text) if t.text else {}
             published = t.published or t.extra.get("datum_iz_teksta", "")
             expired = info.get("rok") and info["rok"] < today
-            if first and (expired or not published or published < cutoff):
+            # Prvi put: rok poznat i nije istekao (objava do pola godine stara), ili bez roka
+            # objava iz zadnjih 45 dana.
+            open_deadline = info.get("rok") and not expired and (not published or published >= oldest)
+            if first and not open_deadline and (expired or not published or published < cutoff):
                 state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
                 continue
             if expired or sent >= limit:

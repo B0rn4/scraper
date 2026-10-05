@@ -43,5 +43,6 @@ nadzor:
 # data/natjecaji.yaml. Čita se jednom dnevno (prvo pokretanje od 7 h).
 natjecaji:
   ukljuceno: true
-  dana_unazad_prvi_put: 45   # prvi put stižu samo objave iz zadnjih 45 dana kojima rok nije istekao
+  dana_unazad_prvi_put: 45   # prvi put: objave bez poznatog roka iz zadnjih 45 dana
+  najstarije_s_rokom: 180    # prvi put: objave s rokom koji nije istekao, do 180 dana stare
   max_poruka: 15

@@ -86,9 +86,11 @@ def test_runner_tenders_first_day_and_later(tmp_path, monkeypatch):
 
     recent, old = (TODAY - timedelta(days=5)).isoformat(), (TODAY - timedelta(days=200)).isoformat()
     future = (TODAY + timedelta(days=10)).strftime("%d.%m.%Y.")
+    older = (TODAY - timedelta(days=90)).isoformat()
     batch = [Tender("a", "Grad Krk", "Krk", "Natječaj za prodaju zemljišta A", "https://k.hr/a", recent, f"Rok za ponude {future}"),
              Tender("b", "Grad Krk", "Krk", "Natječaj za prodaju zemljišta B", "https://k.hr/b", old, "stari"),
-             Tender("c", "Grad Krk", "Krk", "Natječaj za prodaju zemljišta C", "https://k.hr/c", recent, "Rok za ponude 1.1.2020.")]
+             Tender("c", "Grad Krk", "Krk", "Natječaj za prodaju zemljišta C", "https://k.hr/c", recent, "Rok za ponude 1.1.2020."),
+             Tender("e", "Grad Krk", "Krk", "Natječaj za prodaju zemljišta E", "https://k.hr/e", older, f"Rok za ponude {future}")]
 
     class FakeReader:
         def __init__(self, *a):
@@ -112,10 +114,10 @@ def test_runner_tenders_first_day_and_later(tmp_path, monkeypatch):
     runner.telegram = FakeTelegram()
     state = State(tmp_path / "s.db")
     runner._tenders(state)
-    assert [u for _, u in sent] == ["https://k.hr/a"]        # prvi dan: samo nedavni s otvorenim rokom
+    assert [u for _, u in sent] == ["https://k.hr/a", "https://k.hr/e"]   # prvi dan: rok nije istekao
     runner._tenders(state)
-    assert len(sent) == 1                                      # isti dan se ne čita ponovno
+    assert len(sent) == 2                                      # isti dan se ne čita ponovno
     state.meta_set("daily:natjecaji", "2000-01-01")
     batch.append(Tender("d", "Grad Krk", "Krk", "Natječaj za prodaju kuće D", "https://k.hr/d", old, ""))
     runner._tenders(state)
-    assert [u for _, u in sent] == ["https://k.hr/a", "https://k.hr/d"]   # poslije: svaka nova objava
+    assert [u for _, u in sent] == ["https://k.hr/a", "https://k.hr/e", "https://k.hr/d"]   # poslije: svaka nova
