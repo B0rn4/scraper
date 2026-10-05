@@ -30,7 +30,7 @@ _EXCLUDE = re.compile(r"\b(zakup\w*|najam\w*|najm\w*|vozil\w*|automobil\w*|cisti
                       r"|plovil\w*|brod\w*|poslovn\w* prostor\w*|stan(a|ova|ove)?\b|garaz\w*|udjel\w*|dionic\w*)")
 # Nije sam natječaj: savjetovanje, odluka o odabiru, rezultati, poništenje.
 _NOT_TENDER = re.compile(r"\b(savjetovanj\w*|odabir\w*|izbor\w* najpovoljnij\w*|najpovoljnij\w*|ponistenj\w*|ponisten\w*"
-                         r"|rezultat\w*|zapisnik\w*|obustav\w*)")
+                         r"|rezultat\w*|zapisnik\w*|obustav\w*|izvjesc\w*|izvjesce)")
 _DATE = re.compile(r"(\d{1,2})\.\s*(\d{1,2})\.\s*(20\d\d)|(\d{1,2})\.\s*(sijecnja|veljace|ozujka|travnja|svibnja|lipnja|srpnja"
                    r"|kolovoza|rujna|listopada|studenoga|studenog|prosinca)\s*(20\d\d)")
 _MONTHS = {"sijecnja": 1, "veljace": 2, "ozujka": 3, "travnja": 4, "svibnja": 5, "lipnja": 6, "srpnja": 7, "kolovoza": 8,
@@ -45,7 +45,7 @@ _NOT_DEADLINE = re.compile(r"rok\w* (vazenja|zakljucenja|placanja|isplate|za (sk
 _NDAYS = re.compile(r"\b(\d{1,2})\s*(\(\w+\)\s*)?dan\w*[,\s]+(od|nakon|racunajuci|po)\b")
 _EXPLICIT = re.compile(r"(zakljucno|najkasnije|\bdo)\s*(s|sa|do)?\s*(dana\s*)?$")
 _TEASER = re.compile(r"\s+(?=(Na temelju|Temeljem|Sukladno|U skladu s)\b)")
-_PDF = re.compile(r'<a[^>]+href="([^"]+\.pdf)"[^>]*>(.*?)</a>', re.I | re.S)
+_PDF = re.compile(r'<a[^>]+href="([^"]+\.(?:pdf|docx))"[^>]*>(.*?)</a>', re.I | re.S)
 MIN_TEXT = 600            # kraći tekst objave: natječaj je vjerojatno u priloženom PDF-u
 _PART = re.compile(r"\b\d+\s*/\s*\d+\s+(dijel|dio)\w*|\bsuvlasnick\w*\s+(dio|dijel|udio|udjel)\w*|\bidealn\w*\s+(dio|dijel)\w*")
 _NUM = r"(\d{1,3}(?:[. ]\d{3})+(?:,\d+)?|\d+(?:,\d+)?)"
@@ -149,6 +149,9 @@ def lots(text: str, limit: int = 20) -> list[Lot]:
     vrijednosti ostaje bez njih (nejasno), pa poruka pokazuje samo popis cijena."""
     text = unicodedata.normalize("NFC", text or "")
     mentions = parcel_mentions(text)
+    singles = {m.kcs[0] for m in mentions if len(m.kcs) == 1}
+    # Zbirni spomen ("k.č. 5210, 5211 i 5205/5") čije su sve čestice i pojedinačno navedene.
+    mentions = [m for m in mentions if len(m.kcs) == 1 or not set(m.kcs) <= singles]
     if not mentions:
         return []
     plain = _plain(text)
@@ -196,7 +199,7 @@ def lots(text: str, limit: int = 20) -> list[Lot]:
     if len(found) > 1 and len(totals) == 1 and _AS_WHOLE.search(plain):
         # "k.č. 159/3 … 154 m2, k.č. 172/4 … 47 m2 … prodaju se kao cjelina. Početna cijena: 101.141,63"
         sizes = [x.area for x in found]
-        whole = Lot(found[0].ko, [kc for x in found for kc in x.kcs], price=totals.pop(),
+        whole = Lot(found[0].ko, list(dict.fromkeys(kc for x in found for kc in x.kcs)), price=totals.pop(),
                     area=sum(sizes) if all(sizes) else None, house=any(x.house for x in found),
                     context=" ".join(x.context for x in found), land_registry=found[0].land_registry)
         whole.parts = len(found)
@@ -328,6 +331,7 @@ class Reader:
             items = [t for t in items[:15] if self.area_of(f"{t.title}. {t.text}")]
             for t in items:
                 t.jls = self.area_of(f"{t.title}. {t.text}")
+                t.extra["regionalno"] = True     # čestice izvan našeg područja se ne prikazuju
         return items
 
     def area_of(self, text: str) -> str:
@@ -383,6 +387,8 @@ class Reader:
                 continue
             title = _TEASER.split(full, 1)[0].split(" | ")[0].strip()   # "Natječaj … Na temelju članka 48. …"
             url = urljoin(base, html.unescape(href))
+            if url.rstrip("/") in (base.rstrip("/"), site["url"].rstrip("/")):   # sama stranica (izbornik)
+                continue
             if len(title) < 12 or url in seen or not relevant(title):
                 continue
             seen.add(url)
@@ -393,10 +399,10 @@ class Reader:
         """Tekst objave za detalje. Kad je objava kratka, a ima priložen PDF (ili je
         sama objava PDF), čita se i PDF (prvih nekoliko stranica)."""
         path = urlparse(tender.url).path
-        if re.search(r"\.pdf$", path, re.I):
-            tender.text = tender.text or self.pdf_text(tender.url)
+        if re.search(r"\.(pdf|docx)$", path, re.I):
+            tender.text = tender.text or self.doc_text(tender.url)
             tender.extra["iz_pdf"] = bool(tender.text)
-        elif not tender.text and not re.search(r"\.(docx?|xlsx?|zip)$", path, re.I):
+        elif not tender.text and not re.search(r"\.(doc|xlsx?|zip)$", path, re.I):
             try:
                 body = self.http.get(tender.url).text
             except Exception:  # noqa: BLE001 – bez teksta objava ipak stiže
@@ -408,7 +414,7 @@ class Reader:
             pdfs = _PDF.findall(tender.extra["html"])
             pdfs.sort(key=lambda p: not re.search(r"natje|prodaj|oglas", fold(f"{p[0]} {p[1]}")))
             if pdfs:
-                text = self.pdf_text(urljoin(tender.url, html.unescape(pdfs[0][0])))
+                text = self.doc_text(urljoin(tender.url, html.unescape(pdfs[0][0])))
                 if text:
                     tender.text = f"{tender.text}\n{text}"[:30000]
                     tender.extra["iz_pdf"] = True
@@ -416,6 +422,20 @@ class Reader:
         if not tender.published:
             dates = [d for _, d in dates_in(tender.text[:3000])]
             tender.extra["datum_iz_teksta"] = dates[0] if dates else ""
+
+    def doc_text(self, url: str) -> str:
+        """Tekst priloga: PDF (pypdf) ili Word .docx (XML u zip arhivi, bez dodatnih paketa)."""
+        if not re.search(r"\.docx$", urlparse(url).path, re.I):
+            return self.pdf_text(url)
+        try:
+            import zipfile
+            data = self.http.get(url).content
+            with zipfile.ZipFile(io.BytesIO(data)) as z:
+                xml = z.read("word/document.xml").decode("utf-8", "replace")
+            xml = re.sub(r"</w:p>|<w:tab/>|<w:br/>", " ", xml)
+            return " ".join(html.unescape(re.sub(r"<[^>]+>", "", xml)).split())[:30000]
+        except Exception:  # noqa: BLE001 – prilog nije nužan za obavijest
+            return ""
 
     def pdf_text(self, url: str, pages: int = 8) -> str:
         try:

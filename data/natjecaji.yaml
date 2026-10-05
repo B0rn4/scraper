@@ -68,6 +68,10 @@
   jls: Rijeka
   nacin: wp
   url: https://www.rijeka.hr/
+- naziv: Grad Rijeka (zemljišta)       # natječaji za zemljišta nisu objave, nego zasebna vrsta stranica
+  jls: Rijeka
+  nacin: stranica
+  url: https://www.rijeka.hr/gradska-uprava/natjecaji-2/raspolaganje-zemljistem-prodaja-pravo-gradenja-sluznosti-i-zakup/
 - naziv: Primorsko-goranska županija
   nacin: stranica
   url: https://www.pgz.hr/dokumenti/natjecaji/

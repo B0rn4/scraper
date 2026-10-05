@@ -253,3 +253,35 @@ def test_real_tender_texts():
     assert flats_only("ZAGREB - ANTUNA BAUERA 28 (STAN 2473)* Površina 32,36 m2 Početna cijena 71.100,00 EUR. "
                       "Nekretnina je upisana u Zemljišnoknjižnom odjelu, kč.br. 6125")
     assert not flats_only(OPATIJA)
+
+
+def test_shares_groups_and_docx():
+    import io as _io
+    import zipfile
+
+    from scraper.ispu import parcel_mentions
+    from scraper.tenders import lots
+
+    # "7/9 dijela" je udio, ne čestica.
+    assert [m.kcs for m in parcel_mentions("prodaja 126/576 dijela k.č.br. 2977 i 7/9 dijela k.č.br. 2978 k.o. Kostrena-Lucija")] \
+        == [["2977"], ["2978"]]
+    # Zbirni spomen koji ponavlja pojedinačne čestice se ne broji kao nova čestica.
+    found = lots("k.č. 5210 k.o. Kostrena-Lucija površine 35 m2, k.č. 5211 k.o. Kostrena-Lucija površine 14 m2. "
+                 "Čestice k.č. 5210 i 5211 k.o. Kostrena-Lucija nalaze se uz cestu.")
+    assert [x.kcs for x in found] == [["5210"], ["5211"]]
+    # Word prilog (.docx) se čita.
+    buf = _io.BytesIO()
+    with zipfile.ZipFile(buf, "w") as z:
+        z.writestr("word/document.xml", "<w:document><w:body><w:p><w:r><w:t>Prodaje se k.č. 1268/5 K.O. Matulji,</w:t></w:r>"
+                                        "</w:p><w:p><w:r><w:t>početna cijena 50.000,00 EUR.</w:t></w:r></w:p></w:body></w:document>")
+
+    class Bin:
+        content = buf.getvalue()
+
+    class Http:
+        def get(self, url, **kw):
+            return Bin()
+
+    text = Reader(Http(), Locator()).doc_text("https://matulji.hr/a/Javni-natjecaj.docx")
+    assert text == "Prodaje se k.č. 1268/5 K.O. Matulji, početna cijena 50.000,00 EUR."
+    assert details(text)["cijene"] == [50000.0]

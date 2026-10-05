@@ -50,11 +50,13 @@ def to_htrs(lat: float, lon: float) -> tuple[float, float]:
 
 # --- katastarske čestice u tekstu oglasa ------------------------------------
 
+# Broj čestice; "7/9 dijela" je suvlasnički udio, ne čestica.
+_KC_NUM = r"\d{1,5}(?:/\d{1,4})?(?![\d/])(?!\s*(?:dijel|dio\b|udjel|udio))"
 _KC = re.compile(
     # z.k.č. / zk.č. / z.č.: zemljišnoknjižna čestica (na Krku broj često nije isti kao katastarski)
     r"(?:(?P<zk>\bz\.?\s*k\.?\s*č\.?|\bzk\.?\s*č\.?|\bz\.\s*č\.?|\bzkčbr\.?)\s*(?:br\.?|broj)?"
     r"|\bk\.?\s*č\.?\s*(?:br\.?|broj)?|\bčkbr\.?|\bkčbr\.?|\bčest(?:ica|ice|ici|\.)\s*(?:br\.?|broj)?)"
-    r"\s*:?\s*(?P<nums>\d{1,5}(?:/\d{1,4})?(?:\s*(?:,|i|te)\s*\d{1,5}(?:/\d{1,4})?)*)", re.I)
+    r"\s*:?\s*(?P<nums>" + _KC_NUM + r"(?:\s*(?:,|i|te)\s*" + _KC_NUM + r")*)", re.I)
 _KO_WORD = r"(?:Sv\.\s*)?[A-ZČĆŽŠĐ][\wčćžšđČĆŽŠĐ-]*"
 _KO = re.compile(r"\b(?i:k\.?\s*o\.?)\s*:?\s+(" + _KO_WORD + r"(?:(?:\s*[-–]\s*|\s+)" + _KO_WORD + r")*)")
 # Riječi iza naziva k.o. koje nisu dio naziva ("k.o. Punat Početna natječajna cijena…").

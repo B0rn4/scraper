@@ -285,6 +285,8 @@ class Runner:
                 state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
                 continue
             found = tenders.lots(t.text)
+            if t.extra.get("regionalno"):     # PGŽ, CERP, Državne nekretnine: samo čestice na našem području
+                found = [x for x in found if reader.area_of(f"{x.context} {x.ko}")]
             jls = t.jls if t.jls and self.locator.by_name(t.jls) else ""
             where = tenders.place_text(t, found)
             # Odluke iz popisa naselja: odbija se samo naselje napisano u tekstu; prema k.o.
