@@ -6,6 +6,7 @@ Pokreće se u Ubuntuu unutar Termuxa, u mapi scraper (upute u REDMI.md):
     python tools/redmi_probe.py --samo-realitica  # samo Realitica (Njuškalo se ne dira)
     python tools/redmi_probe.py --provjeri-preglednik  # radi li Chromium (otvara Realiticu, ne Njuškalo)
     python tools/redmi_probe.py --playwright      # Njuškalo pravim preglednikom (Chromium)
+    python tools/redmi_probe.py --njuskalo-oglas  # po jedan oglas kuće i zemljišta s Njuškala (Chromium)
     python tools/redmi_probe.py --posalji         # samo ponovno pošalji spremljene rezultate
 
 Ispisuje kratak sažetak, sprema uzorke stranica u redmi-out/ (naziv počinje vremenom
@@ -145,6 +146,29 @@ def run_njuskalo(results: dict, use_playwright: bool) -> None:
             probe(name, url, fetch_cffi, "chrome", results, 20)
 
 
+def run_njuskalo_ads(results: dict) -> None:
+    """Otvara prvi oglas s već spremljenih popisa (popisi se ne učitavaju ponovno)."""
+    print("Njuškalo, pojedinačni oglasi:")
+    targets = {}
+    for kind in ("kuce", "zemljista"):
+        lists = sorted(OUT.glob(f"*_njuskalo_{kind}__playwright.html.gz"))
+        if not lists:
+            print(f"  nema spremljenog popisa ({kind}); prvo pokreni --playwright")
+            continue
+        text = gzip.decompress(lists[-1].read_bytes()).decode("utf-8", "replace")
+        m = re.search(r'EntityList-item--Regular[^"]*"><!--\[--><article[^>]*><h3 class="entity-title"><a href="([^"]+)"', text)
+        if m:
+            targets[f"njuskalo_{kind}_oglas"] = "https://www.njuskalo.hr" + m.group(1)
+    if not targets:
+        return
+    browser = Browser()
+    try:
+        for name, url in targets.items():
+            probe(name, url, lambda u: browser.fetch(u, "h1"), "playwright", results, 15)
+    finally:
+        browser.close()
+
+
 def run_realitica(results: dict) -> None:
     print("Realitica:")
     first = None
@@ -222,7 +246,9 @@ def main() -> None:
         return
     results = {"vrijeme": time.strftime("%Y-%m-%d %H:%M:%S"), "python": sys.version.split()[0],
                "sustav": platform.platform(), "argumenti": sorted(args)}
-    if "--provjeri-preglednik" in args:
+    if "--njuskalo-oglas" in args:
+        run_njuskalo_ads(results)
+    elif "--provjeri-preglednik" in args:
         print("Chromium:")
         browser = Browser()
         try:
@@ -231,7 +257,7 @@ def main() -> None:
             browser.close()
     elif "--samo-realitica" not in args:
         run_njuskalo(results, "--playwright" in args)
-    if not args & {"--playwright", "--provjeri-preglednik"}:
+    if not args & {"--playwright", "--provjeri-preglednik", "--njuskalo-oglas"}:
         run_realitica(results)
     OUT.mkdir(exist_ok=True)
     (OUT / f"{STAMP}_sazetak.json").write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")
