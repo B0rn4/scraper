@@ -131,7 +131,8 @@ class Ppv:
             value = item["stanovi"][key]
             diff = ppm / value - 1
             rel = "oko te vrijednosti" if abs(diff) < 0.1 else f"oglas {_pct(diff)} % {'iznad' if diff > 0 else 'ispod'}"
-            return f"🏛 PPV 2026. ({where}{', medijan naselja' if whole else ''}), stanovi {key} m²: {fmt_eur(value)}/m² – {rel}"
+            where = f"{where}, medijan naselja" if whole else where
+            return f"🏛 PPV 2026. za STANOVE {key} m² (za kuće ne postoji), {where}: {fmt_eur(value)}/m² – {rel}"
         return None
 
 

@@ -105,11 +105,13 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
     elif loc.ambiguous:
         warnings.append(f"lokacija nesigurna – {loc.evidence}")
     if loc.included:
-        far = locator.far_settlement(jls_name, listing.settlement,
-                                     " ".join(filter(None, [listing.location_text, listing.title])))
-        if far:
-            reasons.append(f"{far}: predaleko od mora (popis naselja)")
+        verdict = locator.settlement_verdict(jls_name, listing.settlement,
+                                             " ".join(filter(None, [listing.location_text, listing.title])))
+        if verdict and verdict[0] == REJECT:
+            reasons.append(verdict[1])
             near_miss_only = False
+        elif verdict:
+            warnings.append(verdict[1])
 
     # --- opasni izrazi (pravni problemi, pristup) ---
     for rule, sentence in risks.scan(f"{listing.title}. {listing.description}", listing.source):

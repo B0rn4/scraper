@@ -1,201 +1,202 @@
-grad_opcina,naselje,more_zracno_km,procjena_voznje_do_mora_min,rijeka_min,zagreb_min
-Baška,Draga Bašćanska,"4,3","8,1",67,171
-Baška,Batomalj,"1,9","5,4",74,177
-Baška,Jurandvor,"1,7","4,4",73,176
-Baška,Baška,"0,1",0,76,180
-Crikvenica,Crikvenica,"0,5","6,1",37,140
-Crikvenica,Jadranovo,"0,5","1,5",30,133
-Crikvenica,Dramalj,"0,2",0,33,136
-Crikvenica,Selce,"0,2",0,40,143
-Dobrinj,Dolovo,"3,9","24,0",52,155
-Dobrinj,Polje,"1,8","23,9",51,154
-Dobrinj,Gostinjac,"2,3","16,0",50,154
-Dobrinj,Žestilac,"1,8","13,0",51,154
-Dobrinj,Kras,"4,3","9,1",45,148
-Dobrinj,Rasopasno,"2,9","8,0",41,144
-Dobrinj,Dobrinj,"2,1","7,9",48,152
-Dobrinj,Gabonjin,"3,3","7,4",40,144
-Dobrinj,Sveti Vid Dobrinjski,"2,6","6,0",49,153
-Dobrinj,Županje,"1,6","5,8",48,151
-Dobrinj,Sveti Ivan Dobrinjski,"2,8","5,7",43,146
-Dobrinj,Klanice,"2,4","5,3",44,147
-Dobrinj,Hlapa,"1,9","4,8",47,151
-Dobrinj,Sužan,"1,3","4,3",46,150
-Dobrinj,Tribulje,"1,7","3,5",44,148
-Dobrinj,Rudine,"0,5","1,8",45,148
-Dobrinj,Klimno,"0,0",0,47,150
-Dobrinj,Soline,"0,2",0,44,148
-Dobrinj,Čižići,"0,0",0,42,145
-Dobrinj,Šilo,"0,3",0,54,157
-Kostrena,Kostrena,"0,8","3,2",10,129
-Kostrena,Doričići,,,,
-Kostrena,Dujmići,,,,
-Kostrena,Glavani,,,,
-Kostrena,Kostrena Sveta Barbara,,,,
-Kostrena,Kostrena Sveta Lucija,,,,
-Kostrena,Maračići,,,,
-Kostrena,Martinšćica,,,,
-Kostrena,Paveki,,,,
-Kostrena,Perovići,,,,
-Kostrena,Plešići,,,,
-Kostrena,Randići,,,,
-Kostrena,Rožići,,,,
-Kostrena,Rožmanići,,,,
-Kostrena,Urinj,"0,2",0,18,132
-Kostrena,Vrh Martinšćice,,,,
-Kostrena,Šodići,,,,
-Kostrena,Šoići,,,,
-Kostrena,Žuknica,,,,
-Kostrena,Žurkovo,"0,0",0,11,133
-Kraljevica,Veli Dol,"2,4","13,3",23,126
-Kraljevica,Križišće,"2,3","10,7",22,124
-Kraljevica,Mali Dol,"2,4","8,0",21,124
-Kraljevica,Šmrika,"0,9","6,6",22,126
-Kraljevica,Bakarac,"0,1",0,20,126
-Kraljevica,Kraljevica,"0,1",0,23,126
-Krk,Poljica,"2,2","36,2",47,150
-Krk,Bajčići,"3,7","35,4",46,149
-Krk,Nenadići,"3,4","35,0",46,150
-Krk,Vrh,"3,3","21,9",52,155
-Krk,Brusići,"3,3","11,4",50,154
-Krk,Brzac,"1,3","11,0",55,158
-Krk,Milohnići,"1,7","11,0",53,156
-Krk,Lakmartin,"2,7","9,3",52,155
-Krk,Žgaljići,"2,9","8,2",47,150
-Krk,Muraj,"1,9","5,4",54,158
-Krk,Linardići,"1,5","5,3",52,155
-Krk,Skrbčići,"1,6","4,6",49,153
-Krk,Kornić,"1,2","3,4",56,159
-Krk,Pinezići,"0,6","2,5",50,153
-Krk,Krk,"0,2",0,53,156
-Lovran,Lovranska Draga,"2,2","18,1",42,162
-Lovran,Tuliševica,"1,4","15,1",41,161
-Lovran,Liganj,"1,0","8,1",35,155
-Lovran,Lovran,"0,3",0,31,152
-Lovran,Medveja,"0,2",0,37,158
-Malinska-Dubašnica,Strilčići,"2,7","9,7",43,146
-Malinska-Dubašnica,Sabljići,"2,0","8,7",46,150
-Malinska-Dubašnica,Ljutići,"1,9","6,5",44,147
-Malinska-Dubašnica,Sveti Anton,"1,5","6,1",44,147
-Malinska-Dubašnica,Oštrobradić,"1,8","5,9",43,146
-Malinska-Dubašnica,Kremenići,"1,2","5,3",40,144
-Malinska-Dubašnica,Sveti Ivan,"2,1","5,2",44,147
-Malinska-Dubašnica,Žgombići,"1,5","5,2",41,144
-Malinska-Dubašnica,Sršići,"1,7","4,9",37,140
-Malinska-Dubašnica,Maršići,"1,6","4,8",39,142
-Malinska-Dubašnica,Milovčići,"1,4","4,3",43,146
-Malinska-Dubašnica,Sveti Vid-Miholjice,"1,2","3,0",38,141
-Malinska-Dubašnica,Turčić,"0,7","2,8",43,147
-Malinska-Dubašnica,Bogovići,"0,6","2,1",40,144
-Malinska-Dubašnica,Radići,"0,4","2,0",40,143
-Malinska-Dubašnica,Barušići,,,,
-Malinska-Dubašnica,Malinska,"0,0",0,41,144
-Malinska-Dubašnica,Milčetići,"0,1",0,44,147
-Malinska-Dubašnica,Porat,"0,0",0,47,150
-Malinska-Dubašnica,Vantačići,"0,1",0,44,148
-Malinska-Dubašnica,Zidarići,"0,3",0,43,146
-Mošćenička Draga,Kalac,"2,2","18,8",56,177
-Mošćenička Draga,Sveti Anton,"0,9","15,6",53,174
-Mošćenička Draga,Grabrova,"1,4","15,2",54,175
-Mošćenička Draga,Obrs,"0,8","11,8",50,171
-Mošćenička Draga,Sveta Jelena,"0,9","11,8",52,172
-Mošćenička Draga,Sveti Petar,"0,4","10,4",113,219
-Mošćenička Draga,Mošćenice,"0,3","9,8",47,168
-Mošćenička Draga,Golovik,"1,0","8,1",53,174
-Mošćenička Draga,Sučići,"1,9","7,2",46,167
-Mošćenička Draga,Martina,"1,5","4,4",55,176
-Mošćenička Draga,Brseč,"0,1",0,57,178
-Mošćenička Draga,Donji Kraj,,,,
-Mošćenička Draga,Mošćenička Draga,"0,2",0,42,163
-Mošćenička Draga,Zagore,,,,
-Novi Vinodolski,Gornji Zagon,"6,4","22,8",67,149
-Novi Vinodolski,Crno,"2,8","21,2",66,148
-Novi Vinodolski,Breze,"7,7","20,6",66,140
-Novi Vinodolski,Zabukovac,"5,2","18,8",74,144
-Novi Vinodolski,Bile,"2,1","18,2",70,142
-Novi Vinodolski,Ruševo Krmpotsko,"4,3","15,9",71,147
-Novi Vinodolski,Bater,"3,9","15,5",61,143
-Novi Vinodolski,Javorje,"5,0","14,5",71,141
-Novi Vinodolski,Ledenice,"2,5","13,1",60,142
-Novi Vinodolski,Luka Krmpotska,"4,7","13,1",69,142
-Novi Vinodolski,Podmelnik,"3,7","11,0",68,146
-Novi Vinodolski,Donji Zagon,"2,1","10,4",56,140
-Novi Vinodolski,Drinak,"2,0","9,2",64,150
-Novi Vinodolski,Jakov Polje,"1,2","5,5",62,151
-Novi Vinodolski,Sibinj Krmpotski,"0,4","1,2",67,145
-Novi Vinodolski,Klenovica,"0,1",0,59,153
-Novi Vinodolski,Krmpotske Vodice,,,,
-Novi Vinodolski,Novi Vinodolski,"0,1",0,47,146
-Novi Vinodolski,Povile,"0,3",0,52,147
-Novi Vinodolski,Smokvica Krmpotska,"0,2",0,61,151
-Omišalj,Njivice,"0,3",0,35,138
-Omišalj,Omišalj,"0,3",0,28,131
-Opatija,Mala Učka,"5,6","44,9",48,169
-Opatija,Vela Učka,"6,0","35,3",43,163
-Opatija,Veprinac,"2,1","18,8",24,145
-Opatija,Poljane,"1,6","9,2",28,148
-Opatija,Pobri,"0,8","8,2",20,141
-Opatija,Dobrec,"1,3","6,0",32,152
-Opatija,Volosko,"0,3","4,6",18,138
-Opatija,Opric,"0,7","4,0",32,152
-Opatija,Ika,"0,1",0,29,150
-Opatija,Ičići,"0,2",0,28,149
-Opatija,Kosićevo,,,,
-Opatija,Lipovica,,,,
-Opatija,Opatija,"0,2",0,21,141
-Opatija,Plahuti,,,,
-Opatija,Punta Kolova,,,,
-Opatija,Tošina,,,,
-Opatija,Vrutki,,,,
-Opatija,Zora,,,,
-Punat,Stara Baška,"0,3","0,9",73,176
-Punat,Punat,"0,2",0,59,163
-Rijeka,Drenova,"2,2","13,7",13,134
-Rijeka,Hosti,"2,7","12,3",11,133
-Rijeka,Zamet,"1,2","10,6",12,132
-Rijeka,Draga,"1,3","9,9",14,133
-Rijeka,Svilno,"2,9","9,1",10,124
-Rijeka,Pašac,"2,9","7,6",8,124
-Rijeka,Podmurvice,"0,9","7,0",7,132
-Rijeka,Trsat,"0,9","5,4",6,126
-Rijeka,Podvežica,"0,7","4,8",5,125
-Rijeka,Orehovica,"1,9","4,4",5,121
-Rijeka,Banderovo,,,,
-Rijeka,Belveder,,,,
-Rijeka,Bivio,,,,
-Rijeka,Brajda,,,,
-Rijeka,Brašćine,,,,
-Rijeka,Bulevard,,,,
-Rijeka,Centar,,,,
-Rijeka,Costabella,,,,
-Rijeka,Donja Vežica,,,,
-Rijeka,Gornja Vežica,,,,
-Rijeka,Grbci,,,,
-Rijeka,Kantrida,,,,
-Rijeka,Kozala,,,,
-Rijeka,Krimeja,,,,
-Rijeka,Krnjevo,,,,
-Rijeka,Martinkovac,,,,
-Rijeka,Marčeljeva Draga,,,,
-Rijeka,Mlaka,,,,
-Rijeka,Pehlin,,,,
-Rijeka,Pećine,,,,
-Rijeka,Potok,,,,
-Rijeka,Preluk,,,,
-Rijeka,Pulac,,,,
-Rijeka,Rastočine,,,,
-Rijeka,Rijeka,"0,1",0,0,128
-Rijeka,Rujevica,,,,
-Rijeka,Srdoči,,,,
-Rijeka,Stari Grad,,,,
-Rijeka,Sušak,"0,3",0,3,128
-Rijeka,Sveti Kuzam,,,,
-Rijeka,Turnić,,,,
-Rijeka,Vojak,,,,
-Rijeka,Školjić,,,,
-Rijeka,Škurinje,,,,
-Rijeka,Škurinjska Draga,,,,
-Vrbnik,Garica,"4,0","20,1",50,154
-Vrbnik,Risika,"1,5","16,2",53,157
-Vrbnik,Kampelje,"3,0","15,2",57,160
-Vrbnik,Vrbnik,"0,2",0,62,165
+grad_opcina,naselje,more_zracno_km,procjena_voznje_do_mora_min,rijeka_min,zagreb_min,daleko_od_rijeke,daleko_od_mora,odluka
+Baška,Draga Bašćanska,"4,3","8,1",67,171,da,da,Upozorenje
+Baška,Batomalj,"1,9","5,4",74,177,da,ne,Upozorenje
+Baška,Jurandvor,"1,7","4,4",73,176,da,ne,Upozorenje
+Baška,Baška,"0,1",0,76,180,da,ne,Prolaz
+Crikvenica,Crikvenica,"0,5","6,1",37,140,ne,ne,Prolaz
+Crikvenica,Jadranovo,"0,5","1,5",30,133,ne,ne,Prolaz
+Crikvenica,Dramalj,"0,2",0,33,136,ne,ne,Prolaz
+Crikvenica,Selce,"0,2",0,40,143,da,ne,Odbijen
+Dobrinj,Dolovo,"3,9","24,0",52,155,da,da,Odbijen
+Dobrinj,Polje,"1,8","23,9",51,154,da,ne,Odbijen
+Dobrinj,Gostinjac,"2,3","16,0",50,154,da,da,Odbijen
+Dobrinj,Žestilac,"1,8","13,0",51,154,da,da,Odbijen
+Dobrinj,Kras,"4,3","9,1",45,148,da,da,Odbijen
+Dobrinj,Rasopasno,"2,9","8,0",41,144,da,da,Odbijen
+Dobrinj,Dobrinj,"2,1","7,9",48,152,da,da,Odbijen
+Dobrinj,Gabonjin,"3,3","7,4",40,144,da,da,Odbijen
+Dobrinj,Sveti Vid Dobrinjski,"2,6","6,0",49,153,da,da,Odbijen
+Dobrinj,Županje,"1,6","5,8",48,151,da,ne,Upozorenje
+Dobrinj,Sveti Ivan Dobrinjski,"2,8","5,7",43,146,da,da,Odbijen
+Dobrinj,Klanice,"2,4","5,3",44,147,da,da,Odbijen
+Dobrinj,Hlapa,"1,9","4,8",47,151,da,da,Odbijen
+Dobrinj,Sužan,"1,3","4,3",46,150,da,da,Upozorenje
+Dobrinj,Tribulje,"1,7","3,5",44,148,da,da,Odbijen
+Dobrinj,Rudine,"0,5","1,8",45,148,da,ne,Prolaz
+Dobrinj,Klimno,"0,0",0,47,150,da,ne,Prolaz
+Dobrinj,Soline,"0,2",0,44,148,da,ne,Prolaz
+Dobrinj,Čižići,"0,0",0,42,145,da,ne,Prolaz
+Dobrinj,Šilo,"0,3",0,54,157,da,ne,Upozorenje
+Kostrena,Kostrena,"0,8","3,2",10,129,ne,ne,Prolaz
+Kostrena,Doričići,,,,,ne,ne,Prolaz
+Kostrena,Dujmići,,,,,ne,ne,Prolaz
+Kostrena,Glavani,,,,,ne,da,Upozorenje
+Kostrena,Kostrena Sveta Barbara,,,,,ne,ne,Prolaz
+Kostrena,Kostrena Sveta Lucija,,,,,ne,ne,Prolaz
+Kostrena,Maračići,,,,,ne,da,Upozorenje
+Kostrena,Martinšćica,,,,,ne,ne,Prolaz
+Kostrena,Paveki,,,,,ne,ne,Prolaz
+Kostrena,Perovići,,,,,ne,ne,Prolaz
+Kostrena,Plešići,,,,,ne,da,Odbijen
+Kostrena,Randići,,,,,ne,da,Odbijen
+Kostrena,Rožići,,,,,ne,da,Odbijen
+Kostrena,Rožmanići,,,,,ne,da,Prolaz
+Kostrena,Urinj,"0,2",0,18,132,ne,ne,Prolaz
+Kostrena,Vrh Martinšćice,,,,,ne,ne,Prolaz
+Kostrena,Šodići,,,,,ne,ne,Prolaz
+Kostrena,Šoići,,,,,ne,ne,Prolaz
+Kostrena,Žuknica,,,,,ne,ne,Prolaz
+Kostrena,Žurkovo,"0,0",0,11,133,ne,ne,Prolaz
+Kraljevica,Veli Dol,"2,4","13,3",23,126,ne,da,Odbijen
+Kraljevica,Križišće,"2,3","10,7",22,124,ne,da,Odbijen
+Kraljevica,Mali Dol,"2,4","8,0",21,124,ne,da,Odbijen
+Kraljevica,Šmrika,"0,9","6,6",22,126,ne,ne,Prolaz
+Kraljevica,Bakarac,"0,1",0,20,126,ne,da,Odbijen
+Kraljevica,Kraljevica,"0,1",0,23,126,ne,ne,Prolaz
+Krk,Poljica,"2,2","36,2",47,150,da,da,Upozorenje
+Krk,Bajčići,"3,7","35,4",46,149,da,da,Odbijen
+Krk,Nenadići,"3,4","35,0",46,150,da,da,Odbijen
+Krk,Vrh,"3,3","21,9",52,155,da,da,Odbijen
+Krk,Brusići,"3,3","11,4",50,154,da,da,Odbijen
+Krk,Brzac,"1,3","11,0",55,158,da,ne,Upozorenje
+Krk,Milohnići,"1,7","11,0",53,156,da,ne,Upozorenje
+Krk,Lakmartin,"2,7","9,3",52,155,da,da,Odbijen
+Krk,Žgaljići,"2,9","8,2",47,150,da,da,Odbijen
+Krk,Muraj,"1,9","5,4",54,158,da,da,Odbijen
+Krk,Linardići,"1,5","5,3",52,155,da,da,Odbijen
+Krk,Skrbčići,"1,6","4,6",49,153,da,da,Odbijen
+Krk,Kornić,"1,2","3,4",56,159,da,ne,Upozorenje
+Krk,Pinezići,"0,6","2,5",50,153,da,ne,Upozorenje
+Krk,Krk,"0,2",0,53,156,da,ne,Upozorenje
+Lovran,Lovranska Draga,"2,2","18,1",42,162,da,da,Odbijen
+Lovran,Tuliševica,"1,4","15,1",41,161,da,da,Odbijen
+Lovran,Liganj,"1,0","8,1",35,155,da,da,Upozorenje
+Lovran,Lovran,"0,3",0,31,152,da,ne,Prolaz
+Lovran,Medveja,"0,2",0,37,158,da,da,Odbijen
+Malinska-Dubašnica,Strilčići,"2,7","9,7",43,146,da,da,Odbijen
+Malinska-Dubašnica,Sabljići,"2,0","8,7",46,150,da,da,Odbijen
+Malinska-Dubašnica,Ljutići,"1,9","6,5",44,147,da,da,Odbijen
+Malinska-Dubašnica,Sveti Anton,"1,5","6,1",44,147,da,da,Odbijen
+Malinska-Dubašnica,Oštrobradić,"1,8","5,9",43,146,da,da,Odbijen
+Malinska-Dubašnica,Kremenići,"1,2","5,3",40,144,ne,da,Odbijen
+Malinska-Dubašnica,Sveti Ivan,"2,1","5,2",44,147,da,da,Odbijen
+Malinska-Dubašnica,Žgombići,"1,5","5,2",41,144,ne,da,Odbijen
+Malinska-Dubašnica,Sršići,"1,7","4,9",37,140,ne,da,Odbijen
+Malinska-Dubašnica,Maršići,"1,6","4,8",39,142,ne,da,Odbijen
+Malinska-Dubašnica,Milovčići,"1,4","4,3",43,146,ne,da,Odbijen
+Malinska-Dubašnica,Sveti Vid-Miholjice,"1,2","3,0",38,141,ne,ne,Prolaz
+Malinska-Dubašnica,Turčić,"0,7","2,8",43,147,da,da,Odbijen
+Malinska-Dubašnica,Bogovići,"0,6","2,1",40,144,da,ne,Upozorenje
+Malinska-Dubašnica,Radići,"0,4","2,0",40,143,ne,ne,Prolaz
+Malinska-Dubašnica,Barušići,,,,,ne,da,Odbijen
+Malinska-Dubašnica,Malinska,"0,0",0,41,144,ne,ne,Prolaz
+Malinska-Dubašnica,Milčetići,"0,1",0,44,147,ne,ne,Prolaz
+Malinska-Dubašnica,Porat,"0,0",0,47,150,da,ne,Upozorenje
+Malinska-Dubašnica,Vantačići,"0,1",0,44,148,da,ne,Upozorenje
+Malinska-Dubašnica,Zidarići,"0,3",0,43,146,ne,ne,Prolaz
+Mošćenička Draga,Kalac,"2,2","18,8",56,177,da,ne,Odbijen
+Mošćenička Draga,Sveti Anton,"0,9","15,6",53,174,da,ne,Odbijen
+Mošćenička Draga,Grabrova,"1,4","15,2",54,175,da,ne,Odbijen
+Mošćenička Draga,Obrš,"0,8","11,8",50,171,da,ne,Odbijen
+Mošćenička Draga,Sveta Jelena,"0,9","11,8",52,172,da,ne,Odbijen
+Mošćenička Draga,Sveti Petar,"0,4","10,4",113,219,da,ne,Odbijen
+Mošćenička Draga,Mošćenice,"0,3","9,8",47,168,da,ne,Odbijen
+Mošćenička Draga,Golovik,"1,0","8,1",53,174,da,ne,Odbijen
+Mošćenička Draga,Sučići,"1,9","7,2",46,167,da,ne,Odbijen
+Mošćenička Draga,Martina,"1,5","4,4",55,176,da,ne,Odbijen
+Mošćenička Draga,Brseč,"0,1",0,57,178,da,ne,Odbijen
+Mošćenička Draga,Donji Kraj,,,,,da,ne,Odbijen
+Mošćenička Draga,Mošćenička Draga,"0,2",0,42,163,da,ne,Odbijen
+Mošćenička Draga,Zagore,,,,,da,ne,Odbijen
+Novi Vinodolski,Gornji Zagon,"6,4","22,8",67,149,da,da,Odbijen
+Novi Vinodolski,Crno,"2,8","21,2",66,148,da,ne,Odbijen
+Novi Vinodolski,Breze,"7,7","20,6",66,140,da,ne,Odbijen
+Novi Vinodolski,Zabukovac,"5,2","18,8",74,144,da,ne,Odbijen
+Novi Vinodolski,Bile,"2,1","18,2",70,142,da,ne,Odbijen
+Novi Vinodolski,Ruševo Krmpotsko,"4,3","15,9",71,147,da,ne,Odbijen
+Novi Vinodolski,Bater,"3,9","15,5",61,143,da,ne,Odbijen
+Novi Vinodolski,Javorje,"5,0","14,5",71,141,da,ne,Odbijen
+Novi Vinodolski,Ledenice,"2,5","13,1",60,142,da,ne,Odbijen
+Novi Vinodolski,Luka Krmpotska,"4,7","13,1",69,142,da,ne,Odbijen
+Novi Vinodolski,Podmelnik,"3,7","11,0",68,146,da,ne,Odbijen
+Novi Vinodolski,Donji Zagon,"2,1","10,4",56,140,da,ne,Odbijen
+Novi Vinodolski,Drinak,"2,0","9,2",64,150,da,ne,Odbijen
+Novi Vinodolski,Jakov Polje,"1,2","5,5",62,151,da,ne,Odbijen
+Novi Vinodolski,Sibinj Krmpotski,"0,4","1,2",67,145,da,ne,Odbijen
+Novi Vinodolski,Klenovica,"0,1",0,59,153,da,ne,Odbijen
+Novi Vinodolski,Krmpotske Vodice,,,,,da,ne,Odbijen
+Novi Vinodolski,Novi Vinodolski,"0,1",0,47,146,da,ne,Odbijen
+Novi Vinodolski,Povile,"0,3",0,52,147,da,ne,Odbijen
+Novi Vinodolski,Smokvica Krmpotska,"0,2",0,61,151,da,ne,Odbijen
+Omišalj,Njivice,"0,3",0,35,138,ne,ne,Prolaz
+Omišalj,Omišalj,"0,3",0,28,131,ne,ne,Prolaz
+Opatija,Mala Učka,"5,6","44,9",48,169,ne,da,Odbijen
+Opatija,Vela Učka,"6,0","35,3",43,163,ne,da,Odbijen
+Opatija,Veprinac,"2,1","18,8",24,145,ne,da,Odbijen
+Opatija,Poljane,"1,6","9,2",28,148,ne,da,Odbijen
+Opatija,Pobri,"0,8","8,2",20,141,ne,ne,Prolaz
+Opatija,Dobreć,"1,3","6,0",32,152,ne,da,Odbijen
+Opatija,Volosko,"0,3","4,6",18,138,ne,ne,Prolaz
+Opatija,Oprič,"0,7","4,0",32,152,ne,da,Odbijen
+Opatija,Ika,"0,1",0,29,150,ne,ne,Odbijen
+Opatija,Ičići,"0,2",0,28,149,ne,ne,Odbijen
+Opatija,Kosićevo,,,,,ne,ne,Prolaz
+Opatija,Lipovica,,,,,ne,ne,Prolaz
+Opatija,Opatija,"0,2",0,21,141,ne,ne,Prolaz
+Opatija,Plahuti,,,,,ne,ne,Prolaz
+Opatija,Punta Kolova,,,,,ne,ne,Odbijen
+Opatija,Tošina,,,,,ne,ne,Prolaz
+Opatija,Vrutki,,,,,ne,ne,Prolaz
+Opatija,Zora,,,,,ne,ne,Prolaz
+Punat,Stara Baška,"0,3","0,9",73,176,da,ne,Upozorenje
+Punat,Punat,"0,2",0,59,163,da,ne,Upozorenje
+Rijeka,Drenova,"2,2","13,7",13,134,,,Upozorenje da je Rijeka
+Rijeka,Hosti,"2,7","12,3",11,133,,,Upozorenje da je Rijeka
+Rijeka,Zamet,"1,2","10,6",12,132,,,Upozorenje da je Rijeka
+Rijeka,Draga,"1,3","9,9",14,133,,,Upozorenje da je Rijeka
+Rijeka,Svilno,"2,9","9,1",10,124,,,Upozorenje da je Rijeka
+Rijeka,Pašac,"2,9","7,6",8,124,,,Upozorenje da je Rijeka
+Rijeka,Podmurvice,"0,9","7,0",7,132,,,Upozorenje da je Rijeka
+Rijeka,Trsat,"0,9","5,4",6,126,,,Upozorenje da je Rijeka
+Rijeka,Podvežica,"0,7","4,8",5,125,,,Upozorenje da je Rijeka
+Rijeka,Orehovica,"1,9","4,4",5,121,,,Upozorenje da je Rijeka
+Rijeka,Banderovo,,,,,,,Upozorenje da je Rijeka
+Rijeka,Belveder,,,,,,,Upozorenje da je Rijeka
+Rijeka,Bivio,,,,,,,Upozorenje da je Rijeka
+Rijeka,Brajda,,,,,,,Upozorenje da je Rijeka
+Rijeka,Brašćine,,,,,,,Upozorenje da je Rijeka
+Rijeka,Bulevard,,,,,,,Upozorenje da je Rijeka
+Rijeka,Centar,,,,,,,Upozorenje da je Rijeka
+Rijeka,Costabella,,,,,,,Upozorenje da je Rijeka
+Rijeka,Donja Vežica,,,,,,,Upozorenje da je Rijeka
+Rijeka,Gornja Vežica,,,,,,,Upozorenje da je Rijeka
+Rijeka,Grbci,,,,,,,Upozorenje da je Rijeka
+Rijeka,Kantrida,,,,,,,Upozorenje da je Rijeka
+Rijeka,Kozala,,,,,,,Upozorenje da je Rijeka
+Rijeka,Krimeja,,,,,,,Upozorenje da je Rijeka
+Rijeka,Krnjevo,,,,,,,Upozorenje da je Rijeka
+Rijeka,Martinkovac,,,,,,,Upozorenje da je Rijeka
+Rijeka,Marčeljeva Draga,,,,,,,Upozorenje da je Rijeka
+Rijeka,Mlaka,,,,,,,Upozorenje da je Rijeka
+Rijeka,Pehlin,,,,,,,Upozorenje da je Rijeka
+Rijeka,Pećine,,,,,,,Upozorenje da je Rijeka
+Rijeka,Potok,,,,,,,Upozorenje da je Rijeka
+Rijeka,Preluk,,,,,,,Upozorenje da je Rijeka
+Rijeka,Pulac,,,,,,,Upozorenje da je Rijeka
+Rijeka,Rastočine,,,,,,,Upozorenje da je Rijeka
+Rijeka,Rijeka,"0,1",0,0,128,,,Upozorenje da je Rijeka
+Rijeka,Rujevica,,,,,,,Upozorenje da je Rijeka
+Rijeka,Srdoči,,,,,,,Upozorenje da je Rijeka
+Rijeka,Stari Grad,,,,,,,Upozorenje da je Rijeka
+Rijeka,Sušak,"0,3",0,3,128,,,Upozorenje da je Rijeka
+Rijeka,Sveti Kuzam,,,,,,,Upozorenje da je Rijeka
+Rijeka,Turnić,,,,,,,Upozorenje da je Rijeka
+Rijeka,Vojak,,,,,,,Upozorenje da je Rijeka
+Rijeka,Školjić,,,,,,,Upozorenje da je Rijeka
+Rijeka,Škurinje,,,,,,,Upozorenje da je Rijeka
+Rijeka,Škurinjska Draga,,,,,,,Upozorenje da je Rijeka
+Vrbnik,Garica,"4,0","20,1",50,154,da,da,Odbijen
+Vrbnik,Risika,"1,5","16,2",53,157,da,ne,Upozorenje
+Vrbnik,Kampelje,"3,0","15,2",57,160,da,da,Odbijen
+Vrbnik,Vrbnik,"0,2",0,62,165,da,ne,Upozorenje
+Matulji,Matulji,,,,,ne,ne,Prolaz

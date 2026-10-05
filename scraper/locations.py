@@ -7,6 +7,7 @@ Podaci:
   kvartovi, nazivi koji su ujedno obične riječi, poznati lažni pogoci).
 """
 
+import csv
 import re
 from dataclasses import dataclass, field
 from functools import cached_property
@@ -83,6 +84,39 @@ class LocationResult:
     ambiguous: bool = False
 
 
+PASS_, WARN_, REJECT_ = "prolazi", "upozorenje", "odbijen"
+REASONS = ("daleko od mora", "daleko od Rijeke", "grad Rijeka")
+_DECISIONS = {"prolaz": PASS_, "upozorenje": WARN_, "upozorenje da je rijeka": WARN_, "odbijen": REJECT_}
+
+
+def _join_reasons(reasons: list[str]) -> str:
+    if reasons == ["daleko od mora", "daleko od Rijeke"]:
+        return "daleko od mora i od Rijeke"
+    return ", ".join(reasons)
+
+
+def load_decisions(path: Path) -> dict[str, dict[str, dict]]:
+    """Odluke po naseljima: {grad/općina: {naselje: {odluka, razlozi, razlog, naziv}}}.
+    Odluke su "Prolaz", "Upozorenje", "Upozorenje da je Rijeka" i "Odbijen"; razlog
+    upozorenja (i odbijanja) slijedi iz stupaca daleko_od_mora i daleko_od_rijeke."""
+    out: dict[str, dict[str, dict]] = {}
+    if not path.exists():
+        return out
+    with path.open(encoding="utf-8") as f:
+        for row in csv.DictReader(f):
+            raw = (row.get("odluka") or "").strip().lower()
+            decision = _DECISIONS.get(raw)
+            if not decision:
+                continue
+            reasons = [r for r, col in (("daleko od mora", "daleko_od_mora"), ("daleko od Rijeke", "daleko_od_rijeke"))
+                       if (row.get(col) or "").strip().lower() == "da"]
+            if "rijeka" in raw:
+                reasons = ["grad Rijeka"]
+            out.setdefault(row["grad_opcina"], {})[fold(row["naselje"])] = {
+                "odluka": decision, "razlozi": reasons, "razlog": _join_reasons(reasons), "naziv": row["naselje"]}
+    return out
+
+
 class Locator:
     def __init__(self, data_dir: Path = DATA):
         base = yaml.safe_load((data_dir / "locations.yaml").read_text(encoding="utf-8"))
@@ -107,8 +141,10 @@ class Locator:
         self.aliases = {fold(a): fold(t) for a, t in (extra.get("sinonimi") or {}).items()}
         self.cadastral = {fold(k): self.jls[fold(v)] for k, v in (extra.get("katastarske_opcine") or {}).items()}
         self.common_words = {fold(w) for w in extra.get("obicne_rijeci", [])}
-        self.far_from_sea = {self.jls[fold(k)].name: {fold(n) for n in v}
-                             for k, v in (extra.get("predaleko_od_mora") or {}).items()}
+        self.settlement_aliases = {fold(a): fold(t) for a, t in (extra.get("drugi_nazivi_naselja") or {}).items()}
+        self.only_settlements = {self.jls[fold(k)].name: {fold(n) for n in v}
+                                 for k, v in (extra.get("samo_naselja") or {}).items()}
+        self.decisions = load_decisions(data_dir / "naselja_udaljenosti.csv")
         self.false_phrases = [re.compile(r"\b" + re.escape(fold(p)) + r"\b") for p in extra.get("lazni_pogoci", [])]
 
     # --- pretraživanje po strukturiranim poljima -------------------------
@@ -130,9 +166,14 @@ class Locator:
         return index
 
     def by_settlement(self, name: str) -> list[Jls]:
-        key = fold(name)
-        key = self.aliases.get(key, key)
+        key = self.canonical(name)
         return list(self._settlement_index.get(key, []))
+
+    def canonical(self, name: str) -> str:
+        """Normalizirani naziv naselja: drugi nazivi (Poljice → poljica) i sinonimi."""
+        key = fold(name)
+        key = self.settlement_aliases.get(key, key)
+        return self.aliases.get(key, key)
 
     # --- pretraživanje slobodnog teksta ----------------------------------
 
@@ -150,6 +191,8 @@ class Locator:
                 owners = by_name.setdefault(alias, [])
                 if self.jls[target] not in owners:
                     owners.append(self.jls[target])
+        for alias, target in self.settlement_aliases.items():
+            by_name.setdefault(alias, list(by_name.get(target, [])))
         terms = [(name, re.compile(name_pattern(name)), owners) for name, owners in by_name.items()]
         # Duži nazivi prvi: "Mošćenička Draga" prije "Draga".
         terms.sort(key=lambda t: len(t[0]), reverse=True)
@@ -165,7 +208,7 @@ class Locator:
 
     def scan_names(self, text: str) -> list[tuple[Jls, str]]:
         """Kao scan_text, ali s osnovnim (normaliziranim) nazivom: "u Njivicama" → "njivice"."""
-        return [(jls, name) for jls, name, _ in self._scan(text)]
+        return [(jls, self.settlement_aliases.get(name, name)) for jls, name, _ in self._scan(text)]
 
     def _scan(self, text: str) -> list[tuple[Jls, str, str]]:
         cased = fold_case(text)
@@ -186,19 +229,69 @@ class Locator:
                 found.extend((jls, name, cased[m.start():m.end()]) for jls in owners)
         return found
 
-    def far_settlement(self, jls_name: str, settlement: str, text: str) -> str | None:
-        """Naselje s popisa "predaleko od mora" u polju naselja ili u tekstu oglasa."""
-        far = self.far_from_sea.get(jls_name)
-        if not far:
-            return None
-        if settlement and fold(settlement) in far:
-            return settlement
-        for jls, phrase in self.scan_text(text):
-            if jls.name == jls_name and fold(phrase) in far:
-                return phrase
-        return None
+    def settlement_verdict(self, jls_name: str, settlement: str, text: str) -> tuple[str, str] | None:
+        """Odluka iz popisa naselja (data/naselja_udaljenosti.csv): (REJECT ili WARN, tekst)
+        ili None (prolazi bez napomene).
 
-    # --- odluka ----------------------------------------------------------
+        Naselje: polje naselja s portala, inače naselja spomenuta u lokaciji/naslovu.
+        Naziv koji je ujedno grad/općina ("Krk", "Rijeka") nije određeno naselje. Bez
+        određenog naselja oglas prolazi; napomenu dobije samo ako je imaju sva
+        prihvaćena naselja tog grada/općine (npr. Rijeka, Krk – daleko od Rijeke)."""
+        table = self.decisions.get(jls_name, {})
+        only = self.only_settlements.get(jls_name)
+        own = {fold(n) for n in self.jls[fold(jls_name)].settlements + self.jls[fold(jls_name)].extra} \
+            if fold(jls_name) in self.jls else set()
+        field = fold(settlement) if settlement else ""
+        field = self.settlement_aliases.get(field, field)
+        specific = [field] if field and field in own and self.by_name(field) is None else []
+        if not specific:
+            specific = sorted({name for j, name in self.scan_names(text)
+                               if j.name == jls_name and self.by_name(name) is None and name != "centar"})
+        if only is not None:
+            outside = [n for n in specific if n not in only]
+            if outside and len(outside) == len(specific):
+                names = ", ".join(self._display(jls_name, n) for n in outside)
+                return REJECT_, f"{names} ({jls_name}): prihvaća se samo {', '.join(sorted(self._display(jls_name, n) for n in only))}"
+            if not specific and field not in only:
+                return WARN_, f"{jls_name}: prihvaća se samo mjesto {', '.join(sorted(self._display(jls_name, n) for n in only))} – provjeri"
+        rows = [(n, table[n]) for n in specific if n in table]
+        if not rows and field in table:
+            rows = [(field, table[field])]          # npr. naselje "Krk" (grad Krk)
+        if not rows:
+            return self._town_verdict(jls_name, table)
+        rejected = [(n, r) for n, r in rows if r["odluka"] == REJECT_]
+        kept = [(n, r) for n, r in rows if r["odluka"] != REJECT_]
+        if rejected and not kept:
+            n, r = rejected[0]
+            why = f" ({r['razlog']})" if r["razlog"] else ""
+            return REJECT_, f"{r['naziv']}: isključeno po popisu naselja{why}"
+        by_reason: dict[str, list[str]] = {}
+        for _, r in kept:
+            if r["odluka"] == WARN_ and r["razlog"]:
+                by_reason.setdefault(r["razlog"], []).append(r["naziv"])
+        notes = [f"{', '.join(names)}: {reason}" for reason, names in by_reason.items()]
+        if rejected:
+            notes.append("oglas spominje i " + ", ".join(r["naziv"] for _, r in rejected) + " (isključeno po popisu)")
+        return (WARN_, "; ".join(notes)) if notes else None
+
+    def _town_verdict(self, jls_name: str, table: dict) -> tuple[str, str] | None:
+        accepted = [r for r in table.values() if r["odluka"] != REJECT_]
+        if not accepted or any(r["odluka"] == PASS_ for r in accepted):
+            return None
+        common = set.intersection(*(set(r["razlozi"]) for r in accepted))
+        if not common:
+            return None
+        reasons = [x for x in REASONS if x in common]
+        if reasons == ["grad Rijeka"]:
+            return WARN_, "grad Rijeka"
+        return WARN_, f"{jls_name}: {_join_reasons(reasons)}"
+
+    def _display(self, jls_name: str, key: str) -> str:
+        row = self.decisions.get(jls_name, {}).get(key)
+        if row:
+            return row["naziv"]
+        jls = self.jls.get(fold(jls_name))
+        return next((n for n in (jls.settlements if jls else []) if fold(n) == key), key.title())
 
     def resolve(self, municipality: str = "", settlement: str = "", county: str = "", text: str = "") -> LocationResult:
         if county and fold(county) not in (fold(self.county), fold(self.county) + " zupanija"):

@@ -9,6 +9,10 @@ def loc():
 
 
 def names(loc, text):
+    return {j.name for j, _ in loc.scan_text(text)}
+
+
+def with_inclusion(loc, text):
     return {(j.name, j.included) for j, _ in loc.scan_text(text)}
 
 
@@ -30,8 +34,8 @@ def names(loc, text):
         ("Punta Kolova", "Opatija"),
     ],
 )
-def test_included_places_in_all_cases(loc, text, expected):
-    assert (expected, True) in names(loc, text)
+def test_places_in_all_cases(loc, text, expected):
+    assert expected in names(loc, text)
 
 
 @pytest.mark.parametrize(
@@ -46,21 +50,23 @@ def test_included_places_in_all_cases(loc, text, expected):
     ],
 )
 def test_false_positives_are_ignored(loc, text):
-    assert not any(inc for _, inc in names(loc, text))
+    assert not any(inc for _, inc in with_inclusion(loc, text))
 
 
 def test_excluded_places(loc):
-    assert ("Bakar", False) in names(loc, "nekretnina u Bakru")
-    assert ("Rab", False) in names(loc, "Supetarska Draga na Rabu")
+    assert ("Bakar", False) in with_inclusion(loc, "nekretnina u Bakru")
+    assert ("Rab", False) in with_inclusion(loc, "Supetarska Draga na Rabu")
+    assert ("Novi Vinodolski", False) in with_inclusion(loc, "kuća u Novom Vinodolskom")
+    assert ("Mošćenička Draga", False) in with_inclusion(loc, "u Mošćeničkoj Dragi")
 
 
 def test_structured_fields(loc):
     assert loc.by_name("Malinska").name == "Malinska-Dubašnica"
     assert loc.by_name("Opatija - Okolica").name == "Opatija"
     assert loc.by_name("Grad Krk").name == "Krk"
-    assert not loc.by_name("Matulji").included
+    assert not loc.by_name("Bakar").included
     r = loc.resolve(settlement="Mučići", county="Primorsko-goranska")
-    assert r.jls.name == "Matulji" and r.included is False
+    assert r.jls.name == "Matulji"
     assert loc.resolve(municipality="Umag", county="Istarska").included is False
 
 

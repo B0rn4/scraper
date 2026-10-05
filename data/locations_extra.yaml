@@ -7,14 +7,13 @@ ukljuceno:
   - Kostrena
   - Lovran
   - Malinska-Dubašnica
-  - Mošćenička Draga
+  - Matulji          # samo mjesto Matulji (vidi samo_naselja)
   - Omišalj
   - Punat
   - Vrbnik
   - Crikvenica
   - Kraljevica
   - Krk
-  - Novi Vinodolski
   - Opatija
   - Rijeka
 
@@ -127,8 +126,12 @@ lazni_pogoci:
   - riječ
   - Bakarić
 
-# Naselja predaleko od mora (više od 10 minuta vožnje): oglasi iz njih ne stižu.
-# Za pregled: data/naselja_udaljenosti.csv (zračna udaljenost i procjena vožnje).
-predaleko_od_mora:
-  Novi Vinodolski: [Breze, Gornji Zagon, Zabukovac]
-  Opatija: [Vela Učka, Mala Učka]
+# Odluke po naseljima (prolaz / upozorenje / odbijen) su u data/naselja_udaljenosti.csv.
+
+# Gradovi/općine iz kojih se prihvaćaju samo navedena naselja (ostala se odbijaju).
+samo_naselja:
+  Matulji: [Matulji]
+
+# Drugi nazivi naselja (npr. kako ih piše karta): prepoznaju se kao to naselje.
+drugi_nazivi_naselja:
+  Poljice: Poljica

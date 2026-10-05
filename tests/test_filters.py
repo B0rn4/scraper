@@ -13,7 +13,7 @@ def ctx():
 
 def house(**kw):
     base = dict(source="t", source_id="1", url="u", title="Kuća", kind=HOUSE, subtype="samostojeća kuća",
-                price=300_000, area=120, county="Primorsko-goranska", municipality="Punat")
+                price=300_000, area=120, county="Primorsko-goranska", municipality="Omišalj")
     base.update(kw)
     return Listing(**base)
 
@@ -61,10 +61,18 @@ def test_missing_price_or_area_warns(ctx):
 
 
 def test_location_not_on_list(ctx):
-    d = evaluate(house(municipality="Matulji"), *ctx)
-    assert d.status == REJECT and "Matulji" in d.reasons[0]
+    d = evaluate(house(municipality="Novi Vinodolski"), *ctx)
+    assert d.status == REJECT and "Novi Vinodolski" in d.reasons[0]
     d = evaluate(house(municipality="Bakar"), *ctx)
     assert d.status == REJECT
+
+
+def test_matulji_only_the_village(ctx):
+    assert evaluate(house(municipality="Matulji", settlement="Matulji"), *ctx).status == PASS
+    d = evaluate(house(municipality="Matulji", settlement="Jušići"), *ctx)
+    assert d.status == REJECT and "prihvaća se samo Matulji" in d.reasons[0]
+    d = evaluate(house(municipality="Matulji", title="Kuća, Matulji"), *ctx)
+    assert d.status == WARN and any("provjeri" in w for w in d.warnings)
 
 
 def test_land_rules(ctx):
@@ -98,22 +106,33 @@ def test_fina_small_price_is_total(ctx):
     assert d.status == PASS
 
 
-def test_far_from_sea_settlement():
+def test_settlement_decisions():
+    """Odluke iz data/naselja_udaljenosti.csv: odbijen, upozorenje s razlogom, prolaz."""
     from scraper.locations import Locator
     from scraper.models import HOUSE, Listing
     from scraper.runner import load_config
 
     loc, crit = Locator(), load_config()["kriteriji"]
-    far = Listing(source="t", source_id="1", url="", title="Kuća u Brezama, pogled", kind=HOUSE,
-                  subtype="Samostojeća kuća", price=200_000, area=120, municipality="Novi Vinodolski", settlement="Breze")
-    d = evaluate(far, crit, loc)
-    assert d.status == "odbijen" and any("predaleko od mora" in r for r in d.reasons)
-    town = Listing(source="t", source_id="2", url="", title="Kuća Novi Vinodolski", kind=HOUSE,
-                   subtype="Samostojeća kuća", price=200_000, area=120, municipality="Novi Vinodolski")
-    assert evaluate(town, crit, loc).status != "odbijen"
-    in_text = Listing(source="t", source_id="3", url="", title="Vela Učka – kamena kuća", kind=HOUSE,
-                      subtype="Samostojeća kuća", price=200_000, area=120, municipality="Opatija")
-    assert "predaleko od mora" in " ".join(evaluate(in_text, crit, loc).reasons)
+
+    def house(title, municipality, settlement=""):
+        return Listing(source="t", source_id="1", url="", title=title, kind=HOUSE, subtype="Samostojeća kuća",
+                       price=200_000, area=120, municipality=municipality, settlement=settlement)
+
+    d = evaluate(house("Kuća u Vrhu, pogled", "Krk"), crit, loc)
+    assert d.status == "odbijen" and "Vrh: isključeno po popisu naselja (daleko od mora i od Rijeke)" in d.reasons
+    d = evaluate(house("Kamena kuća", "Krk", "Brzac"), crit, loc)
+    assert d.status == "upozorenje" and "Brzac: daleko od Rijeke" in d.warnings
+    d = evaluate(house("Kuća Glavani", "Kostrena"), crit, loc)
+    assert "Glavani: daleko od mora" in d.warnings
+    assert "Zamet: grad Rijeka" in evaluate(house("Kuća Zamet", "Rijeka"), crit, loc).warnings
+    assert "grad Rijeka" in evaluate(house("Kuća", "Rijeka"), crit, loc).warnings
+    assert evaluate(house("Kuća Omišalj", "Omišalj", "Njivice"), crit, loc).status == "prolazi"
+    # Samo grad/općina: prolazi; napomena samo kad je imaju sva prihvaćena naselja.
+    assert evaluate(house("Kuća", "Dobrinj"), crit, loc).status == "prolazi"
+    assert "Krk: daleko od Rijeke" in evaluate(house("Kuća", "Krk"), crit, loc).warnings
+    # Drugi naziv s karte (Poljice = Poljica); mjesto iz odbijene općine.
+    assert "Poljica: daleko od mora i od Rijeke" in evaluate(house("Kuća Poljice", "Krk"), crit, loc).warnings
+    assert evaluate(house("Kuća Klenovica", "Novi Vinodolski"), crit, loc).status == "odbijen"
 
 
 def test_risky_phrases():
@@ -124,8 +143,8 @@ def test_risky_phrases():
     loc, crit = Locator(), load_config()["kriteriji"]
 
     def house(desc):
-        return Listing(source="t", source_id="1", url="", title="Kuća Krk", kind=HOUSE, subtype="Samostojeća kuća",
-                       price=250_000, area=120, municipality="Krk", description=desc)
+        return Listing(source="t", source_id="1", url="", title="Kuća Omišalj", kind=HOUSE, subtype="Samostojeća kuća",
+                       price=250_000, area=120, municipality="Omišalj", description=desc)
 
     share = evaluate(house("Prodajem svoj suvlasnički dio kuće. Lijep pogled."), crit, loc)
     assert share.status == "odbijen" and "suvlasnički dio" in share.reasons[0]

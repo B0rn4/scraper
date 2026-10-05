@@ -237,7 +237,7 @@ class Runner:
             return f"📉 Snižena cijena ({change}) – sad odgovara kriterijima"
         if not old.get("notified_at"):
             # Prije odbijen, a sad odgovara (npr. ispravljena površina) ili slanje nije uspjelo.
-            return "" if old.get("status") != REJECT else "🔄 Oglas je izmijenjen i sad odgovara kriterijima"
+            return "" if old.get("status") != REJECT else "🔄 Sad odgovara kriterijima (izmijenjen oglas ili pravila pretrage)"
         return None
 
     def _send_notifications(self, state: State, to_notify) -> None:
