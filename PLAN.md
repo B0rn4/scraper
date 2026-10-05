@@ -156,16 +156,28 @@ bez stotina poruka.
       približne), inače središte naselja; tekst („prvi red”, „200 m od mora”).
       Rijeka ravnopravna s ostalima. Izvan naselja / manje mjesto: samo oznaka.
    3. **(gotovo 5. 10.)** `scraper/risks.py`. Opis imaju nekretnine.hr, oglasnik.hr,
-      vender.hr i novi oglasi s Njuškala; index.hr popis nema opis (ne provjerava se).
+      vender.hr i novi oglasi s Njuškala; za index.hr se novi oglasi koji mogu proći
+      otvaraju (api/aditem/single-ad, najviše 10 po pokretanju): opis, vrsta kuće
+      (dvojna/u nizu), vrsta zemljišta, okućnica, godine izgradnje i obnove, parking,
+      vlasnički list.
       Na 268 stvarnih opisa iz testnih primjera nije bilo lažnih upozorenja.
       Opasni izrazi (suvlasništvo, nasljednici, ostavina, bez papira, legalizacija,
       pravo stanovanja, plodouživanje, poljoprivredno, vanknjižno…): **odbija se samo
       nedvosmisleno** (npr. „prodaje se suvlasnički dio”), inače ⚠ s citiranom
       rečenicom. Niječni izrazi („bez tereta”, „legalizirano”, „1/1”) se izuzimaju.
       Dobre ponude se ne smiju izgubiti.
-   4. Cijena: ostvarene cijene (ISPU, Plan približnih vrijednosti – provjeriti može li
-      se preuzeti) važnije su od traženih; medijan traženih cijena iz naše baze po
-      naselju samo kad ima dovoljno oglasa, inače po općini, s napomenom.
+   4. Cijena: ostvarene cijene (ISPU, Plan približnih vrijednosti) važnije su od
+      traženih; medijan traženih cijena iz naše baze po naselju samo kad ima dovoljno
+      oglasa, inače po općini, s napomenom.
+      - **(gotovo 5. 10.)** Medijan traženih €/m² (`scraper/prices.py`): svi viđeni
+        oglasi iste vrste u zadnjih godinu dana (i skuplji od granice), isti oglas na
+        više portala jednom, zemljišta samo građevinska; naselje ako ima ≥ 8 oglasa,
+        inače grad/općina. U poruci: 💰 ≥ 15 % ispod, 💸 ≥ 15 % iznad, 📊 oko medijana;
+        ≥ 45 % ispod „neobično jeftino, provjeri zašto”. GitHub sprema `cijene.json`
+        na granu state, Redmi ga preuzima.
+      - ISPU: Plan približnih vrijednosti postoji za zemljišta, stanove/apartmane i
+        poslovne prostore – **ne za kuće**. Vrijednost za točku daje
+        `api/v1/gis/identify` (provjera u tijeku: `tools/discover13.py`).
    5. Parking: kuća mora imati parkirno mjesto ili dovoljno okućnice za parking
       (okućnica sama po sebi nije bitna) – oznaka/upozorenje kad nije navedeno.
    6. Redak s mjerama u poruci (more, Rijeka, Zagreb, cijena prema prosjeku, upozorenja).
