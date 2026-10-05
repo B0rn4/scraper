@@ -28,7 +28,8 @@ def load_config(path: Path = ROOT / "config.yaml") -> dict:
 
 
 class Runner:
-    def __init__(self, db_path: Path, out_dir: Path, send: bool = True, only: list[str] | None = None):
+    def __init__(self, db_path: Path, out_dir: Path, send: bool = True, only: list[str] | None = None,
+                 device: str = "github", redmi_db: Path | None = None):
         self.cfg = load_config()
         self.tz = ZoneInfo(self.cfg["vrijeme"]["zona"])
         self.now = datetime.now(self.tz)
@@ -36,6 +37,8 @@ class Runner:
         self.db_path = db_path
         self.out_dir = out_dir
         self.only = only
+        self.device = device          # "github" ili "redmi": koji izvori se ovdje čitaju
+        self.redmi_db = redmi_db      # stanje s Redmija (na GitHubu: nadzor i tjedni izvještaj)
         self.locator = Locator()
         self.criteria = self.cfg["kriteriji"]
         self.http = Http()
@@ -52,8 +55,11 @@ class Runner:
         self.log_lines.append(line)
 
     def enabled_sources(self):
-        for name, enabled in self.cfg["izvori"].items():
-            if enabled and (not self.only or name in self.only):
+        """Izvori za ovaj uređaj: true = GitHub, "redmi" = Redmi (kućna IP adresa)."""
+        for name, where in self.cfg["izvori"].items():
+            if not where or (self.only and name not in self.only):
+                continue
+            if (where is True and self.device == "github") or where == self.device:
                 yield ALL[name](self.http, self.locator, self.criteria)
 
     def in_active_hours(self) -> bool:
@@ -103,6 +109,7 @@ class Runner:
                     continue
                 first = state.meta_get(f"baseline:{src.name}") is None
                 mode = FULL if first else INCREMENTAL
+                src.since = next((h["last_ok"] for h in state.health_all() if h["source"] == src.name), None)
                 self.log(f"{src.label}: dohvat ({'početni, cijelo područje' if first else 'najnoviji'})")
                 try:
                     listings = src.fetch(mode, state.known_ids(src.name))
@@ -113,10 +120,16 @@ class Runner:
                     continue
                 self._source_ok(state, src)
                 decided = []
+                silent_baseline = first and not getattr(src, "baseline_report", True)
                 for x in listings:
                     d = evaluate(x, self.criteria, self.locator)
                     old = state.upsert(x, d, self.stamp)
                     decided.append((x, d))
+                    if silent_baseline or (old is None and x.extra.get("stari_oglas")):
+                        # Bez obavijesti (početak praćenja ili stari oglas ponovno objavljen),
+                        # ali zabilježeno – sniženje cijene kasnije i dalje stiže.
+                        state.mark_notified(x.key, x.price, f"tiho:{self.stamp}")
+                        continue
                     if not first:
                         headline = self._notify_reason(x, d, old)
                         if headline is not None:
@@ -124,7 +137,8 @@ class Runner:
                 counts = {s: sum(1 for _, d in decided if d.status == s) for s in (PASS, WARN, REJECT)}
                 self.log(f"{src.label}: {len(listings)} oglasa – ✅ {counts[PASS]}, ⚠ {counts[WARN]}, ❌ {counts[REJECT]}")
                 if first:
-                    baseline.append((src, decided, ""))
+                    if not silent_baseline:
+                        baseline.append((src, decided, ""))
                     state.meta_set(f"baseline:{src.name}", self.stamp)
                 if src.daily:
                     state.meta_set(f"daily:{src.name}", today)
@@ -133,6 +147,9 @@ class Runner:
             if baseline:
                 self._send_baseline(state, baseline)
             self._send_notifications(state, to_notify)
+            state.meta_set("last_run", self.stamp)
+            if self.redmi_db:
+                self._check_redmi(state)
         finally:
             state.close()
 
@@ -213,7 +230,7 @@ class Runner:
         traceback.print_exc()
         limit = self.cfg.get("nadzor", {}).get("greske_prije_upozorenja", 3)
         if failures >= limit and not alerted:
-            self._email(
+            self._alert(
                 f"Scraper: izvor {src.label} ne radi",
                 f"Izvor {src.label} je {failures} puta zaredom vratio grešku.\n\nZadnja greška:\n{detail}\n\n"
                 "Dok se ne popravi, s ovog izvora ne stižu obavijesti. Javi Claudeu ovu poruku.",
@@ -225,7 +242,45 @@ class Runner:
         was_alerted = bool(row and row.get("alerted"))
         state.health_ok(src.name, self.stamp)
         if was_alerted:
-            self._email(f"Scraper: izvor {src.label} ponovno radi", f"Izvor {src.label} ponovno radi ({self.stamp}).")
+            self._alert(f"Scraper: izvor {src.label} ponovno radi", f"Izvor {src.label} ponovno radi ({self.stamp}).")
+
+    def _alert(self, subject: str, text: str) -> None:
+        """Upozorenje mailom; na Redmiju (bez postavki za mail) na Telegram."""
+        if self.email or not self.telegram:
+            self._email(subject, text)
+            return
+        try:
+            self.telegram.send_text(f"⚠ <b>{html.escape(subject)}</b>\n{html.escape(text)}")
+        except Exception as exc:  # noqa: BLE001
+            self.log(f"Upozorenje nije poslano: {exc}")
+
+    def _check_redmi(self, state: State) -> None:
+        """Na GitHubu: javlja li se Redmi. Nakon svakog pokretanja Redmi šalje svoje stanje
+        na granu state-redmi; ako zadnje pokretanje kasni, stiže mail (jednom)."""
+        path = Path(self.redmi_db)
+        if not path.exists():
+            return  # Redmi još nije postavljen
+        other = State(path)
+        last = other.meta_get("last_run")
+        other.close()
+        if not last or self.now.hour < self.cfg["vrijeme"]["od_sata"] + 1:
+            return
+        limit = self.cfg.get("nadzor", {}).get("redmi_kasni_minuta", 90)
+        row = next((h for h in state.health_all() if h["source"] == "redmi"), None)
+        if self.now - datetime.fromisoformat(last) <= timedelta(minutes=limit):
+            state.health_ok("redmi", self.stamp)
+            if row and row.get("alerted"):
+                self._email("Scraper: Redmi se ponovno javlja", f"Redmi je ponovno pokrenuo scraper ({last[:16]}).")
+            return
+        state.health_fail("redmi", f"zadnje pokretanje {last[:16]}")
+        if not (row and row.get("alerted")):
+            self._email(
+                "Scraper: Redmi se ne javlja",
+                f"Redmi se nije javio od {last[:16].replace('T', ' ')}. Dok se ne javi, Njuškalo se ne prati.\n\n"
+                "Provjeri je li Redmi uključen, na punjaču i na Wi-Fiju te radi li Termux "
+                "(obavijest „Termux” u traci obavijesti). Ako je sve u redu, javi Claudeu ovu poruku.",
+            )
+            state.mark_alerted("redmi")
 
     def review(self) -> Path:
         """Pregled: cijelo područje, bez obavijesti po oglasu i bez promjene stanja."""
@@ -282,13 +337,16 @@ class Runner:
 
     def weekly(self) -> None:
         """Tjedni izvještaj mailom."""
-        state = State(self.db_path)
         since = (self.now - timedelta(days=7)).isoformat(timespec="seconds")
-        counts = state.counts_since(since)
-        notified = state.notified_since(since)
-        near = state.near_misses_since(since)
-        health = state.health_all()
-        state.close()
+        counts, notified, near, health = {}, [], [], []
+        paths = [self.db_path] + ([self.redmi_db] if self.redmi_db and Path(self.redmi_db).exists() else [])
+        for path in paths:  # stanje s GitHuba i, ako postoji, s Redmija (Njuškalo)
+            state = State(path)
+            counts.update(state.counts_since(since))
+            notified += state.notified_since(since)
+            near += state.near_misses_since(since)
+            health += state.health_all()
+            state.close()
         e = html.escape
         rows = "".join(
             f"<tr><td>{e(SOURCE_LABELS.get(s, s))}</td><td>{c.get(PASS, 0)}</td><td>{c.get(WARN, 0)}</td><td>{c.get(REJECT, 0)}</td></tr>"

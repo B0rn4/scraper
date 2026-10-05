@@ -19,6 +19,8 @@ SOURCE_LABELS = {
     "oglasnik": "oglasnik.hr",
     "fina": "FINA Očevidnik",
     "vender": "vender.hr",
+    "njuskalo": "Njuškalo",
+    "redmi": "Redmi (Njuškalo)",
 }
 
 

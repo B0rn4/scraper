@@ -1,4 +1,4 @@
-# Redmi: Njuškalo i Realitica (faza 2b)
+# Redmi: Njuškalo (faza 2b)
 
 Njuškalo i Realitica blokiraju GitHubove poslužitelje (američke IP adrese). Redmi na
 kućnom Wi-Fiju portalima izgleda kao običan posjetitelj iz Hrvatske. Programi se
@@ -158,10 +158,84 @@ python tools/redmi_probe.py --playwright
 Svaka naredba na kraju sama traži token i šalje rezultate. Ako slanje ne uspije,
 ponovi ga s `python tools/redmi_probe.py --posalji`.
 
-## Korak 2: automatsko pokretanje (nakon probe; oko 15 min)
+## Korak 2: redovno pokretanje (oko 20 min)
 
-Kad napišem čitanje Njuškala i Realitice prema rezultatima probe, ovdje će biti
-upute za automatsko pokretanje svakih 20 minuta od 7 do 23 h. Uključuje Termux:Boot
-za pokretanje nakon ponovnog paljenja te postavke baterije u MIUI-ju (Termux bez
-ograničenja baterije, automatsko pokretanje uključeno). Plan je da GitHub primijeti
-ako Redmi prestane javljati i pošalje mail.
+Redmi svakih 20 minuta (7–23 h) pravim preglednikom otvori Njuškalo (kuće i zemljišta
+u PGŽ, najnovije), za nove oglase koji bi mogli proći otvori i sam oglas, pošalje
+obavijesti na Telegram i stanje na GitHub. Ako se Redmi 90 minuta ne javi, GitHub
+šalje mail. Stari oglasi koje agencije samo ponovno objave ne stižu (osim sniženja).
+
+### 2.1 Tajne (u Ubuntuu)
+
+Botu u Telegramu prvo napiši bilo što (npr. „bok”) – tako skripta sama pronađe ID
+razgovora. Zatim:
+
+```
+cd ~/scraper && . ~/venv/bin/activate && git pull
+python tools/redmi_setup.py
+```
+
+Skripta pita za:
+- **token bota**: u Telegramu @BotFather → /mybots → tvoj bot → API Token (isti kao
+  TELEGRAM_BOT_TOKEN na GitHubu);
+- **ID razgovora**: samo ako ga ne pronađe sama (isti kao TELEGRAM_CHAT_ID);
+- **GitHub token**: `redmi-scraper` iz koraka 1.2. Ako ga nisi spremio, napravi novi
+  na isti način.
+
+Na kraju stiže probna poruka na Telegram. Tajne ostaju samo na Redmiju.
+
+### 2.2 Prvo pokretanje (u Ubuntuu)
+
+```
+bash tools/redmi_run.sh; tail -15 ~/scraper.log
+```
+
+Prvo pokretanje samo zabilježi oglase s prve stranice, bez poruka. U ispisu treba
+pisati „Njuškalo: … oglasa” i „redmi_sync: stanje poslano”. Javi mi kad prođe.
+
+### 2.3 Automatsko pokretanje (u Termuxu)
+
+Izađi iz Ubuntua (`exit`, odzivnik je opet `~ $`) pa:
+
+```
+pkg install -y cronie termux-services
+```
+
+Zatvori Termux potpuno: u svakom prozoru upiši `exit` (ili ga makni iz nedavnih
+aplikacija) i ponovno ga otvori, da se pokrenu servisi. Zatim:
+
+```
+sv-enable crond
+echo 'PATH=/data/data/com.termux/files/usr/bin' > ~/scraper.cron
+echo '*/20 7-22 * * * proot-distro login ubuntu -- bash /root/scraper/tools/redmi_run.sh' >> ~/scraper.cron
+crontab ~/scraper.cron
+crontab -l
+```
+
+Zadnja naredba ispiše ta dva retka – tada je raspored postavljen.
+
+### 2.4 Nakon ponovnog paljenja i baterija
+
+1. U pregledniku otvori **f-droid.org/packages/com.termux.boot/**, preuzmi APK i
+   instaliraj ga (isti izvor kao Termux). Otvori **Termux:Boot** jednom pa ga zatvori.
+2. U Termuxu:
+
+```
+mkdir -p ~/.termux/boot
+echo '#!/data/data/com.termux/files/usr/bin/sh' > ~/.termux/boot/start-scraper
+echo 'termux-wake-lock' >> ~/.termux/boot/start-scraper
+echo '. /data/data/com.termux/files/usr/etc/profile' >> ~/.termux/boot/start-scraper
+chmod +x ~/.termux/boot/start-scraper
+```
+
+3. MIUI postavke (da Android ne gasi Termux):
+   - Postavke → Aplikacije → Upravljanje aplikacijama → **Termux** → Ušteda baterije →
+     **Bez ograničenja**; Automatsko pokretanje → **uključeno**.
+   - Isto za **Termux:Boot** (automatsko pokretanje uključeno).
+   - U nedavnim aplikacijama dugo pritisni Termux → **lokot** (zaključaj).
+4. Redmi neka stoji na punjaču i kućnom Wi-Fiju.
+
+### Provjera
+
+U Ubuntuu `tail -30 ~/scraper.log` pokazuje zadnja pokretanja. Ako Redmi ne radi,
+GitHub nakon 90 minuta šalje mail „Redmi se ne javlja”.

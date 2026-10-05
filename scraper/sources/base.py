@@ -12,6 +12,8 @@ class Source:
     name = ""          # ključ u konfiguraciji i bazi
     label = ""         # naziv za prikaz
     daily = False      # True: provjerava se jednom dnevno
+    baseline_report = True  # False: prvo pokretanje se samo zabilježi, bez početnog popisa
+    since: str | None = None  # vrijeme zadnjeg uspješnog dohvata (postavlja runner)
 
     def __init__(self, http: Http, locator: Locator, criteria: dict):
         self.http = http

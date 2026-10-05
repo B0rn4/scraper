@@ -1,0 +1,20 @@
+#!/bin/bash
+# Redovno pokretanje na Redmiju (Njuškalo). Poziva ga cron u Termuxu, kroz
+# "proot-distro login ubuntu"; ručno: bash ~/scraper/tools/redmi_run.sh
+set -u
+cd "$HOME/scraper" || exit 1
+exec 9>/tmp/scraper-redmi.lock
+flock -n 9 || exit 0   # prethodno pokretanje još traje
+
+LOG="$HOME/scraper.log"
+{
+  echo "=== $(date '+%F %T')"
+  . "$HOME/venv/bin/activate"
+  set -a; . "$HOME/.scraper.env"; set +a
+  git pull -q --ff-only || echo "git pull nije uspio – radim sa starim kodom"
+  python -m scraper run --uredjaj redmi --db "$HOME/redmi.db" --out "$HOME/redmi-out"
+  python tools/redmi_sync.py "$HOME/redmi.db"
+} >> "$LOG" 2>&1
+
+# Dnevnik drži samo zadnjih 3000 redaka.
+tail -n 3000 "$LOG" > "$LOG.tmp" && mv "$LOG.tmp" "$LOG"

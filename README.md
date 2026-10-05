@@ -21,8 +21,13 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 | oglasnik.hr | podaci sa stranice | svakih 20 min |
 | FINA Očevidnik (samo građevinska zemljišta) | dnevni CSV izvoz | jednom dnevno |
 | vender.hr | njihov API | svakih 20 min |
+| Njuškalo | s Redmija, pravim preglednikom ([REDMI.md](REDMI.md)) | svakih 20 min |
 
-Njuškalo i Realitica dolaze u fazi 2b (preko Redmija, upute u [REDMI.md](REDMI.md)).
+Njuškalo blokira GitHub i zahtjeve bez preglednika, pa ga čita Redmi s kućne mreže.
+Javljaju se samo novi oglasi (novi broj oglasa) i sniženja; stari oglasi koje agencije
+ponovno objave bilježe se bez poruke. Realitica je izostavljena (njezini oglasi gotovo
+su svi već na drugim portalima).
+
 Provjereni i izostavljeni: nekretnine24.hr (nema oglasa za područje), oglasi.hr
 (gotovo prazan), trazimstan.hr (većinom najam, zabranjuje automatsko čitanje),
 gohome.hr (tražilica: Njuškalo osvježava svakih nekoliko dana, index.hr i oglasnik.hr

@@ -109,8 +109,10 @@ class State:
 
     def _new_since(self, since: str, where: str = "1=1") -> list[dict]:
         baselines = self._baselines()
+        # "tiho:" = stari oglas ponovno objavljen ili početak praćenja – nije nov.
         rows = self.conn.execute(
-            f"SELECT * FROM listings WHERE first_seen >= ? AND {where} ORDER BY first_seen", (since,)
+            f"SELECT * FROM listings WHERE first_seen >= ? AND {where} "
+            "AND (notified_at IS NULL OR notified_at NOT LIKE 'tiho:%') ORDER BY first_seen", (since,)
         )
         return [dict(r) for r in rows if r["first_seen"] > baselines.get(r["source"], "")]
 
@@ -119,7 +121,8 @@ class State:
 
     def notified_since(self, since: str) -> list[dict]:
         rows = self.conn.execute(
-            "SELECT * FROM listings WHERE notified_at >= ? AND notified_at NOT LIKE 'zbirno:%' ORDER BY notified_at",
+            "SELECT * FROM listings WHERE notified_at >= ? AND notified_at NOT LIKE 'zbirno:%' "
+            "AND notified_at NOT LIKE 'tiho:%' ORDER BY notified_at",
             (since,),
         )
         return [dict(r) for r in rows]

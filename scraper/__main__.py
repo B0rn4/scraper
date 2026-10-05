@@ -6,6 +6,8 @@
   python -m scraper tjedni     tjedni izvještaj mailom
 
 Opcije: --db state.db  --out out  --izvori nekretnine_hr,fina  --bez-slanja
+        --uredjaj redmi   (na Redmiju: izvori označeni s "redmi" u config.yaml)
+        --redmi-db redmi.db   (na GitHubu: stanje s Redmija za nadzor i tjedni izvještaj)
 """
 
 import argparse
@@ -22,9 +24,12 @@ def main() -> None:
     parser.add_argument("--izvori", default="", help="samo ovi izvori, odvojeni zarezom")
     parser.add_argument("--bez-slanja", action="store_true", help="ne šalji ništa na Telegram ni mail")
     parser.add_argument("--force", action="store_true", help="radi i izvan radnog vremena")
+    parser.add_argument("--uredjaj", default="github", choices=["github", "redmi"])
+    parser.add_argument("--redmi-db", type=Path, default=None)
     args = parser.parse_args()
     only = [s.strip() for s in args.izvori.split(",") if s.strip()] or None
-    runner = Runner(args.db, args.out, send=not args.bez_slanja, only=only)
+    runner = Runner(args.db, args.out, send=not args.bez_slanja, only=only,
+                    device=args.uredjaj, redmi_db=args.redmi_db)
     if args.naredba == "run":
         runner.run(force=args.force)
     elif args.naredba == "pregled":

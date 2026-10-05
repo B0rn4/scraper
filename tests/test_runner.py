@@ -91,3 +91,74 @@ def test_weekly_excludes_baseline(tmp_path):
     assert [r["source_id"] for r in state.near_misses_since(since)] == ["2"]
     assert state.counts_since(since) == {"t": {REJECT: 1}}
     state.close()
+
+
+def test_device_split(tmp_path):
+    names = lambda device: {s.name for s in Runner(tmp_path / "s.db", tmp_path, send=False, device=device).enabled_sources()}
+    assert "njuskalo" not in names("github") and "nekretnine_hr" in names("github")
+    assert names("redmi") == {"njuskalo"}
+
+
+class QuietSource(FakeSource):
+    name, label, daily = "quiet", "quiet", False
+    baseline_report = False
+
+    def fetch(self, mode, known_ids):
+        QuietSource.modes.append(mode)
+        return QuietSource.batches.pop(0)
+
+
+def test_silent_baseline_and_reposted_old_ads(tmp_path, monkeypatch):
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "quiet", QuietSource)
+    old = listing(sid="2")
+    old.extra["stari_oglas"] = True
+    cheaper = listing(280_000, "2")
+    QuietSource.modes = []
+    QuietSource.batches = [[listing(sid="1")],              # početak praćenja: ništa ne stiže
+                           [listing(sid="1"), old, listing(sid="3")],  # stari ponovno objavljen + nov
+                           [cheaper]]                        # stari sad jeftiniji
+    sent = []
+
+    def run_once():
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False, device="redmi")
+        r.cfg["izvori"] = {"quiet": "redmi"}
+        r._send_report = lambda *a, **k: sent.append(("report",))
+        r._send_notifications = lambda state, items: sent.extend((x.source_id, h) for x, d, h in items)
+        r.run(force=True)
+
+    run_once()
+    assert sent == []
+    run_once()
+    assert sent == [("3", "")]
+    sent.clear()
+    run_once()
+    assert len(sent) == 1 and sent[0][0] == "2" and sent[0][1].startswith("📉")
+    state = State(tmp_path / "s.db")
+    assert state.meta_get("last_run") and [r["source_id"] for r in state.notified_since("2000")] == []
+    state.close()
+
+
+def test_redmi_watchdog(tmp_path):
+    from datetime import timedelta
+
+    redmi = State(tmp_path / "redmi.db")
+    mails = []
+
+    def check(minutes_ago):
+        r = Runner(tmp_path / "s.db", tmp_path, send=False, redmi_db=tmp_path / "redmi.db")
+        r.now = r.now.replace(hour=12)
+        redmi.meta_set("last_run", (r.now - timedelta(minutes=minutes_ago)).isoformat(timespec="seconds"))
+        redmi.conn.commit()
+        r._email = lambda subject, *a, **k: mails.append(subject)
+        state = State(tmp_path / "s.db")
+        r._check_redmi(state)
+        state.close()
+
+    check(20)
+    check(200)
+    check(220)  # upozorenje samo jednom
+    check(10)
+    assert mails == ["Scraper: Redmi se ne javlja", "Scraper: Redmi se ponovno javlja"]
+    redmi.close()

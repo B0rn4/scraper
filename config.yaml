@@ -24,6 +24,7 @@ izvori:
   oglasnik: true
   fina: true
   vender: true
+  njuskalo: redmi   # čita Redmi s kućne IP adrese (REDMI.md); GitHub ga ne dira
 
 obavijesti:
   telegram: true
@@ -34,3 +35,5 @@ obavijesti:
 
 nadzor:
   greske_prije_upozorenja: 3
+  # Mail ako se Redmi (Njuškalo) ne javi ovoliko minuta (provjera s GitHuba, od 8 h).
+  redmi_kasni_minuta: 90

@@ -1,0 +1,212 @@
+"""Njuškalo – čita se s Redmija (kućna IP adresa), pravim preglednikom.
+
+Njuškalo štiti ShieldSquare: zahtjevi bez preglednika nakon nekoliko pokušaja dobiju
+captchu, a Chromium s trajnim profilom prolazi (proba 5. 10. 2026.).
+
+Popis je poredan po datumu objave (sort=new), ali na vrhu su većinom stari oglasi
+koje agencije ponovno objave – zadržavaju stari broj oglasa. Brojevi oglasa rastu
+(~20.000 dnevno na cijelom Njuškalu), pa je oglas nov ako mu je broj veći od
+najvećeg dosad viđenog umanjenog za OLD_MARGIN. Stariji oglas koji vidimo prvi put
+zabilježi se bez obavijesti (extra["stari_oglas"]); sniženje cijene i dalje stiže.
+
+Popis ne daje površinu zemljišta, a vrstu kuće samo ugrubo, pa se za nove oglase
+na našem području otvara i stranica oglasa (površine, vrsta, opis, koordinate)."""
+
+import html
+import re
+from datetime import datetime, timedelta
+
+from ..browser import Browser
+from ..filters import evaluate
+from ..models import HOUSE, LAND, REJECT, Listing
+from ..text import areas_in_text, parse_number
+from .base import FULL, Source
+
+BASE = "https://www.njuskalo.hr"
+REGION = "primorsko-goranska"
+CATEGORIES = [("prodaja-kuca", HOUSE), ("prodaja-zemljista", LAND)]
+MAX_PAGES = 4          # najviše stranica po kategoriji u jednom pokretanju
+MAX_DETAILS = 8        # najviše otvorenih oglasa u jednom pokretanju (zaštita od captche)
+OLD_MARGIN = 60_000    # ~3 dana novih brojeva oglasa
+SINCE_MARGIN = timedelta(minutes=15)
+
+_ITEM = re.compile(r'<li class="EntityList-item EntityList-item--n\d+ EntityList-item--(Regular|VauVau)[^"]*">(.*?)</article>',
+                   re.S)
+_LINK = re.compile(r'<h3 class="entity-title"><a href="([^"]+)"[^>]*name="(\d+)"[^>]*>.*?<span>([^<]*)</span>', re.S)
+_DESC = re.compile(r'<div class="entity-description">(.*?)</div>', re.S)
+_DATE = re.compile(r'<time[^>]*datetime="([^"]+)"')
+_PRICE = re.compile(r'<strong class="price[^"]*">([^<]+)</strong>')
+_IMG = re.compile(r'<img[^>]+src="(https://[^"]+)"')
+_COMMENT = re.compile(r"<!--.*?-->", re.S)
+_TAGS = re.compile(r"<[^>]+>")
+
+
+def _text(fragment: str) -> str:
+    return html.unescape(re.sub(r"\s+", " ", _TAGS.sub(" ", _COMMENT.sub("", fragment)))).strip()
+
+
+def _place(value: str) -> tuple[str, str]:
+    """"Krk, Linardići" → ("Krk", "Linardići"); detalj ima i županiju ispred."""
+    parts = [p.strip() for p in value.split(",") if p.strip()]
+    if parts and parts[0].lower().startswith("primorsko-goransk"):
+        parts = parts[1:]
+    return (parts[0] if parts else "", parts[1] if len(parts) > 1 else "")
+
+
+def parse_list(page: str, kind: str) -> list[Listing]:
+    out = []
+    for m in _ITEM.finditer(page):
+        block = m.group(2)
+        link = _LINK.search(block)
+        if not link:
+            continue
+        href, sid, title = link.groups()
+        desc = _DESC.search(block)
+        lines = [_text(x) for x in re.split(r"<br\s*/?>", desc.group(1))] if desc else []
+        lines = [x for x in lines if x]
+        fields = {}
+        subtype = ""
+        for line in lines:
+            if ":" in line:
+                key, value = line.split(":", 1)
+                fields[key.strip().lower()] = value.strip()
+            elif not subtype:
+                subtype = line
+        municipality, settlement = _place(fields.get("lokacija", ""))
+        title = html.unescape(title).strip()
+        area = parse_number((re.search(r"[\d.,]+", fields.get("stambena površina", "")) or [None])[0])
+        if kind == LAND and not area:
+            found = areas_in_text(title)
+            area = max(found) if found else None
+        price = _PRICE.search(block)
+        date = _DATE.search(block)
+        img = _IMG.search(block)
+        out.append(Listing(
+            source=Njuskalo.name,
+            source_id=sid,
+            url=BASE + href,
+            title=title,
+            kind=kind,
+            subtype=subtype,
+            price=parse_number(price.group(1).replace("€", "")) if price else None,
+            area=area,
+            county="Primorsko-goranska",
+            municipality=municipality,
+            settlement=settlement,
+            location_text=fields.get("lokacija", ""),
+            image_url=img.group(1) if img else "",
+            published=date.group(1) if date else "",
+            extra={"istaknut": m.group(1) == "VauVau"},
+        ))
+    return out
+
+
+def parse_detail(page: str, listing: Listing) -> None:
+    """Dopunjuje oglas podacima sa stranice oglasa."""
+    page = _COMMENT.sub("", page)
+    fields = {}
+    for dt, dd in re.findall(r'<dt class="ClassifiedDetailBasicDetails-listTerm">(.*?)</dt>\s*'
+                             r'<dd class="ClassifiedDetailBasicDetails-listDefinition">(.*?)</dd>', page, re.S):
+        fields[_text(dt).lower()] = _text(dd)
+
+    def number(key):
+        value = fields.get(key)
+        return parse_number(re.search(r"[\d.,]+", value).group(0)) if value and re.search(r"\d", value) else None
+
+    if listing.kind == HOUSE:
+        if fields.get("tip kuće"):
+            listing.subtype = f"{fields['tip kuće']} kuća"
+        listing.area = number("stambena površina") or listing.area
+        listing.plot_area = number("površina okućnice") or listing.plot_area
+    else:
+        if fields.get("tip zemljišta"):
+            listing.subtype = f"{fields['tip zemljišta'].capitalize()} zemljište"
+        listing.area = number("površina") or listing.area
+    if fields.get("lokacija"):
+        listing.municipality, listing.settlement = _place(fields["lokacija"])
+        listing.location_text = fields["lokacija"]
+    desc = re.search(r'<div class="ClassifiedDetailDescription-text"[^>]*>(.*?)</div>', page, re.S)
+    groups = [_text(x) for x in re.findall(r'<li class="ClassifiedDetailPropertyGroups-groupListItem">(.*?)</li>', page, re.S)]
+    text = _text(re.sub(r"<br\s*/?>", "\n", desc.group(1))) if desc else ""
+    listing.description = "\n".join(filter(None, [text, "; ".join(groups)]))[:5000]
+    coords = re.search(r'"coordinates":\{"latitude":([-\d.]+),"longitude":([-\d.]+)\},"isApproximateLocationOnMap":(\w+)', page)
+    if coords:
+        listing.extra["lat"], listing.extra["lon"] = float(coords.group(1)), float(coords.group(2))
+        listing.extra["priblizna_lokacija"] = coords.group(3) == "true"
+    for key, name in (("broj parkirnih mjesta", "parking"), ("godina izgradnje", "godina_izgradnje"),
+                      ("namjena", "namjena")):
+        if fields.get(key):
+            listing.extra[name] = fields[key]
+    listing.extra["detalji"] = True
+
+
+def _page_url(category: str, page: int) -> str:
+    return f"{BASE}/{category}/{REGION}?sort=new" + (f"&page={page}" if page > 1 else "")
+
+
+class Njuskalo(Source):
+    name = "njuskalo"
+    label = "Njuškalo"
+    baseline_report = False   # početni popis bi bio samo prva stranica – ne šalje se
+
+    def __init__(self, *args, browser: Browser | None = None, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.browser = browser
+
+    def _since(self) -> datetime | None:
+        try:
+            return datetime.fromisoformat(self.since) - SINCE_MARGIN if self.since else None
+        except ValueError:
+            return None
+
+    def fetch(self, mode, known_ids):
+        browser = self.browser or Browser()
+        own_browser = self.browser is None
+        numeric = [int(x) for x in known_ids if x.isdigit()]
+        threshold = max(numeric) - OLD_MARGIN if numeric else None
+        since = self._since()
+        found: dict[str, Listing] = {}
+        try:
+            for category, kind in CATEGORIES:
+                for page in range(1, (1 if mode == FULL else MAX_PAGES) + 1):
+                    text = browser.get(_page_url(category, page), "li.EntityList-item")
+                    if "captcha" in (re.search(r"<title>([^<]*)", text) or [None, ""])[1].lower():
+                        raise RuntimeError("Njuškalo je vratio captchu (zaštita ShieldSquare)")
+                    items = parse_list(text, kind)
+                    if not items:
+                        if page == 1:
+                            raise RuntimeError(f"Njuškalo: na stranici {category} nema oglasa (promjena stranice?)")
+                        break
+                    for x in items:
+                        found.setdefault(x.source_id, x)
+                    # Sljedeća stranica samo ako je i najstariji redovni oglas objavljen nakon
+                    # prošlog pokretanja (inače smo sve novo već vidjeli).
+                    dates = [x.published for x in items if not x.extra.get("istaknut") and x.published]
+                    oldest = min(dates) if dates else ""
+                    if not since or not oldest or datetime.fromisoformat(oldest.replace("Z", "+00:00")) < since:
+                        break
+            details = 0
+            for x in found.values():
+                if x.source_id in known_ids:
+                    continue
+                if threshold is not None and int(x.source_id) <= threshold:
+                    x.extra["stari_oglas"] = True
+                elif mode != FULL and details < MAX_DETAILS and self._worth_detail(x):
+                    details += 1
+                    try:
+                        parse_detail(browser.get(x.url, "h1"), x)
+                    except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
+                        x.extra["detalji_greska"] = str(exc)[:200]
+        finally:
+            if own_browser:
+                browser.close()
+        return list(found.values())
+
+    def _worth_detail(self, x: Listing) -> bool:
+        """Stranicu oglasa otvaramo samo kad bi oglas mogao proći (područje, cijena, vrsta)."""
+        d = evaluate(x, self.criteria, self.locator)
+        return d.status != REJECT or d.near_miss
+
+    def search_links(self):
+        return [(f"{label}, PGŽ, najnovije", _page_url(cat, 1))
+                for (cat, _), label in zip(CATEGORIES, ("Kuće", "Zemljišta"))]

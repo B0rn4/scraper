@@ -118,3 +118,74 @@ def test_vender_items():
     assert items["790712"].settlement == "Barbat Na Rabu" and items["790712"].area is None
     assert sum(x.kind == HOUSE for x in items.values()) == 5
 
+
+
+def test_njuskalo_list_houses():
+    from scraper.sources.njuskalo import parse_list
+
+    items = {x.source_id: x for x in parse_list(read("njuskalo_kuce.html.gz"), HOUSE)}
+    assert len(items) == 31 and sum(x.extra["istaknut"] for x in items.values()) == 6
+    x = items["45131418"]
+    assert x.subtype == "Samostojeća kuća" and x.price == 500000 and x.area == 157
+    assert (x.municipality, x.settlement) == ("Krk", "Krk") and x.published.startswith("2026-10-05T09:27")
+    assert x.url == "https://www.njuskalo.hr/nekretnine/sarmantna-samostojeca-kuca-okolici-grada-krka-oglas-45131418"
+    assert items["44223167"].subtype == "U nizu kuća"
+    assert items["41395237"].municipality == "Opatija - Okolica"
+
+
+def test_njuskalo_list_land_area_from_title():
+    from scraper.sources.njuskalo import parse_list
+
+    items = {x.source_id: x for x in parse_list(read("njuskalo_zemljista.html.gz"), LAND)}
+    assert items["51465742"].area == 965 and items["42353257"].area == 758
+    assert items["47267864"].area is None  # naslov bez površine – dopunjuje se sa stranice oglasa
+
+
+def test_njuskalo_detail():
+    from scraper.sources.njuskalo import parse_detail, parse_list
+
+    house = next(x for x in parse_list(read("njuskalo_kuce.html.gz"), HOUSE) if x.source_id == "45131418")
+    parse_detail(read("njuskalo_kuca_oglas.html.gz"), house)
+    assert house.subtype == "Samostojeća kuća" and house.area == 157 and house.plot_area == 250
+    assert house.extra["parking"] == "2" and house.extra["priblizna_lokacija"] is True
+    assert round(house.extra["lat"], 3) == 45.029 and "4 km od mora" in house.description
+    land = next(x for x in parse_list(read("njuskalo_zemljista.html.gz"), LAND) if x.source_id == "51465742")
+    parse_detail(read("njuskalo_zemljiste_oglas.html.gz"), land)
+    assert land.subtype == "Građevinsko zemljište" and land.area == 965 and land.extra["namjena"] == "stambeno"
+
+
+class FakeBrowser:
+    def __init__(self, pages):
+        self.pages, self.calls = pages, []
+
+    def get(self, url, wait_selector="body"):
+        self.calls.append(url)
+        for key, page in self.pages.items():
+            if key in url:
+                return page
+        return "<html><title>prazno</title></html>"
+
+    def close(self):
+        pass
+
+
+def test_njuskalo_fetch_old_and_new(fina):
+    from scraper.sources.base import INCREMENTAL
+    from scraper.sources.njuskalo import Njuskalo
+
+    browser = FakeBrowser({"prodaja-kuca": read("njuskalo_kuce.html.gz"),
+                           "prodaja-zemljista": read("njuskalo_zemljista.html.gz"),
+                           "oglas-51323938": read("njuskalo_kuca_oglas.html.gz")})
+    src = Njuskalo(None, Locator(), load_config()["kriteriji"], browser=browser)
+    src.since = "2026-10-05T11:30:00+02:00"
+    # Već viđen oglas s brojem 45.180.000: sve s brojem ≤ 45.120.000 je "staro".
+    items = {x.source_id: x for x in src.fetch(INCREMENTAL, {"45180000"})}
+    assert items["41395237"].extra.get("stari_oglas") and items["45131418"].extra.get("stari_oglas") is None
+    # Rijeka, 368.000 €: nov i mogao bi proći → otvara se oglas; Krk, 500.000 €: preskupo → ne otvara se.
+    assert items["51323938"].extra.get("detalji") and items["51323938"].plot_area == 250
+    assert "detalji" not in items["45131418"].extra
+    detail_calls = [u for u in browser.calls if "/nekretnine/" in u]
+    assert not any(sid in u for u in detail_calls for sid in ("47749178", "41395237"))  # izvan područja / stari
+    assert not any("oglas-50785229" in u for u in detail_calls)  # dvojna kuća → ne otvara se
+    assert 0 < len(detail_calls) <= 8  # samo oglasi koji bi mogli proći, najviše 8
+    assert sum("prodaja-kuca" in u for u in browser.calls) == 1  # najstariji na 1. stranici je stariji od since

@@ -65,6 +65,11 @@ jobs:
           else
             echo "Nema spremljenog stanja – prvo pokretanje."
           fi
+          # Stanje s Redmija (Njuškalo): za nadzor Redmija i tjedni izvještaj.
+          if git fetch -q --depth=1 origin state-redmi 2>/dev/null; then
+            git show FETCH_HEAD:redmi.db > redmi.db
+            echo "Stanje s Redmija učitano ($(stat -c %s redmi.db) B)"
+          fi
 
       - name: Pokreni
         run: |
@@ -77,7 +82,7 @@ jobs:
           # koje poštuje radno vrijeme. Ručni "run" radi odmah, i izvan radnog vremena.
           if [ "$CMD" = "raspored" ]; then CMD=run
           elif [ "$CMD" = "run" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then ARGS="$ARGS --force"; fi
-          python -m scraper $CMD $ARGS
+          python -m scraper $CMD $ARGS --redmi-db redmi.db
 
       - name: Spremi stanje
         if: always()
