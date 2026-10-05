@@ -1,0 +1,74 @@
+# Natječaji za prodaju nekretnina (faza 4). Čita se jednom dnevno.
+#
+# nacin:
+#   wp        – WordPress tražilica (wp-json), s datumom i tekstom objave
+#   rss       – WordPress tražilica kroz RSS (?s=…&feed=rss2)
+#   stranica  – poveznice sa stranice "Natječaji" (tekst se čita s otvorene poveznice)
+# jls: grad/općina kojoj objava pripada. Bez jls (PGŽ, CERP, državne nekretnine) objava se
+#      zadržava samo ako spominje naše područje.
+
+- naziv: Općina Baška
+  jls: Baška
+  nacin: rss
+  url: https://www.baska.hr/
+- naziv: Općina Dobrinj
+  jls: Dobrinj
+  nacin: stranica
+  url: https://dobrinj.hr/default_javnipozivi.asp?sid=5827&n=5
+- naziv: Općina Kostrena
+  jls: Kostrena
+  nacin: wp
+  url: https://kostrena.hr/
+- naziv: Općina Lovran
+  jls: Lovran
+  nacin: wp
+  url: https://lovran.hr/
+- naziv: Općina Malinska-Dubašnica
+  jls: Malinska-Dubašnica
+  nacin: wp
+  url: https://www.malinska.hr/
+- naziv: Općina Matulji
+  jls: Matulji
+  nacin: wp
+  url: https://matulji.hr/portal/
+- naziv: Općina Omišalj
+  jls: Omišalj
+  nacin: stranica
+  url: https://omisalj.hr/informacije/javni-natjecaji-i-pozivi
+- naziv: Općina Punat
+  jls: Punat
+  nacin: stranica
+  url: https://punat.hr/novosti/12
+- naziv: Općina Vrbnik
+  jls: Vrbnik
+  nacin: wp
+  url: https://www.opcina-vrbnik.hr/
+- naziv: Grad Crikvenica
+  jls: Crikvenica
+  nacin: wp
+  url: https://www.crikvenica.hr/
+- naziv: Grad Kraljevica
+  jls: Kraljevica
+  nacin: wp
+  url: https://www.kraljevica.hr/
+- naziv: Grad Krk
+  jls: Krk
+  nacin: stranica
+  url: https://grad-krk.hr/desnibanner/natjecaji
+- naziv: Grad Opatija
+  jls: Opatija
+  nacin: wp
+  url: https://opatija.hr/
+- naziv: Grad Rijeka
+  jls: Rijeka
+  nacin: wp
+  url: https://www.rijeka.hr/
+- naziv: Primorsko-goranska županija
+  nacin: stranica
+  url: https://www.pgz.hr/dokumenti/natjecaji/
+- naziv: CERP (državna imovina)
+  nacin: stranica
+  url: https://www.cerp.hr/natjecaji/11
+- naziv: Državne nekretnine d.o.o.
+  nacin: stranica
+  url: http://www.hr-nekretnine.hr/
