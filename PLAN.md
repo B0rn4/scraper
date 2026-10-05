@@ -15,14 +15,15 @@ kriterijima stiže obavijest na mobitel (Telegram). PC ne mora biti upaljen.
 - **Vrsta kuće:** gdje portal ima polje „vrsta kuće”, koristi se ono. Inače se koriste
   ključne riječi, oprezno: „kuća s dvije etaže” je cijela kuća, a „prodaje se etaža kuće” nije.
   Nesigurni slučajevi idu s oznakom ⚠.
-- **Lokacija:** samo ovih 15 jedinica lokalne samouprave, plus tablica koja svakom
-  naselju pridružuje općinu ili grad (prema službenom popisu naselja). Portali često
-  navode samo naselje (Ičići, Selce, Njivice, Stara Baška…). Usporedba je točna, a ne
-  po dijelu riječi.
-  - Općine: Baška, Dobrinj, Kostrena, Lovran, Malinska-Dubašnica, Mošćenička Draga,
-    Omišalj, Punat, Vrbnik
-  - Gradovi: Crikvenica, Kraljevica, Krk, Novi Vinodolski, Opatija, Rijeka
-  - Bakar je namjerno isključen.
+- **Lokacija:** samo ovi gradovi i općine, plus tablica koja svakom naselju pridružuje
+  općinu ili grad (prema službenom popisu naselja). Portali često navode samo naselje
+  (Ičići, Selce, Njivice, Stara Baška…). Usporedba je točna, a ne po dijelu riječi.
+  - Općine: Baška, Dobrinj, Kostrena, Lovran, Malinska-Dubašnica, Omišalj, Punat,
+    Vrbnik; iz općine Matulji samo mjesto Matulji (od 5. 10.)
+  - Gradovi: Crikvenica, Kraljevica, Krk, Opatija, Rijeka
+  - Isključeni: Bakar; od 5. 10. i Mošćenička Draga i Novi Vinodolski.
+  - Odluka po naselju (prolaz / upozorenje / odbijen) je u
+    `data/naselja_udaljenosti.csv` (korisnik, 5. 10.).
 - **Nedostaje cijena ili površina** („cijena na upit”): oglas se šalje s oznakom ⚠.
 - **Snižena cijena:** pamte se i oglasi izvan filtera. Kad cijena padne ispod granice,
   ili kad već poslani oglas pojeftini, stiže obavijest „📉 snižena cijena”.
@@ -146,12 +147,17 @@ bez stotina poruka.
       brojevi (npr. 299.000 €, 100 m²) traže zajedničko naselje ili riječi naslova.
       GitHub objavljuje sažetak viđenih (`seen.json.gz` na grani state) za Redmi, a
       GitHub čita bazu s Redmija.
-   2. **(gotovo 5. 10., popis se dopunjuje)** Tablica naselja (15 JLS):
-      `data/naselja_udaljenosti.csv` – zračna udaljenost od mora (OSM obala) i procjena
-      vožnje (OSRM; nepouzdana jer izbjegava neasfaltirane/privatne puteve, npr. Brzac
-      11 min umjesto 4). Zato **korisnik sam određuje** popis naselja predaleko od mora
-      (`predaleko_od_mora` u data/locations_extra.yaml); oglasi iz njih ne stižu.
-      Oglas koji navodi samo grad/općinu i dalje stiže. **Više od 10 min vožnje do mora → oglas ne stiže.**
+   2. **(gotovo 5. 10.)** Tablica naselja `data/naselja_udaljenosti.csv` – zračna
+      udaljenost od mora (OSM obala), procjena vožnje (OSRM; nepouzdana jer izbjegava
+      neasfaltirane/privatne puteve, npr. Brzac 11 min umjesto 4) i **odluka korisnika**
+      za svako naselje: Prolaz, Upozorenje (razlog iz stupaca daleko_od_mora /
+      daleko_od_rijeke), Upozorenje da je Rijeka, Odbijen. Oglas koji navodi samo
+      grad/općinu prolazi; napomenu dobije samo ako je imaju sva prihvaćena naselja
+      (Rijeka – „grad Rijeka”; Krk, Punat, Vrbnik – „daleko od Rijeke”). Spominje li
+      oglas i prihvaćeno i odbijeno naselje, stiže s ⚠. Drugi nazivi s karte
+      (Poljice = Poljica) u `drugi_nazivi_naselja`. Lipovica, Plahuti, Punta Kolova,
+      Vrutki, Zora, Kosićevo i Tošina nisu službena naselja nego dijelovi Opatije iz
+      popisa lokacija index.hr; prepoznaju se jer ih oglašivači biraju.
       Lokacija oglasa: koordinate (nekretnine.hr, vender.hr, Njuškalo – često
       približne), inače središte naselja; tekst („prvi red”, „200 m od mora”).
       Rijeka ravnopravna s ostalima. Izvan naselja / manje mjesto: samo oznaka.
@@ -185,8 +191,14 @@ bez stotina poruka.
         jeftino”), kuća prema stanovima slične veličine (orijentacija). Bez
         prepoznatog naselja: raspon svih naselja grada/općine. Poljoprivredna
         zemljišta se ne uspoređuju. Osvježiti svake godine nakon 1.1.
-      - Moguće kasnije: PPV za točne koordinate oglasa (Njuškalo, index.hr) i sloj
-        „Građevinska područja” (je li zemljište u građevinskom području).
+      - **(gotovo 5. 10.)** Građevinsko područje i PPV na samoj lokaciji, za zemljišta
+        koja stižu (`scraper/ispu.py`): katastarska čestica iz opisa (k.č. … k.o. …;
+        matični broj k.o. iz ISPU-a, čestica iz javnog servisa DGU-a INSPIRE CP WFS)
+        ili točna oznaka na karti (nekretnine.hr „marker”, vender.hr, Njuškalo bez
+        „približne lokacije”, index.hr s točnom lokacijom). ISPU sloj „Građevinska
+        područja (rujan 2024.)”: u GP naselja (izgrađeni/neizgrađeni dio), GP izvan
+        naselja (⚠) ili izvan GP-a (⚠). Bez točne lokacije: „nije provjereno”.
+      - Cijena se ne koristi za odbijanje (osim granice iz kriterija) – samo oznake.
    5. Parking: kuća mora imati parkirno mjesto ili dovoljno okućnice za parking
       (okućnica sama po sebi nije bitna) – oznaka/upozorenje kad nije navedeno.
    6. Redak s mjerama u poruci (more, Rijeka, Zagreb, cijena prema prosjeku, upozorenja).

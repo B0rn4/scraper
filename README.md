@@ -17,8 +17,13 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 - **Opasni izrazi u opisu** (suvlasništvo, ostavina, legalizacija, teret…): ⚠ s
   citiranom rečenicom; odbija se samo nedvosmisleno (prodaje se suvlasnički dio).
 - **Ostvarene cijene (🏛 PPV):** Plan približnih vrijednosti Ministarstva (ISPU,
-  1.1.2026.) za naselje: građevinsko zemljište €/m², a za kuće vrijednost stanova
+  1.1.2026.) za naselje: građevinsko zemljište €/m², a za kuće vrijednost STANOVA
   slične veličine (za kuće PPV ne postoji, pa je to orijentacija).
+- **Građevinsko područje (🗺, zemljišta):** prema katastarskoj čestici iz opisa ili
+  točnoj oznaci na karti oglasa (ISPU, DGU). Izvan građevinskog područja → ⚠; bez
+  točne lokacije piše „nije provjereno”. Uz to PPV na samoj lokaciji.
+- **Naselja:** odluka za svako naselje (prolaz / ⚠ s razlogom: daleko od mora, daleko
+  od Rijeke, grad Rijeka / ne stiže) je u `data/naselja_udaljenosti.csv`.
 - **Cijena prema drugim oglasima:** 💰 ispod / 💸 iznad / 📊 oko medijana traženih
   €/m² u istom naselju (ako ima barem 8 oglasa), inače u gradu/općini.
 - **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, parking, vlasnički list.
