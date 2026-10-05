@@ -161,6 +161,41 @@ def osrm_nearest(sources: list[tuple[float, float]], dests: list[tuple[float, fl
     return out
 
 
+def sea_candidates(lat, lon, coast_xy, n=14, spacing=350.0, radius=8_000.0) -> list[tuple[float, float]]:
+    """Najbliže točke obale, međusobno udaljene barem `spacing` m (različite uvale/plaže)."""
+    px, py = _xy(lat, lon)
+    near = sorted((math.hypot(x - px, y - py), x, y, la, lo) for x, y, la, lo in coast_xy
+                  if abs(x - px) < radius and abs(y - py) < radius)
+    chosen = []
+    for d, x, y, la, lo in near:
+        if d > radius:
+            break
+        if all(math.hypot(x - cx, y - cy) >= spacing for _, cx, cy, _, _ in chosen):
+            chosen.append((d, x, y, la, lo))
+            if len(chosen) >= n:
+                break
+    return [(la, lo) for _, _, _, la, lo in chosen]
+
+
+def sea_drive(lat, lon, candidates, max_snap=300.0) -> tuple[float | None, tuple | None]:
+    """Minute vožnje do mjesta gdje cesta dolazi do mora (do max_snap m od obale)."""
+    if not candidates:
+        return None, None
+    coords = ";".join(f"{lo:.5f},{la:.5f}" for la, lo in [(lat, lon)] + candidates)
+    r = requests.get(f"{OSRM}/table/v1/driving/{coords}",
+                     params={"sources": "0", "destinations": ";".join(str(i + 1) for i in range(len(candidates)))},
+                     headers=HEADERS, timeout=60)
+    r.raise_for_status()
+    data = r.json()
+    best = (None, None)
+    for duration, dest, cand in zip(data["durations"][0], data["destinations"], candidates):
+        if duration is None or dest.get("distance", 1e9) > max_snap:
+            continue
+        if best[0] is None or duration < best[0]:
+            best = (round(duration / 60, 1), cand)
+    return best
+
+
 def osrm_route(a, b) -> float | None:
     r = requests.get(f"{OSRM}/route/v1/driving/{a[1]:.5f},{a[0]:.5f};{b[1]:.5f},{b[0]:.5f}",
                      params={"overview": "false"}, headers=HEADERS, timeout=60)
@@ -209,15 +244,20 @@ def run(summary: dict) -> None:
                 p[name] = minutes
         except Exception as exc:  # noqa: BLE001
             summary[f"greska_{name}"] = str(exc)[:300]
-    # Do mora: vožnja do najbližeg naselja uz more (najbliža točka obale je često stijena
-    # bez ceste, pa bi ruta išla okolo).
-    coastal = [(p["lat"], p["lon"]) for p in rows if p["more_m"] <= 300]
-    summary["naselja_uz_more"] = len(coastal)
-    try:
-        for p, minutes in zip(rows, osrm_nearest(coords, coastal)):
-            p["more_min"] = 0.0 if p["more_m"] <= 300 else minutes
-    except Exception as exc:  # noqa: BLE001
-        summary["greska_more_min"] = str(exc)[:300]
+    # Do mora: vožnja do najbližeg mjesta gdje cesta dolazi do obale (plaža, uvala, luka).
+    # Kandidati su najbliže točke obale u različitim uvalama; vrijedi samo ako cesta
+    # prolazi najviše 300 m od te točke (inače je obala stijena bez pristupa).
+    coast_xy = [(*_xy(la, lo), la, lo) for line in coast for la, lo in line]
+    for p in rows:
+        if p["more_m"] <= 300:
+            p["more_min"] = 0.0
+            continue
+        try:
+            p["more_min"], target = sea_drive(p["lat"], p["lon"], sea_candidates(p["lat"], p["lon"], coast_xy))
+            p["more_cilj"] = target
+        except Exception as exc:  # noqa: BLE001
+            summary["greska_more_min"] = str(exc)[:300]
+        time.sleep(1.1)
 
     save()
     summary["primjer"] = rows[:5]
