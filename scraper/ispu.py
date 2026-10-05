@@ -18,6 +18,8 @@ from .text import fmt_m2, fold
 
 API = "https://ispu.mgipu.hr/api/v1/"
 CP_WFS = "https://api.uredjenazemlja.hr/services/inspire/cp/wfs"   # DGU, katastarske čestice (INSPIRE)
+PGZ_OFFICES = {"rijeka", "krk", "crikvenica", "opatija", "delnice", "rab", "mali losinj", "cres", "cabar",
+               "vrbovsko", "novi vinodolski"}
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json",
            "Origin": "https://ispu.mgipu.hr", "Referer": "https://ispu.mgipu.hr/"}
 
@@ -191,6 +193,8 @@ class Ispu:
         want = fold(ko_name)
         names = [(k, fold(str(k.get("labela", "")).split(",")[-1])) for k in r.json() or []]
         matches = [k for k, name in names if name == want] or [k for k, name in names if name.startswith(want)]
+        # Isti naziv k.o. postoji u više županija (npr. Vrh): prednost uredima u PGŽ-u.
+        matches.sort(key=lambda k: fold(str(k.get("labela", "")).split(",")[0]) not in PGZ_OFFICES)
         return matches[0]["maticniBroj"] if matches else None
 
 
@@ -248,7 +252,7 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
     if info is None and lat and lon and not approximate:
         info, where = ispu.point(lat, lon), "oznaci na karti oglasa"
     if info is None:
-        why = "čestica iz oglasa nije pronađena u ISPU-u" if parcels else "oglas nema točnu lokaciju ni broj čestice"
+        why = "čestica iz oglasa nije pronađena u katastru" if parcels else "oglas nema točnu lokaciju ni broj čestice"
         return LandCheck(f"🗺 Građevinsko područje: nije provjereno – {why}")
     caveat = " (oznaka može biti približna)" if where.startswith("oznaci") else ""
     use = info.use.split(") ", 1)[-1].capitalize() if info.use else ""
