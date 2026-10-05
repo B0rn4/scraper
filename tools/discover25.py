@@ -56,7 +56,10 @@ def wp_part(s, summary):
 def ministry_part(s, summary):
     """Pronađi "Pregled tržišta nekretnina" na mpgi.gov.hr i izvuci tekst."""
     found, seen = [("2023", f"{DOCS}Pregled-trzista-nekretnina-2023.pdf"), ("2024", f"{DOCS}Pregled-trzista-nekretnina-2024.pdf"),
-                   ("HNB P-41", "https://www.hnb.hr/documents/20182/2626448/p-041.pdf/a46c4569-30fc-4bb9-80e5-4f5953762d25")], set()
+                   ("2025", f"{DOCS}Pregled-trzista-nekretnina-2025.pdf"),
+                   ("HNB P-41", "https://www.hnb.hr/documents/20182/2626448/p-041.pdf/a46c4569-30fc-4bb9-80e5-4f5953762d25"),
+                   ("HNB I-20", "https://www.hnb.hr/documents/20182/121648/i-020.pdf/67a39d10-1fee-4447-9121-69a1f4a21f13"),
+                   ("Indeksi 2025", "https://mpgi.gov.hr/UserDocsImages/Stanovanje/ProcjenaNekretnina/2025_05_23_Publikacija_indeksi.pdf")], set()
     queue = ["https://mpgi.gov.hr/default.aspx?id=8292", "https://mpgi.gov.hr/"]
     for depth in range(2):
         nxt = []
@@ -79,7 +82,7 @@ def ministry_part(s, summary):
         queue = nxt
     summary["ministry_pdfs"] = found[:20]
     texts = {}
-    for text, url in found[:6]:
+    for text, url in found[:9]:
         try:
             from pypdf import PdfReader
             data = s.get(url, timeout=120).content
