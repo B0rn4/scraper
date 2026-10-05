@@ -22,15 +22,15 @@ def main():
     OUT.mkdir(parents=True, exist_ok=True)
     out = {}
     s = cffi.Session(impersonate="chrome")
-    for name, url in {"CERP": "https://www.cerp.hr/natjecaji/11", "Krk": "https://grad-krk.hr/desnibanner/natjecaji"}.items():
+    for name, url in {"CERP": "https://www.cerp.hr/natjecaji/11?tip=9"}.items():
         try:
             html = s.get(url, timeout=40).text
-            out[name] = [html[max(0, m.start() - 700): m.start() + 500] for m in re.finditer(r"prodaj", html, re.I)][:4]
+            out[name] = [html[max(0, m.start() - 700): m.start() + 500] for m in re.finditer(r"nekretnin", html, re.I)][2:7]
         except Exception as exc:  # noqa: BLE001
             out[name] = str(exc)[:300]
     reader = Reader(Http(delay=1.5), Locator())
     for site in load_sites():
-        if site["naziv"] not in ("Općina Omišalj", "Grad Krk (novosti)", "Državne nekretnine d.o.o."):
+        if site["naziv"] not in ("Općina Omišalj", "CERP (državna imovina)"):
             continue
         try:
             items = reader.fetch(site)

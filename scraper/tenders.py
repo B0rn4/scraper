@@ -173,7 +173,10 @@ class Reader:
         base = str(getattr(page, "url", site["url"]))
         out, seen = [], set()
         for href, inner in re.findall(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>', page.text, re.S | re.I):
-            title = _TEASER.split(_clean(inner), 1)[0].strip()   # "Natječaj … Na temelju članka 48. …"
+            full = _clean(inner)
+            if re.search(r"\bneaktivn", fold(full)):    # Omišalj: istekli natječaji su "Neaktivno"
+                continue
+            title = _TEASER.split(full, 1)[0].split(" | ")[0].strip()   # "Natječaj … Na temelju članka 48. …"
             url = urljoin(base, html.unescape(href))
             if len(title) < 12 or url in seen or not relevant(title):
                 continue

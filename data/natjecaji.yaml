@@ -73,7 +73,7 @@
   url: https://www.pgz.hr/dokumenti/natjecaji/
 - naziv: CERP (državna imovina)
   nacin: stranica
-  url: https://www.cerp.hr/natjecaji/11
+  url: https://www.cerp.hr/natjecaji/11?tip=9   # Javni pozivi – nekretnine
 - naziv: Državne nekretnine d.o.o.
   nacin: stranica
   url: https://hr-nekretnine.hr/vrsta-natjecaja/prodaja-nekretnina/
