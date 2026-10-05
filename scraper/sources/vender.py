@@ -76,6 +76,11 @@ def parse_items(items: list[dict]) -> list[Listing]:
             image_url=media.get("source_url", "") if isinstance(media, dict) else "",
             published=x.get("date") or "",
         ))
+        coords = re.match(r"\s*(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)", _meta(meta, "fave_property_location") or "")
+        if coords and _meta(meta, "fave_property_map") == "1":
+            # Oznaka na karti oglasa; agencija je može staviti i približno.
+            out[-1].extra["lat"], out[-1].extra["lon"] = float(coords.group(1)), float(coords.group(2))
+            out[-1].extra["priblizna_lokacija"] = False
     return out
 
 

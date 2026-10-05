@@ -50,7 +50,7 @@ def _listing(result: dict, kind: str) -> Listing:
         photo = photos[0].get("urls", {}) if photos else {}
     address = loc.get("address") or ""
     settlement = loc.get("macrozone") or (address.split(",")[0].strip() if "," in address else "")
-    return Listing(
+    listing = Listing(
         source=NekretnineHr.name,
         source_id=str(re_["id"]),
         url=(result.get("seo") or {}).get("url") or f"{BASE}/oglasi/{re_['id']}/",
@@ -66,6 +66,11 @@ def _listing(result: dict, kind: str) -> Listing:
         description=" ".join(filter(None, [prop.get("caption"), prop.get("description")])),
         image_url=photo.get("medium") or photo.get("large") or photo.get("small") or "",
     )
+    # "marker": točna oznaka na karti; "only_area": samo područje; "no_map": bez karte.
+    if loc.get("latitude") and loc.get("longitude") and loc.get("marker") != "no_map":
+        listing.extra["lat"], listing.extra["lon"] = float(loc["latitude"]), float(loc["longitude"])
+        listing.extra["priblizna_lokacija"] = loc.get("marker") != "marker"
+    return listing
 
 
 class NekretnineHr(Source):
