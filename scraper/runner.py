@@ -2,6 +2,7 @@
 
 import html
 import json
+import time
 import traceback
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -23,6 +24,7 @@ from .sources.base import FULL, INCREMENTAL
 from .text import fmt_eur, fold
 
 ROOT = Path(__file__).resolve().parent.parent
+LAND_CHECK_SECONDS = 120   # najdulje trajanje provjera građevinskog područja po pokretanju
 
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
@@ -165,8 +167,9 @@ class Runner:
             if baseline:
                 self._send_baseline(state, baseline)
             if len(to_notify) <= self.cfg.get("obavijesti", {}).get("max_poruka_po_pokretanju", 30):
+                deadline = time.monotonic() + LAND_CHECK_SECONDS
                 for x, d, _ in to_notify:
-                    self._check_land(x, d)
+                    self._check_land(x, d, deadline)
             self._send_notifications(state, to_notify)
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
@@ -190,10 +193,13 @@ class Runner:
             self.log(f"Sažetak viđenih oglasa nije učitan: {exc}")
         return seen
 
-    def _check_land(self, x: Listing, d: Decision) -> None:
+    def _check_land(self, x: Listing, d: Decision, deadline: float | None = None) -> None:
         """Zemljište: građevinsko područje i PPV na točnoj lokaciji (ISPU). Izvan
         građevinskog područja naselja → ⚠ (oglas i dalje stiže)."""
         if x.kind != LAND:
+            return
+        if deadline is not None and time.monotonic() > deadline:
+            x.extra["gp"] = "🗺 Građevinsko područje: nije provjereno (vremensko ograničenje pokretanja)"
             return
         if self._ispu is None:
             self._ispu = Ispu()

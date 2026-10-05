@@ -111,6 +111,7 @@ class Ispu:
         self.session = session
         self.timeout = timeout
         self._layers: list[dict] | None = None
+        self.parcels_off = False         # DGU nije odgovorio: do kraja pokretanja bez traženja čestica
 
     def layers(self) -> list[dict]:
         """Slojevi građevinskog područja i najnoviji PPV zemljišta iz kataloga."""
@@ -153,17 +154,25 @@ class Ispu:
         K.o. → matični broj iz ISPU-a; čestica iz javnog katastarskog servisa DGU-a
         (INSPIRE). names: normalizirani naziv → naziv s dijakriticima (pretraga ISPU-a
         traži dijakritike: "OMIŠALJ", ne "OMISALJ")."""
+        if self.parcels_off:
+            return None
         mbr = self.cadastral_municipality(ko_name)
         if mbr is None and names and fold(ko_name) in names:
             mbr = self.cadastral_municipality(names[fold(ko_name)])
         if mbr is None:
             return None
         for label in (kc, "*" + kc):     # "*" su zgradne čestice
-            r = self.session.get(CP_WFS, params={
-                "service": "WFS", "version": "2.0.0", "request": "GetFeature", "typeNames": "cp:CadastralParcel",
-                "count": 1, "outputFormat": "application/json",
-                "CQL_FILTER": f"nationalCadastralReference='{mbr}-{label}'"}, timeout=self.timeout)
-            r.raise_for_status()
+            try:
+                r = self.session.get(CP_WFS, params={
+                    "service": "WFS", "version": "2.0.0", "request": "GetFeature", "typeNames": "cp:CadastralParcel",
+                    "count": 1, "outputFormat": "application/json",
+                    # Ovaj oblik filtra je najbrži (~15 s); točna jednakost oznake traje ~35 s.
+                    "CQL_FILTER": f"label='{label}' AND nationalCadastralReference LIKE '{mbr}-%'"},
+                    timeout=max(self.timeout, 45))
+                r.raise_for_status()
+            except Exception:
+                self.parcels_off = True
+                raise
             features = r.json().get("features") or []
             if features:
                 props = features[0].get("properties") or {}
