@@ -131,15 +131,36 @@ bez stotina poruka.
    Izostavljeni: nekretnine24.hr (0 oglasa za područje), oglasi.hr (1 oglas),
    trazimstan.hr (većinom najam, robots.txt zabranjuje /api/), gohome.hr (vidi tablicu
    izvora; mjerni alat `tools/discover9.py`).
-   **2b** Redmi Note 9S (Termux) za Njuškalo i Realiticu. Napomena iz starog
-   scrapera (stan-alert): Njuškalo je s kućne IP adrese prolazio uz pravi preglednik
-   (Playwright, selektori `li.EntityList-item--Regular`, URL parametri `sort=new`,
-   `price[max]`, `livingArea[min]`). Termux sam ne pokreće Playwright, pa se radi
-   Ubuntu unutar Termuxa (proot-distro): prvo proba s curl_cffi (`tools/redmi_probe.py`),
-   Playwright tek ako to ne prolazi. Upute u REDMI.md.
-3. Općine, gradovi, PGŽ, Ministarstvo, CERP.
-4. Agencije.
-5. Dorade: duplikati među portalima, snižene cijene, tjedni izvještaj.
+   **2b (u tijeku)** Redmi Note 9S, samo za Njuškalo (Realitica izostavljena: 49 od 50
+   najnovijih oglasa već je na našim portalima). Ubuntu unutar Termuxa (proot-distro).
+   Proba 5. 10.: bez preglednika Njuškalo nakon nekoliko zahtjeva vraća ShieldSquare
+   captchu; Chromium (Playwright) s trajnim profilom prolazi. Na vrhu „najnovijih” su
+   većinom stari oglasi koje agencije ponovno objave (stari broj oglasa): obavijest
+   stiže samo za novi broj oglasa i za sniženje; početnog popisa za Njuškalo nema.
+   Upute u REDMI.md.
+3. **Pametnije filtriranje** (dogovoreno 5. 10. 2026., ovim redom):
+   1. Već viđeni oglasi: isti oglas na drugom portalu ili ponovno objavljen (ista
+      općina i vrsta, cijena ±1 %, površina ±2 %, za projekte i naslov/naselje) ne
+      stiže ponovno, osim ako je cijena niža.
+   2. Tablica naselja (15 JLS): udaljenost od mora, vožnja do mora, Rijeke i Zagreba.
+      Korisnik je pregleda. **Više od 10 min vožnje do mora → oglas ne stiže.**
+      Lokacija oglasa: koordinate (nekretnine.hr, vender.hr, Njuškalo – često
+      približne), inače središte naselja; tekst („prvi red”, „200 m od mora”).
+      Rijeka ravnopravna s ostalima. Izvan naselja / manje mjesto: samo oznaka.
+   3. Opasni izrazi (suvlasništvo, nasljednici, ostavina, bez papira, legalizacija,
+      pravo stanovanja, plodouživanje, poljoprivredno, vanknjižno…): **odbija se samo
+      nedvosmisleno** (npr. „prodaje se suvlasnički dio”), inače ⚠ s citiranom
+      rečenicom. Niječni izrazi („bez tereta”, „legalizirano”, „1/1”) se izuzimaju.
+      Dobre ponude se ne smiju izgubiti.
+   4. Cijena: ostvarene cijene (ISPU, Plan približnih vrijednosti – provjeriti može li
+      se preuzeti) važnije su od traženih; medijan traženih cijena iz naše baze po
+      naselju samo kad ima dovoljno oglasa, inače po općini, s napomenom.
+   5. Parking: kuća mora imati parkirno mjesto ili dovoljno okućnice za parking
+      (okućnica sama po sebi nije bitna) – oznaka/upozorenje kad nije navedeno.
+   6. Redak s mjerama u poruci (more, Rijeka, Zagreb, cijena prema prosjeku, upozorenja).
+   - Čitanje opisa jezičnim modelom: zasad ne (korisnik će javiti).
+4. Općine, gradovi, PGŽ, Ministarstvo, CERP.
+5. Agencije.
 
 ## Zadaci za korisnika
 
