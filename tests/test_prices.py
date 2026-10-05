@@ -90,5 +90,5 @@ def test_ppv_note(loc, tmp_path):
     assert ppv.note(Listing(title="Poljoprivredno zemljište Njivice", price=45_000, **land), "Omišalj") is None
     house = Listing(source="t", source_id="2", url="u", title="Kuća u Njivicama", kind=HOUSE, price=300_000, area=120)
     assert ppv.note(house, "Omišalj") == \
-        "🏛 PPV 2026. za STANOVE 100+ m² (za kuće ne postoji), Njivice: 3.200 €/m² – oglas 20 % ispod"
+        "🏛 PPV 2026. za STANOVE 100+ m², Njivice: 3.200 €/m² – oglas 20 % ispod"
     assert ppv.note(house, "Krk") is None

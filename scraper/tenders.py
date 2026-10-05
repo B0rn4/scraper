@@ -11,12 +11,14 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 from datetime import datetime
+from functools import lru_cache
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
 
 import yaml
 
-from .text import areas_in_text, fold, parse_number
+from .ispu import _KO, parcel_mentions
+from .text import area_matches, areas_in_text, fmt_eur, fmt_m2, fold, parse_number
 
 SITES_FILE = Path(__file__).resolve().parent.parent / "data" / "natjecaji.yaml"
 
@@ -38,7 +40,14 @@ _TEASER = re.compile(r"\s+(?=(Na temelju|Temeljem|Sukladno|U skladu s)\b)")
 _PDF = re.compile(r'<a[^>]+href="([^"]+\.pdf)"[^>]*>(.*?)</a>', re.I | re.S)
 MIN_TEXT = 600            # kraći tekst objave: natječaj je vjerojatno u priloženom PDF-u
 _PART = re.compile(r"\b\d+\s*/\s*\d+\s+(dijel|dio)\w*|\bsuvlasnick\w*\s+(dio|dijel|udio|udjel)\w*|\bidealn\w*\s+(dio|dijel)\w*")
-_PRICE = re.compile(r"\b(pocetn\w*|najniz\w*|utvrden\w*)\s+(kupoprodajn\w*\s+)?cijen\w*[^0-9]{0,40}?(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?)\s*(eur|€)")
+_NUM = r"(\d{1,3}(?:[. ]\d{3})+(?:,\d+)?|\d+(?:,\d+)?)"
+_PER_M2 = r"(\w*\s*(?:/|po)\s*(?:m\s?2|metr\w* kvadratn\w*|kvadratn\w* metr\w*))?"
+# "početna cijena … 65.000,00 EUR", "početna cijena za k.č. 12/3 iznosi 65.000 €", "… 120,00 EUR/m2"
+_PRICES = (re.compile(r"\b(pocetn\w*|najniz\w*|utvrden\w*)\s+(kupoprodajn\w*\s+)?cijen\w*[^0-9]{0,40}?" + _NUM
+                      + r"\s*(eur|€)" + _PER_M2),
+           re.compile(r"\b(pocetn\w*|najniz\w*|utvrden\w*)\s+(kupoprodajn\w*\s+)?cijen\w*[^€]{0,100}?\biznos\w*\s+"
+                      + _NUM + r"\s*(eur|€)" + _PER_M2))
+_HOUSE = re.compile(r"\b(kuc[aeiu]\w*|kuca\b|stamben\w* (zgrad|objekt)\w*)")
 
 
 @dataclass
@@ -53,10 +62,123 @@ class Tender:
     extra: dict = field(default_factory=dict)
 
 
+@dataclass
+class Lot:
+    """Čestica (ili skupina čestica pod jednim brojem natječaja) s početnom cijenom i
+    površinom kad ih tekst navodi uz nju. Podatke iz ISPU-a i usporedbe dodaje runner."""
+    ko: str
+    kcs: list[str]
+    price: float | None = None           # početna cijena, €
+    ppm: float | None = None             # početna cijena po m² (kad je natječaj tako navodi)
+    area: float | None = None            # površina iz teksta natječaja
+    house: bool = False                  # uz česticu se spominje kuća
+    context: str = ""                    # tekst oko spomena čestice (za prepoznavanje naselja)
+    cadastre_area: float | None = None   # površina iz katastra (samo za jednu česticu)
+    gp: str = ""                         # građevinsko područje (ISPU) ili "nije pronađena u katastru"
+    ppv_range: str = ""                  # PPV na lokaciji kad nema cijene za usporedbu
+    notes: list[str] = field(default_factory=list)   # usporedbe cijene (PPV, medijan)
+
+    @property
+    def label(self) -> str:
+        return f"k.č. {', '.join(self.kcs)} k.o. {self.ko}"
+
+    @property
+    def size(self) -> float | None:
+        """Površina za €/m²: iz teksta (može se prodavati dio čestice), inače iz katastra."""
+        return self.area or self.cadastre_area
+
+    @property
+    def unit_price(self) -> float | None:
+        if self.ppm:
+            return self.ppm
+        if self.price and self.size:
+            return self.price / self.size
+        return None
+
+
+@lru_cache(maxsize=4096)
+def _plain_char(c: str) -> str:
+    if c in "đĐ":
+        return "d"
+    base = "".join(x for x in unicodedata.normalize("NFKD", c) if not unicodedata.combining(x))
+    return (base[:1] or c).lower()[:1] or c
+
+
 def _plain(text: str) -> str:
-    """Mala slova bez dijakritika, interpunkcija ostaje (za datume i cijene)."""
-    text = unicodedata.normalize("NFKD", (text or "").replace("đ", "d").replace("Đ", "D"))
-    return "".join(c for c in text if not unicodedata.combining(c)).lower()
+    """Mala slova bez dijakritika, interpunkcija ostaje (za datume i cijene). Duljina
+    teksta ostaje ista, pa se položaji poklapaju s izvornim tekstom."""
+    return "".join(_plain_char(c) for c in (text or ""))
+
+
+def _prices(plain: str) -> list[tuple[int, float, bool]]:
+    """Početne cijene: [(položaj broja, iznos, je li po m²)]."""
+    found = {}
+    for regex in _PRICES:
+        for m in regex.finditer(plain):
+            value = parse_number(m.group(3).replace(" ", ""))
+            per = bool(m.group(5))
+            if value and (1 <= value <= 5000 if per else value >= 1000):
+                found.setdefault(m.start(3), (m.start(3), value, per))
+    return sorted(found.values())
+
+
+def lots(text: str, limit: int = 20) -> list[Lot]:
+    """Čestice iz teksta natječaja, s cijenom i površinom koje stoje uz njih.
+
+    Vrijednost se veže uz prethodni spomen čestice ("k.č. 12/3 … površine 650 m²,
+    početna cijena 65.000 €"), a kad tekst navodi vrijednosti prije čestica (prva
+    vrijednost je prije prvog spomena), uz sljedeći. Čestica s više različitih
+    vrijednosti ostaje bez njih (nejasno), pa poruka pokazuje samo popis cijena."""
+    text = unicodedata.normalize("NFC", text or "")
+    mentions = parcel_mentions(text)
+    if not mentions:
+        return []
+    plain = _plain(text)
+    starts = [m[0] for m in mentions]
+    keys = [(fold(ko), tuple(kcs)) for _, _, ko, kcs in mentions]
+    order = list(dict.fromkeys(keys))
+    by_key = {k: Lot(mentions[keys.index(k)][2], list(k[1])) for k in order}
+
+    def owners(values: list[tuple]) -> dict[tuple, list[tuple]]:
+        out: dict[tuple, list[tuple]] = {}
+        if len(order) == 1:
+            return {order[0]: list(values)}
+        forward = bool(values) and values[0][0] < starts[0]
+        for v in values:
+            if forward:
+                i = next((i for i, s in enumerate(starts) if s >= v[0]), None)
+            else:
+                i = max((i for i, s in enumerate(starts) if s <= v[0]), default=None)
+            if i is not None:
+                out.setdefault(keys[i], []).append(v)
+        return out
+
+    prices = owners(_prices(plain))
+    areas = owners([(pos, a) for pos, a in area_matches(text) if a >= 10])
+    for i, (start, end, _, _) in enumerate(mentions):
+        lot = by_key[keys[i]]
+        stop = starts[i + 1] if i + 1 < len(starts) else start + 500
+        if _HOUSE.search(plain[max(0, start - 150):min(stop, start + 500)]):
+            lot.house = True
+        if not lot.context:
+            lot.context = text[max(0, start - 120):end + 120]
+    for key, lot in by_key.items():
+        totals = {v for _, v, per in prices.get(key, []) if not per}
+        per_m2 = {v for _, v, per in prices.get(key, []) if per}
+        sizes = {a for _, a in areas.get(key, [])}
+        lot.price = totals.pop() if len(totals) == 1 else None
+        lot.ppm = per_m2.pop() if len(per_m2) == 1 else None
+        lot.area = sizes.pop() if len(sizes) == 1 else None
+    return [by_key[k] for k in order][:limit]
+
+
+def place_text(t: "Tender", found: list[Lot], cadastral: bool = True) -> str:
+    """Tekst za prepoznavanje naselja: naslov i okolina spomena čestica (ne cijeli tekst –
+    zaglavlje navodi sjedište općine). cadastral=False izostavlja nazive katastarskih
+    općina: k.o. može obuhvaćati više naselja (k.o. Jušići i mjesto Matulji)."""
+    if cadastral:
+        return ". ".join([t.title, *(f"{lot.context} {lot.ko}" for lot in found)])
+    return ". ".join([_KO.sub(" ", t.title), *(_KO.sub(" ", lot.context) for lot in found)])
 
 
 def load_sites(path: Path = SITES_FILE) -> list[dict]:
@@ -101,10 +223,13 @@ def details(text: str) -> dict:
         if after:
             out["rok"] = after[0]
             break
-    prices = [parse_number(m.group(3)) for m in _PRICE.finditer(plain)]
-    prices = [p for p in prices if p and p >= 1000]
+    found = _prices(plain)
+    prices = list(dict.fromkeys(v for _, v, per in found if not per))
+    per_m2 = list(dict.fromkeys(v for _, v, per in found if per))
     if prices:
         out["cijene"] = prices[:5]
+    if per_m2:
+        out["cijene_m2"] = per_m2[:5]
     if _PART.search(plain):
         out["dio"] = True
     areas = [a for a in areas_in_text(text) if a >= 50]
@@ -235,10 +360,38 @@ def fmt_date(iso: str) -> str:
     return f"{d.day}. {d.month}. {d.year}."
 
 
-def format_tender(t: Tender, info: dict, parcel_lines: list[str]) -> str:
-    """Telegram HTML poruka za natječaj."""
+def _lot_lines(lot: Lot) -> list[str]:
     e = html.escape
-    lines = [f"📜 <b>Natječaj za prodaju</b> · {e(t.site)}", f"<b>{e(t.title[:250])}</b>"]
+    area = ""
+    if lot.size:
+        area = f" ({fmt_m2(lot.size)}"
+        if lot.area and lot.cadastre_area and abs(lot.area / lot.cadastre_area - 1) > 0.1:
+            area += f"; cijela čestica u katastru {fmt_m2(lot.cadastre_area)}"
+        area += ")"
+    gp = f": {lot.gp}" if lot.gp else ""
+    ppv = f" · {lot.ppv_range}" if lot.ppv_range and not lot.unit_price else ""
+    lines = [e(f"🗺 {lot.label}{area}{gp}{ppv}")]
+    if lot.house and (lot.price or lot.ppm):
+        lines.append(e(f"💶 početna cijena {fmt_eur(lot.price) if lot.price else fmt_eur(lot.ppm) + '/m²'} (s kućom)"))
+    elif lot.ppm:
+        total = f" (≈ {fmt_eur(lot.ppm * lot.size)})" if lot.size else ""
+        lines.append(e(f"💶 početna cijena {fmt_eur(lot.ppm)}/m²{total}"))
+    elif lot.price:
+        unit = f" · {fmt_eur(lot.unit_price)}/m²" if lot.unit_price else ""
+        lines.append(e(f"💶 početna cijena {fmt_eur(lot.price)}{unit}"))
+    return lines + [e(x) for x in lot.notes]
+
+
+def format_tender(t: Tender, info: dict, found: list[Lot] | None = None, summary: str = "", place: str = "",
+                  warnings: list[str] | None = None, max_lots: int = 3) -> str:
+    """Telegram HTML poruka za natječaj (obična poruka, do 4096 znakova): sažetak, rok,
+    mjesto, za svaku česticu građevinsko područje, početna cijena i €/m² s usporedbama
+    (PPV, medijan traženih), pa upozorenja. Kad je preduga, izostavljaju se čestice s kraja."""
+    e = html.escape
+    found = found or []
+    head = [f"📜 <b>Natječaj za prodaju</b> · {e(t.site)}", f"<b>{e(t.title[:250])}</b>"]
+    if summary:
+        head.append(e(summary))
     when = []
     published = t.published or t.extra.get("datum_iz_teksta", "")
     if published:
@@ -246,22 +399,31 @@ def format_tender(t: Tender, info: dict, parcel_lines: list[str]) -> str:
     if info.get("rok"):
         when.append(f"⏳ rok {fmt_date(info['rok'])}")
     if when:
-        lines.append(" · ".join(when))
-    money = []
-    if info.get("cijene"):
-        prices = ", ".join(f"{p:,.0f} €".replace(",", ".") for p in info["cijene"][:3])
-        money.append(f"početna cijena {prices}")
-    if info.get("povrsine"):
-        money.append(", ".join(f"{a:,.0f} m²".replace(",", ".") for a in info["povrsine"][:3]))
-    if money:
-        lines.append("💶 " + e(" · ".join(money)))
-    if t.jls and t.jls not in t.site:
-        lines.append(f"📍 {e(t.jls)}")
-    lines += [e(x) for x in parcel_lines[:3]]
-    if info.get("dio"):
-        lines.append("⚠ prodaje se dio nekretnine (suvlasnički udio) – provjeri")
+        head.append(" · ".join(when))
+    place = place or (t.jls if t.jls and t.jls not in t.site else "")
+    if place:
+        head.append(f"📍 {e(place)}")
+    shown = [lot for lot in found if lot.gp or lot.price or lot.ppm or lot.area][:max_lots]
+    body = [_lot_lines(lot) for lot in shown]
+    tail = []
+    if len(found) > len(shown) and shown:
+        tail.append(f"… i još {len(found) - len(shown)} čestica – vidi objavu")
+    if not any(lot.price or lot.ppm for lot in shown):
+        money = []
+        if info.get("cijene"):
+            money.append("početna cijena " + ", ".join(fmt_eur(p) for p in info["cijene"][:3]))
+        if info.get("cijene_m2"):
+            money.append("početna cijena " + ", ".join(f"{fmt_eur(p)}/m²" for p in info["cijene_m2"][:3]))
+        if info.get("povrsine"):
+            money.append(", ".join(fmt_m2(a) for a in info["povrsine"][:3]))
+        if money:
+            tail.append(e("💶 " + " · ".join(money)))
+    tail += [e(f"⚠ {w}") for w in (warnings if warnings is not None else
+                                     (["prodaje se dio nekretnine (suvlasnički udio) – provjeri"] if info.get("dio") else []))]
     if len(t.text) < 200:
-        lines.append("<i>Detalji su u priloženom dokumentu – otvori objavu.</i>")
+        tail.append("<i>Detalji su u priloženom dokumentu – otvori objavu.</i>")
     elif t.extra.get("iz_pdf"):
-        lines.append("<i>Podaci iz priloženog PDF-a.</i>")
-    return "\n".join(lines)[:3800]
+        tail.append("<i>Podaci iz priloženog PDF-a.</i>")
+    while body and len("\n".join(head + [x for b in body for x in b] + tail)) > 3800:
+        body.pop()
+    return "\n".join(head + [x for b in body for x in b] + tail)[:4000]

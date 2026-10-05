@@ -95,17 +95,18 @@ def land_short(ppm: float, low: float, high: float) -> str:
     return "PPV u rasponu"
 
 
-def land_note(ppm: float, low: float, high: float, where: str) -> str:
-    """Cijena zemljišta prema rasponu PPV-a za građevinsko zemljište."""
+def land_note(ppm: float, low: float, high: float, where: str, who: str = "oglas") -> str:
+    """Cijena zemljišta prema rasponu PPV-a za građevinsko zemljište (who: "oglas" ili
+    "početna cijena" za natječaj)."""
     low, high = round(low), round(high)
     if ppm > high * 1.05:
-        rel = f"oglas {_pct(ppm / high - 1)} % iznad gornje"
+        rel = f"{who} {_pct(ppm / high - 1)} % iznad gornje"
     elif ppm < low * 0.95:
-        rel = f"oglas {_pct(ppm / low - 1)} % ispod donje"
+        rel = f"{who} {_pct(ppm / low - 1)} % ispod donje"
         if ppm < low * (1 + ODD):
             rel += " – neobično jeftino, provjeri zašto"
     else:
-        rel = "oglas u rasponu"
+        rel = f"{who} u rasponu"
     span = f"{fmt_eur(low)}/m²" if low == high else f"{low:,}–{high:,} €/m²".replace(",", ".")
     return f"🏛 PPV 2026. ({where}): građevinsko {span} – {rel}"
 
@@ -132,7 +133,7 @@ class Ppv:
             return None
         return land_short(listing.price / listing.area, *item["zemljiste"])
 
-    def note(self, listing: Listing, jls: str) -> str | None:
+    def note(self, listing: Listing, jls: str, who: str = "oglas") -> str | None:
         """Npr. "🏛 PPV 2026. Njivice: građevinsko 158–219 €/m² – oglas 15 % iznad gornje"."""
         if not jls or not _ok(listing.kind, listing.price, listing.area) or _agricultural(listing):
             return None
@@ -147,7 +148,7 @@ class Ppv:
         ppm = listing.price / listing.area
         if listing.kind == LAND and item.get("zemljiste"):
             low, high = item["zemljiste"]
-            return land_note(ppm, low, high, f"{where}{', raspon naselja' if whole else ''}")
+            return land_note(ppm, low, high, f"{where}{', raspon naselja' if whole else ''}", who)
         if listing.kind == HOUSE and item.get("stanovi"):
             size = "100+" if listing.area > 100 else "75-100" if listing.area > 75 else "55-75"
             key = next((k for k in self.SIZES[size] if k in item["stanovi"]), None)
@@ -155,9 +156,9 @@ class Ppv:
                 return None
             value = item["stanovi"][key]
             diff = ppm / value - 1
-            rel = "oko te vrijednosti" if abs(diff) < 0.1 else f"oglas {_pct(diff)} % {'iznad' if diff > 0 else 'ispod'}"
+            rel = "oko te vrijednosti" if abs(diff) < 0.1 else f"{who} {_pct(diff)} % {'iznad' if diff > 0 else 'ispod'}"
             where = f"{where}, medijan naselja" if whole else where
-            return f"🏛 PPV 2026. za STANOVE {key} m² (za kuće ne postoji), {where}: {fmt_eur(value)}/m² – {rel}"
+            return f"🏛 PPV 2026. za STANOVE {key} m², {where}: {fmt_eur(value)}/m² – {rel}"
         return None
 
 

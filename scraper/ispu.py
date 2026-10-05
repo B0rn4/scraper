@@ -55,8 +55,8 @@ _KC = re.compile(r"(?:\b(?:z\.?\s*)?k\.?\s*č\.?\s*(?:br\.?|broj)?|\bčkbr\.?|\b
 _KO = re.compile(r"\b(?i:k\.?\s*o\.?)\s*:?\s+((?:[A-ZČĆŽŠĐ][\wčćžšđČĆŽŠĐ-]*)(?:\s+[A-ZČĆŽŠĐ][\wčćžšđČĆŽŠĐ-]*)*)")
 
 
-def parcels_in_text(text: str) -> list[tuple[str, str]]:
-    """[(katastarska općina, broj čestice)] iz teksta, npr. "k.č. 1234/5, k.o. Njivice".
+def parcel_mentions(text: str) -> list[tuple[int, int, str, list[str]]]:
+    """Spomeni čestica u tekstu: [(početak, kraj, katastarska općina, [brojevi čestica])].
     Čestica se veže uz najbližu sljedeću (ili prethodnu) oznaku k.o."""
     text = text or ""
     kos = [(m.start(), re.sub(r"(\s+\w)+$", "", m.group(1).strip())) for m in _KO.finditer(text)]
@@ -65,10 +65,18 @@ def parcels_in_text(text: str) -> list[tuple[str, str]]:
         after = [ko for pos, ko in kos if pos >= m.end() and pos - m.end() < 120]
         before = [ko for pos, ko in kos if pos < m.start() and m.start() - pos < 120]
         ko = after[0] if after else (before[-1] if before else "")
-        if not ko:
-            continue
-        for kc in re.split(r"\s*(?:,|\bi\b|\bte\b)\s*", m.group(1)):
-            if kc and (fold(ko), kc) not in {(fold(k), c) for k, c in out}:
+        kcs = [kc for kc in re.split(r"\s*(?:,|\bi\b|\bte\b)\s*", m.group(1)) if kc]
+        if ko and kcs:
+            out.append((m.start(), m.end(), ko, kcs))
+    return out
+
+
+def parcels_in_text(text: str) -> list[tuple[str, str]]:
+    """[(katastarska općina, broj čestice)] iz teksta, npr. "k.č. 1234/5, k.o. Njivice"."""
+    out = []
+    for _, _, ko, kcs in parcel_mentions(text):
+        for kc in kcs:
+            if (fold(ko), kc) not in {(fold(k), c) for k, c in out}:
                 out.append((ko, kc))
     return out[:5]
 
@@ -284,17 +292,3 @@ def gp_text(info: PointInfo) -> str:
     if info.gp == "izvan naselja":
         return "građevinsko područje IZVAN naselja"
     return "NIJE u građevinskom području"
-
-
-def describe_parcel(ispu: "Ispu", ko: str, kc: str, names: dict[str, str] | None = None) -> str:
-    """Redak za natječaj: "🗺 k.č. 1234/5 k.o. Njivice (650 m²): u građevinskom području naselja · PPV …"."""
-    found = ispu.parcel(ko, kc, names)
-    if not found:
-        return f"🗺 k.č. {kc} k.o. {ko}: nije pronađena u katastru"
-    info = ispu.identify(found["x"], found["y"])
-    area = f" ({fmt_m2(found['povrsina'])})" if found.get("povrsina") else ""
-    ppv = ""
-    if info.land_values:
-        low, high = round(min(info.land_values)), round(max(info.land_values))
-        ppv = f" · PPV {low} €/m²" if low == high else f" · PPV {low}–{high} €/m²"
-    return f"🗺 k.č. {kc} k.o. {ko}{area}: {gp_text(info)}{ppv}"

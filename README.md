@@ -32,7 +32,10 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 - **Sažeti redak (📊):** more (zračno), vožnja do Rijeke i Zagreba, cijena prema
   prosjeku i PPV-u, broj upozorenja.
 - **Natječaji (📜):** prodaja nekretnina gradova, općina, PGŽ-a i države na našem
-  području: rok, početna cijena, površine i čestice (građevinsko područje, PPV).
+  području: sažeti redak, rok, mjesto, a za svaku česticu (do 3) građevinsko područje,
+  početna cijena i €/m² prema PPV-u na lokaciji i medijanu traženih. Odluke iz popisa
+  naselja vrijede kao za oglase (isključeno naselje napisano u tekstu → bez poruke;
+  prema k.o. samo ⚠, jer k.o. može obuhvaćati više naselja).
 - **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
 - **Pregledni izvještaj:** jedna HTML datoteka sa svim oglasima i razlogom odluke.
 

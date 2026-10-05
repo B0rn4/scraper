@@ -226,6 +226,10 @@ bez stotina poruka.
      neaktivni natječaji se preskaču.
    - Iz teksta ili priloženog PDF-a: rok, početna cijena, površine, čestice. Za
      čestice: građevinsko područje i PPV (ISPU, DGU). Suvlasnički dio → ⚠.
+   - (6. 10.) Poruka kao za oglase: cijena i površina vezane uz svaku česticu (kad
+     ih tekst navodi uz nju), €/m², PPV na lokaciji, medijan traženih, sažeti redak
+     i odluke iz popisa naselja. Nejasno (više cijena uz istu česticu) → samo popis
+     cijena i površina, bez €/m².
    - Prvi dan (5. 10.) poslani natječaji kojima rok nije istekao; poslije svaka nova
      objava. Stranica koja 3 dana zaredom ne radi → upozorenje.
    - Ministarstvo (mpgi.gov.hr) nema zaseban popis prodaje; državnu imovinu prodaju

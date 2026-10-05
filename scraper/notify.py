@@ -32,8 +32,13 @@ def _minutes(value: float) -> str:
 def summary_line(listing: Listing, decision: Decision) -> str:
     """Sažetak na vrhu poruke: more (zračno), Rijeka i Zagreb (vožnja), cijena, broj ⚠.
     Kad oglas navodi samo grad/općinu, mjere su za istoimeno mjesto (~Krk)."""
+    warnings = len(decision.warnings) if decision.status == WARN else 0
+    return summary_text(listing.extra.get("mjere") or {}, listing.extra.get("cijena_kratko") or [], warnings)
+
+
+def summary_text(m: dict, price_parts: list[str], warnings: int) -> str:
+    """Sažeti redak iz mjera naselja (popis naselja), kratkih usporedbi cijene i broja ⚠."""
     parts = []
-    m = listing.extra.get("mjere") or {}
     prefix = "" if m.get("tocno", True) else f"~{m.get('naselje')}: "
     if m.get("more_km") is not None:
         parts.append(f"more {m['more_km']:.1f} km".replace(".", ","))
@@ -43,9 +48,9 @@ def summary_line(listing: Listing, decision: Decision) -> str:
         parts.append(f"Zagreb {_minutes(m['zagreb_min'])}")
     if parts:
         parts[0] = prefix + parts[0]
-    parts += listing.extra.get("cijena_kratko") or []
-    if decision.status == WARN and decision.warnings:
-        parts.append(f"⚠ {len(decision.warnings)}")
+    parts += price_parts
+    if warnings:
+        parts.append(f"⚠ {warnings}")
     return "📊 " + " · ".join(parts) if parts else ""
 
 

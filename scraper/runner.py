@@ -11,20 +11,21 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from . import dedupe, report, tenders
-from .ispu import Ispu, check_land, describe_parcel, parcels_in_text
+from .ispu import Ispu, check_land, gp_text
 from .prices import AskingPrices, Ppv, land_note, land_short
 from .db import State
 from .filters import evaluate
 from .http import Http
 from .locations import Locator
 from .models import LAND, PASS, REJECT, WARN, Decision, Listing
-from .notify import SOURCE_LABELS, Email, Telegram
+from .notify import SOURCE_LABELS, Email, Telegram, summary_text
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
 from .text import fmt_eur, fold
 
 ROOT = Path(__file__).resolve().parent.parent
 LAND_CHECK_SECONDS = 120   # najdulje trajanje provjera građevinskog područja po pokretanju
+TENDER_CHECK_SECONDS = 240  # isto za čestice iz natječaja (jednom dnevno)
 
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
@@ -174,7 +175,7 @@ class Runner:
                     self._check_land(x, d, deadline)
             self._send_notifications(state, to_notify)
             try:
-                self._tenders(state)
+                self._tenders(state, prices)
             except Exception as exc:  # noqa: BLE001 – natječaji ne smiju zaustaviti oglase
                 self.log(f"Natječaji: GREŠKA {type(exc).__name__}: {exc}")
                 traceback.print_exc()
@@ -229,7 +230,7 @@ class Runner:
             x.extra["cijena_kratko"] = [t for t in x.extra.get("cijena_kratko", []) if not t.startswith("PPV")] \
                 + [land_short(ppm, low, high)]
 
-    def _tenders(self, state: State) -> None:
+    def _tenders(self, state: State, prices: AskingPrices | None = None) -> None:
         """Natječaji za prodaju nekretnina (gradovi, općine, PGŽ, CERP…), jednom dnevno.
         Prvi put stižu samo objave iz zadnjih N dana kojima rok nije istekao; ostale se
         bilježe bez poruke."""
@@ -269,7 +270,7 @@ class Runner:
             self.log(f"{name}: {len(items)} objava o prodaji, novih {len(fresh)}")
             new.extend(fresh)
         limit = cfg.get("max_poruka", 15)
-        deadline = time.monotonic() + LAND_CHECK_SECONDS
+        deadline = time.monotonic() + TENDER_CHECK_SECONDS
         sent = 0
         for t in new:
             first = t.site in first_sites
@@ -283,25 +284,30 @@ class Runner:
             if first and not open_deadline and (expired or not published or published < cutoff):
                 state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
                 continue
-            if expired or sent >= limit:
+            found = tenders.lots(t.text)
+            jls = t.jls if t.jls and self.locator.by_name(t.jls) else ""
+            where = tenders.place_text(t, found)
+            # Odluke iz popisa naselja: odbija se samo naselje napisano u tekstu; prema k.o.
+            # (može obuhvaćati više naselja) samo upozorenje.
+            verdict = self.locator.settlement_verdict(jls, "", tenders.place_text(t, found, False)) if jls else None
+            by_ko = self.locator.settlement_verdict(jls, "", where) if jls else None
+            if by_ko and by_ko != verdict and not (verdict and verdict[0] == REJECT):
+                note = " (prema k.o. – katastarska općina može obuhvaćati više naselja)" if by_ko[0] == REJECT else ""
+                verdict = (WARN, f"{by_ko[1]}{note}")
+            skip = "istekao" if expired else f"popis naselja – {verdict[1]}" if verdict and verdict[0] == REJECT \
+                else "ograničenje" if sent >= limit else ""
+            if skip:
                 state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
-                self.log(f"Natječaj bez poruke ({'istekao' if expired else 'ograničenje'}): {t.title[:70]}")
+                self.log(f"Natječaj bez poruke ({skip}): {t.title[:70]}")
                 continue
-            lines = []
-            for ko, kc in parcels_in_text(t.text)[:3]:
-                if time.monotonic() > deadline:
-                    break
-                try:
-                    if self._ispu is None:
-                        self._ispu = Ispu()
-                    line = describe_parcel(self._ispu, ko, kc, self._place_names)
-                    if "nije pronađena" not in line:      # broj iz teksta koji nije čestica
-                        lines.append(line)
-                except Exception as exc:  # noqa: BLE001 – ISPU nije nužan za obavijest
-                    self.log(f"ISPU (natječaj): {type(exc).__name__}: {exc}")
-                    break
             try:
-                self.telegram.send_text(tenders.format_tender(t, info, lines), url=t.url)
+                text = self._tender_message(t, info, found, jls, where, verdict, prices, deadline)
+            except Exception as exc:  # noqa: BLE001 – poruka i bez usporedbi
+                self.log(f"Natječaj – detalji: {type(exc).__name__}: {exc}")
+                traceback.print_exc()
+                text = tenders.format_tender(t, info)
+            try:
+                self.telegram.send_text(text, url=t.url)
                 state.tender_add(t, self.stamp, self.stamp)
                 sent += 1
             except Exception as exc:  # noqa: BLE001
@@ -309,6 +315,72 @@ class Runner:
         state.meta_set("daily:natjecaji", today)
         state.conn.commit()
         self.log(f"Natječaji: novih {len(new)}, poslano {sent}")
+
+    def _tender_message(self, t: tenders.Tender, info: dict, found: list[tenders.Lot], jls: str, where: str,
+                        verdict: tuple[str, str] | None, prices: AskingPrices | None, deadline: float) -> str:
+        """Poruka za natječaj s istim podacima kao za oglase: sažeti redak (more, Rijeka,
+        Zagreb, cijena), naselje, za svaku česticu građevinsko područje (ISPU), početna
+        cijena po m² prema PPV-u na lokaciji i medijanu traženih, upozorenja."""
+        warnings = [verdict[1]] if verdict else []
+        mjere, place = {}, ""
+        row = self.locator.settlement_row(jls, "", where) if jls else None
+        if row:
+            r, exact = row
+            mjere = {"naselje": r["naziv"], "tocno": exact, "more_km": r["more_km"], "rijeka_min": r["rijeka_min"],
+                     "zagreb_min": r["zagreb_min"]}
+            if exact and fold(r["naziv"]) != fold(jls):
+                place = f"{jls} – {r['naziv']}"
+        if not place and jls and jls not in t.site:
+            place = jls
+        settlement = mjere["naselje"] if mjere.get("tocno") else ""
+        short: dict[int, list[str]] = {}
+        for i, lot in enumerate(found):
+            point = None
+            if i < 3 and time.monotonic() < deadline:
+                try:
+                    if self._ispu is None:
+                        self._ispu = Ispu()
+                    hit = self._ispu.parcel(lot.ko, lot.kcs[0], self._place_names)
+                    if hit:
+                        lot.cadastre_area = hit.get("povrsina") if len(lot.kcs) == 1 else None
+                        point = self._ispu.identify(hit["x"], hit["y"])
+                        lot.gp = gp_text(point)
+                    elif lot.price or lot.ppm or lot.area:      # inače broj iz teksta možda nije čestica
+                        lot.gp = "nije pronađena u katastru"
+                except Exception as exc:  # noqa: BLE001 – ISPU nije nužan za obavijest
+                    self.log(f"ISPU (natječaj): {type(exc).__name__}: {exc}")
+                    deadline = 0
+            if point and point.gp != "naselja" and not lot.house:
+                warnings.append(f"{lot.label}: prema ISPU-u {gp_text(point)} – provjeri")
+            unit = lot.unit_price
+            parts = []
+            if point and point.land_values:
+                low, high = min(point.land_values), max(point.land_values)
+                if unit and not lot.house:
+                    lot.notes.append(land_note(unit, low, high, f"na lokaciji, blok {point.block.title()}", "početna cijena"))
+                    parts.append(land_short(unit, low, high))
+                else:
+                    span = f"{round(low)}" if round(low) == round(high) else f"{round(low)}–{round(high)}"
+                    lot.ppv_range = f"PPV {span} €/m²"
+            if unit and not lot.house and jls:
+                size = lot.size or 1000.0     # usporedbe gledaju samo €/m² (cijena može biti zadana po m²)
+                x = Listing("natjecaj", t.key, t.url, f"{t.title} {lot.ko}", LAND, price=unit * size, area=size,
+                            settlement=settlement)
+                if not lot.notes:
+                    note = self.ppv.note(x, jls, "početna cijena")
+                    if note:
+                        lot.notes.append(note)
+                        parts.append(self.ppv.short(x, jls) or "")
+                if prices:
+                    lot.notes += [n for n in [prices.compare(x, jls)] if n]
+                    parts.insert(0, prices.short(x, jls) or "")
+            if unit:
+                short[i] = [p for p in parts if p]
+        if info.get("dio"):
+            warnings.append("prodaje se dio nekretnine (suvlasnički udio) – provjeri")
+        price_parts = next(iter(short.values())) if len(short) == 1 else []   # više čestica: usporedbe su uz svaku
+        summary = summary_text(mjere, price_parts, len(warnings))
+        return tenders.format_tender(t, info, found, summary, place, warnings)
 
     def _load_prices(self, state: State) -> AskingPrices | None:
         """Medijani traženih cijena: na GitHubu iz baza (i spremi za Redmi), na Redmiju iz

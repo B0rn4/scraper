@@ -66,17 +66,22 @@ _AREA = re.compile(
 
 def areas_in_text(text: str) -> list[float]:
     """Sve površine iz slobodnog teksta, preračunate u m²."""
+    return [value for _, value in area_matches(text)]
+
+
+def area_matches(text: str) -> list[tuple[int, float]]:
+    """Površine s položajem u tekstu: [(položaj broja, m²)]."""
     found = []
-    for num, unit in _AREA.findall(text or ""):
-        value = parse_number(num)
+    for m in _AREA.finditer(text or ""):
+        value = parse_number(m.group(1))
         if value is None:
             continue
-        unit = unit.lower()
+        unit = m.group(2).lower()
         if unit.startswith("č") or unit.startswith("ch"):
             value *= SQ_FATHOM_M2
         elif unit.startswith("ha") or unit.startswith("hektar"):
             value *= 10_000
-        found.append(round(value, 1))
+        found.append((m.start(), round(value, 1)))
     return found
 
 
