@@ -189,3 +189,55 @@ def test_njuskalo_fetch_old_and_new(fina):
     assert not any("oglas-50785229" in u for u in detail_calls)  # dvojna kuća → ne otvara se
     assert 0 < len(detail_calls) <= 8  # samo oglasi koji bi mogli proći, najviše 8
     assert sum("prodaja-kuca" in u for u in browser.calls) == 1  # najstariji na 1. stranici je stariji od since
+
+
+class FakeHttp:
+    """Popis i oglasi index.hr bez mreže; bilježi pozive."""
+
+    def __init__(self, items, ads):
+        self.items, self.ads, self.calls = items, ads, []
+
+    def get(self, url, **kwargs):
+        self.calls.append(url)
+
+        class Resp:
+            def __init__(self, data):
+                self.data = data
+
+            def json(self):
+                return self.data
+
+        if "single-ad" in url:
+            return Resp({"data": [self.ads[url.split("code=")[1].split("&")[0]]]})
+        if "category=houses-for-sale" in url:
+            return Resp({"data": self.items, "nextPage": -1})
+        return Resp({"data": [], "nextPage": -1})
+
+
+def test_index_opens_new_matching_ads():
+    from scraper.filters import evaluate
+    from scraper.models import REJECT, WARN
+    from scraper.sources.base import INCREMENTAL
+
+    def item(code, price, city="Omišalj", settlement="Njivice"):
+        return {"code": code, "title": f"Kuća {settlement}", "price": price, "summary": {"area": 120},
+                "countyName": "Primorsko-goranska", "cityName": city, "settlementName": settlement, "smartLink": "k"}
+
+    items = [item(1, 300_000), item(2, 290_000), item(3, 900_000), item(4, 250_000, "Ravna Gora", "Ravna Gora"),
+             item(5, 280_000)]
+    ads = {"1": {"description": "Lijepa kuća. Kuća je u suvlasništvu s bratom.", "houseType": 1, "gardenArea": 400,
+                 "yearBuilt": "1978-01-01T00:00:00Z", "noEnclosedCarPark": True, "ownershipCertificate": True},
+           "2": {"description": "Dvojna kuća u mirnom dijelu.", "houseType": 2}}
+    http = FakeHttp(items, ads)
+    cfg = load_config()["kriteriji"]
+    src = index_oglasi.IndexOglasi(http, Locator(), cfg)
+    found = {x.source_id: x for x in src.fetch(INCREMENTAL, {"5"})}
+    opened = [u for u in http.calls if "single-ad" in u]
+    # Otvaraju se samo novi oglasi koji bi mogli proći: ne preskup, ne izvan područja, ne već poznat.
+    assert sorted(u.split("code=")[1][0] for u in opened) == ["1", "2"]
+    x1, x2 = found["1"], found["2"]
+    assert x1.subtype == "Samostojeća kuća" and x1.plot_area == 400 and x1.extra["parking"] == "vanjsko parkirno mjesto"
+    assert x1.extra["godina_izgradnje"] == 1978 and x1.extra["vlasnicki_list"]
+    d1 = evaluate(x1, cfg, Locator())
+    assert d1.status == WARN and any(w.startswith("suvlasništvo") for w in d1.warnings)
+    assert evaluate(x2, cfg, Locator()).status == REJECT  # dvojna kuća iz vrste u oglasu

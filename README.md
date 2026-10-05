@@ -14,6 +14,12 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   okruglih brojeva i isto naselje ili slične riječi u naslovu). Ako je negdje jeftiniji,
   stiže s napomenom „📉 Već viđen na … – sad jeftiniji”. Preskočeni su popisani u
   tjednom izvještaju. Kad pravilo nije sigurno, oglas stiže.
+- **Opasni izrazi u opisu** (suvlasništvo, ostavina, legalizacija, teret…): ⚠ s
+  citiranom rečenicom; odbija se samo nedvosmisleno (prodaje se suvlasnički dio).
+- **Cijena prema drugim oglasima:** 💰 ispod / 💸 iznad / 📊 oko medijana traženih
+  €/m² u istom naselju (ako ima barem 8 oglasa), inače u gradu/općini. To su tražene,
+  ne ostvarene cijene, pa je orijentacija.
+- **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, parking, vlasnički list.
 - **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
 - **Pregledni izvještaj:** jedna HTML datoteka sa svim oglasima i razlogom odluke.
 
@@ -22,7 +28,7 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 | Izvor | Kako | Kada |
 |---|---|---|
 | nekretnine.hr (isti oglasi kao Crozilla i Indomio) | podaci sa stranice | svakih 20 min |
-| index.hr/oglasi | njihov API | svakih 20 min |
+| index.hr/oglasi | njihov API (novi oglasi koji mogu proći otvaraju se radi opisa) | svakih 20 min |
 | oglasnik.hr | podaci sa stranice | svakih 20 min |
 | FINA Očevidnik (samo građevinska zemljišta) | dnevni CSV izvoz | jednom dnevno |
 | vender.hr | njihov API | svakih 20 min |

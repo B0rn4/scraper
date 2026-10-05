@@ -52,6 +52,18 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
         lines.append(e(listing.extra["usporedba"]))
     if listing.extra.get("za_obnovu"):
         lines.append("🔨 za obnovu / starina")
+    facts = []
+    if listing.extra.get("godina_izgradnje"):
+        facts.append(f"izgrađena {listing.extra['godina_izgradnje']}")
+    if listing.extra.get("godina_obnove"):
+        facts.append(f"obnovljena {listing.extra['godina_obnove']}")
+    parking = str(listing.extra.get("parking") or "")
+    if parking:
+        facts.append(f"🚗 parkirnih mjesta: {parking}" if parking.isdigit() else f"🚗 {parking}")
+    if listing.extra.get("vlasnicki_list"):
+        facts.append("vlasnički list ✔")
+    if facts:
+        lines.append("🏗 " + e(" · ".join(facts)))
     if listing.previous_price and listing.price and listing.previous_price > listing.price:
         lines.append(f"📉 prije {fmt_eur(listing.previous_price)}")
     if decision.status == WARN:
