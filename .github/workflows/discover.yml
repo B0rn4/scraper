@@ -12,6 +12,7 @@ on:
       - "tools/discover8.py"
       - "tools/discover9.py"
       - "tools/discover10.py"
+      - "tools/discover11.py"
       - ".github/workflows/discover.yml"
   workflow_dispatch:
 
@@ -34,11 +35,13 @@ jobs:
           python-version: "3.12"
 
       - name: Instaliraj ovisnosti
-        run: pip install -r requirements.txt
+        run: |
+          pip install -r requirements.txt playwright
+          python -m playwright install --with-deps chromium
 
       - name: Otkrij izvore
         timeout-minutes: 22
-        run: python tools/discover10.py debug-out
+        run: python tools/discover11.py debug-out
 
       - name: Spremi na granu debug
         if: always()
