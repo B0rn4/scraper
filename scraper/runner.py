@@ -10,16 +10,17 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from . import dedupe, report
-from .prices import AskingPrices, Ppv
+from .ispu import Ispu, check_land
+from .prices import AskingPrices, Ppv, land_note
 from .db import State
 from .filters import evaluate
 from .http import Http
 from .locations import Locator
-from .models import PASS, REJECT, WARN, Decision, Listing
+from .models import LAND, PASS, REJECT, WARN, Decision, Listing
 from .notify import SOURCE_LABELS, Email, Telegram
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
-from .text import fmt_eur
+from .text import fmt_eur, fold
 
 ROOT = Path(__file__).resolve().parent.parent
 
@@ -45,6 +46,8 @@ class Runner:
         self.prices_file = prices_file  # na Redmiju: medijani traženih cijena s GitHuba
         self.locator = Locator()
         self.ppv = Ppv(self.locator)
+        self._ispu = None               # ISPU (građevinsko područje), otvara se kad zatreba
+        self._place_names = {fold(n): n for j in self.locator.jls.values() for n in [j.name, *j.settlements]}
         self.criteria = self.cfg["kriteriji"]
         self.http = Http()
         notif = self.cfg.get("obavijesti", {})
@@ -161,6 +164,9 @@ class Runner:
 
             if baseline:
                 self._send_baseline(state, baseline)
+            if len(to_notify) <= self.cfg.get("obavijesti", {}).get("max_poruka_po_pokretanju", 30):
+                for x, d, _ in to_notify:
+                    self._check_land(x, d)
             self._send_notifications(state, to_notify)
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
@@ -183,6 +189,30 @@ class Runner:
         except (OSError, ValueError) as exc:
             self.log(f"Sažetak viđenih oglasa nije učitan: {exc}")
         return seen
+
+    def _check_land(self, x: Listing, d: Decision) -> None:
+        """Zemljište: građevinsko područje i PPV na točnoj lokaciji (ISPU). Izvan
+        građevinskog područja naselja → ⚠ (oglas i dalje stiže)."""
+        if x.kind != LAND:
+            return
+        if self._ispu is None:
+            self._ispu = Ispu()
+        try:
+            result = check_land(self._ispu, f"{x.title}. {x.description}", x.extra.get("lat"), x.extra.get("lon"),
+                                bool(x.extra.get("priblizna_lokacija", True)), self._place_names)
+        except Exception as exc:  # noqa: BLE001 – ISPU nije nužan za obavijest
+            self.log(f"ISPU ({x.key}): {type(exc).__name__}: {exc}")
+            x.extra["gp"] = "🗺 Građevinsko područje: nije provjereno (ISPU ne odgovara)"
+            return
+        x.extra["gp"] = result.line
+        if result.warning:
+            d.warnings.append(result.warning)
+            if d.status == PASS:
+                d.status = WARN
+        info = result.info
+        if info and info.land_values and x.price and x.area and x.price > 1000:
+            x.extra["ppv"] = land_note(x.price / x.area, min(info.land_values), max(info.land_values),
+                                       f"na lokaciji, blok {info.block.title()}")
 
     def _load_prices(self, state: State) -> AskingPrices | None:
         """Medijani traženih cijena: na GitHubu iz baza (i spremi za Redmi), na Redmiju iz

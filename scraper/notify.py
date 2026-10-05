@@ -48,7 +48,7 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
     if listing.subtype:
         meta.append(listing.subtype)
     lines.append("💶 " + e(" · ".join(meta)))
-    for key in ("ppv", "usporedba"):
+    for key in ("gp", "ppv", "usporedba"):
         if listing.extra.get(key):
             lines.append(e(listing.extra[key]))
     if listing.extra.get("za_obnovu"):

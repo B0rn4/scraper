@@ -3,18 +3,21 @@
 Isti pozivi koje koristi preglednik na ispu.mgipu.hr, bez prijave:
 - POST api/v1/gis/identify – slojevi na točki (građevinsko područje, PPV zemljišta);
 - GET api/v1/gis/search-kat-opcina?input=… – matični broj katastarske općine;
-- GET api/v1/gis/info-lokacija-kat-cestica?labela=…&maticniBroj=… – oblik čestice (WKT).
+Čestica (točka unutar nje i površina) dolazi iz javnog katastarskog servisa DGU-a
+(INSPIRE WFS, nationalCadastralReference = "matični broj k.o.-broj čestice").
 Koordinate su u HTRS96/TM (EPSG:3765); pretvorba je ovdje, bez dodatnih biblioteka
 (radi i na Redmiju). Slojevi se pronalaze po nazivu u katalogu, jer se brojevi
 slojeva mijenjaju sa svakim novim PPV-om."""
 
+import json
 import math
 import re
 from dataclasses import dataclass, field
 
-from .text import fold
+from .text import fmt_m2, fold
 
 API = "https://ispu.mgipu.hr/api/v1/"
+CP_WFS = "https://api.uredjenazemlja.hr/services/inspire/cp/wfs"   # DGU, katastarske čestice (INSPIRE)
 HEADERS = {"Accept": "application/json", "Content-Type": "application/json",
            "Origin": "https://ispu.mgipu.hr", "Referer": "https://ispu.mgipu.hr/"}
 
@@ -145,23 +148,41 @@ class Ispu:
     def point(self, lat: float, lon: float) -> PointInfo:
         return self.identify(*to_htrs(lat, lon))
 
-    def parcel(self, ko_name: str, kc: str) -> tuple[float, float] | None:
-        """Težište čestice (HTRS96) ili None ako k.o. ili čestica nije pronađena."""
-        r = self.session.get(API + "gis/search-kat-opcina", params={"input": ko_name}, timeout=self.timeout)
+    def parcel(self, ko_name: str, kc: str, names: dict[str, str] | None = None) -> dict | None:
+        """Točka unutar čestice (HTRS96) i površina: {"x", "y", "povrsina"} ili None.
+        K.o. → matični broj iz ISPU-a; čestica iz javnog katastarskog servisa DGU-a
+        (INSPIRE). names: normalizirani naziv → naziv s dijakriticima (pretraga ISPU-a
+        traži dijakritike: "OMIŠALJ", ne "OMISALJ")."""
+        mbr = self.cadastral_municipality(ko_name)
+        if mbr is None and names and fold(ko_name) in names:
+            mbr = self.cadastral_municipality(names[fold(ko_name)])
+        if mbr is None:
+            return None
+        for label in (kc, "*" + kc):     # "*" su zgradne čestice
+            r = self.session.get(CP_WFS, params={
+                "service": "WFS", "version": "2.0.0", "request": "GetFeature", "typeNames": "cp:CadastralParcel",
+                "count": 1, "outputFormat": "application/json",
+                "CQL_FILTER": f"nationalCadastralReference='{mbr}-{label}'"}, timeout=self.timeout)
+            r.raise_for_status()
+            features = r.json().get("features") or []
+            if features:
+                props = features[0].get("properties") or {}
+                point = (props.get("referencePoint") or {}).get("coordinates")
+                if not point:
+                    point = wkt_centroid(json.dumps((features[0].get("geometry") or {}).get("coordinates")))
+                if point:
+                    return {"x": point[0], "y": point[1], "povrsina": (props.get("areaValue") or {}).get("value")}
+        return None
+
+    def cadastral_municipality(self, ko_name: str) -> str | None:
+        """Matični broj katastarske općine. Pretraga traži velika slova s dijakriticima;
+        labela je "URED, K.O." (npr. "KRK, OMIŠALJ")."""
+        r = self.session.get(API + "gis/search-kat-opcina", params={"input": ko_name.upper()}, timeout=self.timeout)
         r.raise_for_status()
         want = fold(ko_name)
-        matches = [k for k in r.json() if fold(str(k.get("labela", ""))).split(" (")[0].strip() == want]
-        if not matches:
-            matches = [k for k in r.json() if fold(str(k.get("labela", ""))).startswith(want)]
-        if not matches:
-            return None
-        r = self.session.get(API + "gis/info-lokacija-kat-cestica",
-                             params={"labela": kc, "maticniBroj": matches[0]["maticniBroj"]}, timeout=self.timeout)
-        if r.status_code != 200 or not r.text.strip():
-            return None
-        data = r.json() if r.text.strip().startswith(("{", "[", '"')) else r.text
-        wkt = data if isinstance(data, str) else (data.get("wkt") or data.get("geom") or "") if isinstance(data, dict) else ""
-        return wkt_centroid(wkt)
+        names = [(k, fold(str(k.get("labela", "")).split(",")[-1])) for k in r.json() or []]
+        matches = [k for k, name in names if name == want] or [k for k, name in names if name.startswith(want)]
+        return matches[0]["maticniBroj"] if matches else None
 
 
 def parse_identify(data) -> PointInfo:
@@ -191,3 +212,44 @@ def parse_identify(data) -> PointInfo:
                         if vrsta.startswith("Građevinsko") and RESIDENTIAL.search(namjena):
                             info.land_values.append(float(value))
     return info
+
+
+# --- provjera zemljišta iz oglasa -------------------------------------------
+
+@dataclass
+class LandCheck:
+    line: str                      # redak za obavijest (🗺 …)
+    warning: str = ""              # ⚠ kad zemljište nije u građevinskom području naselja
+    info: PointInfo | None = None  # podaci ISPU-a (za PPV na lokaciji)
+
+
+def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, approximate: bool,
+               names: dict[str, str] | None = None) -> LandCheck:
+    """Je li zemljište u građevinskom području: prvo po katastarskoj čestici iz teksta
+    (točno), inače po oznaci na karti oglasa (ako portal kaže da nije približna)."""
+    parcels = parcels_in_text(text)
+    info, where = None, ""
+    for ko, kc in parcels[:3]:
+        found = ispu.parcel(ko, kc, names)
+        if found:
+            info = ispu.identify(found["x"], found["y"])
+            area = f", {fmt_m2(found['povrsina'])}" if found.get("povrsina") else ""
+            where = f"k.č. {kc} k.o. {ko}{area}"
+            break
+    if info is None and lat and lon and not approximate:
+        info, where = ispu.point(lat, lon), "oznaci na karti oglasa"
+    if info is None:
+        why = "čestica iz oglasa nije pronađena u ISPU-u" if parcels else "oglas nema točnu lokaciju ni broj čestice"
+        return LandCheck(f"🗺 Građevinsko područje: nije provjereno – {why}")
+    caveat = " (oznaka može biti približna)" if where.startswith("oznaci") else ""
+    use = info.use.split(") ", 1)[-1].capitalize() if info.use else ""
+    if info.gp == "naselja":
+        part = " (neizgrađeni dio)" if "NEIZGRAĐENI" in info.use.upper() else \
+            " (izgrađeni dio)" if "IZGRAĐENI" in info.use.upper() else ""
+        return LandCheck(f"🗺 U građevinskom području naselja{part} – ISPU, prema {where}", info=info)
+    if info.gp == "izvan naselja":
+        return LandCheck(f"🗺 Građevinsko područje IZVAN naselja – ISPU, prema {where}",
+                         f"građevinsko područje izvan naselja ({use or 'izdvojena namjena'}) – nije za obiteljsku kuću, "
+                         f"provjeri{caveat}", info)
+    return LandCheck(f"🗺 NIJE u građevinskom području – ISPU, prema {where}",
+                     f"prema ISPU-u nije u građevinskom području{f' ({use})' if use else ''} – provjeri{caveat}", info)
