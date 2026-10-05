@@ -24,12 +24,14 @@ def walk(o, path, out, depth=0):
         return
     if isinstance(o, dict):
         for k, v in o.items():
+            if k in ("translations", "seo", "breadcrumbs", "footer", "header", "messages"):
+                continue
             walk(v, f"{path}.{k}", out, depth + 1)
     elif isinstance(o, list):
         for i, v in enumerate(o[:3]):
             walk(v, f"{path}[{i}]", out, depth + 1)
     else:
-        out.append((path, str(o)[:120]))
+        out.append((path, str(o)[:160] + (f" …[{len(str(o))} znakova]" if len(str(o)) > 160 else "")))
 
 
 def main():
@@ -38,7 +40,7 @@ def main():
     try:
         http = Http(delay=1.5)
         src = NekretnineHr(http, Locator(), load_config()["kriteriji"])
-        items = [x for x in src.fetch(INCREMENTAL, set()) if x.kind == HOUSE][:3]
+        items = [x for x in src.fetch(INCREMENTAL, set()) if x.kind == HOUSE][:2]
         pages = []
         for x in items:
             r = http.get(x.url)
@@ -51,7 +53,7 @@ def main():
                 flat = []
                 walk(data, "", flat)
                 item["paths"] = [f"{p} = {v}" for p, v in flat if re.search(
-                    r"descr|feature|garag|park|box|surface|garden|land|caption|primary|secondary|ga4|energy|year|cond", p, re.I)][:200]
+                    r"descr|feature|garag|park|box|surface|garden|land|caption|primary|secondary|ga4|energy|year|cond|location|latitude", p, re.I)][:300]
                 desc = [v for p, v in flat if p.endswith(".description")]
                 item["desc_sample_len"] = [len(d) for d in desc][:5]
             pages.append(item)
