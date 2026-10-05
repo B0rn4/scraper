@@ -9,6 +9,11 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 - **Telegram:** obavijest za svaki novi oglas (fotografija, cijena, m², €/m², mjesto,
   izvor, gumb za otvaranje oglasa). Oznaka ⚠ znači da nešto treba provjeriti
   (npr. nema cijene). 📉 znači sniženu cijenu.
+- **Već viđeni oglasi ne stižu ponovno:** isti oglas na drugom portalu ili ponovno
+  objavljen pod novim brojem (ista općina i vrsta, ista površina, ista cijena, a kod
+  okruglih brojeva i isto naselje ili slične riječi u naslovu). Ako je negdje jeftiniji,
+  stiže s napomenom „📉 Već viđen na … – sad jeftiniji”. Preskočeni su popisani u
+  tjednom izvještaju. Kad pravilo nije sigurno, oglas stiže.
 - **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
 - **Pregledni izvještaj:** jedna HTML datoteka sa svim oglasima i razlogom odluke.
 

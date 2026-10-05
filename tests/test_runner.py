@@ -6,9 +6,9 @@ from scraper.models import HOUSE, PASS, REJECT, Decision, Listing
 from scraper.runner import Runner
 
 
-def listing(price=300_000, sid="1"):
-    return Listing(source="t", source_id=sid, url="https://x", title="Kuća Punat", kind=HOUSE,
-                   subtype="samostojeća kuća", price=price, area=120, county="Primorsko-goranska", municipality="Punat")
+def listing(price=300_000, sid="1", area=120, title="Kuća Punat", source="t"):
+    return Listing(source=source, source_id=sid, url="https://x", title=title, kind=HOUSE,
+                   subtype="samostojeća kuća", price=price, area=area, county="Primorsko-goranska", municipality="Punat")
 
 
 def test_notify_reasons(tmp_path):
@@ -62,7 +62,7 @@ def test_baseline_then_incremental(tmp_path, monkeypatch):
     monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
     FakeSource.modes = []
     FakeSource.batches = [[listing(sid="1"), listing(900_000, "2")],          # početni popis
-                          [listing(sid="1"), listing(sid="3"), listing(380_000, "2")]]  # novi + snižen
+                          [listing(sid="1"), listing(sid="3", area=95), listing(380_000, "2")]]  # novi + snižen
     sent = []
 
     def run_once():
@@ -117,7 +117,7 @@ def test_silent_baseline_and_reposted_old_ads(tmp_path, monkeypatch):
     cheaper = listing(280_000, "2")
     QuietSource.modes = []
     QuietSource.batches = [[listing(sid="1")],              # početak praćenja: ništa ne stiže
-                           [listing(sid="1"), old, listing(sid="3")],  # stari ponovno objavljen + nov
+                           [listing(sid="1"), old, listing(sid="3", area=95)],  # stari ponovno objavljen + nov
                            [cheaper]]                        # stari sad jeftiniji
     sent = []
 
@@ -162,3 +162,69 @@ def test_redmi_watchdog(tmp_path):
     check(10)
     assert mails == ["Scraper: Redmi se ne javlja", "Scraper: Redmi se ponovno javlja"]
     redmi.close()
+
+
+def test_same_property_rules():
+    from scraper.dedupe import same_property
+    from scraper.locations import Locator
+
+    a = {"key": "a", "kind": HOUSE, "jls": "Krk", "price": 352_000, "area": 148, "title": "Kuća Krk", "settlement": ""}
+    assert same_property({**a, "key": "b"}, a)                                     # isti (neokrugli) brojevi
+    assert not same_property({**a, "key": "b", "area": 160}, a)                    # druga površina
+    assert not same_property({**a, "key": "b", "jls": "Punat"}, a)                 # druga općina
+    near = {**a, "key": "b", "price": 350_000, "area": 149}
+    assert not same_property(near, a)                                              # blizu, ali bez dokaza
+    assert same_property({**near, "settlement": "Vrh"}, {**a, "settlement": "Vrh"})  # isto naselje
+    titled = {**near, "title": "Kamena kuća Linardići s pogledom"}
+    assert same_property(titled, {**a, "title": "Linardići, kamena kuća, pogled na more"})
+    cheaper = {**a, "key": "b", "price": 320_000, "settlement": "Vrh"}
+    assert not same_property(cheaper, {**a, "settlement": "Vrh"})
+    assert same_property(cheaper, {**a, "settlement": "Vrh"}, cheaper_ok=True)
+    # Okrugli brojevi (350.000 €, 100 m²) traže dokaz; različita naselja nikad nisu isti oglas.
+    r = {**a, "price": 350_000, "area": 100}
+    assert not same_property({**r, "key": "b", "title": "Obiteljska kuća"}, r)
+    loc = Locator()
+    from scraper.dedupe import places
+    vrh = {**a, "key": "b", "title": "Obiteljska kuća 140 m², Vrh, Pinezići, Krk"}
+    grad = {**a, "title": "Višeobiteljska kuća Grad Krk, Centar, Krk"}
+    places(vrh, loc), places(grad, loc)
+    assert vrh["_places"] == {"vrh", "pinezici"} and grad["_places"] == set()
+    selce = {**a, "key": "c", "jls": "Crikvenica", "title": "Selce, kuća"}
+    dramalj = {**a, "jls": "Crikvenica", "title": "Dramalj, kuća"}
+    places(selce, loc), places(dramalj, loc)
+    assert not same_property(selce, dramalj)
+
+
+def test_seen_on_other_portal(tmp_path, monkeypatch):
+    import scraper.runner as runner_mod
+
+    class Two(FakeSource):
+        name, label, daily = "two", "two", False
+
+        def fetch(self, mode, known_ids):
+            return Two.batches.pop(0)
+
+    monkeypatch.setitem(runner_mod.ALL, "two", Two)
+    first = listing(sid="1", title="Kuća Punat, Stara Baška")
+    same_elsewhere = listing(sid="9", title="Stara Baška kuća", source="two")
+    cheaper_elsewhere = listing(285_000, sid="8", title="Stara Baška kuća", source="two")
+    cheaper_elsewhere.settlement = first.settlement = same_elsewhere.settlement = "Stara Baška"
+    Two.batches = [[listing(sid="0", area=60)], [first, same_elsewhere], [same_elsewhere, cheaper_elsewhere]]
+    sent = []
+
+    def run_once():
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"two": True}
+        r._send_report = lambda *a, **k: None
+        r._send_notifications = lambda state, items: [
+            (sent.append((x.source_id, h)), state.mark_notified(x.key, x.price, r.stamp)) for x, d, h in items]
+        r.run(force=True)
+
+    run_once()                      # početni popis
+    run_once()                      # dva portala, isti oglas, isto pokretanje → jedna poruka
+    assert sent == [("1", "")]
+    run_once()                      # isti opet → ništa; jeftiniji → poruka s napomenom
+    assert len(sent) == 2 and sent[1][0] == "8" and sent[1][1].startswith("📉 Već viđen")
+    state = State(tmp_path / "s.db")
+    assert [r["source_id"] for r in state.duplicates_since("2000")] == ["9"]
+    state.close()

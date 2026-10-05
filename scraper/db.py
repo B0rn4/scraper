@@ -51,6 +51,9 @@ class State:
         self.conn = sqlite3.connect(self.path)
         self.conn.row_factory = sqlite3.Row
         self.conn.executescript(SCHEMA)
+        columns = {r[1] for r in self.conn.execute("PRAGMA table_info(listings)")}
+        if "settlement" not in columns:  # dodano za prepoznavanje već viđenih oglasa
+            self.conn.execute("ALTER TABLE listings ADD COLUMN settlement TEXT")
 
     def close(self) -> None:
         self.conn.commit()
@@ -76,18 +79,18 @@ class State:
         if old is None:
             self.conn.execute(
                 """INSERT INTO listings (key, source, source_id, first_seen, last_seen, title, url, kind,
-                   price, area, jls, status, reasons, near_miss)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                   price, area, jls, status, reasons, near_miss, settlement)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (listing.key, listing.source, listing.source_id, now, now, listing.title, listing.url,
                  listing.kind, listing.price, listing.area, decision.jls, decision.status, reasons,
-                 int(decision.near_miss)),
+                 int(decision.near_miss), listing.settlement),
             )
         else:
             self.conn.execute(
                 """UPDATE listings SET last_seen = ?, title = ?, url = ?, price = ?, area = ?, jls = ?,
-                   status = ?, reasons = ?, near_miss = ? WHERE key = ?""",
+                   status = ?, reasons = ?, near_miss = ?, settlement = ? WHERE key = ?""",
                 (now, listing.title, listing.url, listing.price, listing.area, decision.jls,
-                 decision.status, reasons, int(decision.near_miss), listing.key),
+                 decision.status, reasons, int(decision.near_miss), listing.settlement, listing.key),
             )
         if old is None or (listing.price is not None and old.get("price") != listing.price):
             self.conn.execute(
@@ -109,10 +112,12 @@ class State:
 
     def _new_since(self, since: str, where: str = "1=1") -> list[dict]:
         baselines = self._baselines()
-        # "tiho:" = stari oglas ponovno objavljen ili početak praćenja – nije nov.
+        # "tiho:" = stari oglas ponovno objavljen ili početak praćenja; "dup:" = isti oglas
+        # već viđen na drugom portalu – nijedan nije nov.
         rows = self.conn.execute(
             f"SELECT * FROM listings WHERE first_seen >= ? AND {where} "
-            "AND (notified_at IS NULL OR notified_at NOT LIKE 'tiho:%') ORDER BY first_seen", (since,)
+            "AND (notified_at IS NULL OR (notified_at NOT LIKE 'tiho:%' AND notified_at NOT LIKE 'dup:%')) "
+            "ORDER BY first_seen", (since,)
         )
         return [dict(r) for r in rows if r["first_seen"] > baselines.get(r["source"], "")]
 
@@ -122,8 +127,22 @@ class State:
     def notified_since(self, since: str) -> list[dict]:
         rows = self.conn.execute(
             "SELECT * FROM listings WHERE notified_at >= ? AND notified_at NOT LIKE 'zbirno:%' "
-            "AND notified_at NOT LIKE 'tiho:%' ORDER BY notified_at",
+            "AND notified_at NOT LIKE 'tiho:%' AND notified_at NOT LIKE 'dup:%' ORDER BY notified_at",
             (since,),
+        )
+        return [dict(r) for r in rows]
+
+    def seen_rows(self) -> list[dict]:
+        """Oglasi koje smo već "vidjeli" (poslani, u početnom popisu ili tiho zabilježeni)."""
+        rows = self.conn.execute(
+            "SELECT key, source, kind, jls, price, area, title, settlement, notified_at, notified_price "
+            "FROM listings WHERE notified_at IS NOT NULL AND price IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
+        )
+        return [dict(r) for r in rows]
+
+    def duplicates_since(self, since: str) -> list[dict]:
+        rows = self.conn.execute(
+            "SELECT * FROM listings WHERE first_seen >= ? AND notified_at LIKE 'dup:%' ORDER BY first_seen", (since,)
         )
         return [dict(r) for r in rows]
 

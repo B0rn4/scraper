@@ -139,9 +139,13 @@ bez stotina poruka.
    stiže samo za novi broj oglasa i za sniženje; početnog popisa za Njuškalo nema.
    Upute u REDMI.md.
 3. **Pametnije filtriranje** (dogovoreno 5. 10. 2026., ovim redom):
-   1. Već viđeni oglasi: isti oglas na drugom portalu ili ponovno objavljen (ista
-      općina i vrsta, cijena ±1 %, površina ±2 %, za projekte i naslov/naselje) ne
-      stiže ponovno, osim ako je cijena niža.
+   1. **(gotovo 5. 10.)** Već viđeni oglasi: isti oglas na drugom portalu ili ponovno
+      objavljen ne stiže ponovno, osim ako je cijena niža (`scraper/dedupe.py`). Na
+      bazi 5. 10.: od 3.555 oglasa koji odgovaraju kriterijima 1.289 (36 %) bi bili
+      „već viđeni”. Pravilo je oprezno: različita naselja u naslovu → nije isti; okrugli
+      brojevi (npr. 299.000 €, 100 m²) traže zajedničko naselje ili riječi naslova.
+      GitHub objavljuje sažetak viđenih (`seen.json.gz` na grani state) za Redmi, a
+      GitHub čita bazu s Redmija.
    2. Tablica naselja (15 JLS): udaljenost od mora, vožnja do mora, Rijeke i Zagreba.
       Korisnik je pregleda. **Više od 10 min vožnje do mora → oglas ne stiže.**
       Lokacija oglasa: koordinate (nekretnine.hr, vender.hr, Njuškalo – često

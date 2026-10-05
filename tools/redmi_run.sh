@@ -12,7 +12,10 @@ LOG="$HOME/scraper.log"
   . "$HOME/venv/bin/activate"
   set -a; . "$HOME/.scraper.env"; set +a
   git pull -q --ff-only || echo "git pull nije uspio – radim sa starim kodom"
-  python -m scraper run --uredjaj redmi --db "$HOME/redmi.db" --out "$HOME/redmi-out"
+  # Oglasi koje je GitHub već vidio (da isti oglas s Njuškala ne stigne ponovno).
+  python -c "import urllib.request as u; u.urlretrieve('https://raw.githubusercontent.com/B0rn4/scraper/state/seen.json.gz', '$HOME/seen.json.gz.tmp')" \
+    && mv "$HOME/seen.json.gz.tmp" "$HOME/seen.json.gz" || echo "sažetak viđenih oglasa nije preuzet"
+  python -m scraper run --uredjaj redmi --db "$HOME/redmi.db" --out "$HOME/redmi-out" --vidjeni "$HOME/seen.json.gz"
   python tools/redmi_sync.py "$HOME/redmi.db"
 } >> "$LOG" 2>&1
 

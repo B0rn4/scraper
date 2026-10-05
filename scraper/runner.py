@@ -9,7 +9,7 @@ from zoneinfo import ZoneInfo
 
 import yaml
 
-from . import report
+from . import dedupe, report
 from .db import State
 from .filters import evaluate
 from .http import Http
@@ -29,7 +29,7 @@ def load_config(path: Path = ROOT / "config.yaml") -> dict:
 
 class Runner:
     def __init__(self, db_path: Path, out_dir: Path, send: bool = True, only: list[str] | None = None,
-                 device: str = "github", redmi_db: Path | None = None):
+                 device: str = "github", redmi_db: Path | None = None, seen_file: Path | None = None):
         self.cfg = load_config()
         self.tz = ZoneInfo(self.cfg["vrijeme"]["zona"])
         self.now = datetime.now(self.tz)
@@ -39,6 +39,7 @@ class Runner:
         self.only = only
         self.device = device          # "github" ili "redmi": koji izvori se ovdje čitaju
         self.redmi_db = redmi_db      # stanje s Redmija (na GitHubu: nadzor i tjedni izvještaj)
+        self.seen_file = seen_file    # na Redmiju: sažetak već viđenih oglasa s GitHuba
         self.locator = Locator()
         self.criteria = self.cfg["kriteriji"]
         self.http = Http()
@@ -100,6 +101,7 @@ class Runner:
             self.log(f"Izvan radnog vremena ({self.now:%H:%M}), ništa se ne radi.")
             return
         state = State(self.db_path)
+        seen = self._load_seen(state)
         to_notify: list[tuple[Listing, Decision, str]] = []
         baseline: list[tuple[object, list[tuple[Listing, Decision]], str]] = []
         today = self.now.date().isoformat()
@@ -133,6 +135,8 @@ class Runner:
                     if not first:
                         headline = self._notify_reason(x, d, old)
                         if headline is not None:
+                            headline = self._check_seen(state, seen, x, d, old, headline)
+                        if headline is not None:
                             to_notify.append((x, d, headline))
                 counts = {s: sum(1 for _, d in decided if d.status == s) for s in (PASS, WARN, REJECT)}
                 self.log(f"{src.label}: {len(listings)} oglasa – ✅ {counts[PASS]}, ⚠ {counts[WARN]}, ❌ {counts[REJECT]}")
@@ -150,8 +154,44 @@ class Runner:
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
                 self._check_redmi(state)
+            if self.device == "github":
+                dedupe.export(state, Path(self.db_path).with_name("seen.json.gz"))
         finally:
             state.close()
+
+    def _load_seen(self, state: State) -> dedupe.Seen:
+        """Već viđeni oglasi: ova baza, baza s Redmija (na GitHubu) i sažetak s GitHuba (na Redmiju)."""
+        seen = dedupe.Seen(self.locator)
+        seen.add_state(state)
+        if self.redmi_db and Path(self.redmi_db).exists():
+            other = State(self.redmi_db)
+            seen.add_state(other)
+            other.close()
+        try:
+            seen.add_file(self.seen_file)
+        except (OSError, ValueError) as exc:
+            self.log(f"Sažetak viđenih oglasa nije učitan: {exc}")
+        return seen
+
+    def _check_seen(self, state: State, seen: dedupe.Seen, x: Listing, d: Decision, old: dict | None,
+                    headline: str) -> str | None:
+        """Isti oglas već viđen (drugi portal, ponovna objava)? Stiže samo ako je sad jeftiniji."""
+        new = dedupe.row(x, d)
+        twins = seen.twins(new)
+        if twins:
+            cheapest = min(twins, key=lambda r: min(r["price"], r.get("notified_price") or r["price"]))
+            low = min(cheapest["price"], cheapest.get("notified_price") or cheapest["price"])
+            if x.price >= low * (1 - dedupe.PRICE_TOLERANCE):
+                if old is None:
+                    state.mark_notified(x.key, x.price, f"dup:{cheapest['key']}")
+                self.log(f"Već viđen ({cheapest['key']}): {x.title[:60]}")
+                return None
+            if old is None:
+                where = SOURCE_LABELS.get(cheapest["source"], cheapest["source"])
+                headline = f"📉 Već viđen na {where} za {fmt_eur(low)} – sad jeftiniji"
+        new["notified_at"], new["notified_price"] = self.stamp, x.price
+        seen.add(new)  # drugi portal u istom pokretanju ne šalje isti oglas ponovno
+        return headline
 
     def _notify_reason(self, x: Listing, d: Decision, old: dict | None) -> str | None:
         """Naslov obavijesti ili None ako se ne šalje ništa."""
@@ -338,7 +378,7 @@ class Runner:
     def weekly(self) -> None:
         """Tjedni izvještaj mailom."""
         since = (self.now - timedelta(days=7)).isoformat(timespec="seconds")
-        counts, notified, near, health = {}, [], [], []
+        counts, notified, near, health, dups = {}, [], [], [], []
         paths = [self.db_path] + ([self.redmi_db] if self.redmi_db and Path(self.redmi_db).exists() else [])
         for path in paths:  # stanje s GitHuba i, ako postoji, s Redmija (Njuškalo)
             state = State(path)
@@ -346,6 +386,7 @@ class Runner:
             notified += state.notified_since(since)
             near += state.near_misses_since(since)
             health += state.health_all()
+            dups += state.duplicates_since(since)
             state.close()
         e = html.escape
         rows = "".join(
@@ -360,6 +401,11 @@ class Runner:
             f"<li><a href='{e(r['url'] or '')}'>{e(r['title'] or '')}</a> – {e(', '.join(json.loads(r['reasons'] or '[]')))}</li>"
             for r in near
         ) or "<li>nijedan</li>"
+        dl = "".join(
+            f"<li><a href='{e(r['url'] or '')}'>{e(r['title'] or '')}</a> – {fmt_eur(r['price'])}, {e(r['jls'] or '')} "
+            f"({e(SOURCE_LABELS.get(r['source'], r['source']))}; isti kao {e(str(r['notified_at'])[4:])})</li>"
+            for r in dups[:100]
+        ) or "<li>nijedan</li>"
         hl = "".join(
             f"<li>{e(SOURCE_LABELS.get(h['source'], h['source']))}: "
             + ("✅ radi" if not h["failures"] else f"⚠ {h['failures']} grešaka zaredom – {e(h['last_error'] or '')}")
@@ -372,6 +418,8 @@ class Runner:
 <table border=1 cellpadding=4 cellspacing=0><tr><th>Izvor</th><th>✅</th><th>⚠</th><th>❌</th></tr>{rows}</table>
 <h3>Poslane obavijesti</h3><ul>{sent}</ul>
 <h3>Za dlaku promašeni (cijena ili površina do {self.criteria.get('za_dlaku_posto', 15)} %)</h3><ul>{nm}</ul>
+<h3>Preskočeni kao već viđeni ({len(dups)})</h3><p>Isti oglas na drugom portalu ili ponovno objavljen,
+bez niže cijene.</p><ul>{dl}</ul>
 <h3>Stanje izvora</h3><ul>{hl}</ul>"""
         text = "Tjedni izvještaj scrapera – otvori HTML verziju maila."
         self._email(f"Scraper: tjedni izvještaj {self.now:%d.%m.%Y.}", text, body)
