@@ -10,6 +10,7 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from . import dedupe, report
+from .prices import AskingPrices
 from .db import State
 from .filters import evaluate
 from .http import Http
@@ -29,7 +30,8 @@ def load_config(path: Path = ROOT / "config.yaml") -> dict:
 
 class Runner:
     def __init__(self, db_path: Path, out_dir: Path, send: bool = True, only: list[str] | None = None,
-                 device: str = "github", redmi_db: Path | None = None, seen_file: Path | None = None):
+                 device: str = "github", redmi_db: Path | None = None, seen_file: Path | None = None,
+                 prices_file: Path | None = None):
         self.cfg = load_config()
         self.tz = ZoneInfo(self.cfg["vrijeme"]["zona"])
         self.now = datetime.now(self.tz)
@@ -40,6 +42,7 @@ class Runner:
         self.device = device          # "github" ili "redmi": koji izvori se ovdje čitaju
         self.redmi_db = redmi_db      # stanje s Redmija (na GitHubu: nadzor i tjedni izvještaj)
         self.seen_file = seen_file    # na Redmiju: sažetak već viđenih oglasa s GitHuba
+        self.prices_file = prices_file  # na Redmiju: medijani traženih cijena s GitHuba
         self.locator = Locator()
         self.criteria = self.cfg["kriteriji"]
         self.http = Http()
@@ -102,6 +105,7 @@ class Runner:
             return
         state = State(self.db_path)
         seen = self._load_seen(state)
+        prices = self._load_prices(state)
         to_notify: list[tuple[Listing, Decision, str]] = []
         baseline: list[tuple[object, list[tuple[Listing, Decision]], str]] = []
         today = self.now.date().isoformat()
@@ -141,6 +145,7 @@ class Runner:
                         if headline is not None:
                             headline = self._check_seen(state, seen, x, d, old, headline)
                         if headline is not None:
+                            x.extra["usporedba"] = prices.compare(x, d.jls) if prices else None
                             to_notify.append((x, d, headline))
                 counts = {s: sum(1 for _, d in decided if d.status == s) for s in (PASS, WARN, REJECT)}
                 self.log(f"{src.label}: {len(listings)} oglasa – ✅ {counts[PASS]}, ⚠ {counts[WARN]}, ❌ {counts[REJECT]}")
@@ -176,6 +181,25 @@ class Runner:
         except (OSError, ValueError) as exc:
             self.log(f"Sažetak viđenih oglasa nije učitan: {exc}")
         return seen
+
+    def _load_prices(self, state: State) -> AskingPrices | None:
+        """Medijani traženih cijena: na GitHubu iz baza (i spremi za Redmi), na Redmiju iz
+        datoteke s GitHuba (Redmijeva baza ima samo Njuškalo)."""
+        try:
+            if self.device != "github" and self.prices_file and Path(self.prices_file).exists():
+                return AskingPrices.from_file(self.prices_file, self.locator)
+            rows = state.price_rows()
+            if self.redmi_db and Path(self.redmi_db).exists():
+                other = State(self.redmi_db)
+                rows += other.price_rows()
+                other.close()
+            prices = AskingPrices.from_rows(rows, self.locator, self.now)
+            if self.device == "github":
+                prices.save(Path(self.db_path).with_name("cijene.json"))
+            return prices
+        except Exception as exc:  # noqa: BLE001 – usporedba nije nužna za obavijest
+            self.log(f"Medijani cijena nisu učitani: {type(exc).__name__}: {exc}")
+            return None
 
     def _check_seen(self, state: State, seen: dedupe.Seen, x: Listing, d: Decision, old: dict | None,
                     headline: str) -> str | None:

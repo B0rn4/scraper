@@ -143,6 +143,14 @@ class State:
         )
         return [dict(r) for r in rows]
 
+    def price_rows(self) -> list[dict]:
+        """Svi oglasi s cijenom i površinom (za medijan traženih cijena)."""
+        rows = self.conn.execute(
+            "SELECT kind, jls, price, area, title, settlement, reasons, last_seen FROM listings "
+            "WHERE price IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
+        )
+        return [dict(r) for r in rows]
+
     def duplicates_since(self, since: str) -> list[dict]:
         rows = self.conn.execute(
             "SELECT * FROM listings WHERE first_seen >= ? AND notified_at LIKE 'dup:%' ORDER BY first_seen", (since,)

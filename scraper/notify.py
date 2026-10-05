@@ -48,6 +48,8 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
     if listing.subtype:
         meta.append(listing.subtype)
     lines.append("💶 " + e(" · ".join(meta)))
+    if listing.extra.get("usporedba"):
+        lines.append(e(listing.extra["usporedba"]))
     if listing.extra.get("za_obnovu"):
         lines.append("🔨 za obnovu / starina")
     if listing.previous_price and listing.price and listing.previous_price > listing.price:

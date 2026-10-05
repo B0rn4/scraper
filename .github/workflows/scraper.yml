@@ -91,6 +91,7 @@ jobs:
           rm -rf /tmp/state && mkdir -p /tmp/state && cp state.db /tmp/state/
           # Sažetak već viđenih oglasa – Redmi ga preuzima da ne javi isti oglas s Njuškala.
           [ -f seen.json.gz ] && cp seen.json.gz /tmp/state/
+          [ -f cijene.json ] && cp cijene.json /tmp/state/
           cd /tmp/state
           git init -q && git checkout -q -b state && git add -A
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \

@@ -161,6 +161,13 @@ class Locator:
         Nazivi koji su i obične riječi (Kraj, Polje, Vrh…) broje se samo ako
         su napisani velikim početnim slovom. Naziv koji postoji u više
         gradova/općina vraća sve njih."""
+        return [(jls, found) for jls, _, found in self._scan(text)]
+
+    def scan_names(self, text: str) -> list[tuple[Jls, str]]:
+        """Kao scan_text, ali s osnovnim (normaliziranim) nazivom: "u Njivicama" → "njivice"."""
+        return [(jls, name) for jls, name, _ in self._scan(text)]
+
+    def _scan(self, text: str) -> list[tuple[Jls, str, str]]:
         cased = fold_case(text)
         folded = cased.lower()
         mask = [False] * len(folded)
@@ -176,7 +183,7 @@ class Locator:
                 if common and not cased[m.start()].isupper():
                     continue
                 mask[m.start():m.end()] = [True] * (m.end() - m.start())
-                found.extend((jls, cased[m.start():m.end()]) for jls in owners)
+                found.extend((jls, name, cased[m.start():m.end()]) for jls in owners)
         return found
 
     def far_settlement(self, jls_name: str, settlement: str, text: str) -> str | None:
