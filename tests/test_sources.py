@@ -241,3 +241,20 @@ def test_index_opens_new_matching_ads():
     d1 = evaluate(x1, cfg, Locator())
     assert d1.status == WARN and any(w.startswith("suvlasništvo") for w in d1.warnings)
     assert evaluate(x2, cfg, Locator()).status == REJECT  # dvojna kuća iz vrste u oglasu
+
+
+def test_nekretnine_detail():
+    from scraper.models import Listing
+    from scraper.sources.nekretnine_hr import parse_detail
+
+    data = {"props": {"pageProps": {"detailData": {"realEstate": {"properties": [{
+        "caption": "Kuća Njivice", "description": "Puni opis kuće. Kuća je u suvlasništvu.",
+        "features": ["Konoba", "Garaža"], "primaryFeatures": [{"name": "balkon", "value": 1}],
+        "buildingYear": 1987, "land": "420 m²"}]}, "trovakasa": {"boxAutoId": None}}}}}
+    html = f'<script id="__NEXT_DATA__" type="application/json">{json.dumps(data)}</script>'
+    x = Listing(source="nekretnine_hr", source_id="1", url="u", title="Kuća", kind=HOUSE, description="Puni op",
+                extra={"opis_skracen": True})
+    parse_detail(html, x)
+    assert x.description == "Kuća Njivice Puni opis kuće. Kuća je u suvlasništvu."
+    assert x.extra["parking"] == "garaža" and x.extra["godina_izgradnje"] == 1987 and x.plot_area == 420
+    assert "opis_skracen" not in x.extra and x.extra["detalji"]

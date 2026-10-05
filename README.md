@@ -26,7 +26,11 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   od Rijeke, grad Rijeka / ne stiže) je u `data/naselja_udaljenosti.csv`.
 - **Cijena prema drugim oglasima:** 💰 ispod / 💸 iznad / 📊 oko medijana traženih
   €/m² u istom naselju (ako ima barem 8 oglasa), inače u gradu/općini.
-- **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, parking, vlasnički list.
+- **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, vlasnički list.
+- **Parking (🚗, kuće):** parkirno mjesto ili garaža iz oglasa, ili okućnica od barem
+  100 m². „Nema parkinga”, samo javni parking ili parking nije naveden → ⚠.
+- **Sažeti redak (📊):** more (zračno), vožnja do Rijeke i Zagreba, cijena prema
+  prosjeku i PPV-u, broj upozorenja.
 - **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
 - **Pregledni izvještaj:** jedna HTML datoteka sa svim oglasima i razlogom odluke.
 
@@ -34,7 +38,7 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 
 | Izvor | Kako | Kada |
 |---|---|---|
-| nekretnine.hr (isti oglasi kao Crozilla i Indomio) | podaci sa stranice | svakih 20 min |
+| nekretnine.hr (isti oglasi kao Crozilla i Indomio) | podaci sa stranice (novi oglasi koji mogu proći otvaraju se radi punog opisa) | svakih 20 min |
 | index.hr/oglasi | njihov API (novi oglasi koji mogu proći otvaraju se radi opisa) | svakih 20 min |
 | oglasnik.hr | podaci sa stranice | svakih 20 min |
 | FINA Očevidnik (samo građevinska zemljišta) | dnevni CSV izvoz | jednom dnevno |

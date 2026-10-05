@@ -2,12 +2,15 @@
 
 Stranice s popisom imaju podatke u __NEXT_DATA__ (JSON), uključujući grad/općinu,
 vrstu nekretnine, cijenu i površinu. Sortiranje: ?criterio=data&ordine=desc
-(najnoviji), ?criterio=dataModifica&ordine=desc (nedavno izmijenjeni, npr. cijena)."""
+(najnoviji), ?criterio=dataModifica&ordine=desc (nedavno izmijenjeni, npr. cijena).
+Popis daje samo početak opisa; novi oglasi koji bi mogli proći otvaraju se
+(props.pageProps.detailData): puni opis, značajke (garaža, parking), godina izgradnje."""
 
 import json
 import re
 
-from ..models import HOUSE, LAND, Listing
+from ..filters import evaluate
+from ..models import HOUSE, LAND, REJECT, Listing
 from ..text import fold, parse_number
 from .base import FULL, Source
 
@@ -19,6 +22,8 @@ CATEGORIES = [
     ("prodaja-zemljista", LAND, "zemljišta"),
 ]
 _NEXT_DATA = re.compile(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', re.S)
+MAX_DETAILS = 10   # najviše otvorenih oglasa po pokretanju
+_PARKING = re.compile(r"garaz|parkir|parking", re.I)
 
 
 def jls_slug(name: str) -> str:
@@ -74,6 +79,30 @@ def _listing(result: dict, kind: str) -> Listing:
     return listing
 
 
+def parse_detail(html: str, listing: Listing) -> None:
+    """Puni opis i značajke sa stranice oglasa."""
+    m = _NEXT_DATA.search(html)
+    if not m:
+        raise ValueError("nekretnine.hr: na stranici oglasa nema __NEXT_DATA__")
+    detail = json.loads(m.group(1))["props"]["pageProps"].get("detailData") or {}
+    prop = ((detail.get("realEstate") or {}).get("properties") or [{}])[0]
+    description = " ".join(filter(None, [prop.get("caption"), prop.get("description")]))
+    if description:
+        listing.description = description[:6000]
+        listing.extra.pop("opis_skracen", None)
+    names = [str(f) for f in prop.get("features") or []]
+    names += [str(f.get("name")) for f in prop.get("primaryFeatures") or [] if isinstance(f, dict) and f.get("value")]
+    parking = [n for n in names if _PARKING.search(fold(n))]
+    if parking or (detail.get("trovakasa") or {}).get("boxAutoId"):
+        listing.extra["parking"] = (parking[0] if parking else "garaža").lower()
+    if prop.get("buildingYear"):
+        listing.extra["godina_izgradnje"] = prop["buildingYear"]
+    land = parse_number(prop.get("land")) if prop.get("land") else None
+    if listing.kind == HOUSE and land and not listing.plot_area:
+        listing.plot_area = land
+    listing.extra["detalji"] = True
+
+
 class NekretnineHr(Source):
     name = "nekretnine_hr"
     label = "nekretnine.hr"
@@ -89,7 +118,24 @@ class NekretnineHr(Source):
                 # Nedavno izmijenjeni oglasi (npr. snižena cijena).
                 self._crawl(f"{BASE}/{category}/{COUNTY_SLUG}/", kind, found, known_ids, max_pages=1,
                             stop_on_known=False, sort="dataModifica")
+        if mode != FULL:
+            details = 0
+            for x in found.values():
+                if details >= MAX_DETAILS:
+                    break
+                if x.source_id in known_ids or not self._worth_detail(x):
+                    continue
+                details += 1
+                try:
+                    parse_detail(self.http.get(x.url).text, x)
+                except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
+                    x.extra["detalji_greska"] = str(exc)[:200]
         return list(found.values())
+
+    def _worth_detail(self, x: Listing) -> bool:
+        """Oglas otvaramo samo kad bi mogao proći (područje, cijena, površina)."""
+        d = evaluate(x, self.criteria, self.locator)
+        return d.status != REJECT or d.near_miss
 
     def _crawl(self, url, kind, found, known_ids, max_pages, stop_on_known, sort="data"):
         page = 1

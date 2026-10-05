@@ -199,9 +199,16 @@ bez stotina poruka.
         područja (rujan 2024.)”: u GP naselja (izgrađeni/neizgrađeni dio), GP izvan
         naselja (⚠) ili izvan GP-a (⚠). Bez točne lokacije: „nije provjereno”.
       - Cijena se ne koristi za odbijanje (osim granice iz kriterija) – samo oznake.
-   5. Parking: kuća mora imati parkirno mjesto ili dovoljno okućnice za parking
-      (okućnica sama po sebi nije bitna) – oznaka/upozorenje kad nije navedeno.
-   6. Redak s mjerama u poruci (more, Rijeka, Zagreb, cijena prema prosjeku, upozorenja).
+   5. **(gotovo 5. 10.)** Parking (`scraper/parking.py`): kuća mora imati parkirno
+      mjesto ili dovoljno okućnice. Izvori: polja portala (index.hr, Njuškalo,
+      nekretnine.hr), rečenice iz opisa, okućnica (≥ 100 m², `okucnica_za_parking_m2`).
+      „Nema parkinga” / samo javni parking → ⚠ s citatom; nije naveden → ⚠ (osim kad
+      je okućnica dovoljna ili je opis skraćen). nekretnine.hr: novi oglasi koji mogu
+      proći otvaraju se (puni opis, značajke, godina izgradnje), najviše 10 po pokretanju.
+   6. **(gotovo 5. 10.)** Sažeti redak odmah ispod cijene: „📊 more 0,6 km · Rijeka 40
+      min · Zagreb 2 h 24 min · cijena −20 % od prosjeka · PPV u rasponu · ⚠ 2”. More je
+      zračna udaljenost, Rijeka i Zagreb vožnja (OSRM, bez prometa) iz
+      `data/naselja_udaljenosti.csv`; bez naselja: istoimeno mjesto (~Krk).
    - Čitanje opisa jezičnim modelom: zasad ne (korisnik će javiti).
 4. Općine, gradovi, PGŽ, Ministarstvo, CERP.
 5. Agencije.
