@@ -24,6 +24,7 @@ from scraper.runner import load_config  # noqa: E402
 from scraper.sources.index_oglasi import IndexOglasi  # noqa: E402
 
 OUT = Path(sys.argv[1] if len(sys.argv) > 1 else "debug-out") / "discovery25"
+DOCS = "https://mpgi.gov.hr/UserDocsImages/dokumenti/stambeno/"
 WP = {"Rijeka": "https://www.rijeka.hr/", "Opatija": "https://opatija.hr/", "Crikvenica": "https://www.crikvenica.hr/",
       "Kostrena": "https://kostrena.hr/", "Malinska": "https://www.malinska.hr/", "Lovran": "https://lovran.hr/"}
 
@@ -54,7 +55,8 @@ def wp_part(s, summary):
 
 def ministry_part(s, summary):
     """Pronađi "Pregled tržišta nekretnina" na mpgi.gov.hr i izvuci tekst."""
-    found, seen = [], set()
+    found, seen = [("2023", f"{DOCS}Pregled-trzista-nekretnina-2023.pdf"), ("2024", f"{DOCS}Pregled-trzista-nekretnina-2024.pdf"),
+                   ("HNB P-41", "https://www.hnb.hr/documents/20182/2626448/p-041.pdf/a46c4569-30fc-4bb9-80e5-4f5953762d25")], set()
     queue = ["https://mpgi.gov.hr/default.aspx?id=8292", "https://mpgi.gov.hr/"]
     for depth in range(2):
         nxt = []
@@ -77,18 +79,14 @@ def ministry_part(s, summary):
         queue = nxt
     summary["ministry_pdfs"] = found[:20]
     texts = {}
-    for text, url in found[:3]:
+    for text, url in found[:6]:
         try:
             from pypdf import PdfReader
             data = s.get(url, timeout=120).content
             reader = PdfReader(io.BytesIO(data))
-            pages = []
-            for i, page in enumerate(reader.pages):
-                t = page.extract_text() or ""
-                if re.search(r"kuć|kuc", t, re.I) and re.search(r"Primorsko|Rijek|Opatij|Krk|Crikvenic", t):
-                    pages.append(f"--- str. {i + 1} ---\n{t}")
-            texts[url] = {"pages": len(reader.pages), "relevant": len(pages)}
-            save(f"ministry_{len(texts)}.txt", f"{text}\n{url}\n\n" + "\n".join(pages)[:400000])
+            pages = [f"--- str. {i + 1} ---\n{page.extract_text() or ''}" for i, page in enumerate(reader.pages)]
+            texts[url] = {"pages": len(reader.pages), "bytes": len(data)}
+            save(f"ministry_{len(texts)}.txt", f"{text}\n{url}\n\n" + "\n".join(pages)[:3000000])
         except Exception as exc:  # noqa: BLE001
             texts[url] = str(exc)[:300]
     summary["ministry_texts"] = texts
@@ -97,20 +95,24 @@ def ministry_part(s, summary):
 def index_part(summary):
     cfg = load_config()
     src = IndexOglasi(Http(delay=1.5), Locator(), cfg["kriteriji"])
-    rows = []
-    for page in range(1, 16):
-        data = src._api("flats-for-sale", page)
-        for x in data.get("data") or []:
-            area = (x.get("summary") or {}).get("area")
-            if x.get("price") and area and 20 <= area <= 250 and x["price"] > 10000:
-                rows.append({"city": x.get("cityName"), "settlement": x.get("settlementName"), "ppm": x["price"] / area})
-        if not data.get("nextPage"):
-            break
-    by_city = {}
-    for r in rows:
-        by_city.setdefault(r["city"], []).append(r["ppm"])
-    summary["index_flats"] = {k: {"n": len(v), "med": round(statistics.median(v))} for k, v in by_city.items()}
-    summary["index_flats_total"] = len(rows)
+    for category, key, (amin, amax) in (("flats-for-sale", "index_flats", (20, 250)),
+                                        ("houses-for-sale", "index_houses", (50, 600))):
+        rows = []
+        for page in range(1, 31):
+            data = src._api(category, page)
+            for x in data.get("data") or []:
+                area = (x.get("summary") or {}).get("area")
+                if x.get("price") and area and amin <= area <= amax and x["price"] > 10000 and 300 <= x["price"] / area <= 20000:
+                    rows.append({"city": x.get("cityName"), "settlement": x.get("settlementName"), "ppm": x["price"] / area,
+                                 "area": area})
+            if not data.get("nextPage"):
+                break
+        save(f"{key}.json", rows)
+        by_city = {}
+        for r in rows:
+            by_city.setdefault(r["city"], []).append(r["ppm"])
+        summary[key] = {k: {"n": len(v), "med": round(statistics.median(v))} for k, v in by_city.items()}
+        summary[f"{key}_total"] = len(rows)
 
 
 def main():

@@ -27,6 +27,8 @@ on:
       - "tools/discover23.py"
       - "tools/discover24.py"
       - "tools/discover25.py"
+      - "tools/discover26.py"
+      - "tools/discover27.py"
       - ".github/workflows/discover.yml"
   workflow_dispatch:
 
@@ -40,7 +42,7 @@ concurrency:
 jobs:
   discover:
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 55
     steps:
       - uses: actions/checkout@v4
 
@@ -54,8 +56,11 @@ jobs:
           python -m playwright install --with-deps chromium
 
       - name: Otkrij izvore
-        timeout-minutes: 22
-        run: python tools/discover25.py debug-out
+        timeout-minutes: 45
+        run: |
+          python tools/discover25.py debug-out || true
+          python tools/discover27.py debug-out || true
+          python tools/discover26.py debug-out || true
 
       - name: Spremi na granu debug
         if: always()
