@@ -21,7 +21,8 @@ import yaml
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = Path(sys.argv[1] if len(sys.argv) > 1 else "debug-out") / "discovery10"
-OVERPASS = "https://overpass-api.de/api/interpreter"
+OVERPASS = ["https://overpass-api.de/api/interpreter", "https://overpass.kumi.systems/api/interpreter",
+            "https://overpass.private.coffee/api/interpreter"]
 OSRM = "https://router.project-osrm.org"
 RIJEKA = (45.3271, 14.4422)      # Korzo
 ZAGREB = (45.8131, 15.9772)      # Trg bana Jelačića
@@ -31,12 +32,20 @@ PLACES = "city|town|village|hamlet|isolated_dwelling|suburb|neighbourhood|quarte
 
 
 def overpass(query: str) -> dict:
-    for attempt in range(3):
-        r = requests.post(OVERPASS, data={"data": query}, headers=HEADERS, timeout=400)
-        if r.status_code == 200:
-            return r.json()
-        time.sleep(30 * (attempt + 1))
-    r.raise_for_status()
+    """Javni Overpass poslužitelji znaju biti zauzeti (504/429): pokušava redom, s pauzama."""
+    error = None
+    for attempt in range(6):
+        url = OVERPASS[attempt % len(OVERPASS)]
+        try:
+            r = requests.post(url, data={"data": query}, headers=HEADERS, timeout=300)
+            if r.status_code == 200:
+                return r.json()
+            error = f"{url}: HTTP {r.status_code}"
+        except requests.RequestException as exc:
+            error = f"{url}: {exc}"
+        print("Overpass:", error, flush=True)
+        time.sleep(20 * (attempt + 1))
+    raise RuntimeError(error)
 
 
 def municipalities() -> list[dict]:
@@ -108,6 +117,17 @@ def osrm_route(a, b) -> float | None:
 def main():
     OUT.mkdir(parents=True, exist_ok=True)
     summary = {"pocetak": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())}
+    try:
+        run(summary)
+    except Exception as exc:  # noqa: BLE001 – sažetak se sprema i kad nešto ne uspije
+        summary["greska"] = f"{type(exc).__name__}: {exc}"[:500]
+        raise
+    finally:
+        summary["kraj"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
+        (OUT / "sazetak.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
+def run(summary: dict) -> None:
     extra = yaml.safe_load((ROOT / "data" / "locations_extra.yaml").read_text(encoding="utf-8"))
     included = set(extra["ukljuceno"])
 
@@ -148,9 +168,7 @@ def main():
         time.sleep(1.1)
 
     (OUT / "naselja.json.gz").write_bytes(gzip.compress(json.dumps(rows, ensure_ascii=False).encode()))
-    summary["kraj"] = time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime())
     summary["primjer"] = rows[:5]
-    (OUT / "sazetak.json").write_text(json.dumps(summary, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 if __name__ == "__main__":
