@@ -173,7 +173,11 @@ class Runner:
                 for x, d, _ in to_notify:
                     self._check_land(x, d, deadline)
             self._send_notifications(state, to_notify)
-            self._tenders(state)
+            try:
+                self._tenders(state)
+            except Exception as exc:  # noqa: BLE001 – natječaji ne smiju zaustaviti oglase
+                self.log(f"Natječaji: GREŠKA {type(exc).__name__}: {exc}")
+                traceback.print_exc()
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
                 self._check_redmi(state)
