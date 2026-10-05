@@ -26,6 +26,7 @@ on:
       - "tools/discover22.py"
       - "tools/discover23.py"
       - "tools/discover24.py"
+      - "tools/discover25.py"
       - ".github/workflows/discover.yml"
   workflow_dispatch:
 
@@ -54,7 +55,7 @@ jobs:
 
       - name: Otkrij izvore
         timeout-minutes: 22
-        run: python tools/discover24.py debug-out
+        run: python tools/discover25.py debug-out
 
       - name: Spremi na granu debug
         if: always()
