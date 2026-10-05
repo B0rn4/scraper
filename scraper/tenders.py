@@ -137,8 +137,12 @@ class Reader:
         api = urljoin(site["url"], "wp-json/wp/v2/posts")
         found: dict[str, Tender] = {}
         for word in ("prodaj", "nadmetanj"):
-            data = self.http.get(api, params={"search": word, "per_page": 30, "orderby": "date", "order": "desc",
-                                              "_fields": "id,date,link,title,content"}).json()
+            resp = self.http.get(api, params={"search": word, "per_page": 30, "orderby": "date", "order": "desc",
+                                              "_fields": "id,date,link,title,content"})
+            try:
+                data = resp.json()
+            except ValueError:
+                raise RuntimeError(f"wp-json nije vratio JSON: {' '.join(resp.text[:150].split())}") from None
             for x in data if isinstance(data, list) else []:
                 title = _clean((x.get("title") or {}).get("rendered", ""))
                 if relevant(title) and x.get("link") not in found:

@@ -244,11 +244,11 @@ class Runner:
             state.meta_set("natjecaji:pravilo2", self.stamp)
         if state.meta_get("daily:natjecaji") == today:
             return
-        first = state.meta_get("baseline:natjecaji") is None
         cutoff = (self.now - timedelta(days=cfg.get("dana_unazad_prvi_put", 45))).date().isoformat()
         oldest = (self.now - timedelta(days=cfg.get("najstarije_s_rokom", 180))).date().isoformat()
         reader = tenders.Reader(self.http, self.locator)
         new: list[tenders.Tender] = []
+        first_sites: set[str] = set()   # stranice pročitane prvi put (početno stanje po stranici)
         for site in tenders.load_sites():
             name = f"natjecaji: {site['naziv']}"
             try:
@@ -262,6 +262,9 @@ class Runner:
                     state.mark_alerted(name)
                 continue
             state.health_ok(name, self.stamp)
+            if state.meta_get(f"baseline:{name}") is None:
+                first_sites.add(site["naziv"])
+                state.meta_set(f"baseline:{name}", self.stamp)
             fresh = [t for t in items if not state.tender_known(t.key) and t.key not in {n.key for n in new}]
             self.log(f"{name}: {len(items)} objava o prodaji, novih {len(fresh)}")
             new.extend(fresh)
@@ -269,6 +272,7 @@ class Runner:
         deadline = time.monotonic() + LAND_CHECK_SECONDS
         sent = 0
         for t in new:
+            first = t.site in first_sites
             reader.load_text(t)
             info = tenders.details(t.text) if t.text else {}
             published = t.published or t.extra.get("datum_iz_teksta", "")
@@ -302,8 +306,6 @@ class Runner:
                 sent += 1
             except Exception as exc:  # noqa: BLE001
                 self.log(f"Natječaj nije poslan ({t.url}): {exc}")
-        if first:
-            state.meta_set("baseline:natjecaji", self.stamp)
         state.meta_set("daily:natjecaji", today)
         state.conn.commit()
         self.log(f"Natječaji: novih {len(new)}, poslano {sent}")
