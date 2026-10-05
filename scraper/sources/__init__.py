@@ -6,6 +6,7 @@ from .index_oglasi import IndexOglasi
 from .nekretnine_hr import NekretnineHr
 from .njuskalo import Njuskalo
 from .oglasnik import Oglasnik
+from .realestatecroatia import RealEstateCroatia
 from .vender import Vender
 
 ALL: dict[str, type[Source]] = {
@@ -15,4 +16,5 @@ ALL: dict[str, type[Source]] = {
     Fina.name: Fina,
     Vender.name: Vender,
     Njuskalo.name: Njuskalo,
+    RealEstateCroatia.name: RealEstateCroatia,
 }

@@ -26,6 +26,7 @@ izvori:
   fina: true
   vender: true
   njuskalo: redmi   # čita Redmi s kućne IP adrese (REDMI.md); GitHub ga ne dira
+  realestatecroatia: true   # faza 5: oglasi agencija (sustav Agentor)
 
 obavijesti:
   telegram: true

@@ -258,3 +258,42 @@ def test_nekretnine_detail():
     assert x.description == "Kuća Njivice Puni opis kuće. Kuća je u suvlasništvu."
     assert x.extra["parking"] == "garaža" and x.extra["godina_izgradnje"] == 1987 and x.plot_area == 420
     assert "opis_skracen" not in x.extra and x.extra["detalji"]
+
+
+def test_realestatecroatia_list_detail_and_incremental():
+    from scraper.http import Http  # noqa: F401 – samo sučelje
+    from scraper.sources.realestatecroatia import RealEstateCroatia, parse_detail, parse_list
+
+    page = read("realestatecroatia_kuce.html.gz")
+    items = {x.source_id: x for x in parse_list(page, HOUSE)}
+    assert len(items) == 20
+    x = items["1312906"]
+    assert (x.price, x.settlement, x.location_text, x.subtype) == (360000, "Čižići", "Čižići (Krk)", "Kuća")
+    assert x.extra["agencija"] == "PREMIUM nekretnine" and x.extra["istaknut"]
+    parse_detail(read("realestatecroatia_oglas.html.gz"), items["1311438"])
+    y = items["1311438"]
+    assert (y.area, y.plot_area) == (86, 170) and y.description.startswith("Okolica Malinske")
+    assert "opis_skracen" not in y.extra and "/thumbnails/userimages/" in y.image_url
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+    class Http:
+        def __init__(self):
+            self.urls = []
+
+        def get(self, url, **kw):
+            self.urls.append(url)
+            if "detail.asp" in url:
+                return Resp(read("realestatecroatia_oglas.html.gz"))
+            return Resp(page if "vrsta=1" in url else "")
+
+    http = Http()
+    cfg = load_config()
+    src = RealEstateCroatia(http, Locator(), cfg["kriteriji"])
+    known = {k for k, v in items.items() if not v.extra["istaknut"]}       # svi neistaknuti već poznati
+    found = src.fetch("incremental", known)
+    assert sum("list.asp" in u for u in http.urls) == 2                   # kuće str. 1 (stop) + zemljišta str. 1
+    assert all(x.price for x in found)                                    # "cijena na upit" preskočena
+    assert len([u for u in http.urls if "detail.asp" in u]) <= 10

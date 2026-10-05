@@ -250,7 +250,21 @@ bez stotina poruka.
      objava. Stranica koja 3 dana zaredom ne radi → upozorenje.
    - Ministarstvo (mpgi.gov.hr) nema zaseban popis prodaje; državnu imovinu prodaju
      CERP i Državne nekretnine d.o.o.
-5. Agencije.
+5. **(6. 10.) Agencije.**
+   - Najaktivnije na našem području (nekretnine.hr, oglasi koji prolaze kriterije):
+     Dogma 195, RE/MAX Centar 135, DUX 114, Euro Immobilien 88, Miro 60, Pontera 52,
+     Manor 52, Premium SM 46, Vero Krk 44, Smart Invest 42.
+   - Njihove stranice: 9 od 11 iza Cloudflareove zaštite (iz oblaka „Just a moment…”).
+     Većina koristi sustav Agentor, koji oglase objavljuje i na realestatecroatia.com
+     (Labin d.o.o.; radi iz oblaka) – zato je izvor taj portal
+     (`scraper/sources/realestatecroatia.py`): popis cijele PGŽ (regija=8), najnoviji
+     prvi (broj oglasa), do granice cijene; površina sa stranice oglasa.
+   - Mjerenje: od oglasa s cijenom koji prolaze kriterije 217 već imamo, 13 nekretnina
+     ne (~5 %, od toga nekoliko poljoprivrednih ili krivo smještenih). Najnoviji oglasi
+     se na našim portalima pojavljuju u isto vrijeme – portal nije brži.
+   - Prvo pokretanje se bilježi bez poruke (ulazi u završni pregled); „cijena na upit”
+     (luksuzne vile) se preskače. Novi oglasi koji su već poslani s drugog portala ne
+     stižu ponovno (već viđeni).
 
 ## Zadaci za korisnika
 

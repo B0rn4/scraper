@@ -49,12 +49,20 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 | FINA Očevidnik (samo građevinska zemljišta) | dnevni CSV izvoz | jednom dnevno |
 | vender.hr | njihov API | svakih 20 min |
 | Njuškalo | s Redmija, pravim preglednikom ([REDMI.md](REDMI.md)) | svakih 20 min |
+| realestatecroatia.com (oglasi agencija iz sustava Agentor) | popis cijele PGŽ, najnoviji prvi; novi oglasi koji mogu proći otvaraju se radi površine | svakih 20 min |
 | Natječaji gradova i općina, PGŽ-a, CERP-a i Državnih nekretnina ([data/natjecaji.yaml](data/natjecaji.yaml)) | tražilica stranice, RSS ili stranica natječaja; tekst i priloženi PDF | jednom dnevno |
 
 Njuškalo blokira GitHub i zahtjeve bez preglednika, pa ga čita Redmi s kućne mreže.
 Javljaju se samo novi oglasi (novi broj oglasa) i sniženja; stari oglasi koje agencije
 ponovno objave bilježe se bez poruke. Realitica je izostavljena (njezini oglasi gotovo
 su svi već na drugim portalima).
+
+Agencije (faza 5): stranice najaktivnijih agencija su većinom iza Cloudflareove zaštite
+i ne otvaraju se iz oblaka, ali većina njih vodi oglase kroz sustav Agentor, koji ih
+objavljuje i na realestatecroatia.com. Mjerenje 6. 10.: od oglasa s tog portala koji
+prolaze kriterije oko 95 % već imamo s naših portala (i ne stižu ponovno); ostatak su
+oglasi koje agencija drži samo ondje. Prvo pokretanje bilježi postojeće oglase bez poruke
+(ući će u završni pregled), „cijena na upit” se preskače.
 
 Provjereni i izostavljeni: nekretnine24.hr (nema oglasa za područje), oglasi.hr
 (gotovo prazan), trazimstan.hr (većinom najam, zabranjuje automatsko čitanje),
