@@ -96,3 +96,21 @@ def test_fina_small_price_is_total(ctx):
     x.extra["ukupna_cijena"] = True
     d = evaluate(x, *ctx)
     assert d.status == PASS
+
+
+def test_far_from_sea_settlement():
+    from scraper.locations import Locator
+    from scraper.models import HOUSE, Listing
+    from scraper.runner import load_config
+
+    loc, crit = Locator(), load_config()["kriteriji"]
+    far = Listing(source="t", source_id="1", url="", title="Kuća u Brezama, pogled", kind=HOUSE,
+                  subtype="Samostojeća kuća", price=200_000, area=120, municipality="Novi Vinodolski", settlement="Breze")
+    d = evaluate(far, crit, loc)
+    assert d.status == "odbijen" and any("predaleko od mora" in r for r in d.reasons)
+    town = Listing(source="t", source_id="2", url="", title="Kuća Novi Vinodolski", kind=HOUSE,
+                   subtype="Samostojeća kuća", price=200_000, area=120, municipality="Novi Vinodolski")
+    assert evaluate(town, crit, loc).status != "odbijen"
+    in_text = Listing(source="t", source_id="3", url="", title="Vela Učka – kamena kuća", kind=HOUSE,
+                      subtype="Samostojeća kuća", price=200_000, area=120, municipality="Opatija")
+    assert "predaleko od mora" in " ".join(evaluate(in_text, crit, loc).reasons)

@@ -103,6 +103,12 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
         warnings.append(listing.extra.get("location_note") or loc.evidence)
     elif loc.ambiguous:
         warnings.append(f"lokacija nesigurna – {loc.evidence}")
+    if loc.included:
+        far = locator.far_settlement(jls_name, listing.settlement,
+                                     " ".join(filter(None, [listing.location_text, listing.title])))
+        if far:
+            reasons.append(f"{far}: predaleko od mora (popis naselja)")
+            near_miss_only = False
 
     # --- cijena ---
     price = listing.price if listing.price and listing.price > 1000 else None

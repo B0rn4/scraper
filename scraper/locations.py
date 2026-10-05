@@ -107,6 +107,8 @@ class Locator:
         self.aliases = {fold(a): fold(t) for a, t in (extra.get("sinonimi") or {}).items()}
         self.cadastral = {fold(k): self.jls[fold(v)] for k, v in (extra.get("katastarske_opcine") or {}).items()}
         self.common_words = {fold(w) for w in extra.get("obicne_rijeci", [])}
+        self.far_from_sea = {self.jls[fold(k)].name: {fold(n) for n in v}
+                             for k, v in (extra.get("predaleko_od_mora") or {}).items()}
         self.false_phrases = [re.compile(r"\b" + re.escape(fold(p)) + r"\b") for p in extra.get("lazni_pogoci", [])]
 
     # --- pretraživanje po strukturiranim poljima -------------------------
@@ -176,6 +178,18 @@ class Locator:
                 mask[m.start():m.end()] = [True] * (m.end() - m.start())
                 found.extend((jls, cased[m.start():m.end()]) for jls in owners)
         return found
+
+    def far_settlement(self, jls_name: str, settlement: str, text: str) -> str | None:
+        """Naselje s popisa "predaleko od mora" u polju naselja ili u tekstu oglasa."""
+        far = self.far_from_sea.get(jls_name)
+        if not far:
+            return None
+        if settlement and fold(settlement) in far:
+            return settlement
+        for jls, phrase in self.scan_text(text):
+            if jls.name == jls_name and fold(phrase) in far:
+                return phrase
+        return None
 
     # --- odluka ----------------------------------------------------------
 

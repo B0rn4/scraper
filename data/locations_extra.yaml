@@ -126,3 +126,9 @@ lazni_pogoci:
   - Rijeke Dubrovačke
   - riječ
   - Bakarić
+
+# Naselja predaleko od mora (više od 10 minuta vožnje): oglasi iz njih ne stižu.
+# Za pregled: data/naselja_udaljenosti.csv (zračna udaljenost i procjena vožnje).
+predaleko_od_mora:
+  Novi Vinodolski: [Breze, Gornji Zagon, Zabukovac]
+  Opatija: [Vela Učka, Mala Učka]

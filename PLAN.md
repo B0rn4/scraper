@@ -146,8 +146,12 @@ bez stotina poruka.
       brojevi (npr. 299.000 €, 100 m²) traže zajedničko naselje ili riječi naslova.
       GitHub objavljuje sažetak viđenih (`seen.json.gz` na grani state) za Redmi, a
       GitHub čita bazu s Redmija.
-   2. Tablica naselja (15 JLS): udaljenost od mora, vožnja do mora, Rijeke i Zagreba.
-      Korisnik je pregleda. **Više od 10 min vožnje do mora → oglas ne stiže.**
+   2. **(gotovo 5. 10., popis se dopunjuje)** Tablica naselja (15 JLS):
+      `data/naselja_udaljenosti.csv` – zračna udaljenost od mora (OSM obala) i procjena
+      vožnje (OSRM; nepouzdana jer izbjegava neasfaltirane/privatne puteve, npr. Brzac
+      11 min umjesto 4). Zato **korisnik sam određuje** popis naselja predaleko od mora
+      (`predaleko_od_mora` u data/locations_extra.yaml); oglasi iz njih ne stižu.
+      Oglas koji navodi samo grad/općinu i dalje stiže. **Više od 10 min vožnje do mora → oglas ne stiže.**
       Lokacija oglasa: koordinate (nekretnine.hr, vender.hr, Njuškalo – često
       približne), inače središte naselja; tekst („prvi red”, „200 m od mora”).
       Rijeka ravnopravna s ostalima. Izvan naselja / manje mjesto: samo oznaka.
