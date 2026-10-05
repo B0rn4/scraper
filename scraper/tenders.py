@@ -21,7 +21,7 @@ from .text import areas_in_text, fold, parse_number
 SITES_FILE = Path(__file__).resolve().parent.parent / "data" / "natjecaji.yaml"
 
 # Nad fold() tekstom (mala slova, bez dijakritika; "/" je razmak).
-_SALE = re.compile(r"\b(prodaj\w*|kupoprodaj\w*|javn\w* nadmetanj\w*|licitacij\w*|draz\w*)")
+_SALE = re.compile(r"\b(prodaj\w*|kupoprodaj\w*|javn\w* nadmetanj\w*|licitacij\w*|draz\w*|ponud\w* za kupnj\w*)")
 _OBJECT = re.compile(r"\b(nekretnin\w*|zemlj?ist\w*|zemjist\w*|gradevinsk\w*|kuc[aeiu]\w*|kuca\b|cestic\w*|k\.? ?c\.?\s*(br\.?\s*)?\d|parcel\w*|starin\w*)")
 _LAND_OR_HOUSE = re.compile(r"\b(zemlj?ist\w*|zemjist\w*|gradevinsk\w*|kuc[aeiu]\w*|kuca\b|cestic\w*|parcel\w*|k\.? ?c\.?\s*(br\.?\s*)?\d)")
 _EXCLUDE = re.compile(r"\b(zakup\w*|najam\w*|najm\w*|vozil\w*|automobil\w*|cistilic\w*|umjetnin\w*|mljekomat\w*|oprem\w*"
@@ -172,7 +172,7 @@ class Reader:
         page = self.http.get(site["url"])
         base = str(getattr(page, "url", site["url"]))
         out, seen = [], set()
-        for href, inner in re.findall(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>', page.text, re.S | re.I):
+        for href, inner in re.findall(r"""<a[^>]+href=["']([^"'#]+)["'][^>]*>(.*?)</a>""", page.text, re.S | re.I):
             full = _clean(inner)
             if re.search(r"\bneaktivn", fold(full)):    # Omišalj: istekli natječaji su "Neaktivno"
                 continue

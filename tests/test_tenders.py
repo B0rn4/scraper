@@ -32,6 +32,7 @@ def test_relevant_titles():
     assert relevant("NATJEČAJ ZA PRODAJU ZEMLJIŠTA k.č. 788/2 k.o. VRBNIK")
     assert relevant("Natječaj za prodaju nekretnine – Mate Balote")
     assert relevant("Natječaj za prodaju građevinskog zemljišta u vlasništvu Grada Crikvenice")
+    assert relevant("Javni poziv za podnošenje ponuda za kupnju nekretnina u vlasništvu CERP-a")
     for title in ("Javni natječaj za prodaju rabljenog vozila", "Javni natječaj za prodaju stanova Grada Rijeke",
                   "Natječaj za zakup poslovnog prostora", "Odluka o izboru najpovoljnijeg ponuditelja za prodaju zemljišta",
                   "Javni poziv za savjetovanje o kupoprodaji poslovnog prostora", "Javni natječaj za prijam u službu"):
@@ -52,7 +53,7 @@ def test_reader_wp_rss_page():
     rss = ("<rss><channel><item><title>Natječaj za prodaju nekretnine</title><link>https://b.hr/n1</link>"
            "<pubDate>Mon, 21 Sep 2026 08:00:00 +0000</pubDate><description><![CDATA[Opis]]></description></item></channel></rss>")
     page = ('<a href="/natjecaj-zemljiste">NATJEČAJ-prodaja zemljišta u Dobrinju</a><a href="/kultura">Javni poziv za kulturu</a>'
-            '<a href="/x.pdf">Natječaj za prodaju nekretnine u Zagrebu</a>')
+            "<a href='/x.pdf'>Natječaj za prodaju nekretnine u Zagrebu</a>")
     http = FakeHttp({"wp-json": wp, "b.hr": rss, "dobrinj": page, "pgz": page})
     reader = Reader(http, Locator())
     items = reader.fetch({"naziv": "Općina Malinska-Dubašnica", "jls": "Malinska-Dubašnica", "nacin": "wp", "url": "https://m.hr/"})
