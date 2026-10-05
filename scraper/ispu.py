@@ -50,34 +50,74 @@ def to_htrs(lat: float, lon: float) -> tuple[float, float]:
 
 # --- katastarske čestice u tekstu oglasa ------------------------------------
 
-_KC = re.compile(r"(?:\b(?:z\.?\s*)?k\.?\s*č\.?\s*(?:br\.?|broj)?|\bčkbr\.?|\bkčbr\.?|\bčest(?:ica|ice|ici|\.)\s*(?:br\.?|broj)?)"
-                 r"\s*:?\s*(\d{1,5}(?:/\d{1,4})?(?:\s*(?:,|i|te)\s*\d{1,5}(?:/\d{1,4})?)*)", re.I)
-_KO = re.compile(r"\b(?i:k\.?\s*o\.?)\s*:?\s+((?:[A-ZČĆŽŠĐ][\wčćžšđČĆŽŠĐ-]*)(?:\s+[A-ZČĆŽŠĐ][\wčćžšđČĆŽŠĐ-]*)*)")
+_KC = re.compile(
+    # z.k.č. / zk.č. / z.č.: zemljišnoknjižna čestica (na Krku broj često nije isti kao katastarski)
+    r"(?:(?P<zk>\bz\.?\s*k\.?\s*č\.?|\bzk\.?\s*č\.?|\bz\.\s*č\.?|\bzkčbr\.?)\s*(?:br\.?|broj)?"
+    r"|\bk\.?\s*č\.?\s*(?:br\.?|broj)?|\bčkbr\.?|\bkčbr\.?|\bčest(?:ica|ice|ici|\.)\s*(?:br\.?|broj)?)"
+    r"\s*:?\s*(?P<nums>\d{1,5}(?:/\d{1,4})?(?:\s*(?:,|i|te)\s*\d{1,5}(?:/\d{1,4})?)*)", re.I)
+_KO_WORD = r"(?:Sv\.\s*)?[A-ZČĆŽŠĐ][\wčćžšđČĆŽŠĐ-]*"
+_KO = re.compile(r"\b(?i:k\.?\s*o\.?)\s*:?\s+(" + _KO_WORD + r"(?:(?:\s*[-–]\s*|\s+)" + _KO_WORD + r")*)")
+# Riječi iza naziva k.o. koje nisu dio naziva ("k.o. Punat Početna natječajna cijena…").
+_KO_STOP = set("""pocetna pocetne pocetnu napomena napomene povrsina povrsine povrsinom cijena jamcevina predmet
+ukupno ukupne ukupna upisana upisane upisan upisano opis namjena vlasnistvo zemljiste zemljista nekretnina
+nekretnine kupoprodajna prema sukladno grad grada opcina opcine u na i te zk dio oznaka oznake ponuda rok prodaja
+prodaje natjecaj javni oglas kuca obiteljska""".split())
 
 
-def parcel_mentions(text: str) -> list[tuple[int, int, str, list[str]]]:
-    """Spomeni čestica u tekstu: [(početak, kraj, katastarska općina, [brojevi čestica])].
-    Čestica se veže uz najbližu sljedeću (ili prethodnu) oznaku k.o."""
+def clean_ko(raw: str) -> str:
+    """Naziv k.o. iz teksta: "Malinska – Dubašnica" → "Malinska-Dubašnica"; bez riječi koje
+    slijede iza naziva ("Punat Početna", "Volosko NAPOMENA"); najviše tri riječi."""
+    parts = re.split(r"(\s*[-–]\s*|\s+)", raw.strip())
+    words, seps = parts[0::2], parts[1::2]
+    if not words or not words[0]:
+        return ""
+    out = words[0]
+    for n, (sep, w) in enumerate(zip(seps, words[1:]), start=2):
+        if n > 3 or fold(w).strip(".") in _KO_STOP or (w.isupper() and len(w) > 2 and not words[0].isupper()):
+            break
+        out += ("-" if re.search(r"[-–]", sep) else " ") + w
+    return re.sub(r"(\s+\w)+$", "", out)
+
+
+@dataclass
+class Mention:
+    start: int
+    end: int
+    ko: str
+    kcs: list[str]
+    land_registry: bool = False     # z.k.č. (zemljišnoknjižna oznaka), ne katastarska
+
+
+def parcel_mentions(text: str) -> list[Mention]:
+    """Spomeni čestica u tekstu. Čestica se veže uz najbližu sljedeću (ili prethodnu)
+    oznaku k.o. Zemljišnoknjižna oznaka uz koju odmah slijedi katastarska ("zk.č. 1523
+    (k.č. 2775/3)") se preskače."""
     text = text or ""
-    kos = [(m.start(), re.sub(r"(\s+\w)+$", "", m.group(1).strip())) for m in _KO.finditer(text)]
+    kos = [(m.start(), clean_ko(m.group(1))) for m in _KO.finditer(text)]
+    found = list(_KC.finditer(text))
     out = []
-    for m in _KC.finditer(text):
-        after = [ko for pos, ko in kos if pos >= m.end() and pos - m.end() < 120]
+    for i, m in enumerate(found):
+        zk = bool(m.group("zk"))
+        if zk and i + 1 < len(found) and not found[i + 1].group("zk") and found[i + 1].start() - m.end() < 40:
+            continue
+        after = [ko for pos, ko in kos if pos >= m.end() and pos - m.end() < 250]
         before = [ko for pos, ko in kos if pos < m.start() and m.start() - pos < 120]
-        ko = after[0] if after else (before[-1] if before else "")
-        kcs = [kc for kc in re.split(r"\s*(?:,|\bi\b|\bte\b)\s*", m.group(1)) if kc]
+        near = [ko for pos, ko in kos if pos >= m.end() and pos - m.end() < 120]
+        ko = near[0] if near else before[-1] if before else after[0] if after else ""
+        kcs = [kc for kc in re.split(r"\s*(?:,|\bi\b|\bte\b)\s*", m.group("nums")) if kc]
         if ko and kcs:
-            out.append((m.start(), m.end(), ko, kcs))
+            out.append(Mention(m.start(), m.end(), ko, kcs, zk))
     return out
 
 
 def parcels_in_text(text: str) -> list[tuple[str, str]]:
-    """[(katastarska općina, broj čestice)] iz teksta, npr. "k.č. 1234/5, k.o. Njivice"."""
+    """[(katastarska općina, broj čestice)] iz teksta, npr. "k.č. 1234/5, k.o. Njivice".
+    Katastarske oznake prije zemljišnoknjižnih."""
     out = []
-    for _, _, ko, kcs in parcel_mentions(text):
-        for kc in kcs:
-            if (fold(ko), kc) not in {(fold(k), c) for k, c in out}:
-                out.append((ko, kc))
+    for m in sorted(parcel_mentions(text), key=lambda m: m.land_registry):
+        for kc in m.kcs:
+            if (fold(m.ko), kc) not in {(fold(k), c) for k, c in out}:
+                out.append((m.ko, kc))
     return out[:5]
 
 
@@ -122,6 +162,7 @@ class Ispu:
         self.timeout = timeout
         self._layers: list[dict] | None = None
         self.parcels_off = False         # DGU nije odgovorio: do kraja pokretanja bez traženja čestica
+        self.last_miss = ""              # zašto čestica nije nađena: "ko", "kc" ili "off" (servis ne radi)
 
     def layers(self) -> list[dict]:
         """Slojevi građevinskog područja i najnoviji PPV zemljišta iz kataloga."""
@@ -164,13 +205,16 @@ class Ispu:
         K.o. → matični broj iz ISPU-a; čestica iz javnog katastarskog servisa DGU-a
         (INSPIRE). names: normalizirani naziv → naziv s dijakriticima (pretraga ISPU-a
         traži dijakritike: "OMIŠALJ", ne "OMISALJ")."""
+        self.last_miss = "off"
         if self.parcels_off:
             return None
         mbr = self.cadastral_municipality(ko_name)
         if mbr is None and names and fold(ko_name) in names:
             mbr = self.cadastral_municipality(names[fold(ko_name)])
         if mbr is None:
+            self.last_miss = "ko"
             return None
+        self.last_miss = "kc"
         for label in (kc, "*" + kc):     # "*" su zgradne čestice
             try:
                 r = self.session.get(CP_WFS, params={
@@ -198,9 +242,14 @@ class Ispu:
         labela je "URED, K.O." (npr. "KRK, OMIŠALJ"). Iz teksta naziv zna povući i
         sljedeću riječ ("Punat Početna cijena…"), pa se kraće varijante probaju redom."""
         name = re.sub(r"\s*-\s*", "-", ko_name.strip())
+        if re.match(r"(?i)sv\.\s*", name):          # "Sv. Jelena" → "Sveta Jelena" / "Sveti …"
+            rest = re.sub(r"(?i)^sv\.\s*", "", name)
+            return next((m for full in (f"Sveta {rest}", f"Sveti {rest}") if (m := self.cadastral_municipality(full))), None)
         words = name.split()
-        for n in range(len(words), 0, -1):
-            candidate = " ".join(words[:n])
+        candidates = [" ".join(words[:n]) for n in range(len(words), 0, -1)]
+        if "-" in words[0]:
+            candidates.append(words[0].split("-")[0])      # "Njivice-Prodaja" iz "k.o. Njivice - Prodaja"
+        for candidate in candidates:
             for query in dict.fromkeys([candidate, candidate.replace("-", " ")]):
                 r = self.session.get(API + "gis/search-kat-opcina", params={"input": query.upper()}, timeout=self.timeout)
                 r.raise_for_status()

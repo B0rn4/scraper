@@ -194,3 +194,62 @@ def test_runner_tenders_first_day_and_later(tmp_path, monkeypatch):
     batch.append(Tender("d", "Grad Krk", "Krk", "Natječaj za prodaju kuće D", "https://k.hr/d", old, ""))
     runner._tenders(state)
     assert [u for _, u in sent][-1] == "https://k.hr/d" and len(sent) == 4   # poslije: svaka nova
+
+
+# Isječci iz stvarnih natječaja (listopad 2026.).
+PUNAT = ("Predmet natječaja je: Prodaja nekretnine u vlasništvu Općine Punat: k.č. 4784/4 , oranica površine 222 m², "
+         "zk.ul. 7471 k.o. Punat Početna natječajna cijena određuje se u iznosu od 190,00 EUR/m². Ponude se dostavljaju "
+         "u zatvorenoj omotnici s naznakom: «Ponuda za kupnju nekretnine po natječaju – ne otvarati» na adresu: OPĆINA "
+         "PUNAT Novi put 2 51521 Punat Ponude se predaju neposredno na urudžbeni zapisnik ili putem pošte preporučenom "
+         "pošiljkom, a krajnji rok za dostavu ponuda je 8 (osmi) dan od dana objave obavijesti o natječaju u „Novom listu“ "
+         "do 13,00 sati neovisno o načinu dostave. Obavijest o raspisanom natječaju objavit će se u „Novom listu“ dana "
+         "16. rujna 2026. godine .")
+OPATIJA = ("I. PREDMET PRODAJE : k. č. 159/3 pašnjak od 154 m2, upisana u zk.ul. 1764 k.o. Volosko k. č. 172/4 šuma od "
+           "47 m2, upisana u zk.ul. 883 k.o. Volosko NAPOMENA: predmetne nekretnine prodaju se kao cjelina Početna cijena: "
+           "101.141,63 eura (slovima: stojednatisuća) Jamčevina: 10.114,16 eura. Pod dokazom o plaćenoj jamčevini smatra "
+           "se i garancija banke s rokom važenja do 31. listopada 2026. godine. III. ROK ZA PODNOŠENJE PONUDA: Ponuda s "
+           "prilozima dostavlja se u roku od 15 dana od dana objave, odnosno, zaključno s 20.7.2026. godine.")
+LOVRAN = ("PRIKUPLJANJEM PISANIH PONUDA ZA PRODAJU: k.č. 4312, upisana u ZK uložak 1760, k.o. Lovran, pašnjak, 10 m 2 , "
+          "radi ostvarenja prilaza, po početnoj cijeni od 596,00 eur. Natječaj se provodi izborom najpovoljnijeg ponuđača "
+          "na temelju pisanih ponuda predanih u roku od 15 dana, računajući od dana objave Obavijesti o provođenju "
+          "natječajnog postupka u dnevnom glasilu Novi list Rijeka, dana 29. ožujka 2026. godine , i to u zatvorenoj koverti.")
+MALINSKA = ("na prodaju se nudi slijedeća nekretnina: – cijela k.č. 3574/2 k.o. Malinska – Dubašnica, upisana u z.k.ul. "
+            "2717 kod Općinskog suda u Crikvenici, opisane kao MATE BALOTE površine 22 m2 od čega DVORIŠTE površine 22 m2, "
+            "po početnoj cijeni zemljišta utvrđenoj prema Procjembenom elaboratu tržišne vrijednosti građevinskog "
+            "zemljišta br. 005/2024 od 15. svibnja 2024. godine izrađenom od sudskog vještaka iz Rijeke, u iznosu od "
+            "ukupno 4.300,00 € (slovima: četiritisućetristoeura).")
+CRIKVENICA = ("1. suvlasničkog dijela nekretnine označene kao zk.č.br. 1523 (k.č.br.2775/3) – G. Kovačevac – uređeno "
+              "zemljište, ukupne površine 398 m 2 i to suvlasničkog dijela Grada Crikvenice u udjelu od 6/240 odnosno "
+              "ukupne površine 9,95 m2 iz zk.ul. 6835 k.o. Crikvenica - početna kupoprodajna cijena iznosi 100,00 eura/m2. "
+              "Ponude se predaju u roku 8 dana od dana objave obavijesti o natječaju u novinama, zaključno do 6. listopada "
+              "2026. godine do 10,00 sati.")
+
+
+def test_real_tender_texts():
+    from scraper.ispu import parcel_mentions
+    from scraper.tenders import fails_criteria, flats_only, lots
+
+    (lot,) = lots(PUNAT)
+    assert (lot.label, lot.ppm, lot.area) == ("k.č. 4784/4 k.o. Punat", 190.0, 222.0)
+    assert details(PUNAT)["rok"] == "2026-09-24" and details(PUNAT)["rok_priblizno"]
+    (lot,) = lots(OPATIJA)             # dvije čestice kao cjelina: jedna cijena za 201 m²
+    assert (lot.label, lot.price, lot.area, lot.parts) == ("k.č. 159/3, 172/4 k.o. Volosko", 101141.63, 201.0, 2)
+    assert details(OPATIJA)["rok"] == "2026-07-20" and "rok_priblizno" not in details(OPATIJA)
+    (lot,) = lots(LOVRAN)
+    assert (lot.price, lot.area) == (596.0, 10.0)
+    assert details(LOVRAN)["rok"] == "2026-04-13"
+    (lot,) = lots(MALINSKA)
+    assert (lot.label, lot.price, lot.area) == ("k.č. 3574/2 k.o. Malinska-Dubašnica", 4300.0, 22.0)
+    # Zemljišnoknjižna oznaka uz katastarsku: vrijedi katastarska.
+    assert [(m.ko, m.kcs, m.land_registry) for m in parcel_mentions(CRIKVENICA)] == [("Crikvenica", ["2775/3"], False)]
+    assert details(CRIKVENICA)["rok"] == "2026-10-06"
+    assert [(m.ko, m.land_registry) for m in parcel_mentions("122/18805 dijela z.č. 746/3, pašnjak, zk.ul. 4520 k.o. Stara Baška")] \
+        == [("Stara Baška", True)]
+    assert parcel_mentions("k.č. 3842/1 k.o. Sv. Jelena, površine 274 m2")[0].ko == "Sv. Jelena"
+    criteria = {"kuca": {"min_povrsina": 70, "max_cijena": 400000}, "zemljiste": {"min_povrsina": 300, "max_cijena": 300000}}
+    assert fails_criteria(lots(MALINSKA), criteria) == "k.č. 3574/2 k.o. Malinska-Dubašnica: 22 m²"
+    assert fails_criteria(lots(PUNAT), criteria)              # 222 m²
+    assert not fails_criteria(lots("k.č. 77 k.o. Dobrinj, obiteljska kuća, početna cijena 150.000 EUR"), criteria)
+    assert flats_only("ZAGREB - ANTUNA BAUERA 28 (STAN 2473)* Površina 32,36 m2 Početna cijena 71.100,00 EUR. "
+                      "Nekretnina je upisana u Zemljišnoknjižnom odjelu, kč.br. 6125")
+    assert not flats_only(OPATIJA)

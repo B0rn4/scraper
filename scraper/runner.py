@@ -294,8 +294,12 @@ class Runner:
             if by_ko and by_ko != verdict and not (verdict and verdict[0] == REJECT):
                 note = " (prema k.o. – katastarska općina može obuhvaćati više naselja)" if by_ko[0] == REJECT else ""
                 verdict = (WARN, f"{by_ko[1]}{note}")
-            skip = "istekao" if expired else f"popis naselja – {verdict[1]}" if verdict and verdict[0] == REJECT \
-                else "ograničenje" if sent >= limit else ""
+            misses = tenders.fails_criteria(found, self.criteria)
+            skip = ("istekao" if expired
+                    else "samo stanovi/poslovni prostori" if len(t.text) >= tenders.MIN_TEXT and tenders.flats_only(t.text)
+                    else f"popis naselja – {verdict[1]}" if verdict and verdict[0] == REJECT
+                    else f"ne odgovara kriterijima – {misses}" if misses
+                    else "ograničenje" if sent >= limit else "")
             if skip:
                 state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
                 self.log(f"Natječaj bez poruke ({skip}): {t.title[:70]}")
@@ -336,7 +340,8 @@ class Runner:
         short: dict[int, list[str]] = {}
         for i, lot in enumerate(found):
             point = None
-            if i < 3 and time.monotonic() < deadline:
+            # Zemljišnoknjižni broj (z.k.č.) na Krku često nije isti kao katastarski: katastar se ne pita.
+            if i < 3 and time.monotonic() < deadline and not lot.land_registry:
                 try:
                     if self._ispu is None:
                         self._ispu = Ispu()
@@ -346,7 +351,10 @@ class Runner:
                         point = self._ispu.identify(hit["x"], hit["y"])
                         lot.gp = gp_text(point)
                     elif lot.price or lot.ppm or lot.area:      # inače broj iz teksta možda nije čestica
-                        lot.gp = "nije pronađena u katastru"
+                        miss = getattr(self._ispu, "last_miss", "kc")
+                        lot.gp = ("katastar nije odgovorio – nije provjereno" if miss == "off"
+                                  else f"k.o. {lot.ko} nije pronađena u katastru" if miss == "ko"
+                                  else "nije pronađena u katastru")
                 except Exception as exc:  # noqa: BLE001 – ISPU nije nužan za obavijest
                     self.log(f"ISPU (natječaj): {type(exc).__name__}: {exc}")
                     deadline = 0
