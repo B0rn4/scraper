@@ -199,6 +199,14 @@ bez stotina poruka.
         područja (rujan 2024.)”: u GP naselja (izgrađeni/neizgrađeni dio), GP izvan
         naselja (⚠) ili izvan GP-a (⚠). Bez točne lokacije: „nije provjereno”.
       - Cijena se ne koristi za odbijanje (osim granice iz kriterija) – samo oznake.
+      - **Kuće prema stanovima (6. 10.):** fiksnog omjera nema. Tražene cijene na
+        index.hr u istom gradu (13 gradova s ≥ 8 oglasa svake vrste): kuća / stan po m²
+        medijan 0,66, prosjek 0,73, standardna devijacija 0,19, raspon 0,52 (Opatija)
+        – 1,20 (Malinska). Ostvarene cijene (Ministarstvo, HNB) za ovo ne služe: za kuće
+        Porezna uprava ima samo ukupnu površinu (zgrada + zemljište), pa je €/m² kuća
+        nerealno nizak (medijan RH 156 €/m², „veličina” kuće 513 m²). Korekcija se ne
+        stavlja u poruku (raspršenost prevelika); pravilo za glavu: PPV stanova × ⅔,
+        ± trećina.
    5. **(gotovo 5. 10.)** Parking (`scraper/parking.py`): kuća mora imati parkirno
       mjesto ili dovoljno okućnice. Izvori: polja portala (index.hr, Njuškalo,
       nekretnine.hr), rečenice iz opisa, okućnica (≥ 100 m², `okucnica_za_parking_m2`).
@@ -230,6 +238,14 @@ bez stotina poruka.
      ih tekst navodi uz nju), €/m², PPV na lokaciji, medijan traženih, sažeti redak
      i odluke iz popisa naselja. Nejasno (više cijena uz istu česticu) → samo popis
      cijena i površina, bez €/m².
+   - (6. 10., prema stvarnim tekstovima) z.k.č. se ne traži u katastru (na Krku broj
+     nije isti kao katastarski); čestice „kao cjelina” imaju jednu cijenu; rok „N dana
+     od objave” → ≈ datum. Bez poruke: samo stanovi/poslovni prostori; sve čestice
+     ispod kriterija (npr. trake od 10–60 m² za okućnicu) ili preskupe; isključeno
+     naselje napisano u tekstu (prema k.o. samo ⚠).
+   - Rijeka: zemljišta na stranici „Raspolaganje zemljištem – prodaja, pravo građenja,
+     služnosti i zakup”, stanovi i poslovni prostori na zasebnoj stranici; zasebne
+     stranice za kuće nema.
    - Prvi dan (5. 10.) poslani natječaji kojima rok nije istekao; poslije svaka nova
      objava. Stranica koja 3 dana zaredom ne radi → upozorenje.
    - Ministarstvo (mpgi.gov.hr) nema zaseban popis prodaje; državnu imovinu prodaju
