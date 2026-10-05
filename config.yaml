@@ -9,6 +9,7 @@ kriteriji:
   kuca:
     max_cijena: 400000     # €
     min_povrsina: 70       # m² stambene površine
+    okucnica_za_parking_m2: 100   # bez navedenog parkinga: okućnica od ovoliko m² je dovoljna
   zemljiste:
     max_cijena: 300000     # €
     min_povrsina: 300      # m²

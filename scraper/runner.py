@@ -12,7 +12,7 @@ import yaml
 
 from . import dedupe, report
 from .ispu import Ispu, check_land
-from .prices import AskingPrices, Ppv, land_note
+from .prices import AskingPrices, Ppv, land_note, land_short
 from .db import State
 from .filters import evaluate
 from .http import Http
@@ -153,6 +153,8 @@ class Runner:
                         if headline is not None:
                             x.extra["ppv"] = self.ppv.note(x, d.jls)
                             x.extra["usporedba"] = prices.compare(x, d.jls) if prices else None
+                            x.extra["cijena_kratko"] = [t for t in (prices.short(x, d.jls) if prices else None,
+                                                                    self.ppv.short(x, d.jls)) if t]
                             to_notify.append((x, d, headline))
                 counts = {s: sum(1 for _, d in decided if d.status == s) for s in (PASS, WARN, REJECT)}
                 self.log(f"{src.label}: {len(listings)} oglasa – ✅ {counts[PASS]}, ⚠ {counts[WARN]}, ❌ {counts[REJECT]}")
@@ -217,8 +219,10 @@ class Runner:
                 d.status = WARN
         info = result.info
         if info and info.land_values and x.price and x.area and x.price > 1000:
-            x.extra["ppv"] = land_note(x.price / x.area, min(info.land_values), max(info.land_values),
-                                       f"na lokaciji, blok {info.block.title()}")
+            low, high, ppm = min(info.land_values), max(info.land_values), x.price / x.area
+            x.extra["ppv"] = land_note(ppm, low, high, f"na lokaciji, blok {info.block.title()}")
+            x.extra["cijena_kratko"] = [t for t in x.extra.get("cijena_kratko", []) if not t.startswith("PPV")] \
+                + [land_short(ppm, low, high)]
 
     def _load_prices(self, state: State) -> AskingPrices | None:
         """Medijani traženih cijena: na GitHubu iz baza (i spremi za Redmi), na Redmiju iz

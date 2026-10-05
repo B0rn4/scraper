@@ -2,7 +2,7 @@
 
 import re
 
-from . import risks
+from . import parking, risks
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
 from .text import fmt_eur, fmt_m2, fold
@@ -105,8 +105,13 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
     elif loc.ambiguous:
         warnings.append(f"lokacija nesigurna – {loc.evidence}")
     if loc.included:
-        verdict = locator.settlement_verdict(jls_name, listing.settlement,
-                                             " ".join(filter(None, [listing.location_text, listing.title])))
+        place_text = " ".join(filter(None, [listing.location_text, listing.title]))
+        found = locator.settlement_row(jls_name, listing.settlement, place_text)
+        if found:
+            row, exact = found
+            listing.extra["mjere"] = {"naselje": row["naziv"], "tocno": exact, "more_km": row["more_km"],
+                                      "rijeka_min": row["rijeka_min"], "zagreb_min": row["zagreb_min"]}
+        verdict = locator.settlement_verdict(jls_name, listing.settlement, place_text)
         if verdict and verdict[0] == REJECT:
             reasons.append(verdict[1])
             near_miss_only = False
@@ -120,6 +125,13 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
             near_miss_only = False
         else:
             warnings.append(f"{rule.label}: „{sentence}”")
+
+    # --- parking (kuća: parkirno mjesto ili dovoljno okućnice) ---
+    if listing.kind == HOUSE:
+        line, warning = parking.check(listing, limits.get("okucnica_za_parking_m2", parking.MIN_PLOT_M2))
+        listing.extra["parking_redak"] = line
+        if warning:
+            warnings.append(warning)
 
     # --- cijena ---
     price = listing.price if listing.price and listing.price > 1000 else None

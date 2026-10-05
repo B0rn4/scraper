@@ -66,6 +66,7 @@ def _listing(result: dict, kind: str) -> Listing:
         description=" ".join(filter(None, [prop.get("caption"), prop.get("description")])),
         image_url=photo.get("medium") or photo.get("large") or photo.get("small") or "",
     )
+    listing.extra["opis_skracen"] = True   # popis daje samo početak opisa
     # "marker": točna oznaka na karti; "only_area": samo područje; "no_map": bez karte.
     if loc.get("latitude") and loc.get("longitude") and loc.get("marker") != "no_map":
         listing.extra["lat"], listing.extra["lon"] = float(loc["latitude"]), float(loc["longitude"])

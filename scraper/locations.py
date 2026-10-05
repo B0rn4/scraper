@@ -95,6 +95,13 @@ def _join_reasons(reasons: list[str]) -> str:
     return ", ".join(reasons)
 
 
+def _num(value) -> float | None:
+    try:
+        return float(str(value).replace(",", ".")) if str(value or "").strip() else None
+    except ValueError:
+        return None
+
+
 def load_decisions(path: Path) -> dict[str, dict[str, dict]]:
     """Odluke po naseljima: {grad/općina: {naselje: {odluka, razlozi, razlog, naziv}}}.
     Odluke su "Prolaz", "Upozorenje", "Upozorenje da je Rijeka" i "Odbijen"; razlog
@@ -113,7 +120,9 @@ def load_decisions(path: Path) -> dict[str, dict[str, dict]]:
             if "rijeka" in raw:
                 reasons = ["grad Rijeka"]
             out.setdefault(row["grad_opcina"], {})[fold(row["naselje"])] = {
-                "odluka": decision, "razlozi": reasons, "razlog": _join_reasons(reasons), "naziv": row["naselje"]}
+                "odluka": decision, "razlozi": reasons, "razlog": _join_reasons(reasons), "naziv": row["naselje"],
+                "more_km": _num(row.get("more_zracno_km")), "rijeka_min": _num(row.get("rijeka_min")),
+                "zagreb_min": _num(row.get("zagreb_min"))}
     return out
 
 
@@ -247,17 +256,7 @@ class Locator:
         prihvaćena naselja tog grada/općine (npr. Rijeka, Krk – daleko od Rijeke)."""
         table = self.decisions.get(jls_name, {})
         only = self.only_settlements.get(jls_name)
-        own = {fold(n) for n in self.jls[fold(jls_name)].settlements + self.jls[fold(jls_name)].extra} \
-            if fold(jls_name) in self.jls else set()
-        field = fold(settlement) if settlement else ""
-        field = self.settlement_aliases.get(field, field)
-        elsewhere = {n: r for n, r in self.unique_decisions.items()
-                     if n not in own and n not in self.common_words}   # ne "Centar", "Draga"…
-        specific = [field] if field and (field in own or field in elsewhere) and self.by_name(field) is None else []
-        if not specific:
-            specific = sorted({name for j, name in self.scan_names(text)
-                               if (j.name == jls_name or name in elsewhere)
-                               and self.by_name(name) is None and name != "centar"})
+        specific, field, elsewhere = self._places(jls_name, settlement, text)
         if only is not None:
             outside = [n for n in specific if n not in only]
             if outside and len(outside) == len(specific):
@@ -284,6 +283,36 @@ class Locator:
         if rejected:
             notes.append("oglas spominje i " + ", ".join(r["naziv"] for _, r in rejected) + " (isključeno po popisu)")
         return (WARN_, "; ".join(notes)) if notes else None
+
+    def _places(self, jls_name: str, settlement: str, text: str) -> tuple[list[str], str, dict]:
+        """Određena naselja oglasa (normalizirani nazivi), polje naselja i odluke za naselja
+        drugih gradova/općina čiji je naziv jedinstven."""
+        own = {fold(n) for n in self.jls[fold(jls_name)].settlements + self.jls[fold(jls_name)].extra} \
+            if fold(jls_name) in self.jls else set()
+        field = fold(settlement) if settlement else ""
+        field = self.settlement_aliases.get(field, field)
+        elsewhere = {n: r for n, r in self.unique_decisions.items()
+                     if n not in own and n not in self.common_words}   # ne "Centar", "Draga"…
+        specific = [field] if field and (field in own or field in elsewhere) and self.by_name(field) is None else []
+        if not specific:
+            specific = sorted({name for j, name in self.scan_names(text)
+                               if (j.name == jls_name or name in elsewhere)
+                               and self.by_name(name) is None and name != "centar"})
+        return specific, field, elsewhere
+
+    def settlement_row(self, jls_name: str, settlement: str, text: str) -> tuple[dict, bool] | None:
+        """Red popisa naselja za oglas (udaljenosti) i je li naselje određeno (False:
+        oglas navodi samo grad/općinu, pa se uzima istoimeno naselje, npr. grad Krk)."""
+        table = self.decisions.get(jls_name, {})
+        specific, field, elsewhere = self._places(jls_name, settlement, text)
+        rows = [table.get(n) or elsewhere[n] for n in specific if n in table or n in elsewhere]
+        if len(rows) == 1:
+            return rows[0], True
+        if not rows and field in table:
+            return table[field], True
+        if not rows and fold(jls_name) in table:
+            return table[fold(jls_name)], False
+        return None
 
     def _town_verdict(self, jls_name: str, table: dict) -> tuple[str, str] | None:
         accepted = [r for r in table.values() if r["odluka"] != REJECT_]

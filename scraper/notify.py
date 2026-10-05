@@ -24,8 +24,34 @@ SOURCE_LABELS = {
 }
 
 
+def _minutes(value: float) -> str:
+    value = int(round(value))
+    return f"{value} min" if value < 60 else f"{value // 60} h {value % 60:02d} min"
+
+
+def summary_line(listing: Listing, decision: Decision) -> str:
+    """Sažetak na vrhu poruke: more (zračno), Rijeka i Zagreb (vožnja), cijena, broj ⚠.
+    Kad oglas navodi samo grad/općinu, mjere su za istoimeno mjesto (~Krk)."""
+    parts = []
+    m = listing.extra.get("mjere") or {}
+    prefix = "" if m.get("tocno", True) else f"~{m.get('naselje')}: "
+    if m.get("more_km") is not None:
+        parts.append(f"more {m['more_km']:.1f} km".replace(".", ","))
+    if m.get("rijeka_min") is not None and m["rijeka_min"] > 0:
+        parts.append(f"Rijeka {_minutes(m['rijeka_min'])}")
+    if m.get("zagreb_min") is not None:
+        parts.append(f"Zagreb {_minutes(m['zagreb_min'])}")
+    if parts:
+        parts[0] = prefix + parts[0]
+    parts += listing.extra.get("cijena_kratko") or []
+    if decision.status == WARN and decision.warnings:
+        parts.append(f"⚠ {len(decision.warnings)}")
+    return "📊 " + " · ".join(parts) if parts else ""
+
+
 def format_listing(listing: Listing, decision: Decision, headline: str = "") -> str:
-    """Tekst obavijesti (Telegram HTML, najviše ~1000 znakova jer ide kao opis fotografije)."""
+    """Tekst obavijesti (Telegram HTML, najviše ~1000 znakova jer ide kao opis fotografije).
+    Kad je predugo, izostavljaju se cijeli manje važni retci (nikad usred HTML oznake)."""
     e = html.escape
     kind = "🏠 <b>Kuća</b>" if listing.kind == HOUSE else "🌳 <b>Građevinsko zemljište</b>" if listing.kind == LAND else "<b>Nekretnina</b>"
     parts = [kind, fmt_eur(listing.price) if listing.price and listing.price > 1000 else "cijena nije navedena"]
@@ -33,50 +59,56 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
         parts.append(fmt_m2(listing.area))
     if listing.plot_area:
         parts.append(f"okućnica {fmt_m2(listing.plot_area)}")
-    lines = []
+    lines: list[tuple[str, str]] = []          # (vrsta retka, tekst)
     if headline:
-        lines.append(f"<b>{e(headline)}</b>")
-    lines.append(" · ".join(parts))
+        lines.append(("naslov", f"<b>{e(headline)}</b>"))
+    lines.append(("glavni", " · ".join(parts)))
+    summary = summary_line(listing, decision)
+    if summary:
+        lines.append(("sazetak", e(summary)))
     place = decision.jls or listing.municipality
-    if listing.settlement and listing.settlement != place:
-        place = f"{place} – {listing.settlement}" if place else listing.settlement
+    settlement = listing.settlement or ((listing.extra.get("mjere") or {}).get("naselje")
+                                        if (listing.extra.get("mjere") or {}).get("tocno") else "")
+    if settlement and settlement != place:
+        place = f"{place} – {settlement}" if place else settlement
     if place:
-        lines.append(f"📍 {e(place)}")
+        lines.append(("mjesto", f"📍 {e(place)}"))
     ppm = listing.price_per_m2 if listing.price and listing.price > 1000 else None
     meta = [f"{fmt_eur(ppm)}/m²"] if ppm else []
     meta.append(SOURCE_LABELS.get(listing.source, listing.source))
     if listing.subtype:
         meta.append(listing.subtype)
-    lines.append("💶 " + e(" · ".join(meta)))
-    for key in ("gp", "ppv", "usporedba"):
-        if listing.extra.get(key):
-            lines.append(e(listing.extra[key]))
-    if listing.extra.get("za_obnovu"):
-        lines.append("🔨 za obnovu / starina")
-    facts = []
+    lines.append(("cijena", "💶 " + e(" · ".join(meta))))
+    facts = ["🔨 za obnovu / starina"] if listing.extra.get("za_obnovu") else []
     if listing.extra.get("godina_izgradnje"):
         facts.append(f"izgrađena {listing.extra['godina_izgradnje']}")
     if listing.extra.get("godina_obnove"):
         facts.append(f"obnovljena {listing.extra['godina_obnove']}")
-    parking = str(listing.extra.get("parking") or "")
-    if parking:
-        facts.append(f"🚗 parkirnih mjesta: {parking}" if parking.isdigit() else f"🚗 {parking}")
     if listing.extra.get("vlasnicki_list"):
         facts.append("vlasnički list ✔")
     if facts:
-        lines.append("🏗 " + e(" · ".join(facts)))
+        lines.append(("cinjenice", ("" if facts[0].startswith("🔨") else "🏗 ") + e(" · ".join(facts))))
+    for key in ("parking_redak", "gp", "ppv", "usporedba"):
+        if listing.extra.get(key):
+            lines.append((key, e(listing.extra[key])))
     if listing.previous_price and listing.price and listing.previous_price > listing.price:
-        lines.append(f"📉 prije {fmt_eur(listing.previous_price)}")
+        lines.append(("prije", f"📉 prije {fmt_eur(listing.previous_price)}"))
     if decision.status == WARN:
-        for w in decision.warnings[:4]:
-            lines.append(f"⚠ {e(w)}")
+        for w in decision.warnings[:5]:
+            lines.append(("upozorenje", f"⚠ {e(w if len(w) <= 200 else w[:197] + '…')}"))
     if listing.source == "fina":
         sud, spis = listing.extra.get("sud"), listing.extra.get("spis")
-        lines.append(f"⚖ {e(sud or '')} {e(spis or '')}".strip())
-    lines.append(f"<i>{e(listing.title[:150])}</i>")
-    text = "\n".join(lines)
-    return text[:1000]
-
+        lines.append(("fina", f"⚖ {e(sud or '')} {e(spis or '')}".strip()))
+    lines.append(("naslov_oglasa", f"<i>{e(listing.title[:150])}</i>"))
+    # Predugo: redom izostavi manje važne retke.
+    for drop in ("naslov_oglasa", "usporedba", "cinjenice", "ppv", "parking_redak", "mjesto"):
+        if len("\n".join(t for _, t in lines)) <= 1000:
+            break
+        lines = [(k, t) for k, t in lines if k != drop]
+    while len("\n".join(t for _, t in lines)) > 1000 and any(k == "upozorenje" for k, _ in lines):
+        last = max(i for i, (k, _) in enumerate(lines) if k == "upozorenje")
+        lines.pop(last)
+    return "\n".join(t for _, t in lines)
 
 class Telegram:
     def __init__(self, token: str, chat_id: str):

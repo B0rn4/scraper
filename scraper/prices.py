@@ -86,6 +86,15 @@ def _pct(diff: float) -> int:
     return int(round(abs(diff) * 100 / 5) * 5)
 
 
+def land_short(ppm: float, low: float, high: float) -> str:
+    """Za sažeti redak: "PPV u rasponu", "PPV +15 %" (iznad gornje), "PPV −30 %" (ispod donje)."""
+    if ppm > high * 1.05:
+        return f"PPV +{_pct(ppm / high - 1)} %"
+    if ppm < low * 0.95:
+        return f"PPV −{_pct(ppm / low - 1)} %"
+    return "PPV u rasponu"
+
+
 def land_note(ppm: float, low: float, high: float, where: str) -> str:
     """Cijena zemljišta prema rasponu PPV-a za građevinsko zemljište."""
     low, high = round(low), round(high)
@@ -112,6 +121,16 @@ class Ppv:
         self.places = data.get("naselja", {})
         self.towns = data.get("gradovi_opcine", {})
         self.names = _names(locator)
+
+    def short(self, listing: Listing, jls: str) -> str | None:
+        """Za sažeti redak, samo za zemljišta (za kuće je PPV samo orijentacija preko stanova)."""
+        if listing.kind != LAND or not jls or not _ok(listing.kind, listing.price, listing.area) or _agricultural(listing):
+            return None
+        place = place_of(self.locator, jls, listing.title, listing.settlement)
+        item = (self.places.get(jls, {}).get(place) if place else None) or self.towns.get(jls)
+        if not item or not item.get("zemljiste"):
+            return None
+        return land_short(listing.price / listing.area, *item["zemljiste"])
 
     def note(self, listing: Listing, jls: str) -> str | None:
         """Npr. "🏛 PPV 2026. Njivice: građevinsko 158–219 €/m² – oglas 15 % iznad gornje"."""
@@ -162,8 +181,7 @@ class AskingPrices:
         Path(path).write_text(json.dumps({"izracunato": self.stamp, "grupe": self.groups}, ensure_ascii=False),
                               encoding="utf-8")
 
-    def compare(self, listing: Listing, jls: str) -> str | None:
-        """Redak za obavijest, npr. "💰 25 % ispod medijana traženih (Njivice: 3.550 €/m², 40 oglasa)"."""
+    def _stat(self, listing: Listing, jls: str) -> tuple[dict, str] | None:
         if not jls or not _ok(listing.kind, listing.price, listing.area) or _agricultural(listing):
             return None
         place = place_of(self.locator, jls, listing.title, listing.settlement)
@@ -172,8 +190,24 @@ class AskingPrices:
         if not stat:
             stat = self.groups.get(f"{listing.kind}|{jls}|")
             where = _whole(self.locator, jls)
-        if not stat:
+        return (stat, where) if stat else None
+
+    def short(self, listing: Listing, jls: str) -> str | None:
+        """Za sažeti redak: "cijena −25 % od prosjeka" (medijan traženih)."""
+        found = self._stat(listing, jls)
+        if not found:
             return None
+        diff = listing.price / listing.area / found[0]["med"] - 1
+        if abs(diff) < 0.1:
+            return "cijena ≈ prosjek"
+        return f"cijena {'+' if diff > 0 else '−'}{_pct(diff)} % od prosjeka"
+
+    def compare(self, listing: Listing, jls: str) -> str | None:
+        """Redak za obavijest, npr. "💰 25 % ispod medijana traženih (Njivice: 3.550 €/m², 40 oglasa)"."""
+        found = self._stat(listing, jls)
+        if not found:
+            return None
+        stat, where = found
         diff = listing.price / listing.area / stat["med"] - 1
         pct = _pct(diff)
         basis = f"({where}: {fmt_eur(stat['med'])}/m², {stat['n']} oglasa)"
