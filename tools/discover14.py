@@ -38,7 +38,7 @@ def save(name, data):
 def parse(resp: dict) -> list[dict]:
     """Odgovor identify → po sloju: blok, namjena, vrijednosti (tekstualne oznake ISPU-a)."""
     out = []
-    for layer in resp.get("data") or []:
+    for layer in resp if isinstance(resp, list) else resp.get("data") or []:
         for item in layer.get("items") or []:
             rec = {"sloj": layer.get("catalogId"), "polja": [[x["label"]["hr"], x["value"]] for x in item.get("items") or []]}
             out.append(rec)
