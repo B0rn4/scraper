@@ -68,7 +68,7 @@ def parcels_in_text(text: str) -> list[tuple[str, str]]:
         if not ko:
             continue
         for kc in re.split(r"\s*(?:,|\bi\b|\bte\b)\s*", m.group(1)):
-            if kc and (ko, kc) not in out:
+            if kc and (fold(ko), kc) not in {(fold(k), c) for k, c in out}:
                 out.append((ko, kc))
     return out[:5]
 
@@ -187,15 +187,23 @@ class Ispu:
 
     def cadastral_municipality(self, ko_name: str) -> str | None:
         """Matični broj katastarske općine. Pretraga traži velika slova s dijakriticima;
-        labela je "URED, K.O." (npr. "KRK, OMIŠALJ")."""
-        r = self.session.get(API + "gis/search-kat-opcina", params={"input": ko_name.upper()}, timeout=self.timeout)
-        r.raise_for_status()
-        want = fold(ko_name)
-        names = [(k, fold(str(k.get("labela", "")).split(",")[-1])) for k in r.json() or []]
-        matches = [k for k, name in names if name == want] or [k for k, name in names if name.startswith(want)]
-        # Isti naziv k.o. postoji u više županija (npr. Vrh): prednost uredima u PGŽ-u.
-        matches.sort(key=lambda k: fold(str(k.get("labela", "")).split(",")[0]) not in PGZ_OFFICES)
-        return matches[0]["maticniBroj"] if matches else None
+        labela je "URED, K.O." (npr. "KRK, OMIŠALJ"). Iz teksta naziv zna povući i
+        sljedeću riječ ("Punat Početna cijena…"), pa se kraće varijante probaju redom."""
+        name = re.sub(r"\s*-\s*", "-", ko_name.strip())
+        words = name.split()
+        for n in range(len(words), 0, -1):
+            candidate = " ".join(words[:n])
+            for query in dict.fromkeys([candidate, candidate.replace("-", " ")]):
+                r = self.session.get(API + "gis/search-kat-opcina", params={"input": query.upper()}, timeout=self.timeout)
+                r.raise_for_status()
+                want = fold(candidate)
+                found = [(k, fold(str(k.get("labela", "")).split(",")[-1])) for k in r.json() or []]
+                matches = [k for k, label in found if label == want]
+                if matches:
+                    # Isti naziv k.o. postoji u više županija (npr. Vrh): prednost uredima u PGŽ-u.
+                    matches.sort(key=lambda k: fold(str(k.get("labela", "")).split(",")[0]) not in PGZ_OFFICES)
+                    return matches[0]["maticniBroj"]
+        return None
 
 
 def parse_identify(data) -> PointInfo:
@@ -266,3 +274,27 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
                          f"provjeri{caveat}", info)
     return LandCheck(f"🗺 NIJE u građevinskom području – ISPU, prema {where}",
                      f"prema ISPU-u nije u građevinskom području{f' ({use})' if use else ''} – provjeri{caveat}", info)
+
+
+def gp_text(info: PointInfo) -> str:
+    if info.gp == "naselja":
+        part = " (neizgrađeni dio)" if "NEIZGRAĐENI" in info.use.upper() else \
+            " (izgrađeni dio)" if "IZGRAĐENI" in info.use.upper() else ""
+        return f"u građevinskom području naselja{part}"
+    if info.gp == "izvan naselja":
+        return "građevinsko područje IZVAN naselja"
+    return "NIJE u građevinskom području"
+
+
+def describe_parcel(ispu: "Ispu", ko: str, kc: str, names: dict[str, str] | None = None) -> str:
+    """Redak za natječaj: "🗺 k.č. 1234/5 k.o. Njivice (650 m²): u građevinskom području naselja · PPV …"."""
+    found = ispu.parcel(ko, kc, names)
+    if not found:
+        return f"🗺 k.č. {kc} k.o. {ko}: nije pronađena u katastru"
+    info = ispu.identify(found["x"], found["y"])
+    area = f" ({fmt_m2(found['povrsina'])})" if found.get("povrsina") else ""
+    ppv = ""
+    if info.land_values:
+        low, high = round(min(info.land_values)), round(max(info.land_values))
+        ppv = f" · PPV {low} €/m²" if low == high else f" · PPV {low}–{high} €/m²"
+    return f"🗺 k.č. {kc} k.o. {ko}{area}: {gp_text(info)}{ppv}"

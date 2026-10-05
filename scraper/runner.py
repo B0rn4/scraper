@@ -10,8 +10,8 @@ from zoneinfo import ZoneInfo
 
 import yaml
 
-from . import dedupe, report
-from .ispu import Ispu, check_land
+from . import dedupe, report, tenders
+from .ispu import Ispu, check_land, describe_parcel, parcels_in_text
 from .prices import AskingPrices, Ppv, land_note, land_short
 from .db import State
 from .filters import evaluate
@@ -173,6 +173,7 @@ class Runner:
                 for x, d, _ in to_notify:
                     self._check_land(x, d, deadline)
             self._send_notifications(state, to_notify)
+            self._tenders(state)
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
                 self._check_redmi(state)
@@ -223,6 +224,75 @@ class Runner:
             x.extra["ppv"] = land_note(ppm, low, high, f"na lokaciji, blok {info.block.title()}")
             x.extra["cijena_kratko"] = [t for t in x.extra.get("cijena_kratko", []) if not t.startswith("PPV")] \
                 + [land_short(ppm, low, high)]
+
+    def _tenders(self, state: State) -> None:
+        """Natječaji za prodaju nekretnina (gradovi, općine, PGŽ, CERP…), jednom dnevno.
+        Prvi put stižu samo objave iz zadnjih N dana kojima rok nije istekao; ostale se
+        bilježe bez poruke."""
+        cfg = self.cfg.get("natjecaji") or {}
+        today = self.now.date().isoformat()
+        if (not cfg.get("ukljuceno", True) or self.device != "github" or not self.telegram
+                or state.meta_get("daily:natjecaji") == today):
+            return
+        first = state.meta_get("baseline:natjecaji") is None
+        cutoff = (self.now - timedelta(days=cfg.get("dana_unazad_prvi_put", 45))).date().isoformat()
+        reader = tenders.Reader(self.http, self.locator)
+        new: list[tenders.Tender] = []
+        for site in tenders.load_sites():
+            name = f"natjecaji: {site['naziv']}"
+            try:
+                items = reader.fetch(site)
+            except Exception as exc:  # noqa: BLE001
+                failures, alerted = state.health_fail(name, f"{type(exc).__name__}: {exc}")
+                self.log(f"{name}: GREŠKA ({failures}. dan zaredom): {exc}")
+                if failures >= 3 and not alerted:
+                    self._alert(f"Scraper: natječaji – {site['naziv']} ne rade",
+                                f"Stranica {site['url']} tri dana zaredom vraća grešku:\n{exc}\n\nJavi Claudeu ovu poruku.")
+                    state.mark_alerted(name)
+                continue
+            state.health_ok(name, self.stamp)
+            fresh = [t for t in items if not state.tender_known(t.key) and t.key not in {n.key for n in new}]
+            self.log(f"{name}: {len(items)} objava o prodaji, novih {len(fresh)}")
+            new.extend(fresh)
+        limit = cfg.get("max_poruka", 15)
+        deadline = time.monotonic() + LAND_CHECK_SECONDS
+        sent = 0
+        for t in new:
+            reader.load_text(t)
+            info = tenders.details(t.text) if t.text else {}
+            published = t.published or t.extra.get("datum_iz_teksta", "")
+            expired = info.get("rok") and info["rok"] < today
+            if first and (expired or not published or published < cutoff):
+                state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
+                continue
+            if expired or sent >= limit:
+                state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
+                self.log(f"Natječaj bez poruke ({'istekao' if expired else 'ograničenje'}): {t.title[:70]}")
+                continue
+            lines = []
+            for ko, kc in parcels_in_text(t.text)[:3]:
+                if time.monotonic() > deadline:
+                    break
+                try:
+                    if self._ispu is None:
+                        self._ispu = Ispu()
+                    line = describe_parcel(self._ispu, ko, kc, self._place_names)
+                    if "nije pronađena" not in line:      # broj iz teksta koji nije čestica
+                        lines.append(line)
+                except Exception as exc:  # noqa: BLE001 – ISPU nije nužan za obavijest
+                    self.log(f"ISPU (natječaj): {type(exc).__name__}: {exc}")
+                    break
+            try:
+                self.telegram.send_text(tenders.format_tender(t, info, lines), url=t.url)
+                state.tender_add(t, self.stamp, self.stamp)
+                sent += 1
+            except Exception as exc:  # noqa: BLE001
+                self.log(f"Natječaj nije poslan ({t.url}): {exc}")
+        if first:
+            state.meta_set("baseline:natjecaji", self.stamp)
+        state.meta_set("daily:natjecaji", today)
+        state.conn.commit()
+        self.log(f"Natječaji: novih {len(new)}, poslano {sent}")
 
     def _load_prices(self, state: State) -> AskingPrices | None:
         """Medijani traženih cijena: na GitHubu iz baza (i spremi za Redmi), na Redmiju iz

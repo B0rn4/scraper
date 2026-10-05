@@ -6,6 +6,7 @@ poslovni prostori, stanovi, zapošljavanje i rezultati natječaja se preskaču. 
 regionalnih tijela (bez jls) moraju spominjati naše područje."""
 
 import html
+import io
 import re
 import unicodedata
 from dataclasses import dataclass, field
@@ -33,6 +34,9 @@ _DATE = re.compile(r"(\d{1,2})\.\s*(\d{1,2})\.\s*(20\d\d)|(\d{1,2})\.\s*(sijecnj
 _MONTHS = {"sijecnja": 1, "veljace": 2, "ozujka": 3, "travnja": 4, "svibnja": 5, "lipnja": 6, "srpnja": 7, "kolovoza": 8,
            "rujna": 9, "listopada": 10, "studenoga": 11, "studenog": 11, "prosinca": 12}
 _DEADLINE = re.compile(r"\b(rok\w*|najkasnije|zakljucno|ponude se (podnose|dostavljaju)|do dana)\b")
+_TEASER = re.compile(r"\s+(?=(Na temelju|Temeljem|Sukladno|U skladu s)\b)")
+_PDF = re.compile(r'<a[^>]+href="([^"]+\.pdf)"[^>]*>(.*?)</a>', re.I | re.S)
+MIN_TEXT = 600            # kraći tekst objave: natječaj je vjerojatno u priloženom PDF-u
 _PART = re.compile(r"\b\d+\s*/\s*\d+\s+(dijel|dio)\w*|\bsuvlasnick\w*\s+(dio|dijel|udio|udjel)\w*|\bidealn\w*\s+(dio|dijel)\w*")
 _PRICE = re.compile(r"\b(pocetn\w*|najniz\w*|utvrden\w*)\s+(kupoprodajn\w*\s+)?cijen\w*[^0-9]{0,40}?(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:,\d+)?)\s*(eur|€)")
 
@@ -116,9 +120,11 @@ class Reader:
 
     def fetch(self, site: dict) -> list[Tender]:
         method = site.get("nacin")
-        items = {"wp": self._wp, "rss": self._rss, "stranica": self._page}[method](site)
-        if not site.get("jls"):        # regionalno tijelo: samo naše područje
-            items = [t for t in items if self.area_of(f"{t.title}. {t.text}")]
+        items = {"wp": self._wp, "rss": self._rss, "feed": self._rss, "stranica": self._page}[method](site)
+        if not site.get("jls"):        # regionalno tijelo: samo naše područje (iz naslova i teksta)
+            for t in items[:15]:
+                self.load_text(t)
+            items = [t for t in items[:15] if self.area_of(f"{t.title}. {t.text}")]
             for t in items:
                 t.jls = self.area_of(f"{t.title}. {t.text}")
         return items
@@ -136,15 +142,16 @@ class Reader:
             for x in data if isinstance(data, list) else []:
                 title = _clean((x.get("title") or {}).get("rendered", ""))
                 if relevant(title) and x.get("link") not in found:
+                    raw = (x.get("content") or {}).get("rendered", "")
                     found[x["link"]] = Tender(x["link"], site["naziv"], site.get("jls", ""), title, x["link"],
-                                              (x.get("date") or "")[:10],
-                                              _clean((x.get("content") or {}).get("rendered", ""))[:20000])
+                                              (x.get("date") or "")[:10], _clean(raw)[:20000], {"html": raw[:200000]})
         return list(found.values())
 
     def _rss(self, site: dict) -> list[Tender]:
         out = []
         for word in ("prodaj",):
-            xml = self.http.get(site["url"], params={"s": word, "feed": "rss2"}).text
+            params = {"s": word, "feed": "rss2"} if site.get("nacin") == "rss" else None
+            xml = self.http.get(site["url"], params=params).text
             for block in re.findall(r"<item>(.*?)</item>", xml, re.S):
                 def tag(name, b=block):
                     m = re.search(rf"<{name}>(.*?)</{name}>", b, re.S)
@@ -157,7 +164,8 @@ class Reader:
                 except ValueError:
                     published = ""
                 body = tag("content:encoded") or tag("description")
-                out.append(Tender(link, site["naziv"], site.get("jls", ""), title, link, published, _clean(body)[:20000]))
+                out.append(Tender(link, site["naziv"], site.get("jls", ""), title, link, published, _clean(body)[:20000],
+                                  {"html": html.unescape(body)[:200000]}))
         return out
 
     def _page(self, site: dict) -> list[Tender]:
@@ -165,7 +173,7 @@ class Reader:
         base = str(getattr(page, "url", site["url"]))
         out, seen = [], set()
         for href, inner in re.findall(r'<a[^>]+href="([^"#]+)"[^>]*>(.*?)</a>', page.text, re.S | re.I):
-            title = _clean(inner)
+            title = _TEASER.split(_clean(inner), 1)[0].strip()   # "Natječaj … Na temelju članka 48. …"
             url = urljoin(base, html.unescape(href))
             if len(title) < 12 or url in seen or not relevant(title):
                 continue
@@ -174,15 +182,79 @@ class Reader:
         return out[:40]
 
     def load_text(self, tender: Tender) -> None:
-        """Tekst objave za detalje (samo HTML; PDF i Word se ne čitaju)."""
-        if tender.text or re.search(r"\.(pdf|docx?|xlsx?|zip)$", urlparse(tender.url).path, re.I):
-            return
-        try:
-            body = self.http.get(tender.url).text
-        except Exception:  # noqa: BLE001 – bez teksta objava ipak stiže
-            return
-        body = re.sub(r"(?is)<(script|style|nav|header|footer)[^>]*>.*?</\1>", " ", body)
-        tender.text = _clean(body)[:20000]
+        """Tekst objave za detalje. Kad je objava kratka, a ima priložen PDF (ili je
+        sama objava PDF), čita se i PDF (prvih nekoliko stranica)."""
+        path = urlparse(tender.url).path
+        if re.search(r"\.pdf$", path, re.I):
+            tender.text = tender.text or self.pdf_text(tender.url)
+            tender.extra["iz_pdf"] = bool(tender.text)
+        elif not tender.text and not re.search(r"\.(docx?|xlsx?|zip)$", path, re.I):
+            try:
+                body = self.http.get(tender.url).text
+            except Exception:  # noqa: BLE001 – bez teksta objava ipak stiže
+                body = ""
+            tender.extra["html"] = body[:300000]
+            body = re.sub(r"(?is)<(script|style|nav|header|footer)[^>]*>.*?</\1>", " ", body)
+            tender.text = _clean(body)[:20000]
+        if len(tender.text) < MIN_TEXT and tender.extra.get("html"):
+            pdfs = _PDF.findall(tender.extra["html"])
+            pdfs.sort(key=lambda p: not re.search(r"natje|prodaj|oglas", fold(f"{p[0]} {p[1]}")))
+            if pdfs:
+                text = self.pdf_text(urljoin(tender.url, html.unescape(pdfs[0][0])))
+                if text:
+                    tender.text = f"{tender.text}\n{text}"[:30000]
+                    tender.extra["iz_pdf"] = True
+        tender.extra.pop("html", None)
         if not tender.published:
             dates = [d for _, d in dates_in(tender.text[:3000])]
             tender.extra["datum_iz_teksta"] = dates[0] if dates else ""
+
+    def pdf_text(self, url: str, pages: int = 8) -> str:
+        try:
+            from pypdf import PdfReader
+            data = self.http.get(url).content
+            if len(data) > 15_000_000:
+                return ""
+            reader = PdfReader(io.BytesIO(data))
+            return " ".join(" ".join((p.extract_text() or "").split()) for p in reader.pages[:pages])[:30000]
+        except Exception:  # noqa: BLE001 – PDF nije nužan za obavijest
+            return ""
+
+def fmt_date(iso: str) -> str:
+    try:
+        d = datetime.fromisoformat(iso[:10]).date()
+    except ValueError:
+        return iso
+    return f"{d.day}. {d.month}. {d.year}."
+
+
+def format_tender(t: Tender, info: dict, parcel_lines: list[str]) -> str:
+    """Telegram HTML poruka za natječaj."""
+    e = html.escape
+    lines = [f"📜 <b>Natječaj za prodaju</b> · {e(t.site)}", f"<b>{e(t.title[:250])}</b>"]
+    when = []
+    published = t.published or t.extra.get("datum_iz_teksta", "")
+    if published:
+        when.append(f"📅 objavljeno {fmt_date(published)}")
+    if info.get("rok"):
+        when.append(f"⏳ rok {fmt_date(info['rok'])}")
+    if when:
+        lines.append(" · ".join(when))
+    money = []
+    if info.get("cijene"):
+        prices = ", ".join(f"{p:,.0f} €".replace(",", ".") for p in info["cijene"][:3])
+        money.append(f"početna cijena {prices}")
+    if info.get("povrsine"):
+        money.append(", ".join(f"{a:,.0f} m²".replace(",", ".") for a in info["povrsine"][:3]))
+    if money:
+        lines.append("💶 " + e(" · ".join(money)))
+    if t.jls and t.jls not in t.site:
+        lines.append(f"📍 {e(t.jls)}")
+    lines += [e(x) for x in parcel_lines[:3]]
+    if info.get("dio"):
+        lines.append("⚠ prodaje se dio nekretnine (suvlasnički udio) – provjeri")
+    if len(t.text) < 200:
+        lines.append("<i>Detalji su u priloženom dokumentu – otvori objavu.</i>")
+    elif t.extra.get("iz_pdf"):
+        lines.append("<i>Podaci iz priloženog PDF-a.</i>")
+    return "\n".join(lines)[:3800]

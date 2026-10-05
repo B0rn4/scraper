@@ -42,6 +42,16 @@ CREATE TABLE IF NOT EXISTS meta (
     key TEXT PRIMARY KEY,
     value TEXT
 );
+CREATE TABLE IF NOT EXISTS tenders (
+    key TEXT PRIMARY KEY,
+    site TEXT,
+    jls TEXT,
+    title TEXT,
+    url TEXT,
+    published TEXT,
+    first_seen TEXT NOT NULL,
+    notified_at TEXT
+);
 """
 
 
@@ -192,6 +202,17 @@ class State:
 
     def health_all(self) -> list[dict]:
         return [dict(r) for r in self.conn.execute("SELECT * FROM health ORDER BY source")]
+
+    # --- natječaji (faza 4) ---
+
+    def tender_known(self, key: str) -> bool:
+        return self.conn.execute("SELECT 1 FROM tenders WHERE key = ?", (key,)).fetchone() is not None
+
+    def tender_add(self, tender, now: str, notified_at: str | None) -> None:
+        self.conn.execute(
+            "INSERT OR IGNORE INTO tenders (key, site, jls, title, url, published, first_seen, notified_at) "
+            "VALUES (?, ?, ?, ?, ?, ?, ?, ?)",
+            (tender.key, tender.site, tender.jls, tender.title, tender.url, tender.published, now, notified_at))
 
     # --- razno ---
 

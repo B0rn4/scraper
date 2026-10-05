@@ -4,6 +4,7 @@
 #   wp        – WordPress tražilica (wp-json), s datumom i tekstom objave
 #   rss       – WordPress tražilica kroz RSS (?s=…&feed=rss2)
 #   stranica  – poveznice sa stranice "Natječaji" (tekst se čita s otvorene poveznice)
+#   feed      – obični RSS (bez tražilice)
 # jls: grad/općina kojoj objava pripada. Bez jls (PGŽ, CERP, državne nekretnine) objava se
 #      zadržava samo ako spominje naše područje.
 
@@ -34,7 +35,7 @@
 - naziv: Općina Omišalj
   jls: Omišalj
   nacin: stranica
-  url: https://omisalj.hr/informacije/javni-natjecaji-i-pozivi
+  url: https://www.omisalj.hr/informacije/prodaja-i-zakup-nekretnina
 - naziv: Općina Punat
   jls: Punat
   nacin: stranica
@@ -55,6 +56,10 @@
   jls: Krk
   nacin: stranica
   url: https://grad-krk.hr/desnibanner/natjecaji
+- naziv: Grad Krk (novosti)
+  jls: Krk
+  nacin: feed
+  url: https://www.grad-krk.hr/rss.xml
 - naziv: Grad Opatija
   jls: Opatija
   nacin: wp
@@ -71,4 +76,4 @@
   url: https://www.cerp.hr/natjecaji/11
 - naziv: Državne nekretnine d.o.o.
   nacin: stranica
-  url: http://www.hr-nekretnine.hr/
+  url: https://hr-nekretnine.hr/vrsta-natjecaja/prodaja-nekretnina/
