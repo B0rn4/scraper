@@ -4,9 +4,10 @@ on:
   schedule:
     # Svakih 20 minuta. GitHub raspored je u UTC-u, pa je raspon širi;
     # skripta sama radi samo od 7 do 23 h po zagrebačkom vremenu.
+    # Glavni okidač je cron-job.org (README.md); GitHubov raspored je samo rezerva
+    # jer često kasni ili izostane. Tjedni izvještaj pokreće samo cron-job.org
+    # (ponedjeljkom u 7:15), da ne stigne dvaput.
     - cron: "8,28,48 5-22 * * *"
-    # Tjedni izvještaj: ponedjeljkom ujutro.
-    - cron: "17 6 * * 1"
   workflow_dispatch:
     inputs:
       naredba:
@@ -68,9 +69,7 @@ jobs:
       - name: Pokreni
         run: |
           CMD="${{ github.event.inputs.naredba }}"
-          if [ -z "$CMD" ]; then
-            if [ "${{ github.event.schedule }}" = "17 6 * * 1" ]; then CMD=tjedni; else CMD=run; fi
-          fi
+          if [ -z "$CMD" ]; then CMD=run; fi
           ARGS=""
           if [ -n "${{ github.event.inputs.izvori }}" ]; then ARGS="$ARGS --izvori ${{ github.event.inputs.izvori }}"; fi
           if [ "${{ github.event.inputs.bez_slanja }}" = "true" ]; then ARGS="$ARGS --bez-slanja"; fi
