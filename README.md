@@ -16,9 +16,11 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   tjednom izvještaju. Kad pravilo nije sigurno, oglas stiže.
 - **Opasni izrazi u opisu** (suvlasništvo, ostavina, legalizacija, teret…): ⚠ s
   citiranom rečenicom; odbija se samo nedvosmisleno (prodaje se suvlasnički dio).
+- **Ostvarene cijene (🏛 PPV):** Plan približnih vrijednosti Ministarstva (ISPU,
+  1.1.2026.) za naselje: građevinsko zemljište €/m², a za kuće vrijednost stanova
+  slične veličine (za kuće PPV ne postoji, pa je to orijentacija).
 - **Cijena prema drugim oglasima:** 💰 ispod / 💸 iznad / 📊 oko medijana traženih
-  €/m² u istom naselju (ako ima barem 8 oglasa), inače u gradu/općini. To su tražene,
-  ne ostvarene cijene, pa je orijentacija.
+  €/m² u istom naselju (ako ima barem 8 oglasa), inače u gradu/općini.
 - **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, parking, vlasnički list.
 - **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
 - **Pregledni izvještaj:** jedna HTML datoteka sa svim oglasima i razlogom odluke.

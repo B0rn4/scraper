@@ -175,9 +175,18 @@ bez stotina poruka.
         inače grad/općina. U poruci: 💰 ≥ 15 % ispod, 💸 ≥ 15 % iznad, 📊 oko medijana;
         ≥ 45 % ispod „neobično jeftino, provjeri zašto”. GitHub sprema `cijene.json`
         na granu state, Redmi ga preuzima.
-      - ISPU: Plan približnih vrijednosti postoji za zemljišta, stanove/apartmane i
-        poslovne prostore – **ne za kuće**. Vrijednost za točku daje
-        `api/v1/gis/identify` (provjera u tijeku: `tools/discover13.py`).
+      - **(gotovo 5. 10.)** ISPU, Plan približnih vrijednosti 1.1.2026.: postoji za
+        zemljišta, stanove/apartmane i poslovne prostore – **ne za kuće**. Vrijednost
+        za točku daje `api/v1/gis/identify` (bez prijave). Tablica
+        `data/ppv_naselja.json` (191 naselje; 5 točaka oko središta naselja jer
+        središte zna pasti u šumu ili hotel; izrada `tools/discover14.py` na GitHubu
+        pa `tools/build_ppv.py`). U poruci: zemljište prema rasponu građevinskog
+        zemljišta stambene/mješovite namjene (ispod donje granice za 45 %+ „neobično
+        jeftino”), kuća prema stanovima slične veličine (orijentacija). Bez
+        prepoznatog naselja: raspon svih naselja grada/općine. Poljoprivredna
+        zemljišta se ne uspoređuju. Osvježiti svake godine nakon 1.1.
+      - Moguće kasnije: PPV za točne koordinate oglasa (Njuškalo, index.hr) i sloj
+        „Građevinska područja” (je li zemljište u građevinskom području).
    5. Parking: kuća mora imati parkirno mjesto ili dovoljno okućnice za parking
       (okućnica sama po sebi nije bitna) – oznaka/upozorenje kad nije navedeno.
    6. Redak s mjerama u poruci (more, Rijeka, Zagreb, cijena prema prosjeku, upozorenja).

@@ -48,8 +48,9 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
     if listing.subtype:
         meta.append(listing.subtype)
     lines.append("💶 " + e(" · ".join(meta)))
-    if listing.extra.get("usporedba"):
-        lines.append(e(listing.extra["usporedba"]))
+    for key in ("ppv", "usporedba"):
+        if listing.extra.get(key):
+            lines.append(e(listing.extra[key]))
     if listing.extra.get("za_obnovu"):
         lines.append("🔨 za obnovu / starina")
     facts = []

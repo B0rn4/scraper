@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from . import dedupe, report
-from .prices import AskingPrices
+from .prices import AskingPrices, Ppv
 from .db import State
 from .filters import evaluate
 from .http import Http
@@ -44,6 +44,7 @@ class Runner:
         self.seen_file = seen_file    # na Redmiju: sažetak već viđenih oglasa s GitHuba
         self.prices_file = prices_file  # na Redmiju: medijani traženih cijena s GitHuba
         self.locator = Locator()
+        self.ppv = Ppv(self.locator)
         self.criteria = self.cfg["kriteriji"]
         self.http = Http()
         notif = self.cfg.get("obavijesti", {})
@@ -145,6 +146,7 @@ class Runner:
                         if headline is not None:
                             headline = self._check_seen(state, seen, x, d, old, headline)
                         if headline is not None:
+                            x.extra["ppv"] = self.ppv.note(x, d.jls)
                             x.extra["usporedba"] = prices.compare(x, d.jls) if prices else None
                             to_notify.append((x, d, headline))
                 counts = {s: sum(1 for _, d in decided if d.status == s) for s in (PASS, WARN, REJECT)}
