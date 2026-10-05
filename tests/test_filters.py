@@ -133,6 +133,10 @@ def test_settlement_decisions():
     # Drugi naziv s karte (Poljice = Poljica); mjesto iz odbijene općine.
     assert "Poljica: daleko od mora i od Rijeke" in evaluate(house("Kuća Poljice", "Krk"), crit, loc).warnings
     assert evaluate(house("Kuća Klenovica", "Novi Vinodolski"), crit, loc).status == "odbijen"
+    # Odluka po nazivu naselja i kad ga portal vodi pod drugom općinom (Oprič je u popisu pod Opatijom).
+    assert evaluate(house("Kuća", "Lovran", "Oprič"), crit, loc).status == "odbijen"
+    assert evaluate(house("Kuća Oprič", "Lovran"), crit, loc).status == "odbijen"
+    assert evaluate(house("Kuća Lovran", "Lovran"), crit, loc).status == "prolazi"
 
 
 def test_risky_phrases():

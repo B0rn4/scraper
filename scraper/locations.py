@@ -145,6 +145,14 @@ class Locator:
         self.only_settlements = {self.jls[fold(k)].name: {fold(n) for n in v}
                                  for k, v in (extra.get("samo_naselja") or {}).items()}
         self.decisions = load_decisions(data_dir / "naselja_udaljenosti.csv")
+        # Naselja čiji je naziv u popisu odluka samo jednom: odluka vrijedi i kad ih portal
+        # vodi pod drugim gradom/općinom (index.hr npr. Oprič i Dobreć vodi pod Opatijom).
+        counts: dict[str, int] = {}
+        for rows in self.decisions.values():
+            for key in rows:
+                counts[key] = counts.get(key, 0) + 1
+        self.unique_decisions = {key: row for rows in self.decisions.values() for key, row in rows.items()
+                                 if counts[key] == 1}
         self.false_phrases = [re.compile(r"\b" + re.escape(fold(p)) + r"\b") for p in extra.get("lazni_pogoci", [])]
 
     # --- pretraživanje po strukturiranim poljima -------------------------
@@ -243,10 +251,13 @@ class Locator:
             if fold(jls_name) in self.jls else set()
         field = fold(settlement) if settlement else ""
         field = self.settlement_aliases.get(field, field)
-        specific = [field] if field and field in own and self.by_name(field) is None else []
+        elsewhere = {n: r for n, r in self.unique_decisions.items()
+                     if n not in own and n not in self.common_words}   # ne "Centar", "Draga"…
+        specific = [field] if field and (field in own or field in elsewhere) and self.by_name(field) is None else []
         if not specific:
             specific = sorted({name for j, name in self.scan_names(text)
-                               if j.name == jls_name and self.by_name(name) is None and name != "centar"})
+                               if (j.name == jls_name or name in elsewhere)
+                               and self.by_name(name) is None and name != "centar"})
         if only is not None:
             outside = [n for n in specific if n not in only]
             if outside and len(outside) == len(specific):
@@ -254,7 +265,7 @@ class Locator:
                 return REJECT_, f"{names} ({jls_name}): prihvaća se samo {', '.join(sorted(self._display(jls_name, n) for n in only))}"
             if not specific and field not in only:
                 return WARN_, f"{jls_name}: prihvaća se samo mjesto {', '.join(sorted(self._display(jls_name, n) for n in only))} – provjeri"
-        rows = [(n, table[n]) for n in specific if n in table]
+        rows = [(n, table.get(n) or elsewhere[n]) for n in specific if n in table or n in elsewhere]
         if not rows and field in table:
             rows = [(field, table[field])]          # npr. naselje "Krk" (grad Krk)
         if not rows:
