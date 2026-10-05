@@ -215,8 +215,21 @@ bez stotina poruka.
      Njuškalo. Nakon toga s Njuškala stižu samo stvarno novi oglasi; stari oglasi koje
      agencije osvježe i dalje se samo bilježe. Njuškalo za taj pregled čitati s
      filtrima u adresi (područje, cijena, površina) i raspoređeno kroz više pokretanja.
-4. **(u tijeku)** Općine, gradovi, PGŽ, Ministarstvo, CERP: natječaji za prodaju
-   nekretnina, jednom dnevno, po ključnim riječima.
+4. **(gotovo 5. 10.)** Natječaji za prodaju nekretnina (`scraper/tenders.py`, popis
+   stranica u `data/natjecaji.yaml`), jednom dnevno (prvo pokretanje od 7 h):
+   - 13 gradova/općina + Matulji: WordPress tražilica (wp-json) ili RSS tražilica
+     (Baška); Dobrinj, Omišalj, Punat i Krk sa stranice natječaja (Krk i RSS).
+   - PGŽ, CERP (javni pozivi – nekretnine) i Državne nekretnine d.o.o. (prodaja):
+     zadržava se samo objava koja spominje naše područje.
+   - Samo prodaja nekretnina (zemljište, kuća, nekretnina, čestica); zakup, vozila,
+     stanovi, poslovni prostori, zapošljavanje, savjetovanja, odluke o odabiru i
+     neaktivni natječaji se preskaču.
+   - Iz teksta ili priloženog PDF-a: rok, početna cijena, površine, čestice. Za
+     čestice: građevinsko područje i PPV (ISPU, DGU). Suvlasnički dio → ⚠.
+   - Prvi dan (5. 10.) poslani natječaji kojima rok nije istekao; poslije svaka nova
+     objava. Stranica koja 3 dana zaredom ne radi → upozorenje.
+   - Ministarstvo (mpgi.gov.hr) nema zaseban popis prodaje; državnu imovinu prodaju
+     CERP i Državne nekretnine d.o.o.
 5. Agencije.
 
 ## Zadaci za korisnika

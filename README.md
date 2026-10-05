@@ -31,6 +31,8 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   100 m². „Nema parkinga”, samo javni parking ili parking nije naveden → ⚠.
 - **Sažeti redak (📊):** more (zračno), vožnja do Rijeke i Zagreba, cijena prema
   prosjeku i PPV-u, broj upozorenja.
+- **Natječaji (📜):** prodaja nekretnina gradova, općina, PGŽ-a i države na našem
+  području: rok, početna cijena, površine i čestice (građevinsko područje, PPV).
 - **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
 - **Pregledni izvještaj:** jedna HTML datoteka sa svim oglasima i razlogom odluke.
 
@@ -44,6 +46,7 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 | FINA Očevidnik (samo građevinska zemljišta) | dnevni CSV izvoz | jednom dnevno |
 | vender.hr | njihov API | svakih 20 min |
 | Njuškalo | s Redmija, pravim preglednikom ([REDMI.md](REDMI.md)) | svakih 20 min |
+| Natječaji gradova i općina, PGŽ-a, CERP-a i Državnih nekretnina ([data/natjecaji.yaml](data/natjecaji.yaml)) | tražilica stranice, RSS ili stranica natječaja; tekst i priloženi PDF | jednom dnevno |
 
 Njuškalo blokira GitHub i zahtjeve bez preglednika, pa ga čita Redmi s kućne mreže.
 Javljaju se samo novi oglasi (novi broj oglasa) i sniženja; stari oglasi koje agencije
