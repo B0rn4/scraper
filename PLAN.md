@@ -210,7 +210,13 @@ bez stotina poruka.
       zračna udaljenost, Rijeka i Zagreb vožnja (OSRM, bez prometa) iz
       `data/naselja_udaljenosti.csv`; bez naselja: istoimeno mjesto (~Krk).
    - Čitanje opisa jezičnim modelom: zasad ne (korisnik će javiti).
-4. Općine, gradovi, PGŽ, Ministarstvo, CERP.
+   - **Završni pregled (dogovor 5. 10.):** kad sve faze budu gotove, korisnik još
+     jednom dobiva sve aktivne oglase koji odgovaraju (kao početni popis), uključujući
+     Njuškalo. Nakon toga s Njuškala stižu samo stvarno novi oglasi; stari oglasi koje
+     agencije osvježe i dalje se samo bilježe. Njuškalo za taj pregled čitati s
+     filtrima u adresi (područje, cijena, površina) i raspoređeno kroz više pokretanja.
+4. **(u tijeku)** Općine, gradovi, PGŽ, Ministarstvo, CERP: natječaji za prodaju
+   nekretnina, jednom dnevno, po ključnim riječima.
 5. Agencije.
 
 ## Zadaci za korisnika
