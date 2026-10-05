@@ -49,7 +49,7 @@ def parse_list(html):
         if not m:
             continue
         price = re.search(r'class="cijena">\s*([\d.,]+)\s*&#8364;', block)
-        place = re.search(r"Mjesto:\s*(?:<br\s*/?>\s*)*<strong>([^<]+)</strong>", block)
+        place = re.search(r"Mjesto:\s*(?:<br\s*/?>\s*)*<strong>(.*?)</strong>", block, re.S)
         kind = re.search(r"Vrsta:\s*<strong>([^<]+)</strong>", block)
         title = re.search(r'<strong><a href="detail\.asp\?id=\d+"[^>]*>(.*?)</a>', block, re.S)
         agency = re.search(r'showconn\.asp\?id=(\d+)"><strong>([^<]+)', block)
