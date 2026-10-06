@@ -43,6 +43,10 @@ _RENOVATION = re.compile(
 _LUXURY = re.compile(r"luksuz|luxur|ekskluziv|exclusive|\bvill?a\b|\bvile\b|\bvilu\b|bazen|\bpool\b|infinity|premium"
                      r"|prestiz|wellness|jacuzzi|sauna|panoramsk|first row|prvi red|1 ?red\b|\blux\b")
 LUXURY_FACTOR, HUGE_HOUSE_FACTOR = 0.4, 0.2
+# Starina, ruševina, nedovršena gradnja (Rohbau): cijena po m² je daleko ispod medijana, pa se
+# takva "na upit" ne odbija (mjerenje 6. 10.: 4 od 11 izgubljenih kuća u granici bile su takve).
+# "U izgradnji" nije ovdje – tako se oglašavaju i nove luksuzne vile.
+_UNFINISHED = re.compile(r"rohbau|roh bau|zapocet\w* gradnj|nedovrsen\w*|siva faza|grub\w* radov")
 _BUILDING_LAND = re.compile(r"gradevinsk")
 _AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|maslinik|vocnjak")
 
@@ -164,7 +168,9 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) ->
             basis = f"procjena ≈ {fmt_eur(value)} (medijan traženih {where}: {fmt_eur(med)}/m²)"
             luxury = bool(_LUXURY.search(fold(f"{listing.subtype} {listing.title}")))
             limit = limits["max_cijena"]
-            if (luxury and value * LUXURY_FACTOR > limit) or (listing.kind == HOUSE and value * HUGE_HOUSE_FACTOR > limit):
+            unfinished = bool(_RENOVATION.search(text) or _UNFINISHED.search(text))
+            if not unfinished and ((luxury and value * LUXURY_FACTOR > limit)
+                                   or (listing.kind == HOUSE and value * HUGE_HOUSE_FACTOR > limit)):
                 reasons.append(f"cijena na upit – {'luksuzna, ' if luxury else ''}{basis}")
                 near_miss_only = False
             else:

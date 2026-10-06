@@ -48,8 +48,10 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 - **Cijena na upit:** procjena = površina × medijan traženih €/m² u naselju. Odbija se
   luksuzna (u naslovu vila, bazen, luksuzna, ekskluzivna, prvi red… i procjena × 0,4
   iznad granice) i golema kuća (procjena × 0,2 iznad granice); ostale stižu s ⚠ i
-  procjenom. Mjereno na 12.378 oglasa s cijenom: od 1.389 kuća u granici pravilo bi
-  izgubilo njih 11. s realestatecroatia.com i burze „na upit” se i dalje preskače.
+  procjenom. Starina, ruševina i nedovršena gradnja (Rohbau, započeta gradnja) se ne
+  odbijaju – cijena po m² im je daleko ispod medijana. Mjereno na 12.378 oglasa s
+  cijenom: od kuća u granici pravilo bi izgubilo 3 goleme (660–810 m²). S
+  realestatecroatia.com i burze „na upit” se i dalje preskače.
 - **Gumb 🔕 Ne zanima me** ispod svakog oglasa: za taj oglas (i isti oglas na drugim
   portalima) više ne stiže ništa, ni sniženje. Pritisak se obradi pri sljedećem
   pokretanju (do 20 min), a gumb se tada zamijeni oznakom „Zabilježeno · ↩ dodirni za

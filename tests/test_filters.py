@@ -203,3 +203,16 @@ def test_price_on_request_luxury(ctx):
     assert evaluate(land(area=4000, **teren), *ctx, prices).status == REJECT     # 4.000 × 250 × 0,4 = 400.000 > 300.000
     assert evaluate(land(area=2000, **teren), *ctx, prices).status == WARN       # 200.000: može biti u granici
     assert evaluate(land(area=9000, price=100, title="Građevinsko zemljište"), *ctx, prices).status == WARN  # bez riječi
+
+
+def test_price_on_request_unfinished_kept(ctx):
+    """Starina ili Rohbau "na upit" ne odbija se ni kad je velika (cijena po m² je niska)."""
+    from scraper.prices import AskingPrices
+
+    prices = AskingPrices(ctx[1], {"kuca|Omišalj|": {"n": 50, "med": 3500}})
+    for title in ("OTOK KRK - Rohbau s bazenom i pogledom na more", "Starina u blizini grada Krka",
+                  "Kuća, započeta gradnja 450m2 s panoramskim pogledom"):
+        d = evaluate(house(price=1, area=660, title=title, description="Parking."), *ctx, prices)
+        assert d.status == WARN, title
+    vila = evaluate(house(price=1, area=349, title="Luksuzna vila u izgradnji", description="Parking."), *ctx, prices)
+    assert vila.status == REJECT                                       # "u izgradnji" ne spašava luksuznu
