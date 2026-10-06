@@ -74,7 +74,7 @@ def test_runner_marks_land_outside_building_zone(tmp_path):
     d = Decision(PASS, jls="Krk")
     runner._check_land(y, d)
     assert d.status == PASS and "(neizgrađeni dio)" in y.extra["gp"]
-    assert y.extra["ppv"] == "🏛 PPV 2026. (na lokaciji, blok Brzac - Građevinsko): građevinsko 130 €/m² – oglas 55 % iznad gornje"
+    assert y.extra["ppv"] == "🏛 PPV (na lokaciji, blok Brzac - Građevinsko): građevinsko 130 €/m² – oglas 55 % iznad gornje"
 
 
 def test_runner_house_building_zone(tmp_path):

@@ -121,14 +121,11 @@ def land_note(ppm: float, low: float, high: float, where: str, who: str = "oglas
     else:
         rel = f"{who} u rasponu"
     span = f"{fmt_eur(low)}/m²" if low == high else f"{low:,}–{high:,} €/m²".replace(",", ".")
-    return f"🏛 PPV {PPV_YEAR}. ({where}): građevinsko {span} – {rel}"
+    return f"🏛 PPV ({where}): građevinsko {span} – {rel}"
 
 
 class Ppv:
     """Plan približnih vrijednosti po naseljima (ostvarene cijene)."""
-    SIZES = {"100+": ("100+", "75-100", "55-75"), "75-100": ("75-100", "100+", "55-75"),
-             "55-75": ("55-75", "75-100", "100+")}
-
     def __init__(self, locator, path: Path = PPV_FILE):
         self.locator = locator
         data = json.loads(Path(path).read_text(encoding="utf-8")) if Path(path).exists() else {}
@@ -137,7 +134,7 @@ class Ppv:
         self.names = _names(locator)
 
     def short(self, listing: Listing, jls: str) -> str | None:
-        """Za sažeti redak, samo za zemljišta (za kuće je PPV samo orijentacija preko stanova)."""
+        """Za sažeti redak, samo za zemljišta."""
         if listing.kind != LAND or not jls or not _ok(listing.kind, listing.price, listing.area) or _agricultural(listing):
             return None
         place = place_of(self.locator, jls, listing.title, listing.settlement)
@@ -147,7 +144,8 @@ class Ppv:
         return land_short(listing.price / listing.area, *item["zemljiste"])
 
     def note(self, listing: Listing, jls: str, who: str = "oglas") -> str | None:
-        """Npr. "🏛 PPV 2026. (Njivice): građevinsko 158–219 €/m² – oglas 15 % iznad gornje"."""
+        """Samo za zemljišta (za kuće PPV ne postoji; vrijednost stanova je zavaravala), npr.
+        "🏛 PPV (Njivice): građevinsko 158–219 €/m² – oglas 15 % iznad gornje"."""
         if not jls or not _ok(listing.kind, listing.price, listing.area) or _agricultural(listing):
             return None
         place = place_of(self.locator, jls, listing.title, listing.settlement)
@@ -162,16 +160,6 @@ class Ppv:
         if listing.kind == LAND and item.get("zemljiste"):
             low, high = item["zemljiste"]
             return land_note(ppm, low, high, f"{where}{', raspon naselja' if whole else ''}", who)
-        if listing.kind == HOUSE and item.get("stanovi"):
-            size = "100+" if listing.area > 100 else "75-100" if listing.area > 75 else "55-75"
-            key = next((k for k in self.SIZES[size] if k in item["stanovi"]), None)
-            if not key:
-                return None
-            value = item["stanovi"][key]
-            diff = ppm / value - 1
-            rel = "oko te vrijednosti" if abs(diff) < 0.1 else f"{who} {_pct(diff)} % {'iznad' if diff > 0 else 'ispod'}"
-            where = f"{where}, medijan naselja" if whole else where
-            return f"🏛 PPV {PPV_YEAR}. za STANOVE {key} m², {where}: {fmt_eur(value)}/m² – {rel}"
         return None
 
 

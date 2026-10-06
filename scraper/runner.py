@@ -12,7 +12,7 @@ import yaml
 
 from . import dedupe, report, risks, tenders, watch
 from .ispu import Ispu, check_land, gp_text, heritage_warning
-from .prices import AskingPrices, Ppv, land_note, land_short
+from .prices import PPV_YEAR, AskingPrices, Ppv, land_note, land_short
 from .db import State
 from .filters import evaluate
 from .http import Http
@@ -188,6 +188,10 @@ class Runner:
             except Exception as exc:  # noqa: BLE001
                 self.log(f"Banke: GREŠKA {type(exc).__name__}: {exc}")
                 traceback.print_exc()
+            try:
+                self._ppv_reminder(state)
+            except Exception as exc:  # noqa: BLE001
+                self.log(f"PPV podsjetnik: GREŠKA {type(exc).__name__}: {exc}")
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
                 self._check_redmi(state)
@@ -384,6 +388,32 @@ class Runner:
         state.meta_set("daily:banke", today)
         state.conn.commit()
 
+    def _ppv_reminder(self, state: State) -> None:
+        """Nova godina: podsjetnik da se PPV osvježi (Telegram i mail). Zatim jednom dnevno
+        provjera ISPU-a; kad objavi PPV za 1.1. nove godine, još jedan podsjetnik."""
+        if self.device != "github" or not self.telegram or self.now.year <= PPV_YEAR:
+            return
+        today = self.now.date().isoformat()
+        if state.meta_get("daily:ppv") == today:
+            return
+        state.meta_set("daily:ppv", today)
+        how = "Na GitHubu: Actions → „PPV – godišnje osvježavanje” → Run workflow."
+        if state.meta_get(f"ppv:nova_godina:{self.now.year}") is None:
+            state.meta_set(f"ppv:nova_godina:{self.now.year}", self.stamp)
+            text = (f"Sretna Nova godina! PPV u porukama je još za 1.1.{PPV_YEAR}. Kad ISPU objavi PPV za "
+                    f"1.1.{self.now.year}., javit ću da pokreneš osvježavanje. {how}")
+            self.telegram.send_text(f"🏛 <b>PPV</b>\n{html.escape(text)}")
+            self._email(f"Scraper: osvježi PPV ({self.now.year})", text)
+        if self._ispu is None:
+            self._ispu = Ispu()
+        year = self._ispu.ppv_year()
+        if year and year > PPV_YEAR and state.meta_get(f"ppv:objavljen:{year}") is None:
+            state.meta_set(f"ppv:objavljen:{year}", self.stamp)
+            text = f"ISPU je objavio PPV za 1.1.{year}. Pokreni osvježavanje: {how}"
+            self.telegram.send_text(f"🏛 <b>Novi PPV ({year})</b>\n{html.escape(text)}")
+            self._email(f"Scraper: objavljen PPV {year}", text)
+            self.log(f"PPV: objavljen {year}, poslan podsjetnik")
+
     def _tender_message(self, t: tenders.Tender, info: dict, found: list[tenders.Lot], jls: str, where: str,
                         verdict: tuple[str, str] | None, prices: AskingPrices | None, deadline: float) -> str:
         """Poruka za natječaj s istim podacima kao za oglase: sažeti redak (more, Rijeka,
@@ -432,7 +462,7 @@ class Runner:
                 if unit and not lot.house:
                     lot.notes.append(land_note(unit, low, high, f"na lokaciji, blok {point.block.title()}", "početna cijena"))
                     parts.append(land_short(unit, low, high))
-                else:
+                elif not lot.house:                   # za kuće PPV ne postoji
                     span = f"{round(low)}" if round(low) == round(high) else f"{round(low)}–{round(high)}"
                     lot.ppv_range = f"PPV {span} €/m²"
             if unit and not lot.house and jls:

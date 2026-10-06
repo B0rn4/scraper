@@ -189,9 +189,11 @@ bez stotina poruka.
         središte zna pasti u šumu ili hotel; izrada: tijek rada „PPV – godišnje
         osvježavanje” na GitHubu, `tools/ppv_preuzmi.py` + `tools/build_ppv.py`). U poruci: zemljište prema rasponu građevinskog
         zemljišta stambene/mješovite namjene (ispod donje granice za 45 %+ „neobično
-        jeftino”), kuća prema stanovima slične veličine (orijentacija). Bez
-        prepoznatog naselja: raspon svih naselja grada/općine. Poljoprivredna
-        zemljišta se ne uspoređuju. Osvježiti svake godine nakon 1.1.
+        jeftino”); (6. 10.) za kuće se ne prikazuje (vrijednost stanova je zavaravala),
+        a u tekstu nema godine („🏛 PPV (Njivice): …”). Bez prepoznatog naselja: raspon
+        svih naselja grada/općine. Poljoprivredna zemljišta se ne uspoređuju.
+        Osvježavanje jednom godišnje: 1. 1. stiže podsjetnik (Telegram i mail), a kad
+        ISPU objavi novi PPV (dnevna provjera kataloga) još jedan.
       - **(gotovo 5. 10.)** Građevinsko područje i PPV na samoj lokaciji, za zemljišta
         koja stižu (`scraper/ispu.py`): katastarska čestica iz opisa (k.č. … k.o. …;
         matični broj k.o. iz ISPU-a, čestica iz javnog servisa DGU-a INSPIRE CP WFS)

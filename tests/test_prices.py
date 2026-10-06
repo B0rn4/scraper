@@ -68,7 +68,7 @@ def test_saved_file_and_message_line(loc, tmp_path):
     again = AskingPrices.from_file(tmp_path / "cijene.json", loc)
     x = Listing(source="t", source_id="1", url="u", title="Kuća Njivice", kind=HOUSE, price=300_000, area=100)
     x.extra["usporedba"] = again.compare(x, "Omišalj")
-    x.extra["ppv"] = "🏛 PPV 2026. (Njivice), stanovi 75-100 m²: 4.200 €/m² – oglas 30 % ispod"
+    x.extra["ppv"] = "🏛 PPV (Njivice): građevinsko 158–219 €/m² – oglas u rasponu"
     text = format_listing(x, Decision(status=WARN, jls="Omišalj"))
     assert "💰 25 % ispod medijana traženih (Njivice: 4.000 €/m²" in text
     assert text.index("🏛 PPV") < text.index("💰")   # ostvarene cijene prije traženih
@@ -83,12 +83,10 @@ def test_ppv_note(loc, tmp_path):
     ppv = Ppv(loc, tmp_path / "ppv.json")
     land = dict(source="t", source_id="1", url="u", kind=LAND, area=600)
     assert ppv.note(Listing(title="Zemljište Njivice", price=150_000, **land), "Omišalj") == \
-        "🏛 PPV 2026. (Njivice): građevinsko 158–219 €/m² – oglas 15 % iznad gornje"
+        "🏛 PPV (Njivice): građevinsko 158–219 €/m² – oglas 15 % iznad gornje"
     assert ppv.note(Listing(title="Zemljište Njivice", price=110_000, **land), "Omišalj").endswith("oglas u rasponu")
     assert "Omišalj – cijela općina, raspon naselja" in ppv.note(Listing(title="Zemljište", price=90_000, **land), "Omišalj")
     assert ppv.note(Listing(title="Zemljište Njivice", price=45_000, **land), "Omišalj").endswith("neobično jeftino, provjeri zašto")
     assert ppv.note(Listing(title="Poljoprivredno zemljište Njivice", price=45_000, **land), "Omišalj") is None
     house = Listing(source="t", source_id="2", url="u", title="Kuća u Njivicama", kind=HOUSE, price=300_000, area=120)
-    assert ppv.note(house, "Omišalj") == \
-        "🏛 PPV 2026. za STANOVE 100+ m², Njivice: 3.200 €/m² – oglas 20 % ispod"
-    assert ppv.note(house, "Krk") is None
+    assert ppv.note(house, "Omišalj") is None             # za kuće PPV ne postoji (stanovi su zavaravali)

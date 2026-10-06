@@ -210,6 +210,14 @@ class Ispu:
             self._layers = gp + ppv[:1] + heritage
         return self._layers
 
+    def ppv_year(self) -> int | None:
+        """Najnovija godina PPV-a za zemljišta u katalogu ISPU-a (za podsjetnik o osvježavanju)."""
+        found: list[dict] = []
+        self._walk(self.session.get(API + "gis/catalog-izbornik", timeout=self.timeout).json(), [], found)
+        years = [int(m.group(1)) for la in found
+                 if (m := re.match(r"PPV 1\.1\.(\d{4})\. – zemljišta", la["label"].get("hr", "")))]
+        return max(years) if years else None
+
     def _walk(self, node, path, out):
         if isinstance(node, dict):
             label = node.get("label") if isinstance(node.get("label"), dict) else None

@@ -98,7 +98,7 @@ def test_format_tender():
                "2026-09-21", "Predmet natječaja je prodaja zemljišta. " * 10)
     lot = tenders.Lot("VRBNIK", ["788/2"], price=45000.0, cadastre_area=612.0,
                       gp="u građevinskom području naselja (izgrađeni dio)",
-                      notes=["🏛 PPV 2026. (na lokaciji, blok Vrbnik): građevinsko 74–86 €/m² – početna cijena u rasponu"])
+                      notes=["🏛 PPV (na lokaciji, blok Vrbnik): građevinsko 74–86 €/m² – početna cijena u rasponu"])
     text = format_tender(t, {"rok": "2026-10-15", "cijene": [45000.0], "povrsine": [612.0], "dio": True}, [lot],
                          "📊 more 0,4 km · PPV u rasponu · ⚠ 1", "Vrbnik – Vrbnik", ["prodaje se dio nekretnine – provjeri"])
     assert text.splitlines() == [
@@ -109,7 +109,7 @@ def test_format_tender():
         "📍 Vrbnik – Vrbnik",
         "🗺 k.č. 788/2 k.o. VRBNIK (612 m²): u građevinskom području naselja (izgrađeni dio)",
         "💶 početna cijena 45.000 € · 74 €/m²",
-        "🏛 PPV 2026. (na lokaciji, blok Vrbnik): građevinsko 74–86 €/m² – početna cijena u rasponu",
+        "🏛 PPV (na lokaciji, blok Vrbnik): građevinsko 74–86 €/m² – početna cijena u rasponu",
         "⚠ prodaje se dio nekretnine – provjeri"]
     # Bez čestica: cijene i površine iz teksta.
     text = format_tender(t, {"cijene": [45000.0], "povrsine": [612.0]})
@@ -145,7 +145,7 @@ def test_runner_tender_message_with_parcels(tmp_path):
         "📍 Omišalj – Njivice",
         "🗺 k.č. 1234/5 k.o. Njivice (650 m²): u građevinskom području naselja (neizgrađeni dio)",
         "💶 početna cijena 65.000 € · 100 €/m²",
-        "🏛 PPV 2026. (na lokaciji, blok Njivice - Građevinsko): građevinsko 158–219 €/m² – početna cijena 35 % ispod donje",
+        "🏛 PPV (na lokaciji, blok Njivice - Građevinsko): građevinsko 158–219 €/m² – početna cijena 35 % ispod donje",
         "💰 50 % ispod medijana traženih (Njivice: 200 €/m², 20 oglasa)"]
 
 

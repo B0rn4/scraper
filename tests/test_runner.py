@@ -277,3 +277,44 @@ def test_known_listing_gets_place_from_earlier_fetch(tmp_path, monkeypatch):
     state = State(tmp_path / "s.db")
     assert state.get("t:5")["status"] == REJECT
     state.close()
+
+
+def test_ppv_new_year_reminder(tmp_path, monkeypatch):
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    import scraper.runner as runner_mod
+
+    sent, mails = [], []
+
+    class Tg:
+        def send_text(self, text, **kw):
+            sent.append(text)
+
+    class FakeIspu:
+        year = 2026
+
+        def ppv_year(self):
+            return self.year
+
+    def runner(day):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.telegram, r._ispu = Tg(), ispu
+        r._email = lambda subject, text, *a, **k: mails.append(subject)
+        r.now = datetime.fromisoformat(day).replace(tzinfo=ZoneInfo("Europe/Zagreb"))
+        return r
+
+    monkeypatch.setattr(runner_mod, "PPV_YEAR", 2026)
+    ispu = FakeIspu()
+    state = State(tmp_path / "s.db")
+    runner("2026-12-31T09:00")._ppv_reminder(state)
+    assert sent == []                                             # još 2026.
+    r = runner("2027-01-01T07:00")
+    r._ppv_reminder(state)
+    r._ppv_reminder(state)                                        # isti dan samo jednom
+    assert len(sent) == 1 and "Nova godina" in sent[0] and mails == ["Scraper: osvježi PPV (2027)"]
+    ispu.year = 2027
+    runner("2027-01-02T07:00")._ppv_reminder(state)
+    runner("2027-01-03T07:00")._ppv_reminder(state)
+    assert len(sent) == 2 and "Novi PPV (2027)" in sent[1] and mails[-1] == "Scraper: objavljen PPV 2027"
+    state.close()
