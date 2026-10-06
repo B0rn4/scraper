@@ -404,7 +404,26 @@ bez stotina poruka.
       - „Prodajem kuću, polovica kuće je renovirana” odbijano kao prodaja dijela.
       Uz to: „Ne zanima me” se više ne prenosi na jeftiniju kuću iste površine u istom mjestu
       (može biti druga nekretnina) – takva stiže kao „već viđen … sad jeftiniji”.
-   5. **Testovi:** automatski (sad 145) dopuniti cijelim pokretanjem na spremljenim
+
+      **Četvrta runda (6. 10., nova instanca, od stvarnih podataka u bazi):** 9 nalaza, svi
+      provjereni i popravljeni (uz test):
+      - odbijeni oglasi zabilježeni „tiho” (tiho početno čitanje, stari Njuškalo oglasi) smatrali
+        su se viđenima: kad počnu odgovarati, nije stizalo „🔄 Sad odgovara”, a njihove kopije na
+        drugim portalima bile su „već viđene”. Stvaran slučaj: Matulji – strogi centar, kuća
+        80 m², 300.000 € (Njuškalo, index.hr, oglasnik) i Matulji, zemljište 717 m², 145.000 €.
+        Odbijeni se više ne bilježe tiho; postojeći (oko 4.800) jednokratno oslobođeni;
+      - neuspjela obavijest ponavljala se samo ako je portal ponovno prikaže – sad se pamti
+        (najviše 2 dana) i šalje sljedeći put;
+      - moj popravak iz treće runde: „Soline, građevinsko”, „Atraktivan građevinski teren”,
+        „Fužine, građevinsko” nisu se prepoznavali kao građevinsko (riječ završava na „ne”/„van”);
+      - natječaj: čestica sa „zgradom”, „ruševinom” ili „starinom” mjerena kao zemljište (180 m²
+        → premalo); naslovi „… po načelu najpovoljnije ponude” odbacivani kao odluka o odabiru;
+      - burza: „Barić Draga” (Karlobag) i „Sveti Ivan, Općina Oprtalj” prolazili kao naše
+        mjesto – sad svaki dio naziva mora biti cijeli naš naziv;
+      - kuća za 1.200–3.000 € uz 180–400 m² je cijena po m² (prije ukupna – prolazila je);
+      - „suvlasnički dio zajedničkog puta/dvorišta/parkirališta” uz kuću više se ne odbija;
+      - „500m2” u naslovu (bez razmaka) spajao je dva različita zemljišta kao isti oglas.
+   5. **Testovi:** automatski (sad 152) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj

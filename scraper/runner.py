@@ -1,5 +1,6 @@
 """Glavni tok: dohvat, filter, obavijesti, izvještaji, nadzor izvora."""
 
+import dataclasses
 import html
 import json
 import sqlite3
@@ -140,6 +141,14 @@ class Runner:
             self.log(f"Izvan radnog vremena ({self.now:%H:%M}), ništa se ne radi.")
             return
         state = State(self.db_path)
+        if not state.meta_get("popravak:tiho_odbijeni"):
+            # Jednokratno: odbijeni oglasi zabilježeni "tiho" smatrali su se viđenima, pa ni
+            # oni ni njihove kopije na drugim portalima nisu stizali kad počnu odgovarati.
+            n = state.conn.execute("UPDATE listings SET notified_at = NULL, notified_price = NULL "
+                                   "WHERE notified_at LIKE 'tiho:%' AND status = ?", (REJECT,)).rowcount
+            state.meta_set("popravak:tiho_odbijeni", self.stamp)
+            state.conn.commit()
+            self.log(f"Tiho zabilježeni odbijeni oglasi više se ne smatraju viđenima: {n}")
         last = state.meta_get("last_run")
         if reserve and last and self.now - datetime.fromisoformat(last) < timedelta(minutes=RESERVE_MINUTES):
             self.log(f"Rezervno pokretanje: glavni okidač radi (zadnje pokretanje {last[11:16]}), ništa se ne radi.")
@@ -193,8 +202,10 @@ class Runner:
                     decided.append((x, d))
                     if silent_baseline or (old is None and x.extra.get("stari_oglas")):
                         # Bez obavijesti (početak praćenja ili stari oglas ponovno objavljen),
-                        # ali zabilježeno – sniženje cijene kasnije i dalje stiže.
-                        state.mark_notified(x.key, x.price, f"tiho:{self.stamp}")
+                        # ali zabilježeno – sniženje cijene kasnije i dalje stiže. Odbijeni se ne
+                        # bilježe: kad počne odgovarati (izmjena oglasa ili pravila), stiže poruka.
+                        if d.notify:
+                            state.mark_notified(x.key, x.price, f"tiho:{self.stamp}")
                         continue
                     if not first:
                         headline = self._notify_reason(x, d, old)
@@ -220,6 +231,7 @@ class Runner:
 
             if baseline:
                 self._send_baseline(state, baseline)
+            to_notify += self._unsent(state, seen, {x.key for x, _, _ in to_notify})
             if len(to_notify) <= self.cfg.get("obavijesti", {}).get("max_poruka_po_pokretanju", 30):
                 deadline = time.monotonic() + LAND_CHECK_SECONDS
                 for x, d, _ in to_notify:
@@ -715,12 +727,13 @@ class Runner:
             path = self._report("novi-oglasi", "Novi oglasi", entries, [])
             if self._send_report(path, f"<b>{len(to_notify)} novih oglasa</b> – previše za pojedinačne poruke, popis je u datoteci.",
                                  "Scraper: puno novih oglasa", mail=False) is False:
-                return                       # kao i kod pojedinačnih poruka: pokušava se ponovno
+                self._remember_unsent(state, to_notify)     # pokušava se ponovno sljedeći put
+                return
             for x, _, _ in to_notify:
                 state.mark_notified(x.key, x.price, f"zbirno:{self.stamp}")
-            state.conn.commit()
+            self._remember_unsent(state, [])
             return
-        sent = 0
+        sent, failed = 0, []
         for x, d, headline in to_notify:
             try:
                 self.telegram.send_listing(x, d, headline)
@@ -728,8 +741,42 @@ class Runner:
                 sent += 1
             except Exception as exc:  # noqa: BLE001
                 self.log(f"Obavijest nije poslana ({x.key}): {exc}")
-        state.conn.commit()
+                failed.append((x, d, headline))
+        self._remember_unsent(state, failed)
         self.log(f"Poslano obavijesti: {sent}/{len(to_notify)}")
+
+    def _remember_unsent(self, state: State, items) -> None:
+        """Neposlane obavijesti čekaju sljedeće pokretanje i kad ih portal više ne prikazuje
+        (novi oglasi su ih pomaknuli dalje od pročitanih stranica)."""
+        state.meta_set("neposlano", json.dumps([{"oglas": x.to_dict(), "odluka": dataclasses.asdict(d), "naslov": h,
+                                                 "od": self.stamp} for x, d, h in items], ensure_ascii=False))
+        state.conn.commit()
+
+    def _unsent(self, state: State, seen: dedupe.Seen, queued: set[str]) -> list[tuple[Listing, Decision, str]]:
+        """Obavijesti koje prošli put nisu poslane (najviše 2 dana stare), osim ako su u
+        međuvremenu poslane (i kao isti oglas s drugog portala), oglas je odbijen ili
+        označen "Ne zanima me"."""
+        out = []
+        try:
+            items = json.loads(state.meta_get("neposlano") or "[]")
+        except ValueError:
+            return out
+        oldest = (self.now - timedelta(days=2)).isoformat(timespec="seconds")
+        for item in items:
+            try:
+                x, d = Listing(**item["oglas"]), Decision(**item["odluka"])
+            except (TypeError, KeyError):
+                continue
+            row = state.get(x.key)
+            if (x.key in queued or x.key in self.muted or item.get("od", "") < oldest or not row
+                    or row.get("notified_at") or row.get("status") == REJECT):
+                continue
+            if any(seen.delivered(t, x.key) for t in seen.twins(dedupe.row(x, d), cheaper_ok=False)):
+                continue
+            out.append((x, d, item.get("naslov", "")))
+        if out:
+            self.log(f"Ponovno slanje neposlanih obavijesti: {len(out)}")
+        return out
 
     def _send_baseline(self, state: State, baseline) -> None:
         entries, sources = [], []

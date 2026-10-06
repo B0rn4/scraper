@@ -29,8 +29,10 @@ _LAND_OR_HOUSE = re.compile(r"\b(zemlj?ist\w*|zemjist\w*|gradevinsk\w*|kuc[aeiu]
 _EXCLUDE = re.compile(r"\b(zakup\w*|najam\w*|najm\w*|vozil\w*|automobil\w*|cistilic\w*|umjetnin\w*|mljekomat\w*|oprem\w*"
                       r"|plovil\w*|brod\w*|poslovn\w* prostor\w*|stan(a|ova|ove)?\b|garaz\w*|udjel\w*|dionic\w*)")
 # Nije sam natječaj: savjetovanje, odluka o odabiru, rezultati, poništenje.
-_NOT_TENDER = re.compile(r"\b(savjetovanj\w*|odabir\w*|izbor\w* najpovoljnij\w*|najpovoljnij\w*|ponistenj\w*|ponisten\w*"
-                         r"|rezultat\w*|zapisnik\w*|obustav\w*|izvjesc\w*|izvjesce)")
+# "Po načelu najpovoljnije ponude", "odabir najpovoljnijeg ponuditelja putem nadmetanja" su
+# u naslovima samih natječaja; isključuje se tek odluka o odabiru ili naslov koji njime počinje.
+_NOT_TENDER = re.compile(r"\b(savjetovanj\w*|odluk\w* o (odabir|izbor|prihvat|ponist)\w*|ponistenj\w*|ponisten\w*"
+                         r"|rezultat\w*|zapisnik\w*|obustav\w*|izvjesc\w*|izvjesce)|^(odabir|izbor)\w*")
 _DATE = re.compile(r"(\d{1,2})\.\s*(\d{1,2})\.\s*(20\d\d)|(\d{1,2})\.\s*(sijecnja|veljace|ozujka|travnja|svibnja|lipnja|srpnja"
                    r"|kolovoza|rujna|listopada|studenoga|studenog|prosinca)\s*(20\d\d)")
 _MONTHS = {"sijecnja": 1, "veljace": 2, "ozujka": 3, "travnja": 4, "svibnja": 5, "lipnja": 6, "srpnja": 7, "kolovoza": 8,
@@ -73,7 +75,8 @@ _FLAT = re.compile(r"\b(stan\b|stana\b|stanovi\b|stanova\b|\(stan \d|stambeni pr
 _LAND_WORDS = re.compile(r"\b(zemljiste|zemljista|zemljistu|zemljistem|kuc[aeiu]\b|kuca\b|kucom\b|okucnic\w*|oranic\w*"
                          r"|pasnjak\w*|livad\w*|vocnjak\w*|vinograd\w*|sum[aeu]\b|dvorist\w*|neplodno|ruin\w*|rusevin\w*"
                          r"|stambena zgrada|gospodarsk\w* zgrad\w*|gradiliste|gradevinsk\w*|parcel\w*|vrt\b|maslinik\w*)")
-_HOUSE = re.compile(r"\b(kuc[aeiu]\w*|kuca\b|stamben\w* (zgrad|objekt)\w*)")
+# Čestica s građevinom (i ruševinom, starinom): mjeri se kao kuća, ne kao zemljište.
+_HOUSE = re.compile(r"\b(kuc[aeiu]\w*|kuca\b|stamben\w* (zgrad|objekt)\w*|zgrad\w*|zgr\b|rusevin\w*|starin\w*)")
 
 
 @dataclass

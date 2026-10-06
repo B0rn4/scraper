@@ -32,8 +32,8 @@ _PLACE_WORDS: set[str] = set()   # riječi iz naziva naselja i gradova/općina (
 def _words(title: str) -> set[str]:
     """Opisne riječi naslova: bez općenitih riječi i bez naziva mjesta (inače bi sve kuće u
     Baški imale zajedničku riječ "baska")."""
-    return {w for w in fold(title or "").split()
-            if len(w) >= 4 and not w.isdigit() and w not in _GENERIC and w not in _PLACE_WORDS}
+    return {w for w in fold(title or "").split()            # bez brojeva i površina ("500m2", "1.200m2")
+            if len(w) >= 4 and not w[0].isdigit() and w not in _GENERIC and w not in _PLACE_WORDS}
 
 
 def _learn_places(locator) -> None:

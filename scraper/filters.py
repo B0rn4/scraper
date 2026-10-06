@@ -48,20 +48,26 @@ LUXURY_FACTOR, HUGE_HOUSE_FACTOR = 0.4, 0.2
 # "U izgradnji" nije ovdje – tako se oglašavaju i nove luksuzne vile.
 _UNFINISHED = re.compile(r"rohbau|roh bau|zapocet\w* gradnj|nedovrsen\w*|siva faza|grub\w* radov")
 # "Negrađevinsko" i "izvan građevinskog (područja)" nisu građevinsko zemljište.
-_BUILDING_LAND = re.compile(r"(?<!ne)(?<!ne )(?<!izvan )(?<!van )gradevinsk")
+_BUILDING_LAND = re.compile(r"(?<!\bne)(?<!\bne )(?<!\bizvan )(?<!\bvan )gradevinsk")
 _AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|maslinik|vocnjak"
                            r"|\bne ?gradevinsk|\b(izvan|van) gradevinsk")
 
 
 def effective_price(price: float | None, area: float | None, total: bool = False, kind: str = "") -> float | None:
-    """Ukupna cijena kakvu treba usporediti s granicom. Do 1.000 € je obično cijena po m²
+    """Ukupna cijena kakvu treba usporediti s granicom. Do 1.000 € (kuća i do 10.000 € uz
+    manje od 50 €/m²) je obično cijena po m²
     → puta površina. Kuća: do 100 € (1, 10, 100) portali pišu umjesto "cijena na upit" →
     None. Zemljište: "100 €" je zamjena za "na upit" (u bazi ~100 oglasa, većinom skupi
     tereni), a 10–99 € je stvarna cijena po m² (15, 22, 45, 55, 60 €/m² u bazi); ispod
     10 € opet zamjena. FINA (total=True): početna cijena je uvijek ukupna."""
     if not price:
         return None
-    if total or price > 1000:
+    if total:
+        return price
+    if price > 1000:
+        # Kuća za 1.200 ili 3.000 € uz 180–400 m² (ispod 50 €/m²) – to je cijena po m².
+        if kind == HOUSE and area and price < 10_000 and price / area < 50:
+            return price * area
         return price
     per_m2 = (price >= 10 and price != 100) if kind == LAND else price > 100
     return price * area if per_m2 and area else None

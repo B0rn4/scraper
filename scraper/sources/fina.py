@@ -27,7 +27,7 @@ _KO = re.compile(
     r"(?:\b[kK]\.\s?[oO]\.?|katastarsk\w*\s+općin\w*)\s*:?\s*"
     r"((?:Sv\.\s*)?[A-ZČĆŽŠĐ][\w]*(?:(?:\s*-\s*|\s+)(?:[A-ZČĆŽŠĐ][\w]*|na(?=\s+[A-ZČĆŽŠĐ]))){0,3})"
 )
-_BUILDING = re.compile(r"(?<!ne)(?<!ne )(?<!izvan )(?<!van )gradevinsk")    # ne "negrađevinsko"
+_BUILDING = re.compile(r"(?<!\bne)(?<!\bne )(?<!\bizvan )(?<!\bvan )gradevinsk")    # ne "negrađevinsko"
 _LAND = re.compile(r"zemljist|cestic|parcel")
 _AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|\bsuma\b|oranic|livad|pasnjak|vinograd|maslinik|vocnjak"
                            r"|\bne ?gradevinsk|\b(izvan|van) gradevinsk")

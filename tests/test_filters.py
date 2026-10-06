@@ -255,3 +255,25 @@ def test_third_review_land_rules(ctx):
     assert "cijena nije navedena" in evaluate(house(price=55), *ctx).warnings
     assert evaluate(house(description="Prodajem kuću, polovica kuće je renovirana 2020."), *ctx).status != REJECT
     assert evaluate(house(description="Prodajem 1/2 kuće."), *ctx).status == REJECT
+
+
+def test_fourth_review_rules(ctx):
+    """"Soline, građevinsko" i "Atraktivan građevinski teren" jesu građevinsko; kuća za 3.000 €
+    uz 180 m² je cijena po m²; suvlasnički dio zajedničkog puta/dvorišta nije prodaja dijela."""
+    for title in ("Soline, građevinsko zemljište 800 m2", "Atraktivan građevinski teren", "Opatija, Poljane - građevinsko"):
+        d = evaluate(land(subtype="", title=title), *ctx)
+        assert "vrsta zemljišta nije navedena" not in d.warnings and not any("nije građevinsko" in r for r in d.reasons), title
+    d = evaluate(house(price=3_000, area=180), *ctx)
+    assert d.status == REJECT and "cijena 540.000 € > 400.000 €" in d.reasons
+    assert "cijena" not in " ".join(evaluate(house(price=9_000, area=80), *ctx).warnings)   # 112 €/m²: ukupna
+    for text in ("Prodajem kuću i suvlasnički dio zajedničkog dvorišta.", "Prodaje se kuća te idealni dio od 1/3 zajedničkog puta."):
+        assert evaluate(house(description=text), *ctx).status != REJECT, text
+    assert evaluate(house(description="Prodaje se suvlasnički dio kuće (1/2)."), *ctx).status == REJECT
+
+
+def test_burza_place_must_be_whole_name():
+    loc = Locator()
+    for place in ("Barić Draga", "Kraj Drage", "Sveti Ivan, Općina Oprtalj"):
+        assert not loc.knows(place), place
+    for place in ("Rijeka, Donja Drenova", "Kostrena Sveta Lucija", "Grižane-Belgrad", "Opatija - Volosko", "Malinska"):
+        assert loc.knows(place), place

@@ -748,3 +748,78 @@ def test_known_listing_keeps_area_from_listing_page(tmp_path, monkeypatch):
     state = State(tmp_path / "s.db")
     assert state.get("t:7")["area"] == 1200
     state.close()
+
+
+# --- četvrta runda ---
+
+def test_round_area_glued_to_unit_is_not_a_shared_word():
+    from scraper.dedupe import same_property
+
+    a = {"key": "a:1", "source": "a", "kind": "zemljiste", "jls": "Crikvenica", "price": 100_000, "area": 500,
+         "title": "Zemljište Crikvenica, 500m2"}
+    b = dict(a, key="b:2", source="b", title="Zemljište Crikvenica, 500m2")
+    assert not same_property(a, b)
+
+
+def test_silent_rejected_listing_arrives_when_it_starts_matching(tmp_path, monkeypatch):
+    """Tiho početno čitanje: odbijen oglas se ne bilježi kao viđen, pa kad počne odgovarati
+    (izmjena oglasa ili pravila) stiže "🔄 Sad odgovara" – i njegova kopija na drugom portalu
+    nije blokirana."""
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "quiet", QuietSource)
+    QuietSource.modes = []
+    QuietSource.batches = [[listing(300_000, "1", area=60)], [listing(300_000, "1", area=120)]]   # ispravljena površina
+    sent = []
+    for _ in range(2):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"quiet": True}
+        r._check_land = lambda *a, **k: None
+        r._banks = r._tenders = r._ppv_reminder = lambda *a, **k: None
+        r._send_notifications = lambda state, items: sent.extend((x.key, h) for x, d, h in items)
+        r.run(force=True)
+    assert sent and sent[0][0] == "t:1" and "Sad odgovara" in sent[0][1]
+
+
+def test_old_silent_rejected_rows_are_released_once(tmp_path):
+    state = State(tmp_path / "s.db")
+    state.upsert(listing(450_000, "1"), Decision(REJECT, ["x"]), "t1")
+    state.mark_notified("t:1", 450_000, "tiho:t1")
+    state.upsert(listing(300_000, "2"), Decision(PASS, jls="Punat"), "t1")
+    state.mark_notified("t:2", 300_000, "tiho:t1")
+    state.close()
+    r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+    r.cfg["izvori"] = {}
+    r._banks = r._tenders = r._ppv_reminder = lambda *a, **k: None
+    r.run(force=True)
+    state = State(tmp_path / "s.db")
+    assert state.get("t:1")["notified_at"] is None and state.get("t:2")["notified_at"] == "tiho:t1"
+    state.close()
+
+
+def test_failed_send_is_retried_even_if_portal_no_longer_lists_it(tmp_path, monkeypatch):
+    calls = []
+
+    class Tg:
+        chat_id = "1"
+        fail = True
+
+        def send_listing(self, x, d, h):
+            if Tg.fail:
+                raise RuntimeError("502")
+            calls.append(x.key)
+
+        def send_text(self, *a, **k):
+            pass
+
+        def send_document(self, *a, **k):
+            pass
+
+    def configure(r, i):
+        r.telegram = Tg()
+        r._send_notifications = runner_mod_send.__get__(r)
+        Tg.fail = i == 1
+
+    runner_mod_send = Runner._send_notifications
+    _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [listing(sid="1")], [listing(sid="2")]], configure)
+    assert sorted(calls) == ["t:1", "t:2"]                     # t:1 više nije na popisu, a ipak stiže

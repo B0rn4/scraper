@@ -474,3 +474,12 @@ def test_tender_deadline_in_words():
     assert details("Ponude se dostavljaju do uključivo 10.10.2026., 8 dana od objave.", pub) == {"rok": "2026-10-10"}
     # Nepročitan broj dana: datum iza nije rok (prije: natječaj preskočen kao istekao).
     assert "rok" not in details("Rok za podnošenje ponuda: nekoliko dana od dana objave natječaja 02.10.2026.", pub)
+
+
+def test_fourth_review_tender_rules():
+    assert relevant("Javni natječaj za prodaju građevinskog zemljišta prikupljanjem pisanih ponuda po načelu najpovoljnije ponude")
+    assert relevant("Natječaj za prodaju nekretnina Općine Baška – odabir najpovoljnijeg ponuditelja putem javnog nadmetanja")
+    assert not relevant("Odluka o odabiru najpovoljnije ponude za prodaju zemljišta")
+    for building in ("zgrada i dvorište", "u naravi ruševina i dvorište", "kuća i dvor"):
+        found = tenders.lots(f"Predmet prodaje je k.č. 512 k.o. Vrbnik, {building} površine 180 m2, početna cijena 60.000,00 EUR.")
+        assert found and found[0].house, building

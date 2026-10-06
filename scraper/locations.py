@@ -17,6 +17,9 @@ import yaml
 
 from .text import fold, fold_case
 
+_QUALIFIERS = {"donja", "donji", "donje", "gornja", "gornji", "gornje", "mala", "mali", "malo", "vela", "veli", "velo",
+               "velika", "veliki", "nova", "novi", "novo", "stara", "stari", "staro"}
+
 DATA = Path(__file__).resolve().parent.parent / "data"
 
 # Padežni nastavci. Jednorječni nazivi dobivaju nastavke prema završnom slovu
@@ -187,9 +190,27 @@ class Locator:
         return list(self._settlement_index.get(key, []))
 
     def knows(self, place: str) -> bool:
-        """Je li naziv mjesta (naselje, grad/općina, kvart; bez kućnog broja) u županiji."""
+        """Je li naziv mjesta (naselje, grad/općina, kvart; bez kućnog broja) u županiji.
+        Svaki dio ("Rijeka, Zamet", "Kostrena Sveta Lucija") mora biti cijeli naš naziv:
+        "Barić Draga" (Karlobag) i "Sveti Ivan, Općina Oprtalj" (Istra) nisu naši, iako
+        sadrže naše ime."""
         place = re.sub(r"\s+\d+\w*\s*$", "", place or "").strip()
-        return bool(place) and self.resolve(settlement=place, text=place).jls is not None
+        parts = [re.sub(r"^(grad|opcina|općina)\s+", "", p.strip(), flags=re.I)
+                 for p in re.split(r",|\(|\)|\s+-\s+", place)]
+        parts = [p for p in parts if p]
+        return bool(parts) and all(self._whole_names(p.split()) for p in parts)
+
+    def _whole_names(self, words: list[str]) -> bool:
+        """Mogu li se riječi podijeliti na same naše nazive (naselje, grad/općina)?"""
+        if not words:
+            return True
+        if len(words) > 1 and fold(words[0]) in _QUALIFIERS and self._whole_names(words[1:]):
+            return True                      # "Donja Drenova", "Gornji Zamet": dio našeg naselja
+        for end in range(len(words), 0, -1):
+            name = " ".join(words[:end])
+            if (self.by_settlement(name) or self.by_name(name)) and self._whole_names(words[end:]):
+                return True
+        return False
 
     def canonical(self, name: str) -> str:
         """Normalizirani naziv naselja: drugi nazivi (Poljice → poljica) i sinonimi."""
