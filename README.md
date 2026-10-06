@@ -63,6 +63,9 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 | Natječaji gradova i općina, PGŽ-a, CERP-a i Državnih nekretnina ([data/natjecaji.yaml](data/natjecaji.yaml)) | tražilica stranice, RSS ili stranica natječaja; tekst i priloženi PDF | jednom dnevno |
 | Banke ([data/banke.yaml](data/banke.yaml)): Zaba, OTP, HBOR, HPB, Croatia banka | stranice s prodajom preuzetih nekretnina; poruka samo za novi tekst koji spominje naše područje | jednom dnevno |
 
+Popis svih praćenih stranica s poveznicama na iste pretrage (filtri cijene i površine
+iz kriterija), za ručnu provjeru propuštenih oglasa: `python tools/stranice.py stranice.html`.
+
 Njuškalo blokira GitHub i zahtjeve bez preglednika, pa ga čita Redmi s kućne mreže.
 Javljaju se samo novi oglasi (novi broj oglasa) i sniženja; stari oglasi koje agencije
 ponovno objave bilježe se bez poruke. Realitica je izostavljena (njezini oglasi gotovo
