@@ -25,6 +25,7 @@ CATEGORIES = [
 LOCATIONS = Path(__file__).resolve().parents[2] / "data" / "sources" / "index_locations_pgz.json"
 JSON_HEADERS = {"Accept": "application/json", "Content-Type": "application/json"}
 PAGE_SIZE = 24
+INCREMENTAL_PAGES = 10
 # Index drži dio Opatije kao zaseban "grad".
 CITY_ALIASES = {"Opatija": ["Opatija", "Opatija - Okolica"]}
 MAX_DETAILS = 10   # najviše otvorenih oglasa po pokretanju
@@ -120,14 +121,18 @@ class IndexOglasi(Source):
 
     def fetch(self, mode, known_ids):
         found: dict[str, Listing] = {}
-        max_pages = 80 if mode == FULL else 2
+        # Redovno: sljedeća stranica dok ima novih oglasa (ujutro i nakon prekida ih je više),
+        # najviše INCREMENTAL_PAGES.
+        max_pages = 80 if mode == FULL else INCREMENTAL_PAGES
         for category, category_hr, kind in CATEGORIES:
             page = 1
             while page <= max_pages:
                 data = self._api(category, page)
-                for x in parse_items(data, category_hr, kind):
+                items = parse_items(data, category_hr, kind)
+                new = [x for x in items if x.source_id not in known_ids and x.source_id not in found]
+                for x in items:
                     found.setdefault(x.source_id, x)
-                if not data.get("nextPage") or not data.get("data"):
+                if not data.get("nextPage") or not data.get("data") or (mode != FULL and not new):
                     break
                 page += 1
         if mode != FULL:

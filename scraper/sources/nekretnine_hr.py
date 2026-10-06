@@ -114,7 +114,8 @@ class NekretnineHr(Source):
                 for jls in self.included_names:
                     self._crawl(f"{BASE}/{category}/{jls_slug(jls)}/", kind, found, known_ids, max_pages=40, stop_on_known=False)
             else:
-                self._crawl(f"{BASE}/{category}/{COUNTY_SLUG}/", kind, found, known_ids, max_pages=3, stop_on_known=True)
+                # Dok ima novih (ujutro i nakon prekida ih je više), najviše 10 stranica.
+                self._crawl(f"{BASE}/{category}/{COUNTY_SLUG}/", kind, found, known_ids, max_pages=10, stop_on_known=True)
                 # Nedavno izmijenjeni oglasi (npr. snižena cijena).
                 self._crawl(f"{BASE}/{category}/{COUNTY_SLUG}/", kind, found, known_ids, max_pages=1,
                             stop_on_known=False, sort="dataModifica")

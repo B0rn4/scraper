@@ -386,3 +386,33 @@ def test_detail_limit_defers_instead_of_sending_without_area(monkeypatch, fina):
     nj.since = "2026-10-05T11:30:00+02:00"
     items = {x.source_id for x in nj.fetch(INCREMENTAL, {"45180000"})}
     assert "51323938" not in items and "45131418" in items  # kandidat čeka; preskup se vraća bez otvaranja
+
+
+def test_index_reads_more_pages_while_new(fina):
+    """Redovno: index.hr čita sljedeću stranicu dok ima novih oglasa (ujutro ih je više)."""
+    from scraper.sources.base import INCREMENTAL
+
+    def item(code):
+        return {"code": code, "title": "Kuća Njivice", "price": 900_000, "summary": {"area": 120},
+                "countyName": "Primorsko-goranska", "cityName": "Omišalj", "settlementName": "Njivice", "smartLink": "k"}
+
+    class Paged(FakeHttp):
+        def get(self, url, **kwargs):
+            self.calls.append(url)
+            page = int(url.split("&page=")[1].split("&")[0]) if "&page=" in url else 1
+
+            class Resp:
+                def __init__(self, data):
+                    self.data = data
+
+                def json(self):
+                    return self.data
+            if "houses-for-sale" in url:
+                return Resp({"data": [item(page * 100 + i) for i in range(24)], "nextPage": page + 1})
+            return Resp({"data": [], "nextPage": -1})
+
+    http = Paged([], {})
+    src = index_oglasi.IndexOglasi(http, Locator(), load_config()["kriteriji"])
+    known = {str(300 + i) for i in range(24)}                    # 3. stranica već poznata
+    src.fetch(INCREMENTAL, known)
+    assert sum("houses-for-sale" in u for u in http.calls) == 3

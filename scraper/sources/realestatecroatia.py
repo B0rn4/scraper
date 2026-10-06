@@ -97,7 +97,7 @@ class RealEstateCroatia(Source):
         found: dict[str, Listing] = {}
         for vrsta, kind, key in KINDS:
             cap = self.criteria[key]["max_cijena"]
-            for page in range(1, (250 if mode == FULL else 3) + 1):
+            for page in range(1, (250 if mode == FULL else 10) + 1):   # redovno: staje kod poznatih
                 items = parse_list(self._list(vrsta, cap, page), kind)
                 for x in items:
                     if x.price:                      # "cijena na upit" se preskače
