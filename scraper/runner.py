@@ -145,7 +145,7 @@ class Runner:
                         if not x.settlement and prev.get("settlement"):
                             x.settlement = prev["settlement"]
                             x.location_text = x.location_text or x.settlement
-                    d = evaluate(x, self.criteria, self.locator)
+                    d = evaluate(x, self.criteria, self.locator, prices)
                     if prev and d.notify and x.extra.get("opis_skracen") and prev.get("status") == REJECT:
                         d = self._keep_text_reject(d, prev)
                     old = state.upsert(x, d, self.stamp)
@@ -756,6 +756,9 @@ class Runner:
     def review(self) -> Path:
         """Pregled: cijelo područje, bez obavijesti po oglasu i bez promjene stanja."""
         entries, sources = [], []
+        state = State(self.db_path)
+        prices = self._load_prices(state)        # procjena za "cijenu na upit"
+        state.close()
         for src in self.enabled_sources():
             self.log(f"{src.label}: dohvat cijelog područja")
             try:
@@ -765,7 +768,7 @@ class Runner:
                 sources.append({"label": src.label, "total": 0, "error": f"{type(exc).__name__}: {exc}",
                                 "links": src.search_links()})
                 continue
-            decided = [(x, evaluate(x, self.criteria, self.locator)) for x in listings]
+            decided = [(x, evaluate(x, self.criteria, self.locator, prices)) for x in listings]
             entries.extend(report.entry(x, d) for x, d in decided)
             sources.append(self._source_summary(src, decided))
             self.log(f"{src.label}: {len(listings)} oglasa")

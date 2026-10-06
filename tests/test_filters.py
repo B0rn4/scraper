@@ -182,3 +182,24 @@ def test_heritage_phrases(ctx):
     assert w("Nalazi se unutar kulturno-povijesne cjeline grada Kastva.")
     assert not w("Kuća nije pod zaštitom konzervatora.")
     assert not w("Novogradnja s pogledom na more, 5 minuta od plaže.")
+
+
+def test_price_on_request_luxury(ctx):
+    """"Cijena na upit": luksuzna (riječi + procjena) ili golema kuća se odbija, ostale ⚠ s procjenom."""
+    from scraper.prices import AskingPrices
+
+    prices = AskingPrices(ctx[1], {"kuca|Omišalj|": {"n": 50, "med": 3500}, "zemljiste|Omišalj|": {"n": 30, "med": 250}})
+
+    def d(price=1, **kw):
+        return evaluate(house(price=price, description="Kuća s parkingom.", **kw), *ctx, prices)
+
+    vila = d(title="Luksuzna vila s bazenom", area=300)              # 300 × 3.500 × 0,4 = 420.000 > 400.000
+    assert vila.status == REJECT and vila.reasons[0].startswith("cijena na upit – luksuzna, procjena ≈ 1.050.000 €")
+    assert d(title="Obiteljska kuća", area=700).status == REJECT      # 700 × 3.500 × 0,2 = 490.000
+    obicna = d(title="Obiteljska vila", area=110)                      # riječ "vila", ali procjena 385.000
+    assert obicna.status == WARN and "cijena na upit – procjena ≈ 385.000 € (medijan traženih Omišalj" in " ".join(obicna.warnings)
+    assert "cijena nije navedena" in evaluate(house(price=1, description="Kuća s parkingom."), *ctx).warnings  # bez medijana
+    teren = dict(price=100, title="Građevinsko zemljište s panoramskim pogledom")
+    assert evaluate(land(area=4000, **teren), *ctx, prices).status == REJECT     # 4.000 × 250 × 0,4 = 400.000 > 300.000
+    assert evaluate(land(area=2000, **teren), *ctx, prices).status == WARN       # 200.000: može biti u granici
+    assert evaluate(land(area=9000, price=100, title="Građevinsko zemljište"), *ctx, prices).status == WARN  # bez riječi

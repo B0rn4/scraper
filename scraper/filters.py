@@ -34,11 +34,21 @@ _TEXT_WARN = [
 _RENOVATION = re.compile(
     r"za obnov|za adaptacij|potrebn\w* (obnov|adaptacij|renovacij)|starin|rusevin|za rusenje|zapust"
 )
+# "Cijena na upit": luksuzna nekretnina se prepoznaje po riječima u naslovu i procjeni
+# (površina × medijan traženih €/m²). Mjerenje 6. 10. na 12.378 oglasa s cijenom: od
+# kuća s takvim riječima i procjenom × 0,4 iznad granice 99 % je stvarno preskupo
+# (izgubljeno 7 od 1.389 dobrih); kuća s procjenom × 0,2 iznad granice također (4 od
+# 1.389). Za zemljišta samo riječi + procjena × 0,4 (0 izgubljenih); bez riječi
+# procjena za zemljišta nije pouzdana (cijene po m² jako variraju).
+_LUXURY = re.compile(r"luksuz|luxur|ekskluziv|exclusive|\bvill?a\b|\bvile\b|\bvilu\b|bazen|\bpool\b|infinity|premium"
+                     r"|prestiz|wellness|jacuzzi|sauna|panoramsk|first row|prvi red|1 ?red\b|\blux\b")
+LUXURY_FACTOR, HUGE_HOUSE_FACTOR = 0.4, 0.2
 _BUILDING_LAND = re.compile(r"gradevinsk")
 _AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|maslinik|vocnjak")
 
 
-def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
+def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) -> Decision:
+    """prices (medijani traženih, scraper/prices.py): za procjenu kod "cijene na upit"."""
     reasons: list[str] = []
     warnings: list[str] = list(listing.extra.get("warnings", []))
     reasons.extend(listing.extra.get("reject", []))
@@ -148,7 +158,19 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
         price = listing.price * listing.area
         warnings.append(f"cijena {fmt_eur(listing.price)} je vjerojatno po m² – ukupno ≈ {fmt_eur(price)}")
     if price is None:
-        warnings.append("cijena nije navedena")
+        estimate = prices.estimate(listing, jls_name) if prices is not None and jls_name else None
+        if estimate:
+            value, med, where = estimate
+            basis = f"procjena ≈ {fmt_eur(value)} (medijan traženih {where}: {fmt_eur(med)}/m²)"
+            luxury = bool(_LUXURY.search(fold(f"{listing.subtype} {listing.title}")))
+            limit = limits["max_cijena"]
+            if (luxury and value * LUXURY_FACTOR > limit) or (listing.kind == HOUSE and value * HUGE_HOUSE_FACTOR > limit):
+                reasons.append(f"cijena na upit – {'luksuzna, ' if luxury else ''}{basis}")
+                near_miss_only = False
+            else:
+                warnings.append(f"cijena na upit – {basis}")
+        else:
+            warnings.append("cijena nije navedena")
     elif price > limits["max_cijena"]:
         reasons.append(f"cijena {fmt_eur(price)} > {fmt_eur(limits['max_cijena'])}")
         if price > limits["max_cijena"] * (1 + pct):

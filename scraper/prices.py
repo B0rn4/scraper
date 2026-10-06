@@ -194,6 +194,17 @@ class AskingPrices:
             where = _whole(self.locator, jls)
         return (stat, where) if stat else None
 
+    def estimate(self, listing: Listing, jls: str) -> tuple[float, float, str] | None:
+        """Za "cijenu na upit": (površina × medijan traženih €/m², medijan, gdje)."""
+        if not jls or not listing.area or listing.kind not in (HOUSE, LAND) or _agricultural(listing):
+            return None
+        place = place_of(self.locator, jls, listing.title, listing.settlement)
+        stat = self.groups.get(f"{listing.kind}|{jls}|{place}") if place else None
+        where = self.names.get(place, place.title()) if stat else ""
+        if not stat:
+            stat, where = self.groups.get(f"{listing.kind}|{jls}|"), _whole(self.locator, jls)
+        return (listing.area * stat["med"], stat["med"], where) if stat else None
+
     def short(self, listing: Listing, jls: str) -> str | None:
         """Za sažeti redak: "cijena −25 % od prosjeka" (medijan traženih)."""
         found = self._stat(listing, jls)

@@ -317,8 +317,11 @@ bez stotina poruka.
       - novi oglasi iznad ograničenja otvaranja stizali su bez površine (RC, Njuškalo);
       - cijena po m² u prvom retku poruke; PPV podsjetnik bilježi se tek kad je poslan;
       - popis stranica tvrdio je da „cijena na upit” ne stiže.
-      Otvoreno pitanje za korisnika: „cijena na upit” (6 od 26 poruka) – preskakati kao
-      kod realestatecroatia.com i burze?
+      „Cijena na upit” (6 od 26 poruka): korisnik želi maknuti samo luksuzne – procjena
+      površina × medijan traženih €/m²; odbija se luksuzna (riječi u naslovu + procjena
+      × 0,4 iznad granice) i golema kuća (× 0,2); ostale ⚠ s procjenom. Na podacima: od
+      628 oglasa na upit u bazi odbačeno 112 (88 luksuznih, 24 goleme kuće), na
+      oglasima s cijenom izgubljeno 11 od 1.389 kuća u granici.
    4. **Svježi pregled koda:** nova instanca (podagent) bez znanja o razgovoru, samo s
       kodom i README/PLAN kao opisom; traži greške. Svaki nalaz provjeravam prije
       popravka (ne zna za odluke poput isključenih naselja).
