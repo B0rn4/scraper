@@ -58,6 +58,7 @@ def parse_items(data: dict, category_hr: str, kind: str) -> list[Listing]:
             location_text=", ".join(filter(None, [x.get("settlementName"), x.get("cityName")])),
             image_url=f"{BASE}/api/image/direct/{images[0]}" if images else "",
             published=x.get("postedTime") or "",
+            extra={"samo_popis": True},    # bez opisa i vrste – tek sa stranice oglasa
         ))
     return out
 
@@ -91,6 +92,7 @@ def parse_single(data: dict, listing: Listing) -> None:
     if ad.get("ownershipCertificate"):
         listing.extra["vlasnicki_list"] = True
     listing.extra["detalji"] = True
+    listing.extra.pop("samo_popis", None)
 
 
 class IndexOglasi(Source):

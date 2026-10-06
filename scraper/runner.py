@@ -14,7 +14,7 @@ from . import dedupe, report, risks, tenders, watch
 from .ispu import Ispu, check_land, gp_text, heritage_warning
 from .prices import PPV_YEAR, AskingPrices, Ppv, land_note, land_short
 from .db import State
-from .filters import evaluate
+from .filters import effective_price, evaluate
 from .http import Http
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
@@ -79,14 +79,17 @@ class Runner:
         v = self.cfg["vrijeme"]
         return v["od_sata"] <= self.now.hour < v["do_sata"]
 
-    def _email(self, subject: str, text: str, html_body: str = "", attachments=()) -> None:
+    def _email(self, subject: str, text: str, html_body: str = "", attachments=()) -> bool:
+        """False samo kad slanje nije uspjelo (bez postavki za mail nema se što ponoviti)."""
         if not self.email:
             self.log(f"(mail nije poslan – nema postavki) {subject}")
-            return
+            return True
         try:
             self.email.send(subject, text, html_body, list(attachments))
+            return True
         except Exception as exc:  # noqa: BLE001
             self.log(f"Slanje maila nije uspjelo: {exc}")
+            return False
 
     def _report(self, name: str, title: str, entries: list[dict], sources: list[dict], note: str = "") -> Path:
         path = self.out_dir / f"{name}-{self.now:%Y-%m-%d-%H%M}.html"
@@ -94,16 +97,19 @@ class Runner:
         self.log(f"Izvještaj: {path} ({len(entries)} oglasa)")
         return path
 
-    def _send_report(self, path: Path, caption: str, subject: str, mail: bool = False) -> None:
+    def _send_report(self, path: Path, caption: str, subject: str, mail: bool = False) -> bool:
         """Izvještaj ide na Telegram; mail samo ako je izričito traženo (mail je za
-        tjedni izvještaj i greške)."""
+        tjedni izvještaj i greške). False kad slanje na Telegram nije uspjelo."""
+        ok = True
         if self.telegram:
             try:
                 self.telegram.send_document(path, caption)
             except Exception as exc:  # noqa: BLE001
                 self.log(f"Slanje izvještaja na Telegram nije uspjelo: {exc}")
+                ok = False
         if mail:
             self._email(subject, caption.replace("<b>", "").replace("</b>", ""), attachments=[path])
+        return ok
 
     # --- naredbe ---
 
@@ -114,7 +120,7 @@ class Runner:
             return
         state = State(self.db_path)
         self._read_feedback(state)
-        self.muted = state.muted() | self._github_info().get("utisani", set())
+        self.muted = state.muted(self._github_info().get("utisani"))
         seen = self._load_seen(state)
         prices = self._load_prices(state)
         to_notify: list[tuple[Listing, Decision, str]] = []
@@ -127,6 +133,7 @@ class Runner:
                 first = state.meta_get(f"baseline:{src.name}") is None
                 mode = FULL if first else INCREMENTAL
                 src.since = next((h["last_ok"] for h in state.health_all() if h["source"] == src.name), None)
+                src.pending = [] if first else self._load_pending(state, src.name)
                 self.log(f"{src.label}: dohvat ({'početni, cijelo područje' if first else 'najnoviji'})")
                 try:
                     listings = src.fetch(mode, state.known_ids(src.name))
@@ -136,6 +143,10 @@ class Runner:
                     self._source_failed(state, src, exc)
                     continue
                 self._source_ok(state, src)
+                deferred = getattr(src, "deferred", [])
+                if deferred or src.pending:
+                    self.log(f"{src.label}: odgođeno za sljedeće pokretanje {len(deferred)} oglasa")
+                    state.meta_set(f"odgodjeno:{src.name}", json.dumps([x.to_dict() for x in deferred], ensure_ascii=False))
                 decided = []
                 silent_baseline = first and not getattr(src, "baseline_report", True)
                 for x in listings:
@@ -146,7 +157,8 @@ class Runner:
                             x.settlement = prev["settlement"]
                             x.location_text = x.location_text or x.settlement
                     d = evaluate(x, self.criteria, self.locator, prices)
-                    if prev and d.notify and x.extra.get("opis_skracen") and prev.get("status") == REJECT:
+                    partial = x.extra.get("opis_skracen") or x.extra.get("samo_popis")
+                    if prev and d.notify and partial and prev.get("status") == REJECT:
                         d = self._keep_text_reject(d, prev)
                     old = state.upsert(x, d, self.stamp)
                     decided.append((x, d))
@@ -250,6 +262,14 @@ class Runner:
         state.meta_set("telegram:offset", str(offset))
         state.conn.commit()
 
+    def _load_pending(self, state: State, name: str) -> list[Listing]:
+        """Oglasi koje izvor prošli put nije stigao otvoriti (izvor ih otvara ovaj put)."""
+        try:
+            return [Listing(**d) for d in json.loads(state.meta_get(f"odgodjeno:{name}") or "[]")]
+        except (TypeError, ValueError) as exc:
+            self.log(f"Odgođeni oglasi ({name}) nisu učitani: {exc}")
+            return []
+
     def _github_info(self) -> dict:
         """Na Redmiju: podaci s GitHuba (github.json uz sažetak viđenih oglasa)."""
         if self.device == "github" or not self.seen_file:
@@ -275,10 +295,13 @@ class Runner:
 
     @staticmethod
     def _keep_text_reject(d: Decision, prev: dict) -> Decision:
-        """Oglas odbijen zbog rečenice iz punog opisa (npr. prodaje se suvlasnički dio) ostaje
-        odbijen kad popis daje samo početak opisa – inače bi stiglo lažno "sad odgovara"."""
+        """Oglas odbijen zbog podatka sa stranice oglasa (rečenica iz punog opisa, vrsta kuće
+        ili zemljišta) ostaje odbijen kad ovaj put imamo samo podatke s popisa – inače bi
+        stiglo lažno "sad odgovara"."""
         labels = tuple(r.label for r in risks.RULES if r.reject)
-        kept = [r for r in json.loads(prev.get("reasons") or "[]") if r.startswith(labels)]
+        kept = [r for r in json.loads(prev.get("reasons") or "[]")
+                if r.startswith(labels) or "(vrsta: " in r
+                or (r.startswith("nije građevinsko (") and not r.endswith("(naslov)"))]
         return Decision(REJECT, kept, jls=d.jls, location_evidence=d.location_evidence) if kept else d
 
     def _load_seen(self, state: State) -> dedupe.Seen:
@@ -357,9 +380,9 @@ class Runner:
             except Exception as exc:  # noqa: BLE001
                 failures, alerted = state.health_fail(name, f"{type(exc).__name__}: {exc}")
                 self.log(f"{name}: GREŠKA ({failures}. dan zaredom): {exc}")
-                if failures >= 3 and not alerted:
-                    self._alert(f"Scraper: natječaji – {site['naziv']} ne rade",
-                                f"Stranica {site['url']} tri dana zaredom vraća grešku:\n{exc}\n\nJavi Claudeu ovu poruku.")
+                if failures >= 3 and not alerted and self._alert(
+                        f"Scraper: natječaji – {site['naziv']} ne rade",
+                        f"Stranica {site['url']} tri dana zaredom vraća grešku:\n{exc}\n\nJavi Claudeu ovu poruku.") is not False:
                     state.mark_alerted(name)
                 continue
             state.health_ok(name, self.stamp)
@@ -387,8 +410,13 @@ class Runner:
                 self.log(f"Natječaj bez poruke (prvo čitanje stranice, {why}): {t.title[:70]}")
                 continue
             found = tenders.lots(t.text)
+            outside = False
             if t.extra.get("regionalno"):     # PGŽ, CERP, Državne nekretnine: samo čestice na našem području
-                found = [x for x in found if reader.area_of(f"{x.context} {x.ko}")]
+                ours = [x for x in found if reader.area_of(f"{x.context} {x.ko}")]
+                # Tekst spominje naše područje i kad je to samo sjedište (npr. "Trgovački sud u
+                # Rijeci"): bez ijedne naše čestice, ili bez čestica i bez našeg mjesta u naslovu, preskače se.
+                outside = not ours and (bool(found) or not reader.area_of(t.title))
+                found = ours
             jls = t.jls if t.jls and self.locator.by_name(t.jls) else ""
             where = tenders.place_text(t, found)
             # Odluke iz popisa naselja: odbija se samo naselje napisano u tekstu; prema k.o.
@@ -400,10 +428,14 @@ class Runner:
                 verdict = (WARN, f"{by_ko[1]}{note}")
             misses = tenders.fails_criteria(found, self.criteria)
             skip = ("istekao" if expired
+                    else "regionalni natječaj – nijedna čestica na našem području" if outside
                     else "samo stanovi/poslovni prostori" if len(t.text) >= tenders.MIN_TEXT and tenders.flats_only(t.text)
                     else f"popis naselja – {verdict[1]}" if verdict and verdict[0] == REJECT
                     else f"ne odgovara kriterijima – {misses}" if misses
                     else "ograničenje" if sent >= limit else "")
+            if skip == "ograničenje":       # ne bilježi se: stiže sutra
+                self.log(f"Natječaj odgođen za sutra (najviše {limit} poruka dnevno): {t.title[:70]}")
+                continue
             if skip:
                 state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
                 self.log(f"Natječaj bez poruke ({skip}): {t.title[:70]}")
@@ -437,9 +469,9 @@ class Runner:
             except Exception as exc:  # noqa: BLE001
                 failures, alerted = state.health_fail(name, f"{type(exc).__name__}: {exc}")
                 self.log(f"{name}: GREŠKA ({failures}. dan zaredom): {exc}")
-                if failures >= 3 and not alerted:
-                    self._alert(f"Scraper: banke – {page['naziv']} ne radi",
-                                f"Stranica {page['url']} tri dana zaredom vraća grešku:\n{exc}\n\nJavi Claudeu ovu poruku.")
+                if failures >= 3 and not alerted and self._alert(
+                        f"Scraper: banke – {page['naziv']} ne radi",
+                        f"Stranica {page['url']} tri dana zaredom vraća grešku:\n{exc}\n\nJavi Claudeu ovu poruku.") is not False:
                     state.mark_alerted(name)
                 continue
             state.health_ok(name, self.stamp)
@@ -581,11 +613,16 @@ class Runner:
                     headline: str) -> str | None:
         """Isti oglas već viđen (drugi portal, ponovna objava)? Stiže samo ako je sad jeftiniji."""
         new = dedupe.row(x, d)
-        twins = seen.twins(new)
+        # Kopija zabilježena kao "isti kao ovaj oglas" ne znači da je poruka stigla: ako slanje
+        # ovog oglasa nije uspjelo, sljedeće pokretanje ga mora ponovno pokušati poslati.
+        twins = [t for t in seen.twins(new) if t.get("notified_at") != f"dup:{x.key}"]
         if twins:
-            cheapest = min(twins, key=lambda r: min(r["price"], r.get("notified_price") or r["price"]))
-            low = min(cheapest["price"], cheapest.get("notified_price") or cheapest["price"])
-            if not x.price or x.price >= low * (1 - dedupe.PRICE_TOLERANCE):
+            def lowest(r):                   # cijena do 100 € je zamjena za "cijena na upit"
+                values = [v for v in (r["price"], r.get("notified_price")) if v and v > 100]
+                return min(values) if values else None
+            cheapest = min(twins, key=lambda r: lowest(r) or float("inf"))
+            low = lowest(cheapest)
+            if not x.price or low is None or x.price >= low * (1 - dedupe.PRICE_TOLERANCE):
                 if old is None:
                     state.mark_notified(x.key, x.price, f"dup:{cheapest['key']}")
                 self.log(f"Već viđen ({cheapest['key']}): {x.title[:60]}")
@@ -603,14 +640,18 @@ class Runner:
             return None
         if old is None:
             return ""
-        old_price = old.get("price")
-        if x.price and old_price and x.price < old_price - 1:
+        # Ukupne cijene: "1 €" (cijena na upit) ili cijena po m² nisu sniženje.
+        total = bool(x.extra.get("ukupna_cijena"))
+        price = effective_price(x.price, x.area, total)
+        old_price = effective_price(old.get("price"), old.get("area") or x.area, total)
+        if price and old_price and price < old_price - 1:
             # Usporedba s cijenom iz zadnje poruke (ili tihog bilježenja): poskupljenje pa malo
             # pojeftinjenje, a i dalje skuplje nego prije, nije sniženje.
-            ref = old.get("notified_price") if old.get("notified_at") else None
-            if ref and x.price >= ref - 1:
+            ref = (effective_price(old.get("notified_price"), old.get("area") or x.area, total)
+                   if old.get("notified_at") else None)
+            if ref and price >= ref - 1:
                 return None
-            change = f"{fmt_eur(ref or old_price)} → {fmt_eur(x.price)}"
+            change = f"{fmt_eur(ref or old_price)} → {fmt_eur(price)}"
             if old.get("notified_at"):
                 return f"📉 Snižena cijena: {change}"
             return f"📉 Snižena cijena ({change}) – sad odgovara kriterijima"
@@ -632,10 +673,12 @@ class Runner:
         if len(to_notify) > limit:
             entries = [report.entry(x, d) for x, d, _ in to_notify]
             path = self._report("novi-oglasi", "Novi oglasi", entries, [])
-            self._send_report(path, f"<b>{len(to_notify)} novih oglasa</b> – previše za pojedinačne poruke, popis je u datoteci.",
-                              "Scraper: puno novih oglasa", mail=False)
+            if self._send_report(path, f"<b>{len(to_notify)} novih oglasa</b> – previše za pojedinačne poruke, popis je u datoteci.",
+                                 "Scraper: puno novih oglasa", mail=False) is False:
+                return                       # kao i kod pojedinačnih poruka: pokušava se ponovno
             for x, _, _ in to_notify:
                 state.mark_notified(x.key, x.price, f"zbirno:{self.stamp}")
+            state.conn.commit()
             return
         sent = 0
         for x, d, headline in to_notify:
@@ -653,17 +696,23 @@ class Runner:
         for src, decided, _ in baseline:
             entries.extend(report.entry(x, d) for x, d in decided)
             sources.append(self._source_summary(src, decided))
-            for x, d in decided:
-                if d.notify:
-                    state.mark_notified(x.key, x.price, f"zbirno:{self.stamp}")
-        state.conn.commit()
         matching = sum(1 for e in entries if e["st"] in (PASS, WARN))
         names = ", ".join(s["label"] for s in sources)
         path = self._report("pocetni-popis", "Početni popis oglasa", entries, sources,
                             note="Prvo pokretanje izvora: ovo su svi trenutno aktivni oglasi na području. "
                                  "Od sada stižu samo novi oglasi i snižene cijene.")
-        self._send_report(path, f"<b>Početni popis</b> ({names}): {matching} oglasa odgovara kriterijima "
-                                f"(✅ i ⚠), ukupno pregledano {len(entries)}.", "Scraper: početni popis oglasa")
+        if self._send_report(path, f"<b>Početni popis</b> ({names}): {matching} oglasa odgovara kriterijima "
+                                   f"(✅ i ⚠), ukupno pregledano {len(entries)}.", "Scraper: početni popis oglasa") is False:
+            # Popis nije stigao: sljedeće pokretanje ponovno čita cijelo područje i šalje ga.
+            for src, _, _ in baseline:
+                state.conn.execute("DELETE FROM meta WHERE key = ?", (f"baseline:{src.name}",))
+            state.conn.commit()
+            return
+        for _, decided, _ in baseline:
+            for x, d in decided:
+                if d.notify:
+                    state.mark_notified(x.key, x.price, f"zbirno:{self.stamp}")
+        state.conn.commit()
 
     def _source_summary(self, src, decided) -> dict:
         out = {"label": src.label, "total": len(decided), "links": src.search_links()}
@@ -678,12 +727,11 @@ class Runner:
         self.log(f"{src.label}: GREŠKA ({failures}. zaredom): {detail}")
         traceback.print_exc()
         limit = self.cfg.get("nadzor", {}).get("greske_prije_upozorenja", 3)
-        if failures >= limit and not alerted:
-            self._alert(
-                f"Scraper: izvor {src.label} ne radi",
-                f"Izvor {src.label} je {failures} puta zaredom vratio grešku.\n\nZadnja greška:\n{detail}\n\n"
-                "Dok se ne popravi, s ovog izvora ne stižu obavijesti. Javi Claudeu ovu poruku.",
-            )
+        if failures >= limit and not alerted and self._alert(
+            f"Scraper: izvor {src.label} ne radi",
+            f"Izvor {src.label} je {failures} puta zaredom vratio grešku.\n\nZadnja greška:\n{detail}\n\n"
+            "Dok se ne popravi, s ovog izvora ne stižu obavijesti. Javi Claudeu ovu poruku.",
+        ) is not False:                     # neuspjelo upozorenje se ponavlja sljedeće pokretanje
             state.mark_alerted(src.name)
 
     def _source_ok(self, state: State, src) -> None:
@@ -693,15 +741,19 @@ class Runner:
         if was_alerted:
             self._alert(f"Scraper: izvor {src.label} ponovno radi", f"Izvor {src.label} ponovno radi ({self.stamp}).")
 
-    def _alert(self, subject: str, text: str) -> None:
-        """Upozorenje mailom; na Redmiju (bez postavki za mail) na Telegram."""
+    def _alert(self, subject: str, text: str) -> bool:
+        """Upozorenje mailom; na Redmiju (bez postavki za mail) na Telegram. False kad
+        slanje nije uspjelo (pozivatelj ga tada ponavlja sljedeći put)."""
         if self.email or not self.telegram:
-            self._email(subject, text)
-            return
+            return self._email(subject, text)
+        if len(text) > 3000:                 # Telegram prima najviše 4096 znakova
+            text = text[:3000] + "…"
         try:
             self.telegram.send_text(f"⚠ <b>{html.escape(subject)}</b>\n{html.escape(text)}")
+            return True
         except Exception as exc:  # noqa: BLE001
             self.log(f"Upozorenje nije poslano: {exc}")
+            return False
 
     def _check_redmi(self, state: State) -> None:
         """Na GitHubu: javlja li se Redmi. Nakon svakog pokretanja Redmi šalje svoje stanje
@@ -722,13 +774,12 @@ class Runner:
                 self._email("Scraper: Redmi se ponovno javlja", f"Redmi je ponovno pokrenuo scraper ({last[:16]}).")
             return
         state.health_fail("redmi", f"zadnje pokretanje {last[:16]}")
-        if not (row and row.get("alerted")):
-            self._email(
-                "Scraper: Redmi se ne javlja",
-                f"Redmi se nije javio od {last[:16].replace('T', ' ')}. Dok se ne javi, Njuškalo se ne prati.\n\n"
-                "Provjeri je li Redmi uključen, na punjaču i na Wi-Fiju te radi li Termux "
-                "(obavijest „Termux” u traci obavijesti). Ako je sve u redu, javi Claudeu ovu poruku.",
-            )
+        if not (row and row.get("alerted")) and self._email(
+            "Scraper: Redmi se ne javlja",
+            f"Redmi se nije javio od {last[:16].replace('T', ' ')}. Dok se ne javi, Njuškalo se ne prati.\n\n"
+            "Provjeri je li Redmi uključen, na punjaču i na Wi-Fiju te radi li Termux "
+            "(obavijest „Termux” u traci obavijesti). Ako je sve u redu, javi Claudeu ovu poruku.",
+        ) is not False:
             state.mark_alerted("redmi")
 
     def _check_github(self, state: State) -> None:
@@ -746,11 +797,11 @@ class Runner:
                 self._alert("Scraper: GitHub ponovno radi", f"Zadnje pokretanje na GitHubu: {last[:16].replace('T', ' ')}.")
             return
         _, alerted = state.health_fail("github", f"zadnje pokretanje {last[:16]}")
-        if not alerted:
-            self._alert("Scraper: GitHub ne radi",
-                        f"GitHub nije pokrenuo scraper od {last[:16].replace('T', ' ')}. Dok ne proradi, ne prate se "
-                        "portali osim Njuškala (Redmi radi). Provjeri cron-job.org (povijest pokretanja) i "
-                        "githubstatus.com; ako je sve u redu, javi Claudeu ovu poruku.")
+        if not alerted and self._alert(
+                "Scraper: GitHub ne radi",
+                f"GitHub nije pokrenuo scraper od {last[:16].replace('T', ' ')}. Dok ne proradi, ne prate se "
+                "portali osim Njuškala (Redmi radi). Provjeri cron-job.org (povijest pokretanja) i "
+                "githubstatus.com; ako je sve u redu, javi Claudeu ovu poruku.") is not False:
             state.mark_alerted("github")
 
     def review(self) -> Path:

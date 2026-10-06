@@ -96,7 +96,7 @@ def parse_list(page: str, kind: str) -> list[Listing]:
             location_text=fields.get("lokacija", ""),
             image_url=img.group(1) if img else "",
             published=date.group(1) if date else "",
-            extra={"istaknut": m.group(1) == "VauVau"},
+            extra={"istaknut": m.group(1) == "VauVau", "samo_popis": True},   # opis tek sa stranice oglasa
         ))
     return out
 
@@ -138,6 +138,7 @@ def parse_detail(page: str, listing: Listing) -> None:
         if fields.get(key):
             listing.extra[name] = fields[key]
     listing.extra["detalji"] = True
+    listing.extra.pop("samo_popis", None)
 
 
 def _page_url(category: str, page: int) -> str:
@@ -185,6 +186,8 @@ class Njuskalo(Source):
                     oldest = min(dates) if dates else ""
                     if not since or not oldest or datetime.fromisoformat(oldest.replace("Z", "+00:00")) < since:
                         break
+            if mode != FULL:
+                self.add_pending(found, known_ids)
             details, later = 0, set()
             for x in found.values():
                 if x.source_id in known_ids:
@@ -193,6 +196,7 @@ class Njuskalo(Source):
                     x.extra["stari_oglas"] = True
                 elif mode != FULL and self._worth_detail(x):
                     if details >= MAX_DETAILS:     # sljedeći put (bez stranice oglasa stigao bi bez površine)
+                        self.defer(x)
                         later.add(x.source_id)
                         continue
                     details += 1
@@ -200,11 +204,12 @@ class Njuskalo(Source):
                         parse_detail(browser.get(x.url, "h1"), x)
                     except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                         x.extra["detalji_greska"] = str(exc)[:200]
-                        later.add(x.source_id)
+                        if self.defer(x, failed=True):
+                            later.add(x.source_id)
         finally:
             if own_browser:
                 browser.close()
-        # Odgođeni oglas ostaje na 1. stranici ili se zbog novijih oglasa čita i 2. (since).
+        # Odgođeni oglasi se pamte (runner) i otvaraju sljedeći put, i kad su pali s pročitanih stranica.
         return [x for x in found.values() if x.source_id not in later]
 
     def _worth_detail(self, x: Listing) -> bool:

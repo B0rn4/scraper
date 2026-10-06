@@ -159,8 +159,14 @@ class State:
         """Poništenje: oglas i isti oglasi na drugim portalima zapamćeni zbog njega."""
         self.conn.execute("DELETE FROM muted WHERE key = ? OR note = ?", (key, f"isti kao {key}"))
 
-    def muted(self) -> set[str]:
-        return {r[0] for r in self.conn.execute("SELECT key FROM muted")}
+    def muted(self, remote: set[str] | None = None) -> set[str]:
+        """Utišani oglasi. S popisom s drugog uređaja (Redmi dobiva popis s GitHuba): taj
+        popis i ovdje zapamćeni isti oglasi samo dok je njihov izvorni oglas na popisu –
+        poništenje na GitHubu tako vrijedi i ovdje."""
+        rows = self.conn.execute("SELECT key, note FROM muted").fetchall()
+        if remote is None:
+            return {r[0] for r in rows}
+        return set(remote) | {r[0] for r in rows if (r[1] or "").removeprefix("isti kao ") in remote}
 
     def seen_rows(self) -> list[dict]:
         """Oglasi koje smo već "vidjeli" (poslani, u početnom popisu ili tiho zabilježeni)."""

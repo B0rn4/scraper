@@ -368,3 +368,56 @@ def test_page_watch_any_change_mails(tmp_path, monkeypatch):
     state.meta_set("daily:banke", "2000-01-01")
     runner._banks(state)
     assert len(alerts) == 1 and "Novi oglasnik Butiga.hr je pokrenut" in alerts[0][1]
+
+
+def test_runner_regional_tenders_and_daily_limit(tmp_path, monkeypatch):
+    """Regionalno tijelo (CERP, Državne nekretnine): bez ijedne čestice na našem području nema
+    poruke, i kad tekst spominje Rijeku (sjedište). Iznad dnevnog ograničenja: stiže sutra."""
+    from scraper.db import State
+    from scraper.runner import Runner
+
+    recent = (TODAY - timedelta(days=5)).isoformat()
+
+    def regional(key, title, text):
+        t = Tender(key, "CERP", "Rijeka", title, f"https://c.hr/{key}", recent, text)
+        t.extra["regionalno"] = True
+        return t
+
+    batch = [regional("z", "Javni poziv za prodaju nekretnina", "Prodaje se k.č. 12 k.o. Sesvete, površine 800 m2. "
+                      + "Ostali uvjeti natječaja su u prilogu. " * 6 + "Podružnica Rijeka."),
+             regional("p", "Javni poziv za prodaju nekretnina", "Prodaje se k.č. 5 k.o. Punat, površine 700 m2."),
+             regional("n", "Javni poziv za prodaju nekretnina", "Uvjeti su u prilogu. Podružnica Rijeka.")]
+    local = [Tender(k, "Grad Krk", "Krk", f"Natječaj za prodaju zemljišta {k}", f"https://k.hr/{k}", recent, "x")
+             for k in ("a", "b")]
+
+    class FakeReader(Reader):
+        def fetch(self, site):
+            return list(batch if site["naziv"] == "CERP" else local)
+
+        def load_text(self, t):
+            pass
+
+    class NoIspu:
+        def parcel(self, *a, **k):
+            return None
+
+    sent = []
+
+    class FakeTelegram:
+        def send_text(self, text, silent=False, url=""):
+            sent.append(url)
+
+    monkeypatch.setattr(tenders, "Reader", FakeReader)
+    monkeypatch.setattr(tenders, "load_sites", lambda: [{"naziv": "CERP", "nacin": "wp", "url": "u"},
+                                                         {"naziv": "Grad Krk", "jls": "Krk", "nacin": "wp", "url": "u"}])
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner.telegram, runner._ispu = FakeTelegram(), NoIspu()
+    runner.cfg["natjecaji"]["max_poruka"] = 2
+    state = State(tmp_path / "s.db")
+    runner._tenders(state)
+    assert sent == ["https://c.hr/p", "https://k.hr/a"]          # Sesvete i bez čestica: ne; "b": sutra
+    assert state.tender_known("z") and state.tender_known("n") and not state.tender_known("b")
+    state.meta_set("daily:natjecaji", "2000-01-01")
+    runner._tenders(state)
+    assert sent[-1] == "https://k.hr/b" and len(sent) == 3
+    state.close()

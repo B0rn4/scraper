@@ -6,6 +6,7 @@ from ..models import HOUSE, Listing
 
 INCREMENTAL = "incremental"   # redovno pokretanje: samo najnoviji oglasi
 FULL = "full"                 # pregled i početni popis: sve na području
+MAX_ATTEMPTS = 3              # stranica oglasa ne odgovara 3 puta → oglas stiže s podacima s popisa
 
 
 class Source:
@@ -19,6 +20,35 @@ class Source:
         self.http = http
         self.locator = locator
         self.criteria = criteria
+        self.pending: list[Listing] = []    # odgođeni u prošlim pokretanjima (postavlja runner)
+        self.deferred: list[Listing] = []   # odgođeni u ovom dohvatu (runner ih sprema)
+
+    def add_pending(self, found: dict[str, Listing], known_ids: set[str]) -> None:
+        """Oglasi odgođeni prošli put (previše novih za otvaranje ili stranica oglasa nije
+        odgovorila) otvaraju se i kad ih popis ovaj put nema – novi oglasi su ih mogli
+        pomaknuti iza pročitanih stranica."""
+        waiting = {}
+        for p in self.pending:
+            if p.source_id in known_ids:
+                continue
+            x = found.get(p.source_id, p)      # svježi podaci s popisa, ako ga popis ima
+            x.extra["pokusaja"] = max(x.extra.get("pokusaja", 0), p.extra.get("pokusaja", 0))
+            x.extra["odgodjen"] = True
+            waiting[x.source_id] = x
+        rest = {k: v for k, v in found.items() if k not in waiting}
+        found.clear()
+        found.update(waiting)                  # odgođeni se otvaraju prvi (najdulje čekaju)
+        found.update(rest)
+
+    def defer(self, x: Listing, failed: bool = False) -> bool:
+        """Odgađa otvaranje oglasa za sljedeće pokretanje. False kad stranica oglasa nije
+        odgovorila ni nakon MAX_ATTEMPTS pokušaja – tada oglas stiže s podacima s popisa."""
+        if failed:
+            x.extra["pokusaja"] = x.extra.get("pokusaja", 0) + 1
+            if x.extra["pokusaja"] >= MAX_ATTEMPTS:
+                return False
+        self.deferred.append(x)
+        return True
 
     def fetch(self, mode: str, known_ids: set[str]) -> list[Listing]:
         raise NotImplementedError

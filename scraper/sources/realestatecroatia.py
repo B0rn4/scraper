@@ -110,19 +110,22 @@ class RealEstateCroatia(Source):
                     break
         if mode == FULL:
             return list(found.values())
+        self.add_pending(found, known_ids)
         out, details = [], 0
-        for x in sorted(found.values(), key=lambda x: -int(x.source_id)):
+        for x in sorted(found.values(), key=lambda x: (not x.extra.get("odgodjen"), -int(x.source_id))):
             if x.source_id in known_ids or evaluate(x, self.criteria, self.locator).status == REJECT:
                 out.append(x)
                 continue
             if details >= MAX_DETAILS:
-                continue               # otvara se sljedeći put (bez površine bi stigao kao ⚠)
+                self.defer(x)          # otvara se sljedeći put (bez površine bi stigao kao ⚠)
+                continue
             details += 1
             try:
                 parse_detail(self.http.get(x.url).text, x)
             except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                 x.extra["detalji_greska"] = str(exc)[:200]
-                continue
+                if self.defer(x, failed=True):
+                    continue
             out.append(x)
         return out
 

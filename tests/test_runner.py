@@ -461,3 +461,156 @@ def test_project_units_and_town_names_are_not_duplicates():
     baska1 = r("n:5", "nekretnine_hr", 360_000, 85, "Obiteljska kuća Baška, Baška", "Baška")
     baska2 = r("o:6", "oglasnik", 362_000, 85.5, "Obiteljska kuća Baška, Baška", "Baška")
     assert not same_property(baska1, baska2)                                            # samo ime mjesta
+
+
+# --- svježi pregled koda (finiširanje, korak 4) ---
+
+def _runs(tmp_path, monkeypatch, batches, configure=None):
+    """Pokretanja s lažnim izvorom; vraća poslane (ključ, naslov) po pokretanju."""
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    FakeSource.modes, FakeSource.batches = [], list(batches)
+    out = []
+    for i in range(len(batches)):
+        sent = []
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r._send_report = lambda *a, **k: None
+        r._check_land = lambda *a, **k: None
+        r._banks = r._tenders = r._ppv_reminder = lambda *a, **k: None
+        r._send_notifications = lambda state, items, sent=sent: [
+            (sent.append((x.key, h)), state.mark_notified(x.key, x.price, r.stamp)) for x, d, h in items]
+        if configure:
+            configure(r, i)
+        r.run(force=True)
+        out.append(sent)
+    return out
+
+
+def test_failed_send_does_not_lose_property_on_two_portals(tmp_path, monkeypatch):
+    """Isti oglas na dva portala; slanje prvog ne uspije → sljedeće pokretanje ga ipak pošalje
+    (drugi je zabilježen kao "isti kao prvi", ali poruka nije stigla)."""
+    title = "Kamena kuća s konobom, Punat"
+    a, b = listing(sid="1", title=title), listing(sid="2", source="u", title=title)
+
+    def configure(r, i):
+        if i == 1:                                    # Telegram ne radi: ništa se ne bilježi kao poslano
+            r._send_notifications = lambda state, items: None
+
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [a, b], [a, b]], configure)
+    assert sent[2] == [("t:1", "")]
+
+
+def test_list_only_data_keeps_detail_reject(tmp_path, monkeypatch):
+    """index.hr i Njuškalo: odbijen prema stranici oglasa (vrsta, opis); sljedeći put samo
+    popis (bez vrste i opisa) → ne smije stići "🔄 Sad odgovara"."""
+    def detail(sid, subtype="", desc="", kind=HOUSE, title="Kuća Punat"):
+        x = listing(sid=sid, title=title)
+        x.kind, x.subtype, x.description = kind, subtype, desc
+        if kind != HOUSE:
+            x.area = 800
+        return x
+
+    def list_only(sid, **kw):
+        x = detail(sid, **kw)
+        x.subtype, x.description = "", ""
+        x.extra["samo_popis"] = True
+        return x
+
+    from scraper.models import LAND
+    first = [detail("2", subtype="Dvojna kuća"), detail("3", kind=LAND, subtype="Poljoprivredno zemljište", title="Zemljište Punat"),
+             detail("4", desc="Prodaje se suvlasnički dio kuće 1/2.")]
+    later = [list_only("2"), list_only("3", kind=LAND, title="Zemljište Punat"), list_only("4")]
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="1")], first, later])
+    assert sent[1] == [] and sent[2] == []
+    state = State(tmp_path / "s.db")
+    assert {state.get(f"t:{i}")["status"] for i in "234"} == {REJECT}
+    state.close()
+
+
+def test_placeholder_price_is_not_a_drop(tmp_path):
+    """"Cijena na upit" (1 €) nije sniženje; pravo sniženje poslije toga stiže."""
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    ok = Decision(PASS, jls="Punat")
+    state.upsert(listing(390_000), ok, "t1")
+    state.mark_notified("t:1", 390_000, "t1")
+    assert runner._notify_reason(listing(1), ok, state.get("t:1")) is None
+    state.upsert(listing(1), ok, "t2")
+    state.upsert(listing(390_000), ok, "t3")
+    assert runner._notify_reason(listing(350_000), ok, state.get("t:1")) == "📉 Snižena cijena: 390.000 € → 350.000 €"
+    # Cijena po m² (800 € × 120 m²) uspoređuje se kao ukupna.
+    assert runner._notify_reason(listing(800), ok, state.get("t:1")) == "📉 Snižena cijena: 390.000 € → 96.000 €"
+    state.close()
+
+
+def test_deferred_listings_are_remembered_between_runs(tmp_path, monkeypatch):
+    """Oglas koji izvor nije stigao otvoriti pamti se u bazi i predaje izvoru sljedeći put."""
+    seen_pending = []
+
+    def fetch(src, mode, known_ids):
+        seen_pending.append([x.source_id for x in src.pending])
+        src.deferred = [listing(sid="9")] if len(seen_pending) == 2 else []
+        return FakeSource.batches.pop(0)
+
+    monkeypatch.setattr(FakeSource, "fetch", fetch)
+    _runs(tmp_path, monkeypatch, [[listing(sid="1")], [listing(sid="1")], [listing(sid="1")], [listing(sid="1")]])
+    assert seen_pending == [[], [], ["9"], []]
+
+
+def test_failed_reports_are_retried(tmp_path, monkeypatch):
+    """Početni popis ili zbirna datoteka nisu stigli → ništa se ne bilježi kao poslano."""
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    FakeSource.modes = []
+    FakeSource.batches = [[listing(sid="1")], [listing(sid="1")], [listing(sid=str(i)) for i in range(2, 6)]]
+    reports = []
+
+    def run_once(ok):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r.cfg["obavijesti"]["max_poruka_po_pokretanju"] = 2
+        r.telegram = object()                          # "postavljen" (šalje se zbirno)
+        r._check_land = lambda *a, **k: None
+        r._banks = r._tenders = r._ppv_reminder = lambda *a, **k: None
+        r._send_report = lambda path, caption, *a, **k: (reports.append(caption), ok)[1]
+        r.run(force=True)
+
+    run_once(False)                                    # početni popis nije stigao
+    assert FakeSource.modes == ["full"]
+    run_once(True)                                     # ponovno cijelo područje i popis
+    assert FakeSource.modes == ["full", "full"] and len(reports) == 2
+    run_once(False)                                    # 4 nova > 2: zbirna datoteka nije stigla
+    state = State(tmp_path / "s.db")
+    assert state.get("t:1")["notified_at"].startswith("zbirno:")
+    assert all(state.get(f"t:{i}")["notified_at"] is None for i in range(2, 6))
+    state.close()
+
+
+def test_failed_alert_is_retried(tmp_path):
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+
+    class Src:
+        name, label = "x", "x"
+
+    results = [False, True]
+    runner._alert = lambda subject, text: results.pop(0)
+    for _ in range(4):
+        runner._source_failed(state, Src(), RuntimeError("503"))
+    assert results == []                               # 3. greška: nije stiglo; 4.: stiglo
+    assert next(h for h in state.health_all() if h["source"] == "x")["alerted"]
+    state.close()
+
+
+def test_redmi_unmute_reaches_twins(tmp_path):
+    """Redmi: "isti kao K" vrijedi samo dok je K na GitHubovu popisu utišanih."""
+    state = State(tmp_path / "r.db")
+    state.mute("njuskalo:5", "t", "isti kao t:7")
+    state.mute("njuskalo:6", "t", "isti kao t:8")
+    assert state.muted({"t:7"}) == {"t:7", "njuskalo:5"}
+    assert state.muted(set()) == set()
+    assert state.muted() == {"njuskalo:5", "njuskalo:6"}   # bez popisa s GitHuba: sve zapamćeno
+    state.close()

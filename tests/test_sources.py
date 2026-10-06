@@ -55,6 +55,7 @@ def test_index_items():
     assert x.source_id == "7542932" and x.price == 690000 and x.area == 400
     assert x.url == "https://www.index.hr/oglasi/nekretnine/prodaja-kuca/oglas/visestambena-kamena-kuca-s-bazenom-i-pogledom-na-more-supetar/7542932"
     assert x.municipality == "Supetar" and x.county == "Splitsko-dalmatinska"
+    assert x.extra["samo_popis"]                       # bez opisa i vrste dok se oglas ne otvori
 
 
 @pytest.fixture(scope="module")
@@ -116,6 +117,7 @@ def test_vender_items():
     assert drenova.price == 499000 and drenova.area == 148 and drenova.plot_area == 52
     assert drenova.municipality == "Rijeka" and drenova.settlement == "Drenova"
     assert items["790712"].settlement == "Barbat Na Rabu" and items["790712"].area is None
+    assert all(x.area is None or x.area > 0 for x in items.values())       # "0.00" je prazno polje
     assert sum(x.kind == HOUSE for x in items.values()) == 5
 
 
@@ -145,8 +147,10 @@ def test_njuskalo_detail():
     from scraper.sources.njuskalo import parse_detail, parse_list
 
     house = next(x for x in parse_list(read("njuskalo_kuce.html.gz"), HOUSE) if x.source_id == "45131418")
+    assert house.extra["samo_popis"]
     parse_detail(read("njuskalo_kuca_oglas.html.gz"), house)
     assert house.subtype == "Samostojeća kuća" and house.area == 157 and house.plot_area == 250
+    assert "samo_popis" not in house.extra
     assert house.extra["parking"] == "2" and house.extra["priblizna_lokacija"] is True
     assert round(house.extra["lat"], 3) == 45.029 and "4 km od mora" in house.description
     land = next(x for x in parse_list(read("njuskalo_zemljista.html.gz"), LAND) if x.source_id == "51465742")
@@ -237,7 +241,7 @@ def test_index_opens_new_matching_ads():
     assert sorted(u.split("code=")[1][0] for u in opened) == ["1", "2"]
     x1, x2 = found["1"], found["2"]
     assert x1.subtype == "Samostojeća kuća" and x1.plot_area == 400 and x1.extra["parking"] == "vanjsko parkirno mjesto"
-    assert x1.extra["godina_izgradnje"] == 1978 and x1.extra["vlasnicki_list"]
+    assert x1.extra["godina_izgradnje"] == 1978 and x1.extra["vlasnicki_list"] and "samo_popis" not in x1.extra
     d1 = evaluate(x1, cfg, Locator())
     assert d1.status == WARN and any(w.startswith("suvlasništvo") for w in d1.warnings)
     assert evaluate(x2, cfg, Locator()).status == REJECT  # dvojna kuća iz vrste u oglasu
@@ -316,6 +320,7 @@ def test_burza_list_detail_and_fetch():
     assert y.extra["oglasivac"].startswith("Millennium") and "opis_skracen" not in y.extra
     assert y.description.startswith("Prodaje se velika samostojeća kuća")
     assert burza._areas("Prodaje se kuća na okućnici od 600 m2, stambene površine 150 m2", HOUSE) == (150, 600)
+    assert burza._areas("Moguća gradnja kuće 150 m2 na zemljištu 800 m2", LAND) == (800, None)   # zemljište: najveća
 
     class Resp:
         def __init__(self, text):
@@ -386,6 +391,36 @@ def test_detail_limit_defers_instead_of_sending_without_area(monkeypatch, fina):
     nj.since = "2026-10-05T11:30:00+02:00"
     items = {x.source_id for x in nj.fetch(INCREMENTAL, {"45180000"})}
     assert "51323938" not in items and "45131418" in items  # kandidat čeka; preskup se vraća bez otvaranja
+    assert "51323938" in {x.source_id for x in nj.deferred}
+
+    # Sljedeće pokretanje: oglasa više nema na pročitanim stranicama (novi su ga pomaknuli),
+    # ali se otvara jer je zapamćen kao odgođen.
+    monkeypatch.setattr(njuskalo, "MAX_DETAILS", 8)
+    later = njuskalo.Njuskalo(None, Locator(), cfg["kriteriji"], browser=FakeBrowser({
+        "prodaja-kuca": read("njuskalo_zemljista.html.gz"), "prodaja-zemljista": read("njuskalo_zemljista.html.gz"),
+        "oglas-51323938": read("njuskalo_kuca_oglas.html.gz")}))
+    later.since, later.pending = nj.since, nj.deferred
+    got = {x.source_id: x for x in later.fetch(INCREMENTAL, {"45180000"})}
+    assert got["51323938"].extra.get("detalji") and got["51323938"].area
+
+
+def test_deferred_detail_gives_up_after_three_failures():
+    """Stranica oglasa ne odgovara: pokušava se još dva puta, zatim oglas stiže s podacima s popisa."""
+    from scraper.models import Listing
+    from scraper.sources.base import Source
+
+    src = Source(None, None, {})
+    x = Listing("t", "1", "u", "Kuća", HOUSE)
+    assert src.defer(x) and x.extra.get("pokusaja", 0) == 0          # ograničenje otvaranja: bez brojanja
+    assert src.defer(x, failed=True) and src.defer(x, failed=True)
+    assert not src.defer(x, failed=True)
+    src.pending = [x]
+    found = {}
+    src.add_pending(found, set())
+    assert found["1"].extra["pokusaja"] == 3
+    found = {}
+    src.add_pending(found, {"1"})                                    # u međuvremenu poznat → ne otvara se ponovno
+    assert found == {}
 
 
 def test_index_reads_more_pages_while_new(fina):
