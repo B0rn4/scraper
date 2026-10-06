@@ -51,6 +51,17 @@ _BUILDING_LAND = re.compile(r"gradevinsk")
 _AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|maslinik|vocnjak")
 
 
+def effective_price(price: float | None, area: float | None, total: bool = False) -> float | None:
+    """Ukupna cijena kakvu treba usporediti s granicom. Do 100 € (1, 10, 100) portali
+    pišu umjesto "cijena na upit" → None; između 100 i 1.000 € je obično cijena po m²
+    → puta površina. FINA (total=True): početna cijena je uvijek ukupna."""
+    if not price:
+        return None
+    if total or price > 1000:
+        return price
+    return price * area if price > 100 and area else None
+
+
 def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) -> Decision:
     """prices (medijani traženih, scraper/prices.py): za procjenu kod "cijene na upit"."""
     reasons: list[str] = []
@@ -153,13 +164,8 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) ->
             warnings.append(warning)
 
     # --- cijena ---
-    price = listing.price if listing.price and listing.price > 1000 else None
-    if listing.extra.get("ukupna_cijena") and listing.price:
-        price = listing.price  # FINA: početna cijena je uvijek ukupna, i kad je mala
-    elif price is None and listing.price and listing.price > 100 and listing.area:
-        # Cijena između 100 i 1.000 € je obično cijena po m². Do 100 € (1, 10, 100)
-        # portali koriste kao zamjenu za "cijena na upit".
-        price = listing.price * listing.area
+    price = effective_price(listing.price, listing.area, bool(listing.extra.get("ukupna_cijena")))
+    if price is not None and price != listing.price:
         warnings.append(f"cijena {fmt_eur(listing.price)} je vjerojatno po m² – ukupno ≈ {fmt_eur(price)}")
     if price is None:
         estimate = prices.estimate(listing, jls_name) if prices is not None and jls_name else None
@@ -183,7 +189,7 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) ->
             near_miss_only = False
 
     # --- površina ---
-    if listing.area is None:
+    if not listing.area:  # 0 je na nekim portalima prazno polje, ne stvarna površina
         warnings.append("površina nije navedena")
     elif listing.area < limits["min_povrsina"]:
         reasons.append(f"površina {fmt_m2(listing.area)} < {fmt_m2(limits['min_povrsina'])}")

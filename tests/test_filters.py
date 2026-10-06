@@ -216,3 +216,27 @@ def test_price_on_request_unfinished_kept(ctx):
         assert d.status == WARN, title
     vila = evaluate(house(price=1, area=349, title="Luksuzna vila u izgradnji", description="Parking."), *ctx, prices)
     assert vila.status == REJECT                                       # "u izgradnji" ne spašava luksuznu
+
+
+def test_numbers_and_areas_in_text():
+    """Svježi pregled koda: "0,345" je decimalni broj, a razmak razdvaja tisuće ("1 200 m2")."""
+    from scraper.text import areas_in_text, parse_number
+
+    assert (parse_number("0,345"), parse_number("1,200"), parse_number("1.234,5")) == (0.345, 1200, 1234.5)
+    assert areas_in_text("teren 1 200 m2") == [1200.0]
+    assert areas_in_text("0,345 ha") == [3450.0]
+    assert areas_in_text("kuća 150 m2, okućnica 1.200 m2, 3 sobe") == [150.0, 1200.0]
+
+
+def test_ideal_part_of_town_is_not_a_share(ctx):
+    """"U idealnom dijelu Malinske" je opis mjesta, ne prodaja idealnog (suvlasničkog) dijela."""
+    for text in ("Prodajemo kuću u idealnom dijelu Malinske.", "Nudimo kuću na idealnom dijelu otoka Krka."):
+        assert evaluate(house(description=text), *ctx).status != REJECT
+    for text in ("Prodaje se idealni dio od 1/2 kuće.", "Prodajem 1/2 idealnog dijela kuće.",
+                 "Idealni dio nekretnine se prodaje."):
+        assert evaluate(house(description=text), *ctx).status == REJECT
+
+
+def test_zero_area_means_not_given(ctx):
+    d = evaluate(land(area=0), *ctx)
+    assert d.status == WARN and "površina nije navedena" in d.warnings

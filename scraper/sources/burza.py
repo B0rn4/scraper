@@ -41,14 +41,18 @@ def _clean(value: str) -> str:
 
 def _areas(text: str, kind: str) -> tuple[float | None, float | None]:
     """(površina, okućnica) iz teksta. Kuća: površina uz koju piše okućnica/zemljište
-    nije stambena (prva takva je okućnica)."""
+    nije stambena (prva takva je okućnica). Zemljište: najveća površina ("moguća gradnja
+    kuće 150 m2 na zemljištu 800 m2")."""
     area = plot = None
     for pos, value in area_matches(text):
         if value < 20:
             continue
+        if kind != HOUSE:
+            area = max(area or 0, value)
+            continue
         # Riječi ispred broja, samo iz istog dijela rečenice (ne preko prethodne površine).
         before = re.split(r"m2|m²|[,;!?]|\.\s", fold(text[max(0, pos - 40):pos]))[-1]
-        if kind == HOUSE and _NOT_LIVING.search(before):
+        if _NOT_LIVING.search(before):
             if plot is None and re.search(r"okucnic|zemljist|parcel|dvorist|okolis", before):
                 plot = value
             continue
@@ -157,14 +161,17 @@ class Burza(Source):
         for slug, kind in KINDS:
             for x in self._list(slug, kind, REGION, "", REGION_PAGES):
                 found.setdefault(x.source_id, x)
+        self.add_pending(found, known_ids)
         out, details = [], 0
         for x in found.values():
             if x.source_id in known_ids:                       # mjesto i površina iz ranijeg dohvata
                 out.append(x)
-            elif details < MAX_DETAILS:                        # ostali sljedeći put (bez mjesta bi bili "nepoznata lokacija")
+            elif details < MAX_DETAILS:
                 details += 1
-                if self._detail(x):
+                if self._detail(x) or not self.defer(x, failed=True):
                     out.append(x)
+            else:                                              # sljedeći put (bez mjesta bi bili "nepoznata lokacija")
+                self.defer(x)
         return out
 
     def search_links(self):

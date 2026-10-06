@@ -26,11 +26,18 @@ def _re(text: str) -> re.Pattern:
     return re.compile(text)
 
 
+# Suvlasnički ili idealni dio. "Idealni" je i obična pridjevska riječ ("kuća u idealnom
+# dijelu Malinske"), pa se kao dio vlasništva broji samo kad iza slijedi nekretnina ili
+# razlomak ("idealni dio od 1/2 kuće", "idealni dio nekretnine").
+_SHARE = (r"(suvlasnick\w* (dio|dijel\w*|udio|udjel\w*)"
+          r"|(?<!\bu )(?<!\bna )idealn\w* (dio|dijel\w*|udio|udjel\w*)"
+          r"(?= (od )?(\d|nekretnin|kuc|zemljist|cestic|parcel|objekt|stan|zgrad)))")
+
 RULES = [
     # --- odbija se: prodaje se samo dio nekretnine ---
     Rule("prodaje se suvlasnički dio",
-         _re(r"\b(prodaj\w*|nudi\w*|u ponudi)\b[^.]{0,40}\b(suvlasnick\w*|idealn\w*) (dio|dijel\w*|udio|udjel\w*)"
-             r"|\b(suvlasnick\w*|idealn\w*) (dio|dijel\w*|udio|udjel\w*)\b[^.]{0,25}\b(na prodaju|se prodaje|prodajem)"
+         _re(rf"\b(prodaj\w*|nudi\w*|u ponudi)\b[^.]{{0,40}}\b{_SHARE}"
+             rf"|\b{_SHARE}\b[^.]{{0,25}}\b(na prodaju|se prodaje|prodajem)"
              r"|\bprodaj\w*\b[^.]{0,15}\b(1 2|1 3|1 4|2 3|polovic\w*|polovin\w*) (kuce|nekretnine|zemljista|parcele)"),
          reject=True),
     # --- upozorenja ---

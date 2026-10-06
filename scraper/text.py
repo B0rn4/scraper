@@ -43,7 +43,8 @@ def parse_number(text) -> float | None:
             s = s.replace(",", "")
     elif "," in s:
         head, _, tail = s.rpartition(",")
-        s = s.replace(",", "") if len(tail) == 3 and head else s.replace(",", ".")
+        # "1,200" je tisuću dvjesto (engleski zapis), ali "0,345" je decimalni broj.
+        s = s.replace(",", "") if len(tail) == 3 and head and head != "0" else s.replace(",", ".")
     elif s.count(".") == 1:
         head, _, tail = s.partition(".")
         if len(tail) == 3 and head and head != "0":
@@ -59,7 +60,8 @@ def parse_number(text) -> float | None:
 SQ_FATHOM_M2 = 3.596652  # 1 čhv (četvorni hvat)
 
 _AREA = re.compile(
-    r"(\d{1,3}(?:\.\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)\s*(m2|m²|m\s?2|čhv|čh|chv|ha|hektar\w*)(?!\w)",
+    r"(\d{1,3}(?:\.\d{3})+(?:,\d+)?|(?<![\d.,])\d{1,3}(?:[ \u00a0]\d{3})+(?:,\d+)?|\d+(?:[.,]\d+)?)"
+    r"\s*(m2|m²|m\s?2|čhv|čh|chv|ha|hektar\w*)(?!\w)",
     re.I,
 )
 

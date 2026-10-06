@@ -65,7 +65,7 @@ def parse_items(items: list[dict]) -> list[Listing]:
             kind=kind,
             subtype=subtype,
             price=price if price and price > 0 else None,
-            area=size if kind == HOUSE else (land or size),
+            area=(size if kind == HOUSE else (land or size)) or None,
             plot_area=land if kind == HOUSE and land else None,
             county=state,
             municipality=city.title() if city.isupper() else city,
