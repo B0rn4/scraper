@@ -26,21 +26,34 @@ zemljista gradevinsko gradevinska otok otoku pogled pogledom more mora moru okuc
 novogradnja vila vile vilu centar centru blizini blizina mirnoj lokaciji lokacija prilika odlicna odlican
 atraktivna atraktivno prekrasna prekrasan lijepa sobe soba garazom garaza bazen bazenom parcela teren""".split())
 FIELDS = ("key", "source", "kind", "jls", "price", "area", "title", "settlement", "notified_at", "notified_price")
+_PLACE_WORDS: set[str] = set()   # riječi iz naziva naselja i gradova/općina (nisu opis nekretnine)
 
 
 def _words(title: str) -> set[str]:
-    return {w for w in fold(title or "").split() if len(w) >= 4 and not w.isdigit() and w not in _GENERIC}
+    """Opisne riječi naslova: bez općenitih riječi i bez naziva mjesta (inače bi sve kuće u
+    Baški imale zajedničku riječ "baska")."""
+    return {w for w in fold(title or "").split()
+            if len(w) >= 4 and not w.isdigit() and w not in _GENERIC and w not in _PLACE_WORDS}
+
+
+def _learn_places(locator) -> None:
+    if not _PLACE_WORDS and locator is not None:
+        for jls in locator.jls.values():
+            for name in (jls.name, *jls.settlements):
+                _PLACE_WORDS.update(fold(name).split())
 
 
 def places(r: dict, locator=None) -> set[str]:
     """Naselja (ne sam grad/općina) iz naslova i polja naselja; "Centar" se ne broji."""
     if "_places" in r:
         return r["_places"]
+    _learn_places(locator)
     found = set()
     if locator is not None:
-        for jls, phrase in locator.scan_text(f"{r.get('title') or ''}, {r.get('settlement') or ''}"):
-            if jls.name == r.get("jls") and locator.by_name(phrase) is None:
-                found.add(fold(phrase))
+        # Osnovni oblik naselja ("u Barušićima" = "Barušići"), bez naziva grada/općine.
+        for jls, name, written in locator._scan(f"{r.get('title') or ''}, {r.get('settlement') or ''}"):
+            if jls.name == r.get("jls") and locator.by_name(written) is None and locator.by_name(name) is None:
+                found.add(name)
     elif r.get("settlement"):
         found.add(fold(r["settlement"]))
     found.discard("centar")
@@ -62,7 +75,9 @@ def _round(price: float, area: float) -> bool:
 
 
 def same_property(new: dict, old: dict, cheaper_ok: bool = False) -> bool:
-    """Isti oglas? cheaper_ok: dopušta da je raniji oglas skuplji (za "sad jeftiniji")."""
+    """Isti oglas? cheaper_ok: dopušta da je raniji oglas skuplji (za "sad jeftiniji").
+    Na istom portalu samo ponovna objava: ista cijena i površina (više jedinica istog
+    projekta ima bliske, ali različite cijene – to su različite nekretnine)."""
     if new["kind"] != old["kind"] or not new.get("jls") or new["jls"] != old.get("jls"):
         return False
     pn, po, an, ao = new.get("price"), old.get("price"), new.get("area"), old.get("area")
@@ -77,6 +92,8 @@ def same_property(new: dict, old: dict, cheaper_ok: bool = False) -> bool:
         return asked_n and asked_o and _same_place(new, old)
     if abs(pn - po) <= 1 and abs(an - ao) <= 0.5 and (not _round(pn, an) or _same_place(new, old)):
         return True
+    if new.get("source") and new.get("source") == old.get("source"):
+        return False
     close = abs(pn - po) <= PRICE_TOLERANCE * po
     pricier = cheaper_ok and po > pn and po <= pn * (1 + CHEAPER_RANGE)
     return (close or pricier) and _same_place(new, old)

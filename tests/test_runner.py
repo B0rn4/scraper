@@ -362,8 +362,9 @@ def test_mute_button(tmp_path, monkeypatch):
 
     monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
     FakeSource.modes = []
-    other = listing(sid="9", source="u")                  # isti oglas na drugom portalu
-    FakeSource.batches = [[listing(sid="7"), other], [listing(280_000, "7"), listing(250_000, "9", source="u")]]
+    kamena = "Kamena kuća s konobom, Punat"               # isti oglas na dva portala (opisne riječi)
+    FakeSource.batches = [[listing(sid="7", title=kamena), listing(sid="9", source="u", title=kamena)],
+                          [listing(280_000, "7", title=kamena), listing(250_000, "9", source="u", title=kamena)]]
     tg, sent = Tg(), []
 
     def run_once():
@@ -391,7 +392,7 @@ def test_mute_button(tmp_path, monkeypatch):
     # Slučajan dodir: poništenje vraća poruke i za blizanca, a gumb opet glasi "Ne zanima me".
     tg.updates = [{"update_id": 12, "callback_query": {"id": "q3", "data": "pz:t:7",
                    "message": {"message_id": 5, "chat": {"id": 42}, "reply_markup": json.loads(muted_markup({}, "t:7"))}}}]
-    FakeSource.batches = [[listing(270_000, "7"), listing(240_000, "9", source="u")]]
+    FakeSource.batches = [[listing(270_000, "7", title=kamena), listing(240_000, "9", source="u", title=kamena)]]
     run_once()
     state = State(tmp_path / "s.db")
     assert state.muted() == set() and state.meta_get("telegram:offset") == "13"
@@ -436,3 +437,27 @@ def test_price_drop_compared_to_notified_price(tmp_path):
     assert runner._notify_reason(listing(310_000), ok, state.get("t:1")) is None   # i dalje skuplji nego u poruci
     assert runner._notify_reason(listing(290_000), ok, state.get("t:1")) == "📉 Snižena cijena: 300.000 € → 290.000 €"
     state.close()
+
+
+def test_project_units_and_town_names_are_not_duplicates():
+    """Više jedinica istog projekta na istom portalu (bliske cijene) i kuće koje dijele samo
+    ime mjesta u naslovu nisu ista nekretnina; ponovna objava (iste brojke) jest."""
+    from scraper.dedupe import places, same_property
+    from scraper.locations import Locator
+
+    loc = Locator()
+
+    def r(key, source, price, area, title, jls="Malinska-Dubašnica"):
+        row = {"key": key, "source": source, "kind": HOUSE, "jls": jls, "price": price, "area": area, "title": title,
+               "settlement": ""}
+        places(row, loc)
+        return row
+
+    a = r("n:2704487", "nekretnine_hr", 350_000, 310, "Obiteljska vila Barušići, Malinska-Dubašnica")
+    b = r("n:2704423", "nekretnine_hr", 352_000, 310, "Obiteljska vila Barušići, Malinska-Dubašnica")
+    assert not same_property(a, b) and not same_property(a, b, cheaper_ok=True)        # dvije jedinice
+    assert same_property(r("n:1", "nekretnine_hr", 352_000, 310, a["title"]), b)        # ponovna objava
+    assert same_property(r("i:1", "index_oglasi", 351_000, 310, "Vila u Barušićima"), b)  # drugi portal, isto naselje
+    baska1 = r("n:5", "nekretnine_hr", 360_000, 85, "Obiteljska kuća Baška, Baška", "Baška")
+    baska2 = r("o:6", "oglasnik", 362_000, 85.5, "Obiteljska kuća Baška, Baška", "Baška")
+    assert not same_property(baska1, baska2)                                            # samo ime mjesta
