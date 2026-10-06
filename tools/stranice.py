@@ -176,7 +176,8 @@ button.reset {{ font: inherit; font-size: .85rem; padding: 6px 12px; border-radi
     <li>Poveznice portala već imaju filtar cijene (i površine gdje portal to podržava) i najnovije oglase na vrhu.</li>
     <li>Ako nađeš oglas koji odgovara, a nije stigao ni kao ⚠, pošalji mi poveznicu – to je propust koji treba popraviti.</li>
     <li>Ne stižu namjerno: oglas već poslan s drugog portala, stari oglas koji agencija ponovno objavi, naselja koja si
-    u popisu označio da ne stižu, „cijena na upit” i stanovi.</li>
+    u popisu označio da ne stižu, oglasi označeni s 🔕 Ne zanima me i stanovi. „Cijena na upit” stiže s ⚠, osim s
+    realestatecroatia.com i burze (tamo su to gotovo uvijek luksuzne vile).</li>
     <li>Oznaka „pregledano” pamti se samo u ovom pregledniku.</li>
   </ul>
 </header>
