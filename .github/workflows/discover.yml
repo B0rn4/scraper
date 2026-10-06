@@ -73,7 +73,7 @@ jobs:
       - name: Otkrij izvore
         timeout-minutes: 45
         run: |
-          python tools/discover42.py debug-out
+          python tools/discover41.py debug-out
 
       - name: Spremi na granu debug
         if: always()

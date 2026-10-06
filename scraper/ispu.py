@@ -12,6 +12,7 @@ slojeva mijenjaju sa svakim novim PPV-om."""
 import json
 import math
 import re
+import time
 from dataclasses import dataclass, field
 
 from .text import fmt_m2, fold
@@ -181,6 +182,7 @@ class PointInfo:
     land_values: list[float] = field(default_factory=list)   # PPV građevinskog zemljišta stambene/mješovite namjene
     ppv_label: str = ""
     heritage: list[Heritage] = field(default_factory=list)  # zaštićena kulturna dobra na točki
+    heritage_checked: bool = True                           # False: ISPU nije odgovorio za slojeve baštine
 
 
 class Ispu:
@@ -193,6 +195,7 @@ class Ispu:
         self._layers: list[dict] | None = None
         self.parcels_off = False         # DGU nije odgovorio: do kraja pokretanja bez traženja čestica
         self.last_miss = ""              # zašto čestica nije nađena: "ko", "kc" ili "off" (servis ne radi)
+        self.retry_pause = 1.0           # razmak prije ponovnog upita (s)
 
     def layers(self) -> list[dict]:
         """Slojevi građevinskog područja, najnoviji PPV zemljišta i zaštićena kulturna dobra
@@ -223,11 +226,23 @@ class Ispu:
                 self._walk(v, path, out)
 
     def identify(self, x: float, y: float) -> PointInfo:
-        body = {"x": x, "y": y, "scale": 2000,
-                "layers": [{k: v for k, v in la.items() if not k.startswith("_")} for la in self.layers()]}
-        r = self.session.post(API + "gis/identify", json=body, headers=HEADERS, timeout=self.timeout)
-        r.raise_for_status()
-        return parse_identify(r.json())
+        """Slojevi na točki. ISPU povremeno vrati 400 ("pokušajte ponovo") kad upiti idu brzo
+        zaredom (mjerenje 6. 10.: 3 od 36 bez razmaka, 0 od 36 s razmakom od 1 s): ponovi
+        nakon 1 s, a zatim bez slojeva kulturnih dobara (građevinsko područje je važnije)."""
+        layers = self.layers()
+        base = [la for la in layers if "kulturna dobra" not in la["_path"]]
+        attempts = [layers, layers] + ([base] if len(base) < len(layers) else [])
+        for i, use in enumerate(attempts):
+            if i:
+                time.sleep(self.retry_pause)
+            body = {"x": x, "y": y, "scale": 2000, "layers": [{k: v for k, v in la.items() if not k.startswith("_")} for la in use]}
+            r = self.session.post(API + "gis/identify", json=body, headers=HEADERS, timeout=self.timeout)
+            if r.status_code < 400 or i == len(attempts) - 1:
+                r.raise_for_status()
+                info = parse_identify(r.json())
+                info.heritage_checked = len(use) == len(layers)
+                return info
+        raise RuntimeError("ISPU identify")          # ne događa se: zadnji pokušaj vraća ili baca grešku
 
     def point(self, lat: float, lon: float) -> PointInfo:
         return self.identify(*to_htrs(lat, lon))
@@ -378,6 +393,8 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
     caveat = " (oznaka može biti približna)" if where.startswith("oznaci") else ""
     result = _gp_check(info, where, caveat, house, use=info.use.split(") ", 1)[-1].capitalize() if info.use else "")
     result.heritage = heritage_warning(info.heritage, caveat)
+    if not info.heritage_checked:
+        result.line += " (kulturna dobra nisu provjerena – ISPU nije odgovorio)"
     return result
 
 

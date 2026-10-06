@@ -155,3 +155,43 @@ def test_runner_heritage_warning(tmp_path):
     assert d.status == WARN and d.warnings == [
         "u kulturno-povijesnoj cjelini „Kulturno-povijesna cjelina grada Opatije” (Z-5520) – radovi uz uvjete "
         "konzervatora (oznaka može biti približna)"]
+
+
+def test_identify_retries_then_drops_heritage_layers():
+    from scraper.ispu import Ispu
+
+    class Resp:
+        def __init__(self, status, data=None):
+            self.status_code, self.data = status, data
+
+        def json(self):
+            return self.data
+
+        def raise_for_status(self):
+            if self.status_code >= 400:
+                raise RuntimeError(self.status_code)
+
+    class Session:
+        def __init__(self, statuses):
+            self.statuses, self.bodies = list(statuses), []
+
+        def post(self, url, json=None, **kw):
+            self.bodies.append(json)
+            return Resp(self.statuses.pop(0), [])
+
+    gp = {"id": "1", "hashIdentify": "a", "_path": "Građevinska područja > Građevinsko područje naselja"}
+    z = {"id": "326", "hashIdentify": "b", "_path": "Ministarstvo kulture > Zaštićena kulturna dobra (Z-lista) > Zaštićena kulturna dobra"}
+
+    def ispu(statuses):
+        s = Session(statuses)
+        i = Ispu(session=s)
+        i._layers, i.retry_pause = [gp, z], 0
+        return i, s
+
+    i, s = ispu([400, 200])                       # prolazna greška: drugi pokušaj sa svim slojevima
+    assert i.identify(1.0, 2.0).heritage_checked and len(s.bodies) == 2 and len(s.bodies[1]["layers"]) == 2
+    i, s = ispu([400, 400, 200])                  # i drugi put: bez kulturnih dobara
+    info = i.identify(1.0, 2.0)
+    assert not info.heritage_checked and [la["id"] for la in s.bodies[2]["layers"]] == ["1"]
+    r = check_land(FakeIspu(PointInfo(gp="naselja", heritage_checked=False)), "Kuća", 45.1, 14.5, False, house=True)
+    assert r.line.endswith("(kulturna dobra nisu provjerena – ISPU nije odgovorio)")
