@@ -60,7 +60,14 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
     Kad je predugo, izostavljaju se cijeli manje važni retci (nikad usred HTML oznake)."""
     e = html.escape
     kind = "🏠 <b>Kuća</b>" if listing.kind == HOUSE else "🌳 <b>Građevinsko zemljište</b>" if listing.kind == LAND else "<b>Nekretnina</b>"
-    parts = [kind, fmt_eur(listing.price) if listing.price and listing.price > 1000 else "cijena nije navedena"]
+    price = listing.price or 0
+    if price > 1000 or (price and listing.extra.get("ukupna_cijena")):
+        shown = fmt_eur(price)
+    elif price > 100 and listing.area:               # vjerojatno cijena po m² (vidi filters.py)
+        shown = f"≈ {fmt_eur(price * listing.area)} ({fmt_eur(price)}/m²?)"
+    else:
+        shown = "cijena nije navedena"
+    parts = [kind, shown]
     if listing.area:
         parts.append(fmt_m2(listing.area))
     if listing.plot_area:
