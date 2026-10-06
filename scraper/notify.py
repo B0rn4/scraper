@@ -12,6 +12,7 @@ from urllib.parse import quote
 
 import requests
 
+from .filters import effective_price
 from .models import HOUSE, LAND, WARN, Decision, Listing
 from .text import fmt_eur, fmt_m2
 
@@ -61,13 +62,13 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
     Kad je predugo, izostavljaju se cijeli manje važni retci (nikad usred HTML oznake)."""
     e = html.escape
     kind = "🏠 <b>Kuća</b>" if listing.kind == HOUSE else "🌳 <b>Građevinsko zemljište</b>" if listing.kind == LAND else "<b>Nekretnina</b>"
-    price = listing.price or 0
-    if price > 1000 or (price and listing.extra.get("ukupna_cijena")):
-        shown = fmt_eur(price)
-    elif price > 100 and listing.area:               # vjerojatno cijena po m² (vidi filters.py)
-        shown = f"≈ {fmt_eur(price * listing.area)} ({fmt_eur(price)}/m²?)"
-    else:
+    total = effective_price(listing.price, listing.area, bool(listing.extra.get("ukupna_cijena")), listing.kind)
+    if total is None:
         shown = "cijena nije navedena"
+    elif total == listing.price:
+        shown = fmt_eur(total)
+    else:                                            # vjerojatno cijena po m² (vidi filters.py)
+        shown = f"≈ {fmt_eur(total)} ({fmt_eur(listing.price)}/m²?)"
     parts = [kind, shown]
     if listing.area:
         parts.append(fmt_m2(listing.area))

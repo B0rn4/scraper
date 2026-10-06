@@ -684,3 +684,67 @@ def test_telegram_button_url_and_photo_timeout(monkeypatch):
     x.image_url = "https://x.hr/slika.jpg"
     tg.send_listing(x, Decision(PASS, jls="Punat"))
     assert calls == ["sendPhoto", "sendMessage"]
+
+
+# --- treća runda ---
+
+def test_price_on_request_without_price_is_seen(tmp_path, monkeypatch):
+    """"Cijena na upit" bez cijene (None) na dva portala → jedna poruka."""
+    title = "Kamena kuća s konobom, Punat"
+    a, b = listing(None, "1", title=title), listing(None, "2", title=title, source="u")
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [a, b]])
+    assert sent[1] == [("t:1", "")]
+
+
+def test_failed_sends_do_not_hide_property_through_copy_chain(tmp_path, monkeypatch):
+    """A neposlan, B "isti kao A", C "isti kao B" (Telegram ne radi dva pokretanja) → kad
+    proradi, stiže jedna poruka."""
+    title = "Kamena kuća s konobom, Punat"
+    a, b, c = listing(sid="1", title=title), listing(sid="2", source="u", title=title), listing(sid="3", source="v", title=title)
+
+    def configure(r, i):
+        if i in (1, 2):
+            r._send_notifications = lambda state, items: None
+
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [a, b], [a, b, c], [a, b, c]], configure)
+    assert len(sent[3]) == 1
+
+
+def test_mute_does_not_spread_to_cheaper_other_house(tmp_path, monkeypatch):
+    """Utišana kuća 290.000 €; nova kuća iste površine u istom mjestu za 240.000 € (možda druga
+    nekretnina) stiže kao "već viđen … sad jeftiniji", ne utiša se."""
+    first = listing(290_000, "1", title="Obiteljska kuća, Stara Baška")
+    other = listing(240_000, "2", title="Kamena kuća za adaptaciju, Stara Baška", source="u")
+    first.settlement = other.settlement = "Stara Baška"
+
+    def configure(r, i):
+        if i == 2:
+            st = State(tmp_path / "s.db")
+            st.mute("t:1", "x", "gumb")
+            st.close()
+
+    first_cheaper = listing(280_000, "1", title="Obiteljska kuća, Stara Baška")
+    first_cheaper.settlement = "Stara Baška"
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [first], [first_cheaper, other]], configure)
+    assert sent[1] == [("t:1", "")]
+    # Utišana snižena (280.000) ne stiže; druga kuća (240.000) stiže s napomenom.
+    assert [k for k, _ in sent[2]] == ["u:2"] and sent[2][0][1].startswith("📉 Već viđen")
+
+
+def test_known_listing_keeps_area_from_listing_page(tmp_path, monkeypatch):
+    """burza: površina iz kratkog isječka (80 m²) ne prepisuje onu sa stranice oglasa (1.200 m²)."""
+    from scraper.models import LAND
+
+    def land(price, area, from_text):
+        x = listing(price, "7", area=area, title="Građevinsko zemljište, Punat")
+        x.kind, x.subtype = LAND, "Građevinsko zemljište"
+        if from_text:
+            x.extra["povrsina_iz_teksta"] = True
+        return x
+
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [land(150_000, 1200, False)],
+                                         [land(150_000, 80, True)], [land(120_000, 80, True)]])
+    assert sent[3] and sent[3][0][1].startswith("📉 Snižena cijena")
+    state = State(tmp_path / "s.db")
+    assert state.get("t:7")["area"] == 1200
+    state.close()

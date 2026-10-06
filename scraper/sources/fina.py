@@ -21,14 +21,16 @@ from .base import Source
 
 CSV_URL = "https://ponip.fina.hr/ocevidnik-web/preuzmi/csv"
 SEARCH_URL = "https://ponip.fina.hr/ocevidnik-web/pretrazivanje/nekretnina"
+REQUIRED_COLUMNS = {"Vrsta predmeta prodaje", "Opis", "Nadležno tijelo"}
 
 _KO = re.compile(
     r"(?:\b[kK]\.\s?[oO]\.?|katastarsk\w*\s+općin\w*)\s*:?\s*"
     r"((?:Sv\.\s*)?[A-ZČĆŽŠĐ][\w]*(?:(?:\s*-\s*|\s+)(?:[A-ZČĆŽŠĐ][\w]*|na(?=\s+[A-ZČĆŽŠĐ]))){0,3})"
 )
-_BUILDING = re.compile(r"gradevinsk")
+_BUILDING = re.compile(r"(?<!ne)(?<!ne )(?<!izvan )(?<!van )gradevinsk")    # ne "negrađevinsko"
 _LAND = re.compile(r"zemljist|cestic|parcel")
-_AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|\bsuma\b|oranic|livad|pasnjak|vinograd|maslinik|vocnjak")
+_AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|\bsuma\b|oranic|livad|pasnjak|vinograd|maslinik|vocnjak"
+                           r"|\bne ?gradevinsk|\b(izvan|van) gradevinsk")
 _STRUCTURE = re.compile(r"\bkuc[aeiu]\b|obiteljsk\w* kuc|\bstan\b|\bstana\b|stambeno poslovn|poslovn\w* prostor|\bzgrad")
 
 # Sudovi (normalizirani nazivi).
@@ -64,9 +66,15 @@ class Fina(Source):
         resp = self.http.get(CSV_URL)
         text = resp.content.decode("utf-8-sig", errors="replace")
         rows = csv.DictReader(io.StringIO(text), delimiter=";")
+        # Nula oglasa je normalna (ništa na našem području), ali ne kad CSV nije pročitan
+        # (preimenovan stupac, stranica održavanja umjesto CSV-a) – tada je to kvar izvora.
+        missing = REQUIRED_COLUMNS - set(rows.fieldnames or [])
+        if missing:
+            raise RuntimeError(f"FINA CSV nema stupce {sorted(missing)} (početak: {' '.join(text[:120].split())})")
         now = datetime.now()
-        out = []
+        out, total = [], 0
         for row in rows:
+            total += 1
             if (row.get("Vrsta predmeta prodaje") or "").strip() != "nekretnina":
                 continue
             if not is_active(row, now):
@@ -74,6 +82,8 @@ class Fina(Source):
             listing = self.to_listing(row)
             if listing is not None:
                 out.append(listing)
+        if total < 100:
+            raise RuntimeError(f"FINA CSV ima samo {total} redaka (inače tisuće)")
         return out
 
     def court_class(self, court: str) -> str:

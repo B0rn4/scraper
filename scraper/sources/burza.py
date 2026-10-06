@@ -92,6 +92,7 @@ def parse_list(page: str, kind: str, place: str = "") -> list[Listing]:
         )
         x.extra["opis_skracen"] = True
         x.extra["samo_pgz"] = True          # regija obuhvaća i Istru i Liku: mjesto mora biti u PGŽ-u
+        x.extra["povrsina_iz_teksta"] = True    # iz isječka: za poznat oglas vrijedi ona sa stranice oglasa
         _set_area(x)
         out.append(x)
     return out
@@ -114,6 +115,7 @@ def parse_detail(page: str, x: Listing) -> None:
     if advertiser:
         x.extra["oglasivac"] = _clean(advertiser.group(1))
     _set_area(x)
+    x.extra.pop("povrsina_iz_teksta", None)
 
 
 class Burza(Source):

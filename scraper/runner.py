@@ -178,7 +178,10 @@ class Runner:
                 for x in listings:
                     prev = state.get(x.key)
                     if prev:  # podaci sa stranice oglasa iz ranijeg dohvata (popis ih nema)
-                        x.area = x.area or prev.get("area")
+                        # Površina iz kratkog isječka ili naslova (burza, Njuškalo zemljište) ne
+                        # prepisuje onu sa stranice oglasa.
+                        if prev.get("area") and (not x.area or x.extra.get("povrsina_iz_teksta")):
+                            x.area = prev["area"]
                         if not x.settlement and prev.get("settlement"):
                             x.settlement = prev["settlement"]
                             x.location_text = x.location_text or x.settlement
@@ -195,7 +198,7 @@ class Runner:
                         continue
                     if not first:
                         headline = self._notify_reason(x, d, old)
-                        if headline is not None and self._is_muted(state, seen, x, d):
+                        if headline is not None and self._is_muted(state, seen, x, d, old):
                             headline = None
                         if headline is not None:
                             headline = self._check_seen(state, seen, x, d, old, headline)
@@ -306,12 +309,18 @@ class Runner:
         except (OSError, ValueError):
             return {}
 
-    def _is_muted(self, state: State, seen: dedupe.Seen, x: Listing, d: Decision) -> bool:
+    def _is_muted(self, state: State, seen: dedupe.Seen, x: Listing, d: Decision, old: dict | None = None) -> bool:
         """"Ne zanima me" za ovaj oglas ili isti oglas na drugom portalu."""
         if x.key in self.muted:
             self.log(f"Ne zanima (označeno): {x.title[:60]}")
             return True
-        twin = next((t["key"] for t in seen.twins(dedupe.row(x, d)) if t["key"] in self.muted), None)
+        # Isti oglas po istim brojkama (±1 %), sad ili prije promjene cijene. Jeftinija kuća iste
+        # površine u istom mjestu može biti druga nekretnina – ona stiže kao "već viđen … sad
+        # jeftiniji", ne utiša se.
+        rows = [dedupe.row(x, d)]
+        if old and old.get("price") and old["price"] != x.price:
+            rows.append({**dedupe.row(x, d), "price": old["price"]})
+        twin = next((t["key"] for r in rows for t in seen.twins(r, cheaper_ok=False) if t["key"] in self.muted), None)
         if twin:
             self.muted.add(x.key)
             state.mute(x.key, self.stamp, f"isti kao {twin}")
@@ -643,9 +652,9 @@ class Runner:
                     headline: str) -> str | None:
         """Isti oglas već viđen (drugi portal, ponovna objava)? Stiže samo ako je sad jeftiniji."""
         new = dedupe.row(x, d)
-        # Kopija zabilježena kao "isti kao ovaj oglas" ne znači da je poruka stigla: ako slanje
-        # ovog oglasa nije uspjelo, sljedeće pokretanje ga mora ponovno pokušati poslati.
-        twins = [t for t in seen.twins(new) if t.get("notified_at") != f"dup:{x.key}"]
+        # Kopija zabilježena kao "isti kao ovaj oglas" (izravno ili preko druge kopije) ne znači
+        # da je poruka stigla: ako slanje nije uspjelo, sljedeće pokretanje ga ponovno šalje.
+        twins = [t for t in seen.twins(new) if seen.delivered(t, x.key)]
         if twins:
             def lowest(r):                   # cijena do 100 € je zamjena za "cijena na upit"
                 values = [v for v in (r["price"], r.get("notified_price")) if v and v > 100]
@@ -672,12 +681,12 @@ class Runner:
             return ""
         # Ukupne cijene: "1 €" (cijena na upit) ili cijena po m² nisu sniženje.
         total = bool(x.extra.get("ukupna_cijena"))
-        price = effective_price(x.price, x.area, total)
+        price = effective_price(x.price, x.area, total, x.kind)
         # Cijena iz zadnje poruke (ili tihog bilježenja).
-        ref = (effective_price(old.get("notified_price"), old.get("area") or x.area, total)
+        ref = (effective_price(old.get("notified_price"), old.get("area") or x.area, total, x.kind)
                if old.get("notified_at") else None)
         # Prošli put "cijena na upit" (1 € ili bez cijene): uspoređuje se s cijenom iz poruke.
-        old_price = effective_price(old.get("price"), old.get("area") or x.area, total) or ref
+        old_price = effective_price(old.get("price"), old.get("area") or x.area, total, x.kind) or ref
         if price and old_price and price < old_price - 1:
             # Poskupljenje pa malo pojeftinjenje, a i dalje skuplje nego u poruci, nije sniženje.
             if ref and price >= ref - 1:

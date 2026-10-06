@@ -461,3 +461,16 @@ def test_our_places_ignores_namesakes_elsewhere():
     assert our_places(loc, "Zemljište Martinšćica, Kostrena, 600 m2") == ["Kostrena"]
     assert our_places(loc, "CERP, Zagreb, Ivana Lučića 6. Prodaja k.č. 1234 k.o. Njivice, 800 m2") == ["Omišalj"]
     assert our_places(loc, "k.č. 12 k.o. Sveta Jelena") == ["Crikvenica"]
+
+
+def test_tender_deadline_in_words():
+    pub = "2026-10-02"
+    assert details("Rok za podnošenje ponuda je osam (8) dana od dana objave, 02.10.2026.", pub)["rok"] == "2026-10-10"
+    assert details("Ponude se podnose u roku od petnaest (15) dana od dana objave 02.10.2026.", pub)["rok"] == "2026-10-17"
+    assert details("Rok za podnošenje ponuda je 15. dana od dana objave, 02.10.2026.", pub)["rok"] == "2026-10-17"
+    assert details("Ponude se dostavljaju u roku od 8 radnih dana od dana objave 02.10.2026.", pub)["rok"] == "2026-10-14"
+    late = details("Ponude se dostavljaju zaključno s danom 20. listopada 2026. Rok je 15 dana od objave.", pub)
+    assert late == {"rok": "2026-10-20"}
+    assert details("Ponude se dostavljaju do uključivo 10.10.2026., 8 dana od objave.", pub) == {"rok": "2026-10-10"}
+    # Nepročitan broj dana: datum iza nije rok (prije: natječaj preskočen kao istekao).
+    assert "rok" not in details("Rok za podnošenje ponuda: nekoliko dana od dana objave natječaja 02.10.2026.", pub)

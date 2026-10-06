@@ -386,7 +386,25 @@ bez stotina poruka.
       - neuspjelo upozorenje o promjeni na stranici (Butiga) gubilo je promjenu;
       - slanje fotografije koje istekne (timeout) nije pokušalo poslati poruku bez slike;
       - godišnje osvježavanje PPV-a moglo je spremiti nepotpunu tablicu kad istekne vrijeme.
-   5. **Testovi:** automatski (sad 138) dopuniti cijelim pokretanjem na spremljenim
+
+      **Treća runda (6. 10., nova instanca bez popisa prijašnjih nalaza, po scenarijima):**
+      9 nalaza, svi provjereni i popravljeni (uz test):
+      - rok natječaja riječima („osam (8) dana”, „petnaest (15) dana”, „15. dana”, „8 radnih
+        dana”) nije se čitao, pa je datum objave postajao rok → natječaj preskočen kao istekao;
+      - „zaključno s danom 20. listopada” / „do uključivo” nije prepoznato kao točan datum;
+      - „negrađevinsko zemljište” prolazilo kao građevinsko (u bazi 4 takva ✅);
+      - zemljište po 22–60 €/m² smatrano „cijenom na upit” (i odbijano kao luksuzno) – sad
+        10–99 € je cijena po m² (100 € ostaje zamjena za „na upit”: ~100 takvih oglasa u bazi);
+      - „cijena na upit” bez upisane cijene (nekretnine.hr, vender) nije se prepoznavala kao
+        isti oglas na drugom portalu → dvije poruke;
+      - lanac kopija nakon dva neuspjela slanja (C „isti kao” B „isti kao” neposlani A);
+      - burza / Njuškalo zemljište: površina iz kratkog isječka prepisivala onu sa stranice
+        oglasa (1.200 → 80 m², pa odbijeno i bez sniženja);
+      - FINA: nečitljiv CSV (preimenovan stupac, stranica održavanja) bio je „0 oglasa, radi”;
+      - „Prodajem kuću, polovica kuće je renovirana” odbijano kao prodaja dijela.
+      Uz to: „Ne zanima me” se više ne prenosi na jeftiniju kuću iste površine u istom mjestu
+      (može biti druga nekretnina) – takva stiže kao „već viđen … sad jeftiniji”.
+   5. **Testovi:** automatski (sad 145) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj

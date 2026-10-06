@@ -74,7 +74,8 @@ def parse_list(page: str, kind: str) -> list[Listing]:
         municipality, settlement = _place(fields.get("lokacija", ""))
         title = html.unescape(title).strip()
         area = parse_number((re.search(r"[\d.,]+", fields.get("stambena površina", "")) or [None])[0])
-        if kind == LAND and not area:
+        from_title = kind == LAND and not area
+        if from_title:
             found = areas_in_text(title)
             area = max(found) if found else None
         price = _PRICE.search(block)
@@ -95,7 +96,8 @@ def parse_list(page: str, kind: str) -> list[Listing]:
             location_text=fields.get("lokacija", ""),
             image_url=img.group(1) if img else "",
             published=date.group(1) if date else "",
-            extra={"istaknut": m.group(1) == "VauVau", "samo_popis": True},   # opis tek sa stranice oglasa
+            extra={"istaknut": m.group(1) == "VauVau", "samo_popis": True,   # opis tek sa stranice oglasa
+                   "povrsina_iz_teksta": from_title},
         ))
     return out
 
@@ -138,6 +140,7 @@ def parse_detail(page: str, listing: Listing) -> None:
             listing.extra[name] = fields[key]
     listing.extra["detalji"] = True
     listing.extra.pop("samo_popis", None)
+    listing.extra.pop("povrsina_iz_teksta", None)
 
 
 def _is_captcha(page: str) -> bool:

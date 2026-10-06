@@ -38,7 +38,9 @@ RULES = [
     Rule("prodaje se suvlasnički dio",
          _re(rf"\b(prodaj\w*|nudi\w*|u ponudi)\b[^.]{{0,40}}\b{_SHARE}"
              rf"|\b{_SHARE}\b[^.]{{0,25}}\b(na prodaju|se prodaje|prodajem)"
-             r"|\bprodaj\w*\b[^.]{0,15}\b(1 2|1 3|1 4|2 3|polovic\w*|polovin\w*) (kuce|nekretnine|zemljista|parcele)"),
+             # "prodajem 1/2 kuće" – ali ne "prodajem kuću, polovica kuće je renovirana"
+             r"|\bprodaj\w*\b(?:(?!kuc|nekretnin|zemljist|parcel|stan)[^.]){0,15}"
+             r"\b(1 2|1 3|1 4|2 3|polovic\w*|polovin\w*) (kuce|nekretnine|zemljista|parcele)"),
          reject=True),
     # --- upozorenja ---
     Rule("suvlasništvo", _re(r"\bsuvlasni\w*|\bvise (su)?vlasnika"),

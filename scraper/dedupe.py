@@ -111,11 +111,27 @@ class Seen:
     def __init__(self, locator=None):
         self.locator = locator
         self.rows: dict[tuple, list[dict]] = {}
+        self.by_key: dict[str, dict] = {}
 
     def add(self, r: dict) -> None:
-        if r.get("jls") and r.get("price") and r.get("area"):
+        if r.get("jls") and r.get("area"):          # i bez cijene (na upit; vidi same_property)
             places(r, self.locator)
             self.rows.setdefault((r["kind"], r["jls"]), []).append(r)
+            self.by_key[r["key"]] = r
+
+    def delivered(self, r: dict, key: str) -> bool:
+        """Je li poruka o ovom oglasu stvarno stigla? Kopija "dup:K" ("isti kao K") vrijedi
+        samo ako je K (ili kopija od koje je K kopija…) poslan – a nije ako je to upravo
+        oglas `key` čije slanje nije uspjelo, ili K u viđenima nema."""
+        for _ in range(10):
+            mark = r.get("notified_at") or ""
+            if not mark.startswith("dup:"):
+                return bool(mark)
+            target = mark[4:]
+            if target == key or target not in self.by_key:
+                return False
+            r = self.by_key[target]
+        return False
 
     def add_state(self, state) -> None:
         for r in state.seen_rows():

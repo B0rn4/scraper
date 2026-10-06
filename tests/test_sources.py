@@ -531,3 +531,23 @@ def test_njuskalo_captcha_on_listing_page_defers(monkeypatch, fina):
     opened = [u for u in browser.calls if "oglas-" in u]
     assert len(opened) == 1 and "51323938" not in items
     assert nj.deferred and not any(x.extra.get("detalji") for x in items.values())
+
+
+def test_fina_unreadable_csv_is_an_error(fina):
+    class Resp:
+        def __init__(self, text):
+            self.content = text.encode("utf-8")
+
+    class Http:
+        def __init__(self, text):
+            self.text = text
+
+        def get(self, url, **kw):
+            return Resp(self.text)
+
+    for text in ("<html><title>Održavanje</title></html>",
+                 "Tijelo;Opis;Vrsta\nOpćinski sud u Rijeci;Građevinsko zemljište k.o. Njivice;nekretnina\n"):
+        fina.http = Http(text)
+        with pytest.raises(RuntimeError):
+            fina.fetch("incremental", set())
+    fina.http = None

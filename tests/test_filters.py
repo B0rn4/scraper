@@ -240,3 +240,18 @@ def test_ideal_part_of_town_is_not_a_share(ctx):
 def test_zero_area_means_not_given(ctx):
     d = evaluate(land(area=0), *ctx)
     assert d.status == WARN and "površina nije navedena" in d.warnings
+
+
+def test_third_review_land_rules(ctx):
+    """Negrađevinsko nije građevinsko; zemljište 10–99 €/m² je stvarna cijena po m²
+    (100 € je zamjena za "na upit"); "polovica kuće je renovirana" nije prodaja dijela."""
+    d = evaluate(land(subtype="", title="Negrađevinsko zemljište, Omišalj"), *ctx)
+    assert d.status == REJECT and "nije građevinsko" in d.reasons[0]
+    assert evaluate(land(subtype="Poljoprivredno", title="Negrađevinsko zemljište 1370m2"), *ctx).status == REJECT
+    d = evaluate(land(price=55, area=2442), *ctx)
+    assert d.status == WARN and any("ukupno ≈ 134.310 €" in w for w in d.warnings)
+    assert "cijena nije navedena" in evaluate(land(price=100, area=600), *ctx).warnings
+    assert "cijena nije navedena" in evaluate(land(price=5, area=600), *ctx).warnings
+    assert "cijena nije navedena" in evaluate(house(price=55), *ctx).warnings
+    assert evaluate(house(description="Prodajem kuću, polovica kuće je renovirana 2020."), *ctx).status != REJECT
+    assert evaluate(house(description="Prodajem 1/2 kuće."), *ctx).status == REJECT

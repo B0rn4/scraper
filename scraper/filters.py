@@ -47,19 +47,24 @@ LUXURY_FACTOR, HUGE_HOUSE_FACTOR = 0.4, 0.2
 # takva "na upit" ne odbija (mjerenje 6. 10.: 4 od 11 izgubljenih kuća u granici bile su takve).
 # "U izgradnji" nije ovdje – tako se oglašavaju i nove luksuzne vile.
 _UNFINISHED = re.compile(r"rohbau|roh bau|zapocet\w* gradnj|nedovrsen\w*|siva faza|grub\w* radov")
-_BUILDING_LAND = re.compile(r"gradevinsk")
-_AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|maslinik|vocnjak")
+# "Negrađevinsko" i "izvan građevinskog (područja)" nisu građevinsko zemljište.
+_BUILDING_LAND = re.compile(r"(?<!ne)(?<!ne )(?<!izvan )(?<!van )gradevinsk")
+_AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|maslinik|vocnjak"
+                           r"|\bne ?gradevinsk|\b(izvan|van) gradevinsk")
 
 
-def effective_price(price: float | None, area: float | None, total: bool = False) -> float | None:
-    """Ukupna cijena kakvu treba usporediti s granicom. Do 100 € (1, 10, 100) portali
-    pišu umjesto "cijena na upit" → None; između 100 i 1.000 € je obično cijena po m²
-    → puta površina. FINA (total=True): početna cijena je uvijek ukupna."""
+def effective_price(price: float | None, area: float | None, total: bool = False, kind: str = "") -> float | None:
+    """Ukupna cijena kakvu treba usporediti s granicom. Do 1.000 € je obično cijena po m²
+    → puta površina. Kuća: do 100 € (1, 10, 100) portali pišu umjesto "cijena na upit" →
+    None. Zemljište: "100 €" je zamjena za "na upit" (u bazi ~100 oglasa, većinom skupi
+    tereni), a 10–99 € je stvarna cijena po m² (15, 22, 45, 55, 60 €/m² u bazi); ispod
+    10 € opet zamjena. FINA (total=True): početna cijena je uvijek ukupna."""
     if not price:
         return None
     if total or price > 1000:
         return price
-    return price * area if price > 100 and area else None
+    per_m2 = (price >= 10 and price != 100) if kind == LAND else price > 100
+    return price * area if per_m2 and area else None
 
 
 def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) -> Decision:
@@ -164,7 +169,7 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) ->
             warnings.append(warning)
 
     # --- cijena ---
-    price = effective_price(listing.price, listing.area, bool(listing.extra.get("ukupna_cijena")))
+    price = effective_price(listing.price, listing.area, bool(listing.extra.get("ukupna_cijena")), listing.kind)
     if price is not None and price != listing.price:
         warnings.append(f"cijena {fmt_eur(listing.price)} je vjerojatno po m² – ukupno ≈ {fmt_eur(price)}")
     if price is None:

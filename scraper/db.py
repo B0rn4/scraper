@@ -172,7 +172,8 @@ class State:
         """Oglasi koje smo već "vidjeli" (poslani, u početnom popisu ili tiho zabilježeni)."""
         rows = self.conn.execute(
             "SELECT key, source, kind, jls, price, area, title, settlement, notified_at, notified_price "
-            "FROM listings WHERE notified_at IS NOT NULL AND price IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
+            # I bez cijene ("cijena na upit"): isti oglas na upit s drugog portala ne smije stići ponovno.
+            "FROM listings WHERE notified_at IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
         )
         return [dict(r) for r in rows]
 

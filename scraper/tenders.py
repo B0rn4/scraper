@@ -45,8 +45,15 @@ _DEADLINE_STRONG = re.compile(r"\b(zakljucno (s|sa|do)\b|najkasnije do)")
 _PAYMENT = re.compile(r"jamcevin|uplat|placa|placanj|isplat|ugovor|kupoprodajn")
 _DEADLINE = re.compile(r"\b(rok\w*|najkasnije|zakljucno|ponude se (podnose|dostavljaju)|do dana)\b")
 _NOT_DEADLINE = re.compile(r"rok\w* (vazenja|zakljucenja|placanja|isplate|za (sklapanje|zakljucenje|placanje|isplatu|uplatu))")
-_NDAYS = re.compile(r"\b(\d{1,2})\s*(\(\w+\)\s*)?dan\w*[,\s]+(od|nakon|racunajuci|po)\b")
-_EXPLICIT = re.compile(r"(zakljucno|najkasnije|\bdo)\s*(s|sa|do)?\s*(dana\s*)?$")
+# Broj dana brojkom ili riječima: "8 dana", "8 (osam) dana", "osam (8) dana", "15. dana", "8 radnih dana".
+_NUMBER_WORDS = {"jedan": 1, "dva": 2, "tri": 3, "cetiri": 4, "pet": 5, "sest": 6, "sedam": 7, "osam": 8, "devet": 9,
+                 "deset": 10, "jedanaest": 11, "dvanaest": 12, "trinaest": 13, "cetrnaest": 14, "petnaest": 15,
+                 "sesnaest": 16, "sedamnaest": 17, "osamnaest": 18, "devetnaest": 19, "dvadeset": 20,
+                 "dvadesetpet": 25, "trideset": 30, "cetrdeset": 40, "pedeset": 50, "sezdeset": 60}
+_NDAYS = re.compile(r"\b(\d{1,2}|" + "|".join(sorted(_NUMBER_WORDS, key=len, reverse=True)) + r")\.?\s*"
+                    r"(\(\s*[\w ]+\s*\)\s*)?(radn\w*\s+)?dan\w*[,\s]+(od|nakon|racunajuci|po)\b")
+_FROM_PUBLICATION = re.compile(r"\bdan\w*\s+(od|nakon)\s+(dana\s+)?(objav|izlask)")
+_EXPLICIT = re.compile(r"(zakljucno|najkasnije|\bdo|ukljucivo)\s*(s|sa|do|ukljucivo)?\s*(dana|danom)?\s*(ukljucivo\s*)?$")
 _TEASER = re.compile(r"\s+(?=(Na temelju|Temeljem|Sukladno|U skladu s)\b)")
 _PDF = re.compile(r'<a[^>]+href="([^"]+\.(?:pdf|docx))"[^>]*>(.*?)</a>', re.I | re.S)
 MIN_TEXT = 600            # kraći tekst objave: natječaj je vjerojatno u priloženom PDF-u
@@ -294,10 +301,16 @@ def _deadline(text: str, plain: str, published: str = "") -> tuple[str, bool] | 
             explicit = [d for pos, d in after if _EXPLICIT.search(plain[max(0, pos - 30):pos])]
             if explicit:
                 return explicit[0], False
-            days = _NDAYS.search(plain, m.start(), min(len(plain), m.start() + 120))
+            window = (m.start(), min(len(plain), m.start() + 120))
+            days = _NDAYS.search(plain, *window)
             if days:
+                n = int(days.group(1)) if days.group(1).isdigit() else _NUMBER_WORDS[days.group(1)]
+                if days.group(3):                    # radni dani: približno, s vikendima
+                    n = n * 7 // 5 + 1
                 start = max(after[0][1], published[:10]) if published else after[0][1]
-                return (date.fromisoformat(start) + timedelta(days=int(days.group(1)))).isoformat(), True
+                return (date.fromisoformat(start) + timedelta(days=n)).isoformat(), True
+            if _FROM_PUBLICATION.search(plain, *window):
+                return None                          # "… dana od objave" nepročitano: datum iza nije rok
             return after[0][1], False
     return None
 
