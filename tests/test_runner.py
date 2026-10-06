@@ -318,3 +318,92 @@ def test_ppv_new_year_reminder(tmp_path, monkeypatch):
     runner("2027-01-03T07:00")._ppv_reminder(state)
     assert len(sent) == 2 and "Novi PPV (2027)" in sent[1] and mails[-1] == "Scraper: objavljen PPV 2027"
     state.close()
+
+
+def test_mute_button(tmp_path, monkeypatch):
+    """Gumb "Ne zanima me": pritisak se pročita pri pokretanju; za taj oglas i isti oglas na
+    drugom portalu više ne stiže ništa (ni sniženje)."""
+    import json
+
+    import scraper.runner as runner_mod
+    from scraper.notify import listing_markup, muted_markup
+
+    x = listing(sid="7")
+    buttons = json.loads(listing_markup(x))["inline_keyboard"][0]
+    assert buttons[0]["url"] == "https://x" and buttons[1]["callback_data"] == "nz:t:7"
+
+    class Tg:
+        chat_id = "42"
+
+        def __init__(self):
+            self.edited, self.sent = [], []
+            self.updates = [
+                {"update_id": 10, "callback_query": {"id": "q1", "data": "nz:t:7",
+                 "message": {"message_id": 5, "chat": {"id": 42},
+                             "reply_markup": json.loads(listing_markup(x))}}},
+                {"update_id": 11, "callback_query": {"id": "q2", "data": "nz:t:8", "message": {"message_id": 6, "chat": {"id": 99}}}},
+            ]
+
+        def get_updates(self, offset):
+            out = [u for u in self.updates if not offset or u["update_id"] >= offset]
+            return out
+
+        def edit_markup(self, chat, mid, markup):
+            self.edited.append((mid, json.loads(markup)))
+
+        def answer_callback(self, qid, text):
+            raise RuntimeError("query is too old")        # stari upit: ne smeta
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    FakeSource.modes = []
+    other = listing(sid="9", source="u")                  # isti oglas na drugom portalu
+    FakeSource.batches = [[listing(sid="7"), other], [listing(280_000, "7"), listing(250_000, "9", source="u")]]
+    tg, sent = Tg(), []
+
+    def run_once():
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r.telegram = tg
+        r._send_report = lambda *a, **k: None
+        r._send_notifications = lambda state, items: sent.extend(x.key for x, d, h in items)
+        r._banks = r._tenders = lambda *a, **k: None
+        r.run(force=True)
+
+    run_once()                                            # početni popis + pritisak gumba
+    state = State(tmp_path / "s.db")
+    assert state.muted() == {"t:7"} and state.meta_get("telegram:offset") == "12"
+    state.close()
+    assert tg.edited[0][0] == 5 and tg.edited[0][1]["inline_keyboard"][0][0]["url"] == "https://x"
+    assert "Zabilježeno" in json.loads(muted_markup({}))["inline_keyboard"][0][0]["text"]
+    run_once()                                            # oba snižena: ništa ne stiže
+    assert sent == []
+    state = State(tmp_path / "s.db")
+    assert "u:9" in state.muted()                         # zapamćen i blizanac
+    state.close()
+    assert json.loads((tmp_path / "github.json").read_text())["utisani"] == ["t:7", "u:9"]
+
+
+def test_redmi_watches_github(tmp_path):
+    import json
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    alerts = []
+
+    def runner(now, last):
+        (tmp_path / "github.json").write_text(json.dumps({"zadnje_pokretanje": last, "utisani": ["t:1"]}))
+        r = Runner(tmp_path / "r.db", tmp_path / "out", send=False, device="redmi", seen_file=tmp_path / "seen.json.gz")
+        r.now = datetime.fromisoformat(now).replace(tzinfo=ZoneInfo("Europe/Zagreb"))
+        r._alert = lambda subject, text: alerts.append(subject)
+        return r
+
+    state = State(tmp_path / "r.db")
+    assert runner("2026-10-07T12:00", "2026-10-07T11:40:00+02:00")._github_info()["utisani"] == {"t:1"}
+    runner("2026-10-07T08:30", "2026-10-06T23:00:00+02:00")._check_github(state)   # prije 9 h: noć je normalna
+    runner("2026-10-07T12:00", "2026-10-07T11:40:00+02:00")._check_github(state)
+    assert alerts == []
+    runner("2026-10-07T14:00", "2026-10-07T11:40:00+02:00")._check_github(state)
+    runner("2026-10-07T14:20", "2026-10-07T11:40:00+02:00")._check_github(state)   # samo jednom
+    runner("2026-10-07T15:00", "2026-10-07T14:55:00+02:00")._check_github(state)
+    assert alerts == ["Scraper: GitHub ne radi", "Scraper: GitHub ponovno radi"]
+    state.close()

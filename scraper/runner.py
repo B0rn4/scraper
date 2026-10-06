@@ -18,7 +18,7 @@ from .filters import evaluate
 from .http import Http
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
-from .notify import SOURCE_LABELS, Email, Telegram, summary_text
+from .notify import MUTE_PREFIX, SOURCE_LABELS, Email, Telegram, muted_markup, summary_text
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
 from .text import fmt_eur, fold
@@ -57,6 +57,7 @@ class Runner:
         self.telegram = Telegram.from_env() if send and notif.get("telegram", True) else None
         self.email = Email.from_env() if send and notif.get("email", True) else None
         self.log_lines: list[str] = []
+        self.muted: set[str] = set()   # "Ne zanima me" (gumb ispod poruke)
 
     # --- pomoćno ---
 
@@ -111,6 +112,8 @@ class Runner:
             self.log(f"Izvan radnog vremena ({self.now:%H:%M}), ništa se ne radi.")
             return
         state = State(self.db_path)
+        self._read_feedback(state)
+        self.muted = state.muted() | self._github_info().get("utisani", set())
         seen = self._load_seen(state)
         prices = self._load_prices(state)
         to_notify: list[tuple[Listing, Decision, str]] = []
@@ -153,6 +156,8 @@ class Runner:
                         continue
                     if not first:
                         headline = self._notify_reason(x, d, old)
+                        if headline is not None and self._is_muted(state, seen, x, d):
+                            headline = None
                         if headline is not None:
                             headline = self._check_seen(state, seen, x, d, old, headline)
                         if headline is not None:
@@ -195,10 +200,68 @@ class Runner:
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
                 self._check_redmi(state)
+            if self.device == "redmi":
+                self._check_github(state)
             if self.device == "github":
                 dedupe.export(state, Path(self.db_path).with_name("seen.json.gz"))
+                # Za Redmi: zadnje pokretanje (nadzor GitHuba) i oglasi označeni "Ne zanima me".
+                Path(self.db_path).with_name("github.json").write_text(json.dumps(
+                    {"zadnje_pokretanje": self.stamp, "utisani": sorted(state.muted())}, ensure_ascii=False), encoding="utf-8")
         finally:
             state.close()
+
+    def _read_feedback(self, state: State) -> None:
+        """Pritisci gumba "Ne zanima me" od zadnjeg pokretanja (čita ih samo GitHub, i za
+        poruke s Redmija – isti bot). Oglas se zapamti, gumb se zamijeni oznakom."""
+        if self.device != "github" or not self.telegram or not hasattr(self.telegram, "get_updates"):
+            return
+        try:
+            offset = int(state.meta_get("telegram:offset") or 0)
+            updates = self.telegram.get_updates(offset or None)
+        except Exception as exc:  # noqa: BLE001 – gumb nije nužan za rad
+            self.log(f"Telegram (gumbi): {type(exc).__name__}: {exc}")
+            return
+        for u in updates:
+            offset = max(offset, int(u["update_id"]) + 1)
+            q = u.get("callback_query") or {}
+            message = q.get("message") or {}
+            data = q.get("data") or ""
+            if not data.startswith(MUTE_PREFIX) or str((message.get("chat") or {}).get("id")) != str(self.telegram.chat_id):
+                continue
+            key = data[len(MUTE_PREFIX):]
+            state.mute(key, self.stamp, "gumb")
+            self.log(f"Ne zanima me: {key}")
+            for call in (lambda: self.telegram.edit_markup(message["chat"]["id"], message["message_id"], muted_markup(message)),
+                         lambda: self.telegram.answer_callback(q["id"], "Zabilježeno")):
+                try:
+                    call()
+                except Exception as exc:  # noqa: BLE001 – stari upit ili poruka: nije bitno
+                    self.log(f"Telegram (gumbi): {type(exc).__name__}: {exc}")
+        state.meta_set("telegram:offset", str(offset))
+        state.conn.commit()
+
+    def _github_info(self) -> dict:
+        """Na Redmiju: podaci s GitHuba (github.json uz sažetak viđenih oglasa)."""
+        if self.device == "github" or not self.seen_file:
+            return {}
+        try:
+            data = json.loads(Path(self.seen_file).with_name("github.json").read_text(encoding="utf-8"))
+            return {"zadnje_pokretanje": data.get("zadnje_pokretanje"), "utisani": set(data.get("utisani") or [])}
+        except (OSError, ValueError):
+            return {}
+
+    def _is_muted(self, state: State, seen: dedupe.Seen, x: Listing, d: Decision) -> bool:
+        """"Ne zanima me" za ovaj oglas ili isti oglas na drugom portalu."""
+        if x.key in self.muted:
+            self.log(f"Ne zanima (označeno): {x.title[:60]}")
+            return True
+        twin = next((t["key"] for t in seen.twins(dedupe.row(x, d)) if t["key"] in self.muted), None)
+        if twin:
+            self.muted.add(x.key)
+            state.mute(x.key, self.stamp, f"isti kao {twin}")
+            self.log(f"Ne zanima (isti kao {twin}): {x.title[:60]}")
+            return True
+        return False
 
     @staticmethod
     def _keep_text_reject(d: Decision, prev: dict) -> Decision:
@@ -652,6 +715,28 @@ class Runner:
                 "(obavijest „Termux” u traci obavijesti). Ako je sve u redu, javi Claudeu ovu poruku.",
             )
             state.mark_alerted("redmi")
+
+    def _check_github(self, state: State) -> None:
+        """Na Redmiju: radi li GitHub (zadnje pokretanje iz github.json na grani state).
+        Ako kasni (cron-job.org ne pokreće, GitHub ne pokreće poslove), poruka na Telegram
+        (jednom) i poruka kad ponovno proradi – inače bi tišina izgledala kao "nema oglasa"."""
+        last = self._github_info().get("zadnje_pokretanje")
+        if not last or self.now.hour < self.cfg["vrijeme"]["od_sata"] + 2:
+            return
+        limit = self.cfg.get("nadzor", {}).get("github_kasni_minuta", 120)
+        row = next((h for h in state.health_all() if h["source"] == "github"), None)
+        if self.now - datetime.fromisoformat(last) <= timedelta(minutes=limit):
+            state.health_ok("github", self.stamp)
+            if row and row.get("alerted"):
+                self._alert("Scraper: GitHub ponovno radi", f"Zadnje pokretanje na GitHubu: {last[:16].replace('T', ' ')}.")
+            return
+        _, alerted = state.health_fail("github", f"zadnje pokretanje {last[:16]}")
+        if not alerted:
+            self._alert("Scraper: GitHub ne radi",
+                        f"GitHub nije pokrenuo scraper od {last[:16].replace('T', ' ')}. Dok ne proradi, ne prate se "
+                        "portali osim Njuškala (Redmi radi). Provjeri cron-job.org (povijest pokretanja) i "
+                        "githubstatus.com; ako je sve u redu, javi Claudeu ovu poruku.")
+            state.mark_alerted("github")
 
     def review(self) -> Path:
         """Pregled: cijelo područje, bez obavijesti po oglasu i bez promjene stanja."""

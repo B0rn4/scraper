@@ -45,7 +45,13 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   početna cijena i €/m² prema PPV-u na lokaciji i medijanu traženih. Odluke iz popisa
   naselja vrijede kao za oglase (isključeno naselje napisano u tekstu → bez poruke;
   prema k.o. samo ⚠, jer k.o. može obuhvaćati više naselja).
+- **Gumb 🔕 Ne zanima me** ispod svakog oglasa: za taj oglas (i isti oglas na drugim
+  portalima) više ne stiže ništa, ni sniženje. Pritisak se obradi pri sljedećem
+  pokretanju (do 20 min), a gumb se tada zamijeni oznakom „Zabilježeno”.
 - **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
+- **Nadzor:** GitHub provjerava javlja li se Redmi (mail), a Redmi provjerava radi li
+  GitHub (Telegram, ako nije pokrenuo scraper 2 h, od 9 h) – tišina inače izgleda kao
+  „nema novih oglasa”.
 - **Pregledni izvještaj:** jedna HTML datoteka sa svim oglasima i razlogom odluke.
 
 ## Izvori
@@ -122,7 +128,8 @@ klikni **Kopiraj označene**. Zalijepi popis Claudeu u razgovor.
 ## Tehnički
 
 - `python -m scraper run|pregled|test|tjedni` (opcije: `--izvori`, `--bez-slanja`, `--force`).
-- Stanje (viđeni oglasi) je u `state.db` na grani `state`.
+- Stanje (viđeni oglasi) je u `state.db` na grani `state`; oštećena baza se ne sprema.
+  Dnevna kopija (zadnjih 7 dana, i Redmijeva baza) je na grani `state-kopija`.
 - Testovi: `python -m pytest`.
 - Tajne (GitHub Secrets): `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `SMTP_USER`,
   `SMTP_PASSWORD`, `EMAIL_TO`.

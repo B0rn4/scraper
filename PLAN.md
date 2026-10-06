@@ -291,8 +291,17 @@ bez stotina poruka.
       na v6 (Node.js 24). Izrada PPV-a sačuvana kao `tools/ppv_preuzmi.py` i tijek rada
       „PPV – godišnje osvježavanje” (godinu sloja nalazi sam). Napomena: maknute
       datoteke ostaju u povijesti gita (javne stranice portala, bez tajni).
-   2. **Moje mišljenje:** što scraperu fali, a što je višak – pisani pregled s
-      prijedlozima, korisnik odlučuje.
+   2. **(gotovo 6. 10.) Moje mišljenje** – odluke korisnika:
+      - nadzor cijelog sustava: Redmi provjerava GitHub (`github.json` na grani
+        `state`: zadnje pokretanje); poruka ako kasni 2 h (od 9 h) i kad proradi;
+      - gumb samo „🔕 Ne zanima me” (bez 👍): oglas i isti oglas na drugim portalima
+        više ne javljaju ništa; pritisci se čitaju pri pokretanju na GitHubu
+        (getUpdates; isti bot i za Redmijeve poruke), popis ide Redmiju u `github.json`;
+      - dnevna kopija stanja (7 dana, grana `state-kopija`); oštećena baza se ne sprema;
+      - PPV za kuće maknut; godina se ne piše u poruci; podsjetnik za PPV 1. 1. i kad
+        ISPU objavi novi;
+      - ne: spremljene pretrage u aplikaciji Njuškalo, starost oglasa, FINA kuće
+        (previše mogućih komplikacija).
    3. **Moja provjera grešaka:** pregled koda po modulima i podataka u bazi (sumnjive
       vrijednosti: površina < 20 m², cijena < 1.000 €, nepoznata lokacija, najčešća
       upozorenja), zapisnici zadnjih pokretanja (greške, ograničenja vremena, zdravlje

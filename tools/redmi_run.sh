@@ -17,6 +17,9 @@ LOG="$HOME/scraper.log"
     && mv "$HOME/seen.json.gz.tmp" "$HOME/seen.json.gz" || echo "sažetak viđenih oglasa nije preuzet"
   python -c "import urllib.request as u; u.urlretrieve('https://raw.githubusercontent.com/B0rn4/scraper/state/cijene.json', '$HOME/cijene.json.tmp')" \
     && mv "$HOME/cijene.json.tmp" "$HOME/cijene.json" || echo "medijani cijena nisu preuzeti"
+  # Zadnje pokretanje na GitHubu (nadzor) i oglasi označeni "Ne zanima me".
+  python -c "import urllib.request as u; u.urlretrieve('https://raw.githubusercontent.com/B0rn4/scraper/state/github.json', '$HOME/github.json.tmp')" \
+    && mv "$HOME/github.json.tmp" "$HOME/github.json" || echo "github.json nije preuzet"
   python -m scraper run --uredjaj redmi --db "$HOME/redmi.db" --out "$HOME/redmi-out" --vidjeni "$HOME/seen.json.gz" \
     --cijene "$HOME/cijene.json"
   python tools/redmi_sync.py "$HOME/redmi.db"

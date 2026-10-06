@@ -40,6 +40,8 @@ nadzor:
   greske_prije_upozorenja: 3
   # Mail ako se Redmi (Njuškalo) ne javi ovoliko minuta (provjera s GitHuba, od 8 h).
   redmi_kasni_minuta: 90
+  # Poruka s Redmija ako GitHub nije pokrenuo scraper ovoliko minuta (od 9 h).
+  github_kasni_minuta: 120
 
 # Natječaji za prodaju nekretnina (gradovi, općine, PGŽ, CERP…), popis stranica u
 # data/natjecaji.yaml. Čita se jednom dnevno (prvo pokretanje od 7 h).

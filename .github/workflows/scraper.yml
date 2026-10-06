@@ -84,15 +84,39 @@ jobs:
         if: always()
         run: |
           [ -f state.db ] || exit 0
+          # Oštećena baza se ne sprema (ostaje prethodno stanje; kopije su na grani state-kopija).
+          python -c "import sqlite3, sys; sys.exit(sqlite3.connect('state.db').execute('PRAGMA integrity_check').fetchone()[0] != 'ok')" \
+            || { echo "state.db je oštećen – stanje se ne sprema"; exit 1; }
           rm -rf /tmp/state && mkdir -p /tmp/state && cp state.db /tmp/state/
           # Sažetak već viđenih oglasa – Redmi ga preuzima da ne javi isti oglas s Njuškala.
           [ -f seen.json.gz ] && cp seen.json.gz /tmp/state/
           [ -f cijene.json ] && cp cijene.json /tmp/state/
+          # Za Redmi: zadnje pokretanje (nadzor GitHuba) i oglasi označeni "Ne zanima me".
+          [ -f github.json ] && cp github.json /tmp/state/
           cd /tmp/state
           git init -q && git checkout -q -b state && git add -A
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             commit -qm "Stanje $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" state
+
+      - name: Dnevna kopija stanja (zadnjih 7 dana)
+        if: success()
+        run: |
+          [ -f state.db ] || exit 0
+          DAY=$(TZ=Europe/Zagreb date +%F)
+          REPO="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+          rm -rf /tmp/kopija && mkdir -p /tmp/kopija && cd /tmp/kopija && git init -q
+          if git fetch -q --depth=1 "$REPO" state-kopija 2>/dev/null; then git checkout -q FETCH_HEAD -- .; fi
+          if [ -f "state-$DAY.db.gz" ]; then echo "Kopija za $DAY već postoji."; exit 0; fi
+          gzip -c "$GITHUB_WORKSPACE/state.db" > "state-$DAY.db.gz"
+          if [ -f "$GITHUB_WORKSPACE/redmi.db" ]; then gzip -c "$GITHUB_WORKSPACE/redmi.db" > "redmi-$DAY.db.gz"; fi
+          for prefix in state redmi; do ls -1 $prefix-*.db.gz 2>/dev/null | sort -r | tail -n +8 | xargs -r git rm -q --cached --ignore-unmatch; done
+          for prefix in state redmi; do ls -1 $prefix-*.db.gz 2>/dev/null | sort -r | tail -n +8 | xargs -r rm -f; done
+          git add -A
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -qm "Kopija stanja $DAY"
+          git push -qf "$REPO" HEAD:state-kopija
+          echo "Kopija za $DAY spremljena: $(ls -1 | tr '\n' ' ')"
 
       - name: Spremi izvještaje kao artefakt
         if: always()

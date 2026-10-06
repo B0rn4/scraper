@@ -42,6 +42,11 @@ CREATE TABLE IF NOT EXISTS meta (
     key TEXT PRIMARY KEY,
     value TEXT
 );
+CREATE TABLE IF NOT EXISTS muted (
+    key TEXT PRIMARY KEY,
+    at TEXT,
+    note TEXT
+);
 CREATE TABLE IF NOT EXISTS tenders (
     key TEXT PRIMARY KEY,
     site TEXT,
@@ -144,6 +149,14 @@ class State:
             (since,),
         )
         return [dict(r) for r in rows]
+
+    # --- "Ne zanima me" (gumb ispod poruke) ---
+
+    def mute(self, key: str, at: str, note: str = "") -> None:
+        self.conn.execute("INSERT OR IGNORE INTO muted (key, at, note) VALUES (?, ?, ?)", (key, at, note))
+
+    def muted(self) -> set[str]:
+        return {r[0] for r in self.conn.execute("SELECT key FROM muted")}
 
     def seen_rows(self) -> list[dict]:
         """Oglasi koje smo već "vidjeli" (poslani, u početnom popisu ili tiho zabilježeni)."""

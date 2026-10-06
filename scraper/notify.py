@@ -1,6 +1,7 @@
 """Obavijesti: Telegram (svaki oglas, izvještaji) i e-mail (tjedni izvještaj, greške)."""
 
 import html
+import json
 import os
 import smtplib
 import ssl
@@ -153,7 +154,7 @@ class Telegram:
 
     def send_listing(self, listing: Listing, decision: Decision, headline: str = "") -> None:
         text = format_listing(listing, decision, headline)
-        markup = _button(listing.url, "Otvori oglas" if listing.source != "fina" else "Otvori Očevidnik")
+        markup = listing_markup(listing)
         if listing.image_url:
             try:
                 self._call("sendPhoto", {"chat_id": self.chat_id, "photo": listing.image_url, "caption": text,
@@ -164,6 +165,20 @@ class Telegram:
         self._call("sendMessage", {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML",
                                    "disable_web_page_preview": "true", "reply_markup": markup})
 
+    # --- gumb "Ne zanima me": pritisci se čitaju pri pokretanju (nema stalnog poslužitelja) ---
+
+    def get_updates(self, offset: int | None) -> list[dict]:
+        data = {"timeout": "0", "allowed_updates": json.dumps(["callback_query"])}
+        if offset:
+            data["offset"] = str(offset)
+        return self._call("getUpdates", data).get("result") or []
+
+    def answer_callback(self, query_id: str, text: str) -> None:
+        self._call("answerCallbackQuery", {"callback_query_id": query_id, "text": text})
+
+    def edit_markup(self, chat_id, message_id, markup: str) -> None:
+        self._call("editMessageReplyMarkup", {"chat_id": str(chat_id), "message_id": str(message_id), "reply_markup": markup})
+
     def send_document(self, path: Path, caption: str) -> None:
         with open(path, "rb") as fh:
             self._call("sendDocument", {"chat_id": self.chat_id, "caption": caption[:1000], "parse_mode": "HTML"},
@@ -171,9 +186,28 @@ class Telegram:
 
 
 def _button(url: str, label: str = "Otvori") -> str:
-    import json
-
     return json.dumps({"inline_keyboard": [[{"text": label, "url": url}]]})
+
+
+MUTE_PREFIX = "nz:"          # callback_data gumba "Ne zanima me" (Telegram: najviše 64 bajta)
+MUTED_LABEL = "🔕 Zabilježeno – bez daljnjih poruka"
+
+
+def listing_markup(listing: Listing) -> str:
+    """Gumbi ispod oglasa: otvori oglas i "Ne zanima me" (više nikakvih poruka o njemu)."""
+    row = [{"text": "Otvori oglas" if listing.source != "fina" else "Otvori Očevidnik", "url": listing.url}]
+    data = MUTE_PREFIX + listing.key
+    if len(data.encode("utf-8")) <= 64:
+        row.append({"text": "🔕 Ne zanima me", "callback_data": data})
+    return json.dumps({"inline_keyboard": [row]})
+
+
+def muted_markup(message: dict) -> str:
+    """Gumbi nakon pritiska: poveznica ostaje, umjesto gumba piše da je zabilježeno."""
+    rows = (message.get("reply_markup") or {}).get("inline_keyboard") or []
+    links = [b for row in rows for b in row if b.get("url")][:1]
+    return json.dumps({"inline_keyboard": [links, [{"text": MUTED_LABEL, "callback_data": "nz-ok"}]] if links
+                       else [[{"text": MUTED_LABEL, "callback_data": "nz-ok"}]]})
 
 
 class Email:
