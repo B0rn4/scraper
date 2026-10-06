@@ -48,6 +48,8 @@ katastarske_opcine:
   Novi: Novi Vinodolski
   Rupa: Matulji
   Brgud: Matulji
+  # k.o. Sveta Jelena (Dramalj) je u Crikvenici; istoimeno naselje je u Mošćeničkoj Dragi.
+  Sveta Jelena: Crikvenica
 
 # Nazivi naselja koji su ujedno obične riječi. U slobodnom tekstu broje se samo
 # ako su napisani velikim početnim slovom.

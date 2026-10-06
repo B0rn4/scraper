@@ -152,8 +152,11 @@ same preuzmu novu godinu; PPV na točnoj lokaciji (ISPU) uvijek je najnoviji.
 
 ## Automatsko pokretanje (cron-job.org)
 
-GitHub raspored za ovaj repozitorij ne pokreće workflow, pa ga pokreće besplatni
-servis cron-job.org, svakih 20 minuta od 7 do 23 h, preko GitHub API-ja.
+GitHub raspored za ovaj repozitorij pokreće workflow tek povremeno (nekoliko puta
+dnevno, u slučajno vrijeme), pa ga pokreće besplatni servis cron-job.org, svakih 20
+minuta od 7 do 23 h, preko GitHub API-ja. GitHubov raspored ostaje kao rezerva: radi
+samo kad zadnje pokretanje kasni više od 30 minuta (inače bi se mogao poklopiti s
+Redmijem).
 
 - Adresa: `https://api.github.com/repos/B0rn4/scraper/actions/workflows/scraper.yml/dispatches`
 - Metoda: `POST`

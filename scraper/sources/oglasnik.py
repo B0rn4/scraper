@@ -4,10 +4,14 @@ ugrađenom RSC sadržaju (self.__next_f.push). Filter lokacije: f[4][<id>]=true,
 
 import json
 import re
+from datetime import datetime
+from zoneinfo import ZoneInfo
 
 from ..models import HOUSE, LAND, Listing
 from ..text import fmt_eur, fmt_m2, fold, parse_number
 from .base import FULL, Source
+
+ZAGREB = ZoneInfo("Europe/Zagreb")
 
 BASE = "https://oglasnik.hr"
 PGZ_LOCATION_ID = 4559
@@ -119,10 +123,23 @@ class Oglasnik(Source):
                 new = [x for x in listings if x.source_id not in known_ids and x.source_id not in found]
                 for x in listings:
                     found.setdefault(x.source_id, x)
-                if not listings or (mode != FULL and not new):
+                if not listings or (mode != FULL and not new and not self._recent(listings)):
                     break
                 page += 1
         return list(found.values())
+
+    def _recent(self, listings: list[Listing]) -> bool:
+        """Je li i zadnji oglas na stranici objavljen ili obnovljen nakon prošlog čitanja?
+        Tada se čita i sljedeća stranica: skupne obnove agencija (desetci oglasa u par minuta)
+        mogu ispuniti stranicu poznatim oglasima i gurnuti nov oglas na sljedeću."""
+        since = self.since_time()
+        if since is None:
+            return False
+        try:
+            last = datetime.strptime(listings[-1].published, "%d.%m.%Y %H:%M:%S").replace(tzinfo=ZAGREB)
+        except ValueError:
+            return False
+        return last >= since
 
     def search_links(self):
         # Filtri: f[2] cijena, f[45] stambena površina (kuće), f[44] ukupna površina (zemljišta).

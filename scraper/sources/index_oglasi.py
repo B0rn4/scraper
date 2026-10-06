@@ -10,6 +10,7 @@ odvaja dvojne kuće i poljoprivredno zemljište."""
 
 import json
 import re
+from datetime import datetime
 from pathlib import Path
 
 from ..filters import evaluate
@@ -58,9 +59,19 @@ def parse_items(data: dict, category_hr: str, kind: str) -> list[Listing]:
             location_text=", ".join(filter(None, [x.get("settlementName"), x.get("cityName")])),
             image_url=f"{BASE}/api/image/direct/{images[0]}" if images else "",
             published=x.get("postedTime") or "",
-            extra={"samo_popis": True},    # bez opisa i vrste – tek sa stranice oglasa
+            # Popis je poredan po zadnjoj aktivnosti (objava, obnova); istaknuti su na vrhu.
+            extra={"samo_popis": True,      # bez opisa i vrste – tek sa stranice oglasa
+                   "istaknut": bool(x.get("isPromoted")),
+                   "aktivnost": max(filter(None, [x.get("postedTime"), x.get("renewalTime")]), default="")},
         ))
     return out
+
+
+def _time(value: str) -> datetime | None:
+    try:
+        return datetime.fromisoformat((value or "").replace("Z", "+00:00"))
+    except ValueError:
+        return None
 
 
 def _year(value) -> int | None:
@@ -134,7 +145,7 @@ class IndexOglasi(Source):
                 new = [x for x in items if x.source_id not in known_ids and x.source_id not in found]
                 for x in items:
                     found.setdefault(x.source_id, x)
-                if not data.get("nextPage") or not data.get("data") or (mode != FULL and not new):
+                if not data.get("nextPage") or not data.get("data") or (mode != FULL and not new and not self._recent(items)):
                     break
                 page += 1
         if mode != FULL:
@@ -151,6 +162,19 @@ class IndexOglasi(Source):
                 except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
                     x.extra["detalji_greska"] = str(exc)[:200]
         return list(found.values())
+
+    def _recent(self, items: list[Listing]) -> bool:
+        """Ima li i najstariji redovni oglas na stranici aktivnost nakon prošlog čitanja?
+        Tada se čita i sljedeća stranica: obnovljeni (već poznati) oglasi mogu ispuniti
+        cijelu stranicu i gurnuti nov oglas na sljedeću (ujutro, skupne obnove agencija)."""
+        since = self.since_time()
+        regular = [x for x in items if not x.extra.get("istaknut")]
+        if since is None:
+            return False
+        if not regular:
+            return True                  # samo istaknuti: redovni su tek na sljedećoj stranici
+        times = [_time(x.extra.get("aktivnost")) for x in regular]
+        return all(times) and min(times) >= since
 
     def _worth_detail(self, x: Listing) -> bool:
         """Oglas otvaramo samo kad bi mogao proći (područje, cijena, površina)."""

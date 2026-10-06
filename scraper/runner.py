@@ -2,6 +2,7 @@
 
 import html
 import json
+import sqlite3
 import time
 import traceback
 from datetime import datetime, timedelta
@@ -27,6 +28,7 @@ from .text import fmt_eur, fold
 ROOT = Path(__file__).resolve().parent.parent
 LAND_CHECK_SECONDS = 120   # najdulje trajanje provjera građevinskog područja po pokretanju
 TENDER_CHECK_SECONDS = 240  # isto za čestice iz natječaja (jednom dnevno)
+RESERVE_MINUTES = 30        # GitHubov raspored radi samo kad cron-job.org kasni ovoliko
 
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
@@ -59,6 +61,7 @@ class Runner:
         self.email = Email.from_env() if send and notif.get("email", True) else None
         self.log_lines: list[str] = []
         self.muted: set[str] = set()   # "Ne zanima me" (gumb ispod poruke)
+        self._redmi_ok: bool | None = None
 
     # --- pomoćno ---
 
@@ -74,6 +77,22 @@ class Runner:
                 continue
             if (where is True and self.device == "github") or where == self.device:
                 yield ALL[name](self.http, self.locator, self.criteria)
+
+    def _redmi_usable(self) -> bool:
+        """Postoji li čitljivo stanje s Redmija. Oštećena datoteka ne smije zaustaviti
+        pokretanje (portali, natječaji); javlja se kao kvar Redmija (_check_redmi)."""
+        if self._redmi_ok is None:
+            self._redmi_ok = False
+            if self.redmi_db and Path(self.redmi_db).exists():
+                try:
+                    other = State(self.redmi_db)
+                    self._redmi_ok = other.conn.execute("PRAGMA quick_check").fetchone()[0] == "ok"
+                    other.close()
+                except sqlite3.DatabaseError as exc:
+                    self.log(f"Stanje s Redmija nije čitljivo: {exc}")
+                if not self._redmi_ok:
+                    self.log("Stanje s Redmija je oštećeno – preskače se")
+        return self._redmi_ok
 
     def in_active_hours(self) -> bool:
         v = self.cfg["vrijeme"]
@@ -113,12 +132,19 @@ class Runner:
 
     # --- naredbe ---
 
-    def run(self, force: bool = False) -> None:
-        """Redovno pokretanje (svakih 20 minuta)."""
+    def run(self, force: bool = False, reserve: bool = False) -> None:
+        """Redovno pokretanje (svakih 20 minuta). reserve: GitHubov raspored (rezerva za
+        cron-job.org) – radi samo ako je zadnje pokretanje starije od RESERVE_MINUTES, inače
+        bi se mogao poklopiti s Redmijem (isti oglas dvaput)."""
         if not force and not self.in_active_hours():
             self.log(f"Izvan radnog vremena ({self.now:%H:%M}), ništa se ne radi.")
             return
         state = State(self.db_path)
+        last = state.meta_get("last_run")
+        if reserve and last and self.now - datetime.fromisoformat(last) < timedelta(minutes=RESERVE_MINUTES):
+            self.log(f"Rezervno pokretanje: glavni okidač radi (zadnje pokretanje {last[11:16]}), ništa se ne radi.")
+            state.close()
+            return
         self._read_feedback(state)
         self.muted = state.muted(self._github_info().get("utisani"))
         seen = self._load_seen(state)
@@ -308,7 +334,7 @@ class Runner:
         """Već viđeni oglasi: ova baza, baza s Redmija (na GitHubu) i sažetak s GitHuba (na Redmiju)."""
         seen = dedupe.Seen(self.locator)
         seen.add_state(state)
-        if self.redmi_db and Path(self.redmi_db).exists():
+        if self._redmi_usable():
             other = State(self.redmi_db)
             seen.add_state(other)
             other.close()
@@ -398,12 +424,15 @@ class Runner:
         for t in new:
             first = t.site in first_sites
             reader.load_text(t)
-            info = tenders.details(t.text) if t.text else {}
             published = t.published or t.extra.get("datum_iz_teksta", "")
-            expired = info.get("rok") and info["rok"] < today
+            info = tenders.details(t.text, published) if t.text else {}
+            # Približan rok ("15 dana od objave") može biti krivo izračunat: zbog njega se
+            # natječaj ne preskače kao istekao, a prvi put vrijedi pravilo datuma objave.
+            approximate = info.get("rok_priblizno")
+            expired = info.get("rok") and not approximate and info["rok"] < today
             # Prvi put: rok poznat i nije istekao (objava do pola godine stara), ili bez roka
             # objava iz zadnjih 45 dana.
-            open_deadline = info.get("rok") and not expired and (not published or published >= oldest)
+            open_deadline = info.get("rok") and not approximate and not expired and (not published or published >= oldest)
             if first and not open_deadline and (expired or not published or published < cutoff):
                 state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
                 why = "rok istekao" if expired else "bez datuma i roka" if not published else f"objavljeno {published}"
@@ -481,9 +510,10 @@ class Runner:
             if page.get("svaka_promjena"):        # najava (npr. novi oglasnik Butiga.hr): mail kod bilo koje promjene
                 fresh = [s for s in watch.segments(body) if watch.digest(s) not in known]
                 if stored is not None and fresh:
-                    self._alert(f"Scraper: promjena na stranici {page['naziv']}",
-                                f"{page['url']}\n\nNovo na stranici:\n" + "\n".join(fresh[:10])
-                                + "\n\nJavi Claudeu ako je pokrenut novi oglasnik.")
+                    if self._alert(f"Scraper: promjena na stranici {page['naziv']}",
+                                   f"{page['url']}\n\nNovo na stranici:\n" + "\n".join(fresh[:10])
+                                   + "\n\nJavi Claudeu ako je pokrenut novi oglasnik.") is False:
+                        continue                  # promjena se ne pamti: mail se ponavlja sutra
                     self.log(f"{name}: promjena ({len(fresh)} novih odlomaka)")
                 found = []
             if stored is not None and found:
@@ -597,7 +627,7 @@ class Runner:
             if self.device != "github" and self.prices_file and Path(self.prices_file).exists():
                 return AskingPrices.from_file(self.prices_file, self.locator)
             rows = state.price_rows()
-            if self.redmi_db and Path(self.redmi_db).exists():
+            if self._redmi_usable():
                 other = State(self.redmi_db)
                 rows += other.price_rows()
                 other.close()
@@ -643,12 +673,13 @@ class Runner:
         # Ukupne cijene: "1 €" (cijena na upit) ili cijena po m² nisu sniženje.
         total = bool(x.extra.get("ukupna_cijena"))
         price = effective_price(x.price, x.area, total)
-        old_price = effective_price(old.get("price"), old.get("area") or x.area, total)
+        # Cijena iz zadnje poruke (ili tihog bilježenja).
+        ref = (effective_price(old.get("notified_price"), old.get("area") or x.area, total)
+               if old.get("notified_at") else None)
+        # Prošli put "cijena na upit" (1 € ili bez cijene): uspoređuje se s cijenom iz poruke.
+        old_price = effective_price(old.get("price"), old.get("area") or x.area, total) or ref
         if price and old_price and price < old_price - 1:
-            # Usporedba s cijenom iz zadnje poruke (ili tihog bilježenja): poskupljenje pa malo
-            # pojeftinjenje, a i dalje skuplje nego prije, nije sniženje.
-            ref = (effective_price(old.get("notified_price"), old.get("area") or x.area, total)
-                   if old.get("notified_at") else None)
+            # Poskupljenje pa malo pojeftinjenje, a i dalje skuplje nego u poruci, nije sniženje.
             if ref and price >= ref - 1:
                 return None
             change = f"{fmt_eur(ref or old_price)} → {fmt_eur(price)}"
@@ -761,6 +792,14 @@ class Runner:
         path = Path(self.redmi_db)
         if not path.exists():
             return  # Redmi još nije postavljen
+        if not self._redmi_usable():
+            _, alerted = state.health_fail("redmi", "redmi.db je oštećen")
+            if not alerted and self._email(
+                    "Scraper: stanje s Redmija je oštećeno",
+                    "Datoteka redmi.db na grani state-redmi nije ispravna baza. Njuškalo se ne uspoređuje s ostalim "
+                    "portalima dok Redmi ne pošalje ispravno stanje. Javi Claudeu ovu poruku.") is not False:
+                state.mark_alerted("redmi")
+            return
         other = State(path)
         last = other.meta_get("last_run")
         other.close()
@@ -864,7 +903,7 @@ class Runner:
         """Tjedni izvještaj mailom."""
         since = (self.now - timedelta(days=7)).isoformat(timespec="seconds")
         counts, notified, near, health, dups = {}, [], [], [], []
-        paths = [self.db_path] + ([self.redmi_db] if self.redmi_db and Path(self.redmi_db).exists() else [])
+        paths = [self.db_path] + ([self.redmi_db] if self._redmi_usable() else [])
         for path in paths:  # stanje s GitHuba i, ako postoji, s Redmija (Njuškalo)
             state = State(path)
             counts.update(state.counts_since(since))

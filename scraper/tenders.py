@@ -37,9 +37,12 @@ _MONTHS = {"sijecnja": 1, "veljace": 2, "ozujka": 3, "travnja": 4, "svibnja": 5,
            "rujna": 9, "listopada": 10, "studenoga": 11, "studenog": 11, "prosinca": 12}
 # Rok za ponude: prvo izričiti izrazi, pa bilo koji "rok". "U roku od 15 dana od dana objave … dana
 # 29. ožujka" je datum objave + 15 dana, osim kad tekst navodi i izričit datum ("zaključno s 20.7.").
-_DEADLINE_STRONG = re.compile(r"\b(rok\w* za (podnosenje|dostavu|predaju|primitak|zaprimanje) (pisanih )?ponud\w*"
-                              r"|ponud\w* (se )?(podnose|dostavljaju|predaju|zaprimaju)|krajnji rok|zakljucno (s|sa|do)\b"
-                              r"|najkasnije do)")
+# Rok za ponude, od najpouzdanijeg izraza: "rok za podnošenje ponuda", zatim "zaključno s",
+# "najkasnije do" (ne u rečenici o jamčevini ili plaćanju), zatim bilo koji "rok".
+_DEADLINE_OFFER = re.compile(r"\b(rok\w* za (podnosenje|dostavu|predaju|primitak|zaprimanje) (pisanih )?ponud\w*"
+                             r"|ponud\w* (se )?(podnose|dostavljaju|predaju|zaprimaju)|krajnji rok)")
+_DEADLINE_STRONG = re.compile(r"\b(zakljucno (s|sa|do)\b|najkasnije do)")
+_PAYMENT = re.compile(r"jamcevin|uplat|placa|placanj|isplat|ugovor|kupoprodajn")
 _DEADLINE = re.compile(r"\b(rok\w*|najkasnije|zakljucno|ponude se (podnose|dostavljaju)|do dana)\b")
 _NOT_DEADLINE = re.compile(r"rok\w* (vazenja|zakljucenja|placanja|isplate|za (sklapanje|zakljucenje|placanje|isplatu|uplatu))")
 _NDAYS = re.compile(r"\b(\d{1,2})\s*(\(\w+\)\s*)?dan\w*[,\s]+(od|nakon|racunajuci|po)\b")
@@ -47,7 +50,7 @@ _EXPLICIT = re.compile(r"(zakljucno|najkasnije|\bdo)\s*(s|sa|do)?\s*(dana\s*)?$"
 _TEASER = re.compile(r"\s+(?=(Na temelju|Temeljem|Sukladno|U skladu s)\b)")
 _PDF = re.compile(r'<a[^>]+href="([^"]+\.(?:pdf|docx))"[^>]*>(.*?)</a>', re.I | re.S)
 MIN_TEXT = 600            # kraći tekst objave: natječaj je vjerojatno u priloženom PDF-u
-_PART = re.compile(r"\b\d+\s*/\s*\d+\s+(dijel|dio)\w*|\bsuvlasnick\w*\s+(dio|dijel|udio|udjel)\w*|\bidealn\w*\s+(dio|dijel)\w*")
+_PART = re.compile(r"\b(\d+)\s*/\s*(?!\1\b)\d+\s+(dijel|dio)\w*|\bsuvlasnick\w*\s+(dio|dijel|udio|udjel)\w*|(?<!\bu )(?<!\bna )\bidealn\w*\s+(dio|dijel)\w*")
 _NUM = r"(\d{1,3}(?:[. ]\d{3})+(?:,\d+)?|\d+(?:,\d+)?)"
 _PER_M2 = r"(\w*\s*(?:/|po)\s*(?:m\s?2|metr\w* kvadratn\w*|kvadratn\w* metr\w*))?"
 # "početna cijena … 65.000,00 EUR", "početna cijena za k.č. 12/3 iznosi 65.000 €", "… 120,00 EUR/m2"
@@ -59,10 +62,10 @@ _PRICES = (re.compile(r"\b(pocetn\w*|najniz\w*|utvrden\w*)\s+(\w+\s+)?cijen\w*[^
 # Prodaja više čestica kao jedne cjeline (jedna početna cijena za sve).
 _AS_WHOLE = re.compile(r"\b(kao (jedn\w* )?cjelin\w*|u cjelini|zajedno kao|jedinstven\w* (cjelin|nekretnin)\w*)")
 # Natječaj samo za stanove/poslovne prostore/garaže (npr. Državne nekretnine): bez zemljišta i kuća.
-_FLAT = re.compile(r"\b(stan\b|stana\b|stanovi\b|stanova\b|\(stan \d|stambeni prostor|poslovn\w* prostor\w*|garaz\w*)")
+_FLAT = re.compile(r"\b(stan\b|stana\b|stanovi\b|stanova\b|\(stan \d|stambeni prostor|poslovn\w* prostor(?!ij)\w*|garaz\w*)")
 _LAND_WORDS = re.compile(r"\b(zemljiste|zemljista|zemljistu|zemljistem|kuc[aeiu]\b|kuca\b|kucom\b|okucnic\w*|oranic\w*"
                          r"|pasnjak\w*|livad\w*|vocnjak\w*|vinograd\w*|sum[aeu]\b|dvorist\w*|neplodno|ruin\w*|rusevin\w*"
-                         r"|stambena zgrada|gospodarsk\w* zgrad\w*|gradiliste)")
+                         r"|stambena zgrada|gospodarsk\w* zgrad\w*|gradiliste|gradevinsk\w*|parcel\w*|vrt\b|maslinik\w*)")
 _HOUSE = re.compile(r"\b(kuc[aeiu]\w*|kuca\b|stamben\w* (zgrad|objekt)\w*)")
 
 
@@ -273,13 +276,18 @@ def dates_in(text: str) -> list[tuple[int, str]]:
     return [(pos, d) for pos, d in out if d]
 
 
-def _deadline(text: str, plain: str) -> tuple[str, bool] | None:
-    """(datum, je li približan) roka za ponude."""
+def _deadline(text: str, plain: str, published: str = "") -> tuple[str, bool] | None:
+    """(datum, je li približan) roka za ponude. Približan ("15 dana od objave") računa se od
+    prvog datuma iza izraza za rok, ali ne od datuma prije objave na stranici (to je npr.
+    datum odluke ili prethodnog natječaja)."""
     dates = dates_in(text)
-    for regex in (_DEADLINE_STRONG, _DEADLINE):
+    for tier, regex in enumerate((_DEADLINE_OFFER, _DEADLINE_STRONG, _DEADLINE)):
         for m in regex.finditer(plain):
             if _NOT_DEADLINE.match(plain, m.start()):
                 continue
+            sentence = re.split(r"\.\s+(?=[a-z])", plain[max(0, m.start() - 120):m.start()])[-1]
+            if tier and _PAYMENT.search(sentence):
+                continue                      # "jamčevina se uplaćuje najkasnije do …"
             after = [(pos, d) for pos, d in dates if m.start() <= pos <= m.start() + 250]
             if not after:
                 continue
@@ -288,16 +296,17 @@ def _deadline(text: str, plain: str) -> tuple[str, bool] | None:
                 return explicit[0], False
             days = _NDAYS.search(plain, m.start(), min(len(plain), m.start() + 120))
             if days:
-                return (date.fromisoformat(after[0][1]) + timedelta(days=int(days.group(1)))).isoformat(), True
+                start = max(after[0][1], published[:10]) if published else after[0][1]
+                return (date.fromisoformat(start) + timedelta(days=int(days.group(1)))).isoformat(), True
             return after[0][1], False
     return None
 
 
-def details(text: str) -> dict:
-    """Rok za ponude, početna cijena, površine iz teksta natječaja."""
+def details(text: str, published: str = "") -> dict:
+    """Rok za ponude, početna cijena, površine iz teksta natječaja (published: datum objave)."""
     plain = _plain(text)
     out = {}
-    deadline = _deadline(text, plain)
+    deadline = _deadline(text, plain, published)
     if deadline:
         out["rok"], approximate = deadline
         if approximate:
@@ -335,7 +344,10 @@ class Reader:
         return items
 
     def area_of(self, text: str) -> str:
-        names = [j.name for j, _ in self.locator.scan_text(text) if j.included]
+        """Naš grad/općina iz teksta regionalnog natječaja (kao kod banaka: bez istoimenih
+        naselja drugdje, npr. "k.o. Sveti Ivan Zelina")."""
+        from .watch import our_places
+        names = our_places(self.locator, text)
         return names[0] if names else ""
 
     def _wp(self, site: dict) -> list[Tender]:

@@ -8,6 +8,7 @@ import ssl
 import time
 from email.message import EmailMessage
 from pathlib import Path
+from urllib.parse import quote
 
 import requests
 
@@ -167,8 +168,8 @@ class Telegram:
                 self._call("sendPhoto", {"chat_id": self.chat_id, "photo": listing.image_url, "caption": text,
                                          "parse_mode": "HTML", "reply_markup": markup})
                 return
-            except RuntimeError:
-                pass  # slika se nije dala dohvatiti – pošalji bez nje
+            except (RuntimeError, requests.RequestException):
+                pass  # slika se nije dala dohvatiti (ili Telegram nije odgovorio na vrijeme) – pošalji bez nje
         self._call("sendMessage", {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML",
                                    "disable_web_page_preview": "true", "reply_markup": markup})
 
@@ -192,8 +193,14 @@ class Telegram:
                        files={"document": (path.name, fh, "text/html")})
 
 
+def safe_url(url: str) -> str:
+    """Adresa za gumb: Telegram odbija razmake i znakove izvan ASCII-ja ("…/Natječaj za
+    prodaju.pdf"), a postojeće %XX ostaju kakve jesu."""
+    return quote(url or "", safe=":/?#[]@!$&'()*+,;=%~")
+
+
 def _button(url: str, label: str = "Otvori") -> str:
-    return json.dumps({"inline_keyboard": [[{"text": label, "url": url}]]})
+    return json.dumps({"inline_keyboard": [[{"text": label, "url": safe_url(url)}]]})
 
 
 MUTE_PREFIX = "nz:"          # callback_data gumba "Ne zanima me" (Telegram: najviše 64 bajta)
@@ -204,7 +211,7 @@ MUTED_LABEL = "🔕 Zabilježeno · ↩ dodirni za poništenje"
 
 def listing_markup(listing: Listing) -> str:
     """Gumbi ispod oglasa: otvori oglas i "Ne zanima me" (više nikakvih poruka o njemu)."""
-    row = [{"text": "Otvori oglas" if listing.source != "fina" else "Otvori Očevidnik", "url": listing.url}]
+    row = [{"text": "Otvori oglas" if listing.source != "fina" else "Otvori Očevidnik", "url": safe_url(listing.url)}]
     data = MUTE_PREFIX + listing.key
     if len(data.encode("utf-8")) <= 64:
         row.append({"text": MUTE_LABEL, "callback_data": data})

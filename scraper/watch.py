@@ -15,12 +15,18 @@ from pathlib import Path
 
 import yaml
 
-from .text import fold
+from .text import fold, fold_case
 
 PAGES_FILE = Path(__file__).resolve().parent.parent / "data" / "banke.yaml"
 # Nazivi naselja koji su i nazivi mjesta drugdje u Hrvatskoj (Županja, Ročko Polje, Draga kod Požege).
 EXCLUDE = {"zupanje", "polje", "draga", "vrh"}
 MAX_PER_PAGE = 3
+# Mjesta izvan PGŽ-a: kad ih tekst spominje, naše naselje istog imena je vjerojatno ono
+# drugo ("Poljane, Zagreb", "Bregi, Karlovac", "Glavani, Barban").
+_ELSEWHERE = re.compile(
+    r"\b(zagreb|split|zadar|osijek|karlov[ca]|pul[aieu]|rovinj|porec|pazin|umag|labin|barban|buzet|gospic|otocac"
+    r"|senj|novalj|sis[ak]|varazdin|cakovec|koprivnic|bjelovar|sibenik|dubrovnik|slavonsk|vinkovc|vukovar|pozeg"
+    r"|viroviti|krapin|zelin|samobor|velik\w* goric|makarsk|trogir|kastel|ogulin|istr[aeiu]|istarsk|dalmacij)\w*")
 
 
 def load_pages(path: Path = PAGES_FILE) -> list[dict]:
@@ -46,11 +52,27 @@ def digest(segment: str) -> str:
 
 
 def our_places(locator, text: str) -> list[str]:
-    """Naša mjesta spomenuta u tekstu (velikim početnim slovom, bez naziva koji postoje i drugdje)."""
+    """Naša mjesta spomenuta u tekstu (velikim početnim slovom, bez naziva koji postoje i drugdje).
+
+    Naselje (ne grad/općina) se ne broji kad je dio duljeg naziva ("Sveti Ivan Zelina"),
+    kad tekst spominje drugu našu jedinicu s istoimenim naseljem ("Martinšćica na Cresu")
+    ili mjesto izvan PGŽ-a ("Poljane, Zagreb")."""
+    hits = locator._scan(text)                       # (grad/općina, osnovni naziv, kako piše)
+    cased = fold_case(text)
+    mentioned = {jls.key for jls, name, _ in hits if name == jls.key}
+    elsewhere = bool(_ELSEWHERE.search(cased.lower()))
     found = []
-    for jls, name, written in locator._scan(text):      # (grad/općina, osnovni naziv, kako piše)
+    for jls, name, written in hits:
         if not jls.included or not written[:1].isupper() or name in locator.common_words or name in EXCLUDE:
             continue
+        if name != jls.key and not name.startswith("k.o. "):             # naselje
+            owners = {j.key for j, n, _ in hits if n == name}
+            pos = cased.find(written)
+            longer = pos >= 0 and re.match(r" [A-ZČĆŽŠĐ]\w", cased[pos + len(written):pos + len(written) + 3])
+            # Iza "k.o." je katastarska općina – točna oznaka i kad tekst spominje Zagreb (sjedište CERP-a).
+            cadastral = re.search(rf"\bk\.?\s?o\.?\s*{re.escape(written)}\b", cased, re.I)
+            if longer or (elsewhere and not cadastral) or (owners & mentioned) - {jls.key}:
+                continue
         if jls.name not in found:
             found.append(jls.name)
     return found

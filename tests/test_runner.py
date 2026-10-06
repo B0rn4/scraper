@@ -614,3 +614,73 @@ def test_redmi_unmute_reaches_twins(tmp_path):
     assert state.muted(set()) == set()
     assert state.muted() == {"njuskalo:5", "njuskalo:6"}   # bez popisa s GitHuba: sve zapamćeno
     state.close()
+
+
+# --- druga runda svježeg pregleda ---
+
+def test_drop_after_price_on_request_phase(tmp_path):
+    """390.000 € (poruka) → "cijena na upit" → 350.000 €: sniženje stiže."""
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    ok = Decision(PASS, jls="Punat")
+    for placeholder, sid in ((1, "1"), (None, "2")):
+        state.upsert(listing(390_000, sid), ok, "t1")
+        state.mark_notified(f"t:{sid}", 390_000, "t1")
+        state.upsert(listing(placeholder, sid), ok, "t2")
+        assert runner._notify_reason(listing(390_000, sid), ok, state.get(f"t:{sid}")) is None
+        assert runner._notify_reason(listing(350_000, sid), ok, state.get(f"t:{sid}")) == \
+            "📉 Snižena cijena: 390.000 € → 350.000 €"
+    state.close()
+
+
+def test_corrupt_redmi_db_does_not_stop_run(tmp_path, monkeypatch):
+    (tmp_path / "redmi.db").write_bytes(b"nije baza " * 200)
+    mails = []
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="1")], [listing(sid="1"), listing(sid="2")]],
+                 lambda r, i: (setattr(r, "redmi_db", tmp_path / "redmi.db"),
+                               setattr(r, "_email", lambda subject, *a, **k: mails.append(subject))))
+    assert sent[1] == [("t:2", "")]
+    assert mails.count("Scraper: stanje s Redmija je oštećeno") == 1          # jednom, ne svako pokretanje
+
+
+def test_reserve_run_skipped_while_main_trigger_works(tmp_path, monkeypatch):
+    """GitHubov raspored (rezerva) ne radi ništa dok cron-job.org redovno pokreće."""
+    from datetime import timedelta
+
+    def configure(r, i):
+        if i == 1:
+            r.now = r.now + timedelta(minutes=10)
+            r.run = lambda force=False, reserve=True, run=r.run: run(force, reserve)
+        if i == 2:
+            r.now = r.now + timedelta(minutes=45)
+            r.run = lambda force=False, reserve=True, run=r.run: run(force, reserve)
+
+    _runs(tmp_path, monkeypatch, [[listing(sid="1")], [listing(sid="1")], [listing(sid="1")]], configure)
+    assert FakeSource.modes == ["full", "incremental"]           # drugo (10 min kasnije) preskočeno
+
+
+def test_telegram_button_url_and_photo_timeout(monkeypatch):
+    import json
+
+    import requests
+
+    from scraper.notify import Telegram, _button, listing_markup
+
+    url = json.loads(_button("https://www.dobrinj.hr/dokumenti/Natječaj za prodaju.pdf"))["inline_keyboard"][0][0]["url"]
+    assert url == "https://www.dobrinj.hr/dokumenti/Natje%C4%8Daj%20za%20prodaju.pdf"
+    x = listing()
+    x.url = "https://x.hr/a b?c=%20"
+    assert json.loads(listing_markup(x))["inline_keyboard"][0][0]["url"] == "https://x.hr/a%20b?c=%20"
+
+    calls = []
+    tg = Telegram("t", "1")
+
+    def call(method, data, files=None):
+        calls.append(method)
+        if method == "sendPhoto":
+            raise requests.Timeout("slika")
+        return {"ok": True}
+    monkeypatch.setattr(tg, "_call", call)
+    x.image_url = "https://x.hr/slika.jpg"
+    tg.send_listing(x, Decision(PASS, jls="Punat"))
+    assert calls == ["sendPhoto", "sendMessage"]

@@ -67,6 +67,11 @@ jobs:
             git fetch -q --depth=1 origin state
             git show FETCH_HEAD:state.db > state.db
             echo "Stanje učitano ($(stat -c %s state.db) B)"
+            # Datoteke za Redmi ostaju i kad ih ovo pokretanje ne napravi ponovno (tjedni
+            # izvještaj, izvan radnog vremena, greška): redovno pokretanje ih prepiše.
+            for f in seen.json.gz cijene.json github.json; do
+              git show "FETCH_HEAD:$f" > "$f" 2>/dev/null || rm -f "$f"
+            done
           else
             echo "Nema spremljenog stanja – prvo pokretanje."
           fi
@@ -89,6 +94,9 @@ jobs:
           # koje poštuje radno vrijeme. Ručni "run" radi odmah, i izvan radnog vremena.
           if [ "$CMD" = "raspored" ]; then CMD=run
           elif [ "$CMD" = "run" ] && [ "${{ github.event_name }}" = "workflow_dispatch" ]; then ARGS="$ARGS --force"; fi
+          # GitHubov raspored je samo rezerva: radi tek kad cron-job.org kasni (inače bi se
+          # mogao poklopiti s Redmijem u :10/:30/:50).
+          if [ "${{ github.event_name }}" = "schedule" ]; then ARGS="$ARGS --rezerva"; fi
           python -m scraper $CMD $ARGS --redmi-db redmi.db
 
       - name: Spremi stanje

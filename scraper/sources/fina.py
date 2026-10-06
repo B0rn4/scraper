@@ -24,7 +24,7 @@ SEARCH_URL = "https://ponip.fina.hr/ocevidnik-web/pretrazivanje/nekretnina"
 
 _KO = re.compile(
     r"(?:\b[kK]\.\s?[oO]\.?|katastarsk\w*\s+općin\w*)\s*:?\s*"
-    r"([A-ZČĆŽŠĐ][\w]*(?:(?:\s*-\s*|\s+)(?:[A-ZČĆŽŠĐ][\w]*|na(?=\s+[A-ZČĆŽŠĐ]))){0,3})"
+    r"((?:Sv\.\s*)?[A-ZČĆŽŠĐ][\w]*(?:(?:\s*-\s*|\s+)(?:[A-ZČĆŽŠĐ][\w]*|na(?=\s+[A-ZČĆŽŠĐ]))){0,3})"
 )
 _BUILDING = re.compile(r"gradevinsk")
 _LAND = re.compile(r"zemljist|cestic|parcel")
@@ -84,6 +84,8 @@ class Fina(Source):
             return "regija"
         if _COMMERCIAL.search(c):
             return "stecaj_drugdje"
+        if not re.search(r"\bsud\b", c):
+            return "nije_sud"          # javni bilježnik, stečajni upravitelj: mjesto samo iz opisa
         return "drugdje"
 
     def locate(self, opis: str) -> tuple[list[str], list[tuple[str, bool]]]:
@@ -157,6 +159,8 @@ class Fina(Source):
                 warnings.append(f"opis spominje i: {', '.join(excluded)}")
             if court_class == "stecaj_drugdje":
                 warnings.append(f"stečaj pred sudom izvan regije ({court}) – provjeri lokaciju")
+            elif court_class == "nije_sud":
+                warnings.append(f"prodaje {court.strip('()') or 'nepoznato tijelo'} – mjesto samo iz opisa, provjeri lokaciju")
             elif court_class == "druga_regija":
                 warnings.append(f"sud za drugo područje ({court}) – provjeri lokaciju")
         elif excluded:

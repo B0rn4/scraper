@@ -1,5 +1,7 @@
 """Zajednička sučelja izvora."""
 
+from datetime import datetime, timedelta
+
 from ..http import Http
 from ..locations import Locator
 from ..models import HOUSE, Listing
@@ -7,6 +9,7 @@ from ..models import HOUSE, Listing
 INCREMENTAL = "incremental"   # redovno pokretanje: samo najnoviji oglasi
 FULL = "full"                 # pregled i početni popis: sve na području
 MAX_ATTEMPTS = 3              # stranica oglasa ne odgovara 3 puta → oglas stiže s podacima s popisa
+SINCE_MARGIN = timedelta(minutes=15)
 
 
 class Source:
@@ -22,6 +25,13 @@ class Source:
         self.criteria = criteria
         self.pending: list[Listing] = []    # odgođeni u prošlim pokretanjima (postavlja runner)
         self.deferred: list[Listing] = []   # odgođeni u ovom dohvatu (runner ih sprema)
+
+    def since_time(self) -> datetime | None:
+        """Prošlo uspješno čitanje izvora (s 15 minuta zalihe), ili None."""
+        try:
+            return datetime.fromisoformat(self.since) - SINCE_MARGIN if self.since else None
+        except ValueError:
+            return None
 
     def add_pending(self, found: dict[str, Listing], known_ids: set[str]) -> None:
         """Oglasi odgođeni prošli put (previše novih za otvaranje ili stranica oglasa nije

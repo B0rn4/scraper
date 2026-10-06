@@ -366,8 +366,16 @@ def test_page_watch_any_change_mails(tmp_path, monkeypatch):
     assert alerts == []
     pages["https://butiga.hr/"] += "<p>Novi oglasnik Butiga.hr je pokrenut – nekretnine, vozila, posao.</p>"
     state.meta_set("daily:banke", "2000-01-01")
+    runner._alert = lambda subject, text: (alerts.append((subject, text)), False)[1]    # mail nije otišao
     runner._banks(state)
     assert len(alerts) == 1 and "Novi oglasnik Butiga.hr je pokrenut" in alerts[0][1]
+    state.meta_set("daily:banke", "2000-01-01")
+    runner._alert = lambda subject, text: alerts.append((subject, text))
+    runner._banks(state)                                      # promjena nije zapamćena → ponovno
+    assert len(alerts) == 2
+    state.meta_set("daily:banke", "2000-01-01")
+    runner._banks(state)
+    assert len(alerts) == 2
 
 
 def test_runner_regional_tenders_and_daily_limit(tmp_path, monkeypatch):
@@ -421,3 +429,35 @@ def test_runner_regional_tenders_and_daily_limit(tmp_path, monkeypatch):
     runner._tenders(state)
     assert sent[-1] == "https://k.hr/b" and len(sent) == 3
     state.close()
+
+
+def test_tender_text_rules_second_review():
+    """"Poslovne prostorije" nisu poslovni prostor; "u 1/1 dijela" nije suvlasnički dio; rok
+    za jamčevinu ili plaćanje nije rok za ponude; približan rok računa se od objave."""
+    from scraper.tenders import flats_only
+
+    land = ("Predmet prodaje je k.č. 1234/5 k.o. Omišalj, površine 650 m2, u građevinskom području naselja. "
+            "Ponude se predaju neposredno u poslovnim prostorijama Općine Omišalj. ") * 4
+    assert not flats_only(land)
+    assert flats_only("Prodaja stana u Rijeci i poslovnog prostora u prizemlju. " * 12)
+    assert "dio" not in details("Vlasništvo Općine Omišalj u 1/1 dijela. Početna cijena 120.000,00 EUR.")
+    assert details("Prodaje se suvlasnički dio 1/2 dijela nekretnine.").get("dio")
+    assert details("Kupac je dužan platiti cijenu najkasnije do 1. 9. 2026. Ponude se dostavljaju do 20. listopada "
+                   "2026.")["rok"] == "2026-10-20"
+    assert details("Jamčevina se uplaćuje najkasnije do 1.10.2026. Rok za podnošenje ponuda je 25.10.2026.")["rok"] == "2026-10-25"
+    text = ("Rok za podnošenje ponuda je 15 dana od dana objave natječaja. Ovo je ponovljeni natječaj nakon "
+            "natječaja objavljenog 3. ožujka 2026.")
+    assert details(text, "2026-10-01") == {"rok": "2026-10-16", "rok_priblizno": True}
+
+
+def test_our_places_ignores_namesakes_elsewhere():
+    from scraper.watch import our_places
+
+    loc = Locator()
+    for text in ("Obiteljska kuća, Sveti Ivan Zelina, 120 m2", "Kuća u mjestu Glavani, Barban (Istra)",
+                 "Zemljište u Martinšćici na otoku Cresu, 600 m2", "Stan u Poljanama, Zagreb", "Kuća Bregi, Karlovac",
+                 "k.č. 1234/5 k.o. Sveti Ivan Zelina"):
+        assert our_places(loc, text) == [], text
+    assert our_places(loc, "Zemljište Martinšćica, Kostrena, 600 m2") == ["Kostrena"]
+    assert our_places(loc, "CERP, Zagreb, Ivana Lučića 6. Prodaja k.č. 1234 k.o. Njivice, 800 m2") == ["Omišalj"]
+    assert our_places(loc, "k.č. 12 k.o. Sveta Jelena") == ["Crikvenica"]

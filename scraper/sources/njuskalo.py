@@ -14,7 +14,7 @@ na našem području otvara i stranica oglasa (površine, vrsta, opis, koordinate
 
 import html
 import re
-from datetime import datetime, timedelta
+from datetime import datetime
 
 from ..browser import Browser
 from ..filters import evaluate
@@ -28,7 +28,6 @@ CATEGORIES = [("prodaja-kuca", HOUSE), ("prodaja-zemljista", LAND)]
 MAX_PAGES = 4          # najviše stranica po kategoriji u jednom pokretanju
 MAX_DETAILS = 8        # najviše otvorenih oglasa u jednom pokretanju (zaštita od captche)
 OLD_MARGIN = 60_000    # ~3 dana novih brojeva oglasa
-SINCE_MARGIN = timedelta(minutes=15)
 
 _ITEM = re.compile(r'<li class="EntityList-item EntityList-item--n\d+ EntityList-item--(Regular|VauVau)[^"]*">(.*?)</article>',
                    re.S)
@@ -141,6 +140,10 @@ def parse_detail(page: str, listing: Listing) -> None:
     listing.extra.pop("samo_popis", None)
 
 
+def _is_captcha(page: str) -> bool:
+    return "captcha" in (re.search(r"<title>([^<]*)", page) or [None, ""])[1].lower()
+
+
 def _page_url(category: str, page: int) -> str:
     return f"{BASE}/{category}/{REGION}?sort=new" + (f"&page={page}" if page > 1 else "")
 
@@ -154,24 +157,18 @@ class Njuskalo(Source):
         super().__init__(*args, **kwargs)
         self.browser = browser
 
-    def _since(self) -> datetime | None:
-        try:
-            return datetime.fromisoformat(self.since) - SINCE_MARGIN if self.since else None
-        except ValueError:
-            return None
-
     def fetch(self, mode, known_ids):
         browser = self.browser or Browser()
         own_browser = self.browser is None
         numeric = [int(x) for x in known_ids if x.isdigit()]
         threshold = max(numeric) - OLD_MARGIN if numeric else None
-        since = self._since()
+        since = self.since_time()
         found: dict[str, Listing] = {}
         try:
             for category, kind in CATEGORIES:
                 for page in range(1, (1 if mode == FULL else MAX_PAGES) + 1):
                     text = browser.get(_page_url(category, page), "li.EntityList-item")
-                    if "captcha" in (re.search(r"<title>([^<]*)", text) or [None, ""])[1].lower():
+                    if _is_captcha(text):
                         raise RuntimeError("Njuškalo je vratio captchu (zaštita ShieldSquare)")
                     items = parse_list(text, kind)
                     if not items:
@@ -188,20 +185,26 @@ class Njuskalo(Source):
                         break
             if mode != FULL:
                 self.add_pending(found, known_ids)
-            details, later = 0, set()
+            details, later, blocked = 0, set(), False
             for x in found.values():
                 if x.source_id in known_ids:
                     continue
                 if threshold is not None and int(x.source_id) <= threshold:
                     x.extra["stari_oglas"] = True
                 elif mode != FULL and self._worth_detail(x):
-                    if details >= MAX_DETAILS:     # sljedeći put (bez stranice oglasa stigao bi bez površine)
+                    # Sljedeći put (bez stranice oglasa stigao bi bez površine); nakon captche
+                    # se u ovom pokretanju više ne otvara nijedan oglas.
+                    if details >= MAX_DETAILS or blocked:
                         self.defer(x)
                         later.add(x.source_id)
                         continue
                     details += 1
                     try:
-                        parse_detail(browser.get(x.url, "h1"), x)
+                        page = browser.get(x.url, "h1")
+                        if _is_captcha(page) or "ClassifiedDetail" not in page:
+                            blocked = _is_captcha(page)
+                            raise RuntimeError("stranica oglasa: captcha" if blocked else "stranica oglasa bez podataka")
+                        parse_detail(page, x)
                     except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                         x.extra["detalji_greska"] = str(exc)[:200]
                         if self.defer(x, failed=True):

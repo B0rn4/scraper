@@ -451,3 +451,83 @@ def test_index_reads_more_pages_while_new(fina):
     known = {str(300 + i) for i in range(24)}                    # 3. stranica već poznata
     src.fetch(INCREMENTAL, known)
     assert sum("houses-for-sale" in u for u in http.calls) == 3
+
+
+def test_index_reads_on_while_page_is_recent(fina):
+    """Popis je poredan po zadnjoj aktivnosti: stranica puna obnovljenih (poznatih) oglasa
+    nakon prošlog čitanja ne zaustavlja čitanje – nov oglas može biti na sljedećoj."""
+    from scraper.sources.base import INCREMENTAL
+
+    def item(code, when, promoted=False):
+        return {"code": code, "title": "Kuća Njivice", "price": 900_000, "summary": {"area": 120}, "isPromoted": promoted,
+                "countyName": "Primorsko-goranska", "cityName": "Omišalj", "settlementName": "Njivice", "smartLink": "k",
+                "postedTime": "2026-08-01T10:00:00Z", "renewalTime": when}
+
+    pages = {1: [item(100 + i, "2026-10-06T05:30:00Z") for i in range(24)],         # obnovljeni noću
+             2: [item(200, "2026-10-06T05:00:00Z")] + [item(201 + i, "2026-10-05T19:00:00Z") for i in range(23)],
+             3: [item(300 + i, "2026-10-05T10:00:00Z") for i in range(24)]}
+
+    class Paged(FakeHttp):
+        def get(self, url, **kwargs):
+            self.calls.append(url)
+            page = int(url.split("&page=")[1].split("&")[0]) if "&page=" in url else 1
+
+            class Resp:
+                def __init__(self, data):
+                    self.data = data
+
+                def json(self):
+                    return self.data
+            if "houses-for-sale" in url:
+                return Resp({"data": pages.get(page, []), "nextPage": page + 1})
+            return Resp({"data": [], "nextPage": -1})
+
+    http = Paged([], {})
+    src = index_oglasi.IndexOglasi(http, Locator(), load_config()["kriteriji"])
+    src.since = "2026-10-05T22:40:00+02:00"                      # zadnje čitanje sinoć
+    known = {str(100 + i) for i in range(24)} | {str(201 + i) for i in range(23)} | {str(300 + i) for i in range(24)}
+    found = {x.source_id for x in src.fetch(INCREMENTAL, known)}
+    assert "200" in found                                        # nov oglas na 2. stranici
+    # 2. stranica ima nov oglas → čita se 3.; ona je poznata i starija od prošlog čitanja → kraj.
+    assert sum("houses-for-sale" in u for u in http.calls) == 3
+
+
+def test_oglasnik_reads_on_while_page_is_recent():
+    from scraper.sources.oglasnik import Oglasnik
+
+    src = Oglasnik(None, Locator(), load_config()["kriteriji"])
+    page = oglasnik.parse_page(read("oglasnik_kuce.html.gz"), HOUSE)   # zadnji na stranici: 04.10.2026 u noći
+    src.since = "2026-10-03T22:40:00+02:00"
+    assert src._recent(page)
+    src.since = "2026-10-04T12:00:00+02:00"
+    assert not src._recent(page)
+
+
+def test_fina_notary_sale_and_cadastral_sveta_jelena(fina):
+    """Javni bilježnik / stečajni upravitelj: mjesto samo iz opisa (⚠). k.o. Sveta Jelena je
+    Crikvenica, ne istoimeno naselje u Mošćeničkoj Dragi."""
+    from scraper.filters import evaluate
+
+    x = fina.to_listing(row("(javni bilježnik)", "Građevinsko zemljište k.č. 1234/5 k.o. Njivice, površine 800 m2"))
+    assert x and x.municipality == "Omišalj" and any("javni bilježnik" in w for w in x.extra["warnings"])
+    assert fina.to_listing(row("(javni bilježnik)", "Građevinsko zemljište k.č. 1 k.o. Sesvete, 800 m2")) is None
+    for ko in ("Sveta Jelena", "Sv. Jelena"):
+        y = fina.to_listing(row("Općinski sud u Crikvenici", f"Građevinsko zemljište, k.č. 3842/1 k.o. {ko}, površine 800 m2"))
+        assert y.municipality == "Crikvenica" and evaluate(y, load_config()["kriteriji"], Locator()).status != "odbijen"
+
+
+def test_njuskalo_captcha_on_listing_page_defers(monkeypatch, fina):
+    """Captcha na stranici oglasa: oglas se ne označava kao otvoren, nego čeka; ostali se
+    u tom pokretanju ne otvaraju."""
+    from scraper.sources import njuskalo
+    from scraper.sources.base import INCREMENTAL
+
+    captcha = "<html><title>Captcha - ShieldSquare</title></html>"
+    browser = FakeBrowser({"prodaja-kuca": read("njuskalo_kuce.html.gz"),
+                           "prodaja-zemljista": read("njuskalo_zemljista.html.gz"), "oglas-": captcha})
+    nj = njuskalo.Njuskalo(None, Locator(), load_config()["kriteriji"], browser=browser)
+    nj.since = "2026-10-05T11:30:00+02:00"
+    items = {x.source_id: x for x in nj.fetch(INCREMENTAL, {"45180000"})}
+    opened = [u for u in browser.calls if "oglas-" in u]
+    assert len(opened) == 1 and "51323938" not in items
+    assert nj.deferred and not any(x.extra.get("detalji") for x in items.values())

@@ -240,6 +240,13 @@ class Locator:
             for m in phrase.finditer(folded):
                 mask[m.start():m.end()] = [True] * (m.end() - m.start())
         found = []
+        # Iza "k.o." je katastarska općina: "k.o. Sveta Jelena" je Crikvenica, ne istoimeno
+        # naselje u Mošćeničkoj Dragi (tablica katastarske_opcine u locations_extra.yaml).
+        for key, jls in self.cadastral.items():
+            for m in re.finditer(rf"\bk\.?\s?o\.?\s*(?:br\.?\s*)?:?\s*({re.escape(key)})\b", folded):
+                if not any(mask[m.start(1):m.end(1)]):
+                    mask[m.start(1):m.end(1)] = [True] * (m.end(1) - m.start(1))
+                    found.append((jls, f"k.o. {key}", cased[m.start(1):m.end(1)]))   # nije naselje
         for name, regex, owners in self._terms:
             common = name in self.common_words
             for m in regex.finditer(folded):

@@ -10,6 +10,7 @@ Opcije: --db state.db  --out out  --izvori nekretnine_hr,fina  --bez-slanja
         --redmi-db redmi.db   (na GitHubu: stanje s Redmija za nadzor i tjedni izvještaj)
         --vidjeni seen.json.gz   (na Redmiju: već viđeni oglasi s GitHuba)
         --cijene cijene.json   (na Redmiju: medijani traženih cijena s GitHuba)
+        --rezerva   (GitHubov raspored: radi samo ako glavni okidač, cron-job.org, kasni)
 """
 
 import argparse
@@ -30,13 +31,14 @@ def main() -> None:
     parser.add_argument("--redmi-db", type=Path, default=None)
     parser.add_argument("--vidjeni", type=Path, default=None)
     parser.add_argument("--cijene", type=Path, default=None)
+    parser.add_argument("--rezerva", action="store_true", help="samo ako zadnje pokretanje kasni")
     args = parser.parse_args()
     only = [s.strip() for s in args.izvori.split(",") if s.strip()] or None
     runner = Runner(args.db, args.out, send=not args.bez_slanja, only=only,
                     device=args.uredjaj, redmi_db=args.redmi_db, seen_file=args.vidjeni,
                     prices_file=args.cijene)
     if args.naredba == "run":
-        runner.run(force=args.force)
+        runner.run(force=args.force, reserve=args.rezerva)
     elif args.naredba == "pregled":
         runner.review()
     elif args.naredba == "test":

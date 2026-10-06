@@ -175,7 +175,8 @@ def main():
         print(result["sazetak"]["greska"], flush=True)
     save()
     print(json.dumps(result["sazetak"], ensure_ascii=False), flush=True)
-    if "greska" in result["sazetak"] or not result["naselja"]:
+    # Nepotpun popis (greška ili isteklo vrijeme) ne smije prepisati postojeću tablicu.
+    if "greska" in result["sazetak"] or "zaustavljeno" in result["sazetak"] or not result["naselja"]:
         sys.exit(1)
 
 

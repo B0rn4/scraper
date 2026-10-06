@@ -357,7 +357,36 @@ bez stotina poruka.
         bilježilo se kao poslano – sad se ponavlja;
       - poništenje „Ne zanima me” nije vrijedilo za iste oglase utišane na Redmiju;
       - natječaji iznad dnevnog ograničenja (15) bili su izgubljeni – sad stižu sutra.
-   5. **Testovi:** automatski (sad 128) dopuniti cijelim pokretanjem na spremljenim
+
+      **Druga runda (6. 10., nova instanca):** 16 nalaza, svi provjereni i popravljeni (uz test):
+      - sniženje nakon razdoblja „cijena na upit” (390.000 → na upit → 350.000) nije stizalo;
+      - FINA: prodaje preko javnog bilježnika i stečajnog upravitelja (oko 200 u cijeloj
+        Hrvatskoj) odbacivane bez gledanja mjesta – sad stižu s ⚠ kad opis navodi naše mjesto;
+      - k.o. Sveta Jelena (Crikvenica) prepoznavana kao naselje Sveta Jelena u Mošćeničkoj
+        Dragi (odbijeno); iza „k.o.” sad vrijedi tablica katastarskih općina, i za „Sv. Jelena”;
+      - natječaj za zemljište s rečenicom „u poslovnim prostorijama Općine” preskakan kao
+        „samo stanovi/poslovni prostori”;
+      - adresa s razmacima ili slovima č/ć (npr. PDF natječaja) – Telegram odbija gumb, pa
+        poruka nikad ne bi stigla; adrese se sad kodiraju;
+      - index.hr i oglasnik.hr su poredani po zadnjoj aktivnosti: stranica puna noćnih
+        obnova poznatih oglasa zaustavljala je čitanje, a nov oglas je bio na sljedećoj –
+        sad se čita dalje dok je stranica novija od prošlog čitanja;
+      - Njuškalo: captcha na stranici oglasa prihvaćena kao otvoren oglas – sad čeka;
+      - GitHubov raspored (rezerva, radi povremeno u slučajno vrijeme) mogao se poklopiti s
+        Redmijem – sad radi samo kad cron-job.org kasni više od 30 minuta;
+      - rok natječaja: „najkasnije do” iz rečenice o jamčevini/plaćanju uzimao se kao rok
+        ponuda, a približan rok („15 dana od objave”) računao od krivog datuma → natječaj
+        preskočen kao istekao; približan rok se više ne smatra isteklim;
+      - oštećen redmi.db zaustavljao je cijelo pokretanje na GitHubu – sad upozorenje mailom;
+      - banke i regionalni natječaji: „Sveti Ivan Zelina”, „Poljane, Zagreb”, „Bregi,
+        Karlovac”, „Martinšćica na Cresu” brojani kao naše područje;
+      - natječaj „u 1/1 dijela” (cijelo vlasništvo) dobivao ⚠ „prodaje se dio”;
+      - pokretanja bez novog sažetka (tjedni izvještaj, noć) brisala su seen.json.gz,
+        cijene.json i github.json s grane state – Redmi bi radio sa starim;
+      - neuspjelo upozorenje o promjeni na stranici (Butiga) gubilo je promjenu;
+      - slanje fotografije koje istekne (timeout) nije pokušalo poslati poruku bez slike;
+      - godišnje osvježavanje PPV-a moglo je spremiti nepotpunu tablicu kad istekne vrijeme.
+   5. **Testovi:** automatski (sad 138) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj
