@@ -326,10 +326,38 @@ bez stotina poruka.
       × 0,4 iznad granice) i golema kuća (× 0,2); ostale ⚠ s procjenom. Na podacima: od
       628 oglasa na upit u bazi odbačeno 112 (88 luksuznih, 24 goleme kuće), na
       oglasima s cijenom izgubljeno 11 od 1.389 kuća u granici.
-   4. **Svježi pregled koda:** nova instanca (podagent) bez znanja o razgovoru, samo s
-      kodom i README/PLAN kao opisom; traži greške. Svaki nalaz provjeravam prije
-      popravka (ne zna za odluke poput isključenih naselja).
-   5. **Testovi:** automatski (sad 106) dopuniti cijelim pokretanjem na spremljenim
+   4. **(gotovo 6. 10.) Svježi pregled koda:** nova instanca (podagent) bez znanja o
+      razgovoru, samo s kodom i README/PLAN kao opisom; traži greške. Svaki nalaz
+      provjeren prije popravka. Našla je 15 grešaka, sve stvarne i sve popravljene (uz
+      test za svaku):
+      - Redmi i GitHub su kretali u istoj minuti, pa je isti oglas s Njuškala i drugog
+        portala stizao dvaput (u bazi 6. 10. u 7 h: 3 od 4 Redmijeve poruke). Redmi
+        sad radi 10 minuta kasnije (:10, :30, :50) i stanje s GitHuba preuzima preko
+        API-ja (raw adresa vraća do 5 minuta staro stanje);
+      - neuspjelo slanje: isti oglas na drugom portalu bio je zabilježen kao „isti kao”
+        neposlani, pa nije stigao nijedan;
+      - index.hr i Njuškalo: oglas odbijen prema stranici oglasa (dvojna kuća,
+        poljoprivredno, suvlasnički dio) sljedeći put je s podacima samo s popisa
+        stizao kao „🔄 Sad odgovara”;
+      - odgođeni oglasi (Njuškalo, realestatecroatia, burza) gubili su se kad ih novi
+        pomaknu s pročitanih stranica – sad se pamte u bazi i otvaraju prvi; stranica
+        oglasa koja 3 puta ne odgovori → oglas stiže s podacima s popisa;
+      - prelazak na „cijenu na upit” (1 €) javljao se kao sniženje, a zatim skrivao
+        prava sniženja;
+      - „1 200 m2” čitano kao 200 m², „0,345 ha” kao 345 ha; burza za zemljište sad
+        uzima najveću površinu iz opisa;
+      - „kuća u idealnom dijelu Malinske” odbijana kao „prodaje se suvlasnički dio”
+        (u bazi se nije dogodilo);
+      - kratki prekid mreže pri učitavanju stanja na GitHubu: pokretanje bi krenulo od
+        praznog stanja i prepisalo pravo (i sedmodnevne kopije) – sad posao staje;
+      - vender.hr površina „0.00” → odbijeno umjesto ⚠ „površina nije navedena”;
+      - regionalni natječaji (CERP, Državne nekretnine) prolazili su jer tekst spominje
+        Rijeku (sjedište) – sad samo s česticom na našem području;
+      - neuspjelo slanje zbirne datoteke, početnog popisa ili upozorenja o kvaru
+        bilježilo se kao poslano – sad se ponavlja;
+      - poništenje „Ne zanima me” nije vrijedilo za iste oglase utišane na Redmiju;
+      - natječaji iznad dnevnog ograničenja (15) bili su izgubljeni – sad stižu sutra.
+   5. **Testovi:** automatski (sad 128) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj

@@ -214,6 +214,10 @@ crontab -l
 
 Zadnja naredba ispiše ta dva retka – tada je raspored postavljen.
 
+Cron pokreće skriptu u :00, :20 i :40, a skripta sama pričeka 10 minuta (radi u :10,
+:30 i :50): tako Redmi i GitHub ne rade istodobno i svaki prije čitanja ima najnovije
+stanje drugoga, pa isti oglas ne stigne dvaput. Ručno pokretanje iz terminala kreće odmah.
+
 ### 2.4 Nakon ponovnog paljenja i baterija
 
 1. U pregledniku otvori **f-droid.org/packages/com.termux.boot/**, preuzmi APK i

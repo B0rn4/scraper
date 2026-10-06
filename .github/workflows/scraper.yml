@@ -55,17 +55,28 @@ jobs:
 
       - name: Učitaj stanje
         run: |
-          if git fetch -q --depth=1 origin state 2>/dev/null; then
+          # Grana koja ne postoji (izlaz 2) = prvo pokretanje. Svaka druga greška prekida posao:
+          # inače bi se pokretanje s praznim stanjem spremilo preko pravog stanja.
+          branch_exists() {
+            rc=0; git ls-remote --exit-code --heads origin "$1" > /dev/null || rc=$?
+            [ $rc -eq 0 ] && return 0
+            [ $rc -eq 2 ] && return 1
+            echo "Grana $1 nije provjerena (greška $rc) – prekid bez spremanja stanja"; exit 1
+          }
+          if branch_exists state; then
+            git fetch -q --depth=1 origin state
             git show FETCH_HEAD:state.db > state.db
             echo "Stanje učitano ($(stat -c %s state.db) B)"
           else
             echo "Nema spremljenog stanja – prvo pokretanje."
           fi
-          # Stanje s Redmija (Njuškalo): za nadzor Redmija i tjedni izvještaj.
-          if git fetch -q --depth=1 origin state-redmi 2>/dev/null; then
+          # Stanje s Redmija (Njuškalo): za nadzor Redmija, već viđene oglase i tjedni izvještaj.
+          if branch_exists state-redmi; then
+            git fetch -q --depth=1 origin state-redmi
             git show FETCH_HEAD:redmi.db > redmi.db
             echo "Stanje s Redmija učitano ($(stat -c %s redmi.db) B)"
           fi
+          touch .stanje-ucitano
 
       - name: Pokreni
         run: |
@@ -83,7 +94,7 @@ jobs:
       - name: Spremi stanje
         if: always()
         run: |
-          [ -f state.db ] || exit 0
+          [ -f state.db ] && [ -f .stanje-ucitano ] || exit 0
           # Oštećena baza se ne sprema (ostaje prethodno stanje; kopije su na grani state-kopija).
           python -c "import sqlite3, sys; sys.exit(sqlite3.connect('state.db').execute('PRAGMA integrity_check').fetchone()[0] != 'ok')" \
             || { echo "state.db je oštećen – stanje se ne sprema"; exit 1; }
@@ -106,7 +117,10 @@ jobs:
           DAY=$(TZ=Europe/Zagreb date +%F)
           REPO="https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           rm -rf /tmp/kopija && mkdir -p /tmp/kopija && cd /tmp/kopija && git init -q
-          if git fetch -q --depth=1 "$REPO" state-kopija 2>/dev/null; then git checkout -q FETCH_HEAD -- .; fi
+          # Kao kod učitavanja stanja: samo grana koja ne postoji je nova; greška ne briše stare kopije.
+          rc=0; git ls-remote --exit-code --heads "$REPO" state-kopija > /dev/null || rc=$?
+          if [ $rc -eq 0 ]; then git fetch -q --depth=1 "$REPO" state-kopija && git checkout -q FETCH_HEAD -- .
+          elif [ $rc -ne 2 ]; then echo "Grana state-kopija nije provjerena (greška $rc) – kopija se preskače"; exit 0; fi
           if [ -f "state-$DAY.db.gz" ]; then echo "Kopija za $DAY već postoji."; exit 0; fi
           gzip -c "$GITHUB_WORKSPACE/state.db" > "state-$DAY.db.gz"
           if [ -f "$GITHUB_WORKSPACE/redmi.db" ]; then gzip -c "$GITHUB_WORKSPACE/redmi.db" > "redmi-$DAY.db.gz"; fi
