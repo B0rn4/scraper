@@ -45,7 +45,8 @@ kriterijima stiže obavijest na mobitel (Telegram). PC ne mora biti upaljen.
 | FINA Očevidnik | dnevni CSV izvoz (svi predmeti, ~11.000 redaka) | **samo građevinska zemljišta**; lokacija iz slobodnog opisa (vidi niže) |
 | Stranice 15 općina i gradova | RSS, jednom dnevno, ključne riječi | 12 od 15 ima RSS; Dobrinj („Javni pozivi i natječaji”), Punat (Novosti → Natječaj) i Krk („Natječaji”) čitaju se izravno s tih odjeljaka |
 | PGŽ, Ministarstvo državne imovine, CERP | jednom dnevno, ključne riječi | rade iz oblaka |
-| Novi list (mali oglasi) | provjera | stranica radi; treba naći oglasnik |
+| Novi list (mali oglasi) | (6. 10.) nema na internetu | tiskana Butiga (mali oglasi Novog lista i Glasa Istre) ugašena 1. 6. 2026.; najavljen novi digitalni oglasnik Butiga.hr – mail kad se stranica promijeni (`data/banke.yaml`). Mali oglasi u dnevnom izdanju predaju se preko oglasni.glasistre.hr, na internetu se ne objavljuju |
+| burza.com.hr | (6. 10.) izmjereno, nije uključeno | regionalni oglasnik (Kvarner i Istra): ~100 kuća i zemljišta s filtrima naših mjesta, agencije i privatni; površina samo u opisu, filtar „otok Krk” spaja cijeli otok. Od oglasa koji prolaze kriterije 4 već imamo, ~10 nismo mogli usporediti (bez površine) |
 | Lokalne agencije | faza 4 | 10–15 najaktivnijih, izdvojenih iz podataka s portala |
 | Banke i leasing kuće | (6. 10.) praćenje stranica (`scraper/watch.py`, `data/banke.yaml`) | na našem području trenutno ništa (Zaba, OTP, HBOR, HPB, Croatia banka, PBZ nekretnine); leasing kuće (Raiffeisen, OTP, PBZ, UniCredit, Erste) nude samo vozila i opremu; Addiko → Njuškalo; EOS Matrix (stranica za BiH), B2 Kapital i APS bez vlastite ponude; prisilne prodaje → FINA e-dražbe. Poruka 🏦 samo za novi tekst koji spominje naše područje |
 | Facebook Marketplace i grupe | ručno | ugrađene FB obavijesti („Sve objave” u grupama); bez automatizacije |
