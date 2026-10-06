@@ -50,6 +50,7 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 | vender.hr | njihov API | svakih 20 min |
 | Njuškalo | s Redmija, pravim preglednikom ([REDMI.md](REDMI.md)) | svakih 20 min |
 | realestatecroatia.com (oglasi agencija iz sustava Agentor) | popis cijele PGŽ, najnoviji prvi; novi oglasi koji mogu proći otvaraju se radi površine | svakih 20 min |
+| burza.com.hr (regionalni oglasnik, agencije i privatni) | prve dvije stranice Kvarnera i Istre; novi oglasi se otvaraju radi mjesta i površine (do 10 po pokretanju) | svakih 20 min |
 | Natječaji gradova i općina, PGŽ-a, CERP-a i Državnih nekretnina ([data/natjecaji.yaml](data/natjecaji.yaml)) | tražilica stranice, RSS ili stranica natječaja; tekst i priloženi PDF | jednom dnevno |
 | Banke ([data/banke.yaml](data/banke.yaml)): Zaba, OTP, HBOR, HPB, Croatia banka | stranice s prodajom preuzetih nekretnina; poruka samo za novi tekst koji spominje naše područje | jednom dnevno |
 
@@ -64,6 +65,11 @@ objavljuje i na realestatecroatia.com. Mjerenje 6. 10.: od oglasa s tog portala 
 prolaze kriterije oko 95 % već imamo s naših portala (i ne stižu ponovno); ostatak su
 oglasi koje agencija drži samo ondje. Prvo pokretanje bilježi postojeće oglase bez poruke
 (ući će u završni pregled), „cijena na upit” se preskače.
+
+burza.com.hr (6. 10.): regionalni oglasnik Kvarnera i Istre, oko 100 kuća i zemljišta s
+našeg područja. Mjesto i datum zadnje izmjene su na stranici oglasa, površina samo u
+naslovu ili opisu (kod kuća se površina uz koju piše okućnica/zemljište/terasa ne
+računa kao stambena). Prvo pokretanje bilježi postojeće oglase bez poruke.
 
 Banke i leasing kuće (6. 10.): na našem području trenutno ništa. Leasing kuće nude samo
 vozila i opremu, Addiko objavljuje na Njuškalu, a prisilne prodaje idu kroz FINA

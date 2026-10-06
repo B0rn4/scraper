@@ -20,6 +20,7 @@ SOURCE_LABELS = {
     "fina": "FINA Očevidnik",
     "vender": "vender.hr",
     "realestatecroatia": "realestatecroatia.com",
+    "burza": "burza.com.hr",
     "njuskalo": "Njuškalo",
     "redmi": "Redmi (Njuškalo)",
 }

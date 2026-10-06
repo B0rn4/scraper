@@ -228,3 +228,27 @@ def test_seen_on_other_portal(tmp_path, monkeypatch):
     state = State(tmp_path / "s.db")
     assert [r["source_id"] for r in state.duplicates_since("2000")] == ["9"]
     state.close()
+
+
+def test_short_description_keeps_text_reject(tmp_path, monkeypatch):
+    """Odbijen zbog rečenice iz punog opisa; kasnije popis daje samo početak opisa → bez poruke."""
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    part = listing(sid="4")
+    part.description = "Prodaje se suvlasnički dio kuće (1/2) s okućnicom i parkingom."
+    short = listing(sid="4")
+    short.description = "Kuća u Puntu s parkingom."
+    short.extra["opis_skracen"] = True
+    FakeSource.modes = []
+    FakeSource.batches = [[listing(sid="1")], [part], [short]]
+    sent = []
+    for _ in range(3):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r._send_report = lambda *a, **k: None
+        r._send_notifications = lambda state, items: sent.extend(x.source_id for x, d, h in items)
+        r.run(force=True)
+    state = State(tmp_path / "s.db")
+    assert sent == [] and state.get("t:4")["status"] == REJECT
+    state.close()

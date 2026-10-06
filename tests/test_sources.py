@@ -297,3 +297,51 @@ def test_realestatecroatia_list_detail_and_incremental():
     assert sum("list.asp" in u for u in http.urls) == 2                   # kuće str. 1 (stop) + zemljišta str. 1
     assert all(x.price for x in found)                                    # "cijena na upit" preskočena
     assert len([u for u in http.urls if "detail.asp" in u]) <= 10
+
+
+def test_burza_list_detail_and_fetch():
+    from scraper.models import Listing
+    from scraper.sources import burza
+
+    page = read("burza_kuce.html.gz")
+    items = {x.source_id: x for x in burza.parse_list(page, HOUSE, "Crikvenica")}
+    assert len(items) == 6 and items["349053"].price is None                 # "cijena na upit"
+    x = items["347113"]
+    assert (x.price, x.area, x.settlement) == (420000, 120, "Crikvenica") and x.extra["opis_skracen"]
+    assert x.url.startswith("https://burza.com.hr/oglasi/") and x.url.endswith("/347113")
+    assert burza.parse_list(page, HOUSE, "otok Krk")[0].settlement == ""       # otok nije naselje
+
+    y = Listing("burza", "1", "https://burza.com.hr/oglasi/x/1", "Crikvenica, 435m2, samostojeća kuća", HOUSE, price=875000)
+    burza.parse_detail(read("burza_oglas.html.gz"), y)
+    assert (y.settlement, y.area, y.published) == ("Crikvenica", 435, "2026-10-05")
+    assert y.extra["oglasivac"].startswith("Millennium") and "opis_skracen" not in y.extra
+    assert y.description.startswith("Prodaje se velika samostojeća kuća")
+    assert burza._areas("Prodaje se kuća na okućnici od 600 m2, stambene površine 150 m2", HOUSE) == (150, 600)
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+    class Http:
+        def __init__(self):
+            self.urls = []
+
+        def get(self, url, **kw):
+            self.urls.append(url)
+            if url.rstrip("/").split("/")[-1].isdigit():
+                return Resp(read("burza_oglas.html.gz"))
+            return Resp(page if "kuce" in url and ("crikvenica" in url or url.endswith("kvarner-i-istra")) else "")
+
+    cfg = load_config()
+    http = Http()
+    found = burza.Burza(http, Locator(), cfg["kriteriji"]).fetch("full", set())
+    assert {x.source_id for x in found} == {"350166", "350164", "347113", "350118"}   # bez "na upit"
+    assert sum(u.split("/")[-1].isdigit() for u in http.urls) == 4                # svaki oglas otvoren
+    assert all(x.settlement == "Crikvenica" and x.published for x in found)
+
+    http = Http()
+    known = {"350166", "350164"}
+    found = {x.source_id: x for x in burza.Burza(http, Locator(), cfg["kriteriji"]).fetch("incremental", known)}
+    assert set(found) == {"350166", "350164", "347113", "350118"}
+    assert found["350166"].settlement == "" and found["350166"].extra["opis_skracen"]   # poznat: bez otvaranja
+    assert sorted(u.split("/")[-1] for u in http.urls if u.split("/")[-1].isdigit()) == ["347113", "350118"]

@@ -1,6 +1,7 @@
 """Izvori oglasa. Svaki izvor vraća listu Listing objekata."""
 
 from .base import Source
+from .burza import Burza
 from .fina import Fina
 from .index_oglasi import IndexOglasi
 from .nekretnine_hr import NekretnineHr
@@ -17,4 +18,5 @@ ALL: dict[str, type[Source]] = {
     Vender.name: Vender,
     Njuskalo.name: Njuskalo,
     RealEstateCroatia.name: RealEstateCroatia,
+    Burza.name: Burza,
 }

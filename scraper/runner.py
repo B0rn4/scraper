@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 
 import yaml
 
-from . import dedupe, report, tenders, watch
+from . import dedupe, report, risks, tenders, watch
 from .ispu import Ispu, check_land, gp_text
 from .prices import AskingPrices, Ppv, land_note, land_short
 from .db import State
@@ -140,6 +140,8 @@ class Runner:
                         x.area = x.area or prev.get("area")
                         x.settlement = x.settlement or prev.get("settlement") or ""
                     d = evaluate(x, self.criteria, self.locator)
+                    if prev and d.notify and x.extra.get("opis_skracen") and prev.get("status") == REJECT:
+                        d = self._keep_text_reject(d, prev)
                     old = state.upsert(x, d, self.stamp)
                     decided.append((x, d))
                     if silent_baseline or (old is None and x.extra.get("stari_oglas")):
@@ -191,6 +193,14 @@ class Runner:
                 dedupe.export(state, Path(self.db_path).with_name("seen.json.gz"))
         finally:
             state.close()
+
+    @staticmethod
+    def _keep_text_reject(d: Decision, prev: dict) -> Decision:
+        """Oglas odbijen zbog rečenice iz punog opisa (npr. prodaje se suvlasnički dio) ostaje
+        odbijen kad popis daje samo početak opisa – inače bi stiglo lažno "sad odgovara"."""
+        labels = tuple(r.label for r in risks.RULES if r.reject)
+        kept = [r for r in json.loads(prev.get("reasons") or "[]") if r.startswith(labels)]
+        return Decision(REJECT, kept, jls=d.jls, location_evidence=d.location_evidence) if kept else d
 
     def _load_seen(self, state: State) -> dedupe.Seen:
         """Već viđeni oglasi: ova baza, baza s Redmija (na GitHubu) i sažetak s GitHuba (na Redmiju)."""
