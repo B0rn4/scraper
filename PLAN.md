@@ -305,10 +305,20 @@ bez stotina poruka.
         ISPU objavi novi;
       - ne: spremljene pretrage u aplikaciji Njuškalo, starost oglasa, FINA kuće
         (previše mogućih komplikacija).
-   3. **Moja provjera grešaka:** pregled koda po modulima i podataka u bazi (sumnjive
-      vrijednosti: površina < 20 m², cijena < 1.000 €, nepoznata lokacija, najčešća
-      upozorenja), zapisnici zadnjih pokretanja (greške, ograničenja vremena, zdravlje
-      izvora).
+   3. **(gotovo 6. 10.) Moja provjera grešaka** (kod, baze GitHuba i Redmija, 98
+      pokretanja – 4 neuspjela su prekid GitHuba 5. 10.). Popravljeno:
+      - isti oglas „cijena na upit” na više portala stizao je više puta (vila Matulji,
+        kuća Krk, zemljište Jadranovo);
+      - Susak (Mali Lošinj) / Sušak (Rijeka) i Sveti Anton: odlučuje tekst (22 oglasa
+        s otoka Suska bila su ⚠);
+      - lažno „sniženje” nakon poskupljenja – uspoređuje se s cijenom iz poruke;
+      - ujutro i nakon prekida čitalo se premalo stranica (index.hr 2 × 24 uz 44 nova
+        oglasa u satu) – sad dok ima novih;
+      - novi oglasi iznad ograničenja otvaranja stizali su bez površine (RC, Njuškalo);
+      - cijena po m² u prvom retku poruke; PPV podsjetnik bilježi se tek kad je poslan;
+      - popis stranica tvrdio je da „cijena na upit” ne stiže.
+      Otvoreno pitanje za korisnika: „cijena na upit” (6 od 26 poruka) – preskakati kao
+      kod realestatecroatia.com i burze?
    4. **Svježi pregled koda:** nova instanca (podagent) bez znanja o razgovoru, samo s
       kodom i README/PLAN kao opisom; traži greške. Svaki nalaz provjeravam prije
       popravka (ne zna za odluke poput isključenih naselja).
