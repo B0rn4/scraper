@@ -138,7 +138,9 @@ class Runner:
                     prev = state.get(x.key)
                     if prev:  # podaci sa stranice oglasa iz ranijeg dohvata (popis ih nema)
                         x.area = x.area or prev.get("area")
-                        x.settlement = x.settlement or prev.get("settlement") or ""
+                        if not x.settlement and prev.get("settlement"):
+                            x.settlement = prev["settlement"]
+                            x.location_text = x.location_text or x.settlement
                     d = evaluate(x, self.criteria, self.locator)
                     if prev and d.notify and x.extra.get("opis_skracen") and prev.get("status") == REJECT:
                         d = self._keep_text_reject(d, prev)

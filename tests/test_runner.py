@@ -252,3 +252,26 @@ def test_short_description_keeps_text_reject(tmp_path, monkeypatch):
     state = State(tmp_path / "s.db")
     assert sent == [] and state.get("t:4")["status"] == REJECT
     state.close()
+
+
+def test_known_listing_gets_place_from_earlier_fetch(tmp_path, monkeypatch):
+    """Popis bez mjesta (burza.com.hr): naselje i tekst lokacije dolaze iz ranijeg dohvata stranice oglasa."""
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    first = listing(sid="5", title="Kuća s okućnicom")
+    first.municipality, first.settlement, first.location_text = "", "Sveti Ivan, Općina Oprtalj", "Sveti Ivan, Općina Oprtalj"
+    later = listing(sid="5", title="Kuća s okućnicom")
+    later.municipality = ""
+    FakeSource.modes = []
+    FakeSource.batches = [[first], [later]]
+    for _ in range(2):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r._send_report = lambda *a, **k: None
+        r._send_notifications = lambda state, items: None
+        r.run(force=True)
+    assert later.location_text == "Sveti Ivan, Općina Oprtalj"
+    state = State(tmp_path / "s.db")
+    assert state.get("t:5")["status"] == REJECT
+    state.close()
