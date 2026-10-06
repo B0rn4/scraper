@@ -195,6 +195,12 @@ def test_same_property_rules():
     dramalj = {**a, "jls": "Crikvenica", "title": "Dramalj, kuća"}
     places(selce, loc), places(dramalj, loc)
     assert not same_property(selce, dramalj)
+    # "Cijena na upit" (1 € / 100 €) na dva portala: isti po površini i naslovu; s cijenom nije isti.
+    vila = {"key": "i", "kind": HOUSE, "jls": "Matulji", "price": 100, "area": 430, "settlement": "",
+            "title": "MATULJI – EKSKLUZIVNA VILA OD 430 M², 8 MINUTA OD OPATIJE"}
+    assert same_property({**vila, "key": "o", "price": 1}, vila)
+    assert not same_property({**vila, "key": "o", "title": "Kuća s bazenom"}, vila)
+    assert not same_property({**vila, "key": "o", "price": 390_000}, vila)
 
 
 def test_seen_on_other_portal(tmp_path, monkeypatch):

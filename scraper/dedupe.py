@@ -5,7 +5,8 @@ vrsta i grad/općina isti, površina se razlikuje najviše 2 % (barem 1 m²), na
 spomenuta u naslovu se ne razlikuju (Vrh ≠ Krk-Centar), a uz to:
 - cijena je ista do eura i površina do pola kvadrata – a kod okruglih brojeva
   (npr. 299.000 € i 100 m²) i zajedničko naselje ili riječi iz naslova, ili
-- cijena se razlikuje najviše 1 % i oglasi dijele naselje ili riječi iz naslova.
+- cijena se razlikuje najviše 1 % i oglasi dijele naselje ili riječi iz naslova, ili
+- oba su "cijena na upit" (1 ili 100 €), a dijele naselje ili riječi iz naslova.
 Ako je novi oglas jeftiniji od svih istih viđenih (više od 1 %), ipak stiže, s
 napomenom. Pravilo je namjerno oprezno: kad nije sigurno, oglas stiže (dobru ponudu
 je gore propustiti nego dobiti dvaput)."""
@@ -65,13 +66,15 @@ def same_property(new: dict, old: dict, cheaper_ok: bool = False) -> bool:
     if new["kind"] != old["kind"] or not new.get("jls") or new["jls"] != old.get("jls"):
         return False
     pn, po, an, ao = new.get("price"), old.get("price"), new.get("area"), old.get("area")
-    if not (pn and po and an and ao) or pn <= 100 or po <= 100:
-        return False
-    if abs(an - ao) > max(1.0, 0.02 * ao):
+    if not (an and ao) or abs(an - ao) > max(1.0, 0.02 * ao):
         return False
     pa, pb = places(new), places(old)
     if pa and pb and not pa & pb:
         return False  # naslovi spominju različita naselja
+    asked_n, asked_o = not pn or pn <= 100, not po or po <= 100      # "cijena na upit" (1, 100 €)
+    if asked_n or asked_o:
+        # Oba na upit: dovoljni površina i isto mjesto ili naslov (agencija ga stavlja na više portala).
+        return asked_n and asked_o and _same_place(new, old)
     if abs(pn - po) <= 1 and abs(an - ao) <= 0.5 and (not _round(pn, an) or _same_place(new, old)):
         return True
     close = abs(pn - po) <= PRICE_TOLERANCE * po

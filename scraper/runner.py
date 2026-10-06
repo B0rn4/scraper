@@ -585,7 +585,7 @@ class Runner:
         if twins:
             cheapest = min(twins, key=lambda r: min(r["price"], r.get("notified_price") or r["price"]))
             low = min(cheapest["price"], cheapest.get("notified_price") or cheapest["price"])
-            if x.price >= low * (1 - dedupe.PRICE_TOLERANCE):
+            if not x.price or x.price >= low * (1 - dedupe.PRICE_TOLERANCE):
                 if old is None:
                     state.mark_notified(x.key, x.price, f"dup:{cheapest['key']}")
                 self.log(f"Već viđen ({cheapest['key']}): {x.title[:60]}")
