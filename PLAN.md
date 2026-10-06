@@ -316,7 +316,11 @@ bez stotina poruka.
         oglasa u satu) – sad dok ima novih;
       - novi oglasi iznad ograničenja otvaranja stizali su bez površine (RC, Njuškalo);
       - cijena po m² u prvom retku poruke; PPV podsjetnik bilježi se tek kad je poslan;
-      - popis stranica tvrdio je da „cijena na upit” ne stiže.
+      - popis stranica tvrdio je da „cijena na upit” ne stiže;
+      - (korisnik uočio) „isti oglas” je spajao različite nekretnine: jedinice istog
+        projekta na istom portalu (Barušići 350.000 / 352.000 €) i kuće koje dijele samo
+        ime mjesta u naslovu. Sad na istom portalu samo iste brojke (ponovna objava),
+        nazivi mjesta nisu zajedničke riječi, naselja u osnovnom obliku.
       „Cijena na upit” (6 od 26 poruka): korisnik želi maknuti samo luksuzne – procjena
       površina × medijan traženih €/m²; odbija se luksuzna (riječi u naslovu + procjena
       × 0,4 iznad granice) i golema kuća (× 0,2); ostale ⚠ s procjenom. Na podacima: od
