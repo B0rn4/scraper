@@ -389,6 +389,8 @@ class Reader:
             url = urljoin(base, html.unescape(href))
             if url.rstrip("/") in (base.rstrip("/"), site["url"].rstrip("/")):   # sama stranica (izbornik)
                 continue
+            if site.get("poveznice") and site["poveznice"] not in url:          # npr. Rijeka: samo /bidding/
+                continue
             if len(title) < 12 or url in seen or not relevant(title):
                 continue
             seen.add(url)

@@ -285,3 +285,13 @@ def test_shares_groups_and_docx():
     text = Reader(Http(), Locator()).doc_text("https://matulji.hr/a/Javni-natjecaj.docx")
     assert text == "Prodaje se k.č. 1268/5 K.O. Matulji, početna cijena 50.000,00 EUR."
     assert details(text)["cijene"] == [50000.0]
+
+
+def test_page_links_filter():
+    page = ('<a href="/gradska-uprava/natjecaji-2/raspolaganje-zemljistem-prodaja/">Raspolaganje zemljištem – prodaja, pravo '
+            'građenja, služnosti i zakup</a><a href="/bidding/natjecaj-za-prodaju-zemljista/">Natječaj za prodaju zemljišta u '
+            'vlasništvu Grada Rijeke</a>')
+    reader = Reader(FakeHttp({"rijeka": page}), Locator())
+    items = reader.fetch({"naziv": "Grad Rijeka (ostali)", "jls": "Rijeka", "nacin": "stranica", "poveznice": "/bidding/",
+                          "url": "https://www.rijeka.hr/gradska-uprava/natjecaji-2/ostali-natjecaji/"})
+    assert [t.url for t in items] == ["https://www.rijeka.hr/bidding/natjecaj-za-prodaju-zemljista/"]
