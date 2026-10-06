@@ -280,6 +280,34 @@ bez stotina poruka.
      Približna oznaka: samo cjeline i samo kad opis spominje staru jezgru. Uz to
      pravilo za tekst (kulturno dobro, konzervator, zaštićena jezgra). Isto za čestice
      iz natječaja.
+7. **Finiširanje (prijedlog 6. 10., čeka potvrdu).** Redom:
+   1. **Čišćenje i privatnost:** maknuti alate za otkrivanje (`tools/discover*.py`, 40
+      skripti), probne tijekove rada i sadržaj grane `debug` (javni repozitorij, u njoj su
+      spremljene stranice portala s imenima i telefonima oglašivača); provjeriti da u
+      repozitoriju i granama `state`/`state-redmi` nema osobnih podataka ni tajni;
+      osvježiti GitHub akcije (upozorenje o Node.js 20).
+   2. **Moje mišljenje:** što scraperu fali, a što je višak – pisani pregled s
+      prijedlozima, korisnik odlučuje.
+   3. **Moja provjera grešaka:** pregled koda po modulima i podataka u bazi (sumnjive
+      vrijednosti: površina < 20 m², cijena < 1.000 €, nepoznata lokacija, najčešća
+      upozorenja), zapisnici zadnjih pokretanja (greške, ograničenja vremena, zdravlje
+      izvora).
+   4. **Svježi pregled koda:** nova instanca (podagent) bez znanja o razgovoru, samo s
+      kodom i README/PLAN kao opisom; traži greške. Svaki nalaz provjeravam prije
+      popravka (ne zna za odluke poput isključenih naselja).
+   5. **Testovi:** automatski (sad 105) dopuniti cijelim pokretanjem na spremljenim
+      stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
+      radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
+      korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj
+      pošti), Redmi nakon nestanka struje / ponovnog pokretanja, obavijesti
+      cron-job.org kod neuspjeha, ručna usporedba s portalima (popis praćenih stranica).
+   6. **Upute za korisnika** (`UPUTE.md`): značenje svakog retka i oznake u poruci,
+      kako promijeniti kriterije i naselja, dodati stranicu natječaja, pauzirati, što
+      napraviti kad stigne upozorenje o kvaru.
+   7. **Završni pregled oglasa** (dogovor 5. 10.): svi aktivni oglasi koji odgovaraju,
+      uključujući cijelo Njuškalo preko Redmija; nakon toga redovni rad.
+   8. **Nakon 1–2 tjedna rada:** s korisnikom proći što je stiglo, a bilo je
+      nepotrebno, i što je propušteno; podesiti pravila.
 
 ## Zadaci za korisnika
 
