@@ -140,7 +140,7 @@ def test_runner_tender_message_with_parcels(tmp_path):
     message = runner._tender_message(t, tenders.details(text), found, "Omišalj", tenders.place_text(t, found), None,
                                      prices, 10 ** 12)
     lines = message.splitlines()
-    assert lines[2] == "📊 more 0,3 km · Rijeka 35 min · Zagreb 2 h 18 min · cijena −50 % od prosjeka · PPV −35 %"
+    assert lines[2] == "📊 more 0,3 km · Rijeka 35 min · cijena −50 % od prosjeka · PPV −35 %"
     assert lines[4:9] == [
         "📍 Omišalj – Njivice",
         "🗺 k.č. 1234/5 k.o. Njivice (650 m²): u građevinskom području naselja (neizgrađeni dio)",

@@ -115,7 +115,7 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
         if found:
             row, exact = found
             listing.extra["mjere"] = {"naselje": row["naziv"], "tocno": exact, "more_km": row["more_km"],
-                                      "rijeka_min": row["rijeka_min"], "zagreb_min": row["zagreb_min"]}
+                                      "rijeka_min": row["rijeka_min"]}
         verdict = locator.settlement_verdict(jls_name, listing.settlement, place_text)
         if verdict and verdict[0] == REJECT:
             reasons.append(verdict[1])

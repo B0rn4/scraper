@@ -215,9 +215,10 @@ bez stotina poruka.
       je okućnica dovoljna ili je opis skraćen). nekretnine.hr: novi oglasi koji mogu
       proći otvaraju se (puni opis, značajke, godina izgradnje), najviše 10 po pokretanju.
    6. **(gotovo 5. 10.)** Sažeti redak odmah ispod cijene: „📊 more 0,6 km · Rijeka 40
-      min · Zagreb 2 h 24 min · cijena −20 % od prosjeka · PPV u rasponu · ⚠ 2”. More je
-      zračna udaljenost, Rijeka i Zagreb vožnja (OSRM, bez prometa) iz
-      `data/naselja_udaljenosti.csv`; bez naselja: istoimeno mjesto (~Krk).
+      min · cijena −20 % od prosjeka · PPV u rasponu · ⚠ 2”. More je zračna udaljenost,
+      Rijeka vožnja (OSRM, bez prometa) iz `data/naselja_udaljenosti.csv`; bez naselja:
+      istoimeno mjesto (~Krk). (6. 10.) Vrijeme do Zagreba maknuto iz poruke – popis
+      naselja već sadrži samo prihvatljivo udaljena mjesta.
    - Čitanje opisa jezičnim modelom: zasad ne (korisnik će javiti).
    - **Završni pregled (dogovor 5. 10.):** kad sve faze budu gotove, korisnik još
      jednom dobiva sve aktivne oglase koji odgovaraju (kao početni popis), uključujući

@@ -381,15 +381,14 @@ class Runner:
     def _tender_message(self, t: tenders.Tender, info: dict, found: list[tenders.Lot], jls: str, where: str,
                         verdict: tuple[str, str] | None, prices: AskingPrices | None, deadline: float) -> str:
         """Poruka za natječaj s istim podacima kao za oglase: sažeti redak (more, Rijeka,
-        Zagreb, cijena), naselje, za svaku česticu građevinsko područje (ISPU), početna
+        cijena), naselje, za svaku česticu građevinsko područje (ISPU), početna
         cijena po m² prema PPV-u na lokaciji i medijanu traženih, upozorenja."""
         warnings = [verdict[1]] if verdict else []
         mjere, place = {}, ""
         row = self.locator.settlement_row(jls, "", where) if jls else None
         if row:
             r, exact = row
-            mjere = {"naselje": r["naziv"], "tocno": exact, "more_km": r["more_km"], "rijeka_min": r["rijeka_min"],
-                     "zagreb_min": r["zagreb_min"]}
+            mjere = {"naselje": r["naziv"], "tocno": exact, "more_km": r["more_km"], "rijeka_min": r["rijeka_min"]}
             if exact and fold(r["naziv"]) != fold(jls):
                 place = f"{jls} – {r['naziv']}"
         if not place and jls and jls not in t.site:

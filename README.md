@@ -29,7 +29,7 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 - **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, vlasnički list.
 - **Parking (🚗, kuće):** parkirno mjesto ili garaža iz oglasa, ili okućnica od barem
   100 m². „Nema parkinga”, samo javni parking ili parking nije naveden → ⚠.
-- **Sažeti redak (📊):** more (zračno), vožnja do Rijeke i Zagreba, cijena prema
+- **Sažeti redak (📊):** more (zračno), vožnja do Rijeke, cijena prema
   prosjeku i PPV-u, broj upozorenja.
 - **Natječaji (📜):** prodaja nekretnina gradova, općina, PGŽ-a i države na našem
   području: sažeti redak, rok, mjesto, a za svaku česticu (do 3) građevinsko područje,
