@@ -268,7 +268,10 @@ bez stotina poruka.
      ne (~5 %, od toga nekoliko poljoprivrednih ili krivo smještenih). Najnoviji oglasi
      se na našim portalima pojavljuju u isto vrijeme – portal nije brži.
    - Prvo pokretanje se bilježi bez poruke (ulazi u završni pregled); „cijena na upit”
-     (luksuzne vile) se preskače. Novi oglasi koji su već poslani s drugog portala ne
+     (luksuzne vile) se preskače. Prvo čitanje nije otvaralo oglase (4.500 stranica ≈
+     2,5 h), pa ti oglasi nemaju površinu – za završni pregled otvaraju se oni koji mogu
+     proći. (6. 10.) Novi oglasi iznad ograničenja otvaranja (10 po pokretanju) više se ne
+     šalju bez površine nego čekaju sljedeće pokretanje; isto za Njuškalo (8). Novi oglasi koji su već poslani s drugog portala ne
      stižu ponovno (već viđeni).
 6. **(6. 10.) Dodaci za kuće.**
    - Građevinsko područje (ISPU) kao kod zemljišta: po k.č. iz opisa ili točnoj oznaci

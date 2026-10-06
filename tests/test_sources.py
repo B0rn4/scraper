@@ -344,3 +344,45 @@ def test_burza_list_detail_and_fetch():
     assert set(found) == {"350166", "350164", "347113", "350118"}
     assert found["350166"].settlement == "" and found["350166"].extra["opis_skracen"]   # poznat: bez otvaranja
     assert sorted(u.split("/")[-1] for u in http.urls if u.split("/")[-1].isdigit()) == ["347113", "350118"]
+
+
+def test_detail_limit_defers_instead_of_sending_without_area(monkeypatch, fina):
+    """Kandidati iznad ograničenja otvaranja ne vraćaju se (inače bi stigli bez površine),
+    nego čekaju sljedeće pokretanje."""
+    from scraper.sources import njuskalo, realestatecroatia
+    from scraper.sources.base import INCREMENTAL
+
+    page = read("realestatecroatia_kuce.html.gz")
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+    class Http:
+        def __init__(self):
+            self.urls = []
+
+        def get(self, url, **kw):
+            self.urls.append(url)
+            if "detail.asp" in url:
+                return Resp(read("realestatecroatia_oglas.html.gz"))
+            return Resp(page if "vrsta=1" in url and "page=1" in url else "")
+
+    monkeypatch.setattr(realestatecroatia, "MAX_DETAILS", 2)
+    cfg = load_config()
+    src = realestatecroatia.RealEstateCroatia(Http(), Locator(), cfg["kriteriji"])
+    first = {x.source_id for x in src.fetch(INCREMENTAL, set())}
+    candidates = [x for x in realestatecroatia.parse_list(page, HOUSE) if x.price]
+    assert len(first) < len(candidates)                      # neki čekaju
+    second = {x.source_id for x in src.fetch(INCREMENTAL, first)}
+    assert second - first                                    # sljedeći put dolaze odgođeni
+    opened = [x for x in src.fetch(INCREMENTAL, set()) if "opis_skracen" not in x.extra]
+    assert opened and all(x.area for x in opened)            # otvoreni imaju površinu
+
+    monkeypatch.setattr(njuskalo, "MAX_DETAILS", 0)
+    browser = FakeBrowser({"prodaja-kuca": read("njuskalo_kuce.html.gz"),
+                           "prodaja-zemljista": read("njuskalo_zemljista.html.gz")})
+    nj = njuskalo.Njuskalo(None, Locator(), cfg["kriteriji"], browser=browser)
+    nj.since = "2026-10-05T11:30:00+02:00"
+    items = {x.source_id for x in nj.fetch(INCREMENTAL, {"45180000"})}
+    assert "51323938" not in items and "45131418" in items  # kandidat čeka; preskup se vraća bez otvaranja

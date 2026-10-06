@@ -185,22 +185,27 @@ class Njuskalo(Source):
                     oldest = min(dates) if dates else ""
                     if not since or not oldest or datetime.fromisoformat(oldest.replace("Z", "+00:00")) < since:
                         break
-            details = 0
+            details, later = 0, set()
             for x in found.values():
                 if x.source_id in known_ids:
                     continue
                 if threshold is not None and int(x.source_id) <= threshold:
                     x.extra["stari_oglas"] = True
-                elif mode != FULL and details < MAX_DETAILS and self._worth_detail(x):
+                elif mode != FULL and self._worth_detail(x):
+                    if details >= MAX_DETAILS:     # sljedeći put (bez stranice oglasa stigao bi bez površine)
+                        later.add(x.source_id)
+                        continue
                     details += 1
                     try:
                         parse_detail(browser.get(x.url, "h1"), x)
-                    except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
+                    except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                         x.extra["detalji_greska"] = str(exc)[:200]
+                        later.add(x.source_id)
         finally:
             if own_browser:
                 browser.close()
-        return list(found.values())
+        # Odgođeni oglas ostaje na 1. stranici ili se zbog novijih oglasa čita i 2. (since).
+        return [x for x in found.values() if x.source_id not in later]
 
     def _worth_detail(self, x: Listing) -> bool:
         """Stranicu oglasa otvaramo samo kad bi oglas mogao proći (područje, cijena, vrsta)."""

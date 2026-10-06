@@ -9,7 +9,8 @@ Popis cijele PGŽ: list.asp?regija=8&vrsta=1 (kuće) / 3 (zemljišta)&akcija=1 (
 sort=objekt_id&smjer=desc (najnoviji prvi; broj oglasa raste i ne mijenja se pri
 osvježavanju), cijenaDo=granica iz kriterija. Cijena je zapisana "530,000 €". Mjesto
 je "ČIŽIĆI (KRK)" – u zagradi otok ili općina. Površina je samo na stranici oglasa,
-pa se otvaraju novi oglasi koji bi mogli proći (najviše MAX_DETAILS po pokretanju).
+pa se otvaraju novi oglasi koji bi mogli proći (najviše MAX_DETAILS po pokretanju; ostali
+čekaju sljedeće pokretanje, da ne stignu bez površine).
 "Cijena na upit" se preskače (gotovo uvijek luksuzne vile iznad granice)."""
 
 import html
@@ -101,23 +102,29 @@ class RealEstateCroatia(Source):
                 for x in items:
                     if x.price:                      # "cijena na upit" se preskače
                         found.setdefault(x.source_id, x)
-                # Najnoviji prvi: kad se pojave već poznati oglasi, dalje su samo stariji.
-                if len(items) < PAGE_SIZE or (mode != FULL and any(
-                        x.source_id in known_ids for x in items if not x.extra["istaknut"])):
+                # Najnoviji prvi: kad je i najstariji redovni oglas na stranici poznat, dalje su
+                # samo stariji. (Ne "bilo koji poznat": oglasi odgođeni prošli put su između.)
+                regular = [x for x in items if not x.extra["istaknut"] and x.price]
+                if len(items) < PAGE_SIZE or (mode != FULL and regular and
+                                              min(regular, key=lambda x: int(x.source_id)).source_id in known_ids):
                     break
-        if mode != FULL:
-            details = 0
-            for x in sorted(found.values(), key=lambda x: -int(x.source_id)):
-                if details >= MAX_DETAILS:
-                    break
-                if x.source_id in known_ids or evaluate(x, self.criteria, self.locator).status == REJECT:
-                    continue
-                details += 1
-                try:
-                    parse_detail(self.http.get(x.url).text, x)
-                except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
-                    x.extra["detalji_greska"] = str(exc)[:200]
-        return list(found.values())
+        if mode == FULL:
+            return list(found.values())
+        out, details = [], 0
+        for x in sorted(found.values(), key=lambda x: -int(x.source_id)):
+            if x.source_id in known_ids or evaluate(x, self.criteria, self.locator).status == REJECT:
+                out.append(x)
+                continue
+            if details >= MAX_DETAILS:
+                continue               # otvara se sljedeći put (bez površine bi stigao kao ⚠)
+            details += 1
+            try:
+                parse_detail(self.http.get(x.url).text, x)
+            except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
+                x.extra["detalji_greska"] = str(exc)[:200]
+                continue
+            out.append(x)
+        return out
 
     def search_links(self):
         out = []
