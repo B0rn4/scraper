@@ -3,7 +3,7 @@
 import re
 
 from . import parking, risks
-from .locations import Locator
+from .locations import LocationResult, Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
 from .text import fmt_eur, fmt_m2, fold
 
@@ -90,12 +90,17 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator) -> Decision:
         return Decision(REJECT, [f"nije kuća ni zemljište ({listing.subtype or 'nepoznato'})"])
 
     # --- lokacija ---
-    loc = locator.resolve(
-        municipality=listing.municipality,
-        settlement=listing.settlement,
-        county=listing.county,
-        text=" ".join(filter(None, [listing.location_text, listing.title])),
-    )
+    if listing.extra.get("samo_pgz") and listing.settlement and not locator.knows(listing.settlement):
+        # Portal pokriva i druge županije, a daje samo naselje: naselje izvan PGŽ-a znači
+        # oglas izvan područja, i kad se naziv iz naslova poklapa s nekim našim mjestom.
+        loc = LocationResult(None, False, f"mjesto izvan PGŽ-a: {listing.settlement}")
+    else:
+        loc = locator.resolve(
+            municipality=listing.municipality,
+            settlement=listing.settlement,
+            county=listing.county,
+            text=" ".join(filter(None, [listing.location_text, listing.title])),
+        )
     jls_name = loc.jls.name if loc.jls else ""
     if loc.included is False:
         reasons.append(f"lokacija nije na popisu ({jls_name or loc.evidence})")

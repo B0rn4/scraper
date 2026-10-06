@@ -69,7 +69,10 @@ oglasi koje agencija drži samo ondje. Prvo pokretanje bilježi postojeće oglas
 burza.com.hr (6. 10.): regionalni oglasnik Kvarnera i Istre, oko 100 kuća i zemljišta s
 našeg područja. Mjesto i datum zadnje izmjene su na stranici oglasa, površina samo u
 naslovu ili opisu (kod kuća se površina uz koju piše okućnica/zemljište/terasa ne
-računa kao stambena). Prvo pokretanje bilježi postojeće oglase bez poruke.
+računa kao stambena). Regija obuhvaća i Istru i Liku, a na stranici oglasa piše samo
+naselje: oglas iz naselja koje nije u PGŽ-u se odbija (i kad naslov spominje neko naše
+mjesto, npr. „Barić Draga” kod Karlobaga). Prvo pokretanje (6. 10.) zabilježilo je 128
+oglasa bez poruke; dva koja prolaze već imamo s nekretnine.hr i index.hr.
 
 Banke i leasing kuće (6. 10.): na našem području trenutno ništa. Leasing kuće nude samo
 vozila i opremu, Addiko objavljuje na Njuškalu, a prisilne prodaje idu kroz FINA

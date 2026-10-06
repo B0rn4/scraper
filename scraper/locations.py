@@ -186,6 +186,11 @@ class Locator:
         key = self.canonical(name)
         return list(self._settlement_index.get(key, []))
 
+    def knows(self, place: str) -> bool:
+        """Je li naziv mjesta (naselje, grad/općina, kvart; bez kućnog broja) u županiji."""
+        place = re.sub(r"\s+\d+\w*\s*$", "", place or "").strip()
+        return bool(place) and self.resolve(settlement=place, text=place).jls is not None
+
     def canonical(self, name: str) -> str:
         """Normalizirani naziv naselja: drugi nazivi (Poljice → poljica) i sinonimi."""
         key = fold(name)

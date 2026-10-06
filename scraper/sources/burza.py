@@ -87,6 +87,7 @@ def parse_list(page: str, kind: str, place: str = "") -> list[Listing]:
             image_url=image.group(1) if image else "",
         )
         x.extra["opis_skracen"] = True
+        x.extra["samo_pgz"] = True          # regija obuhvaća i Istru i Liku: mjesto mora biti u PGŽ-u
         _set_area(x)
         out.append(x)
     return out

@@ -156,3 +156,18 @@ def test_risky_phrases():
     assert heirs.status == "upozorenje" and any("nasljednici" in w and "„" in w for w in heirs.warnings)
     clean = evaluate(house("Vlasništvo 1/1, bez tereta. Legalizirano. Kolni pristup i parking."), crit, loc)
     assert clean.status == "prolazi"
+
+
+def test_place_outside_county_rejected(ctx):
+    """burza.com.hr (Kvarner i Istra): naselje izvan PGŽ-a odbija oglas i kad naslov spominje naše mjesto."""
+    def burza(settlement, title):
+        x = house(county="", municipality="", settlement=settlement, location_text=settlement, title=title,
+                  description="Samostojeća kuća s parkingom.")
+        x.extra["samo_pgz"] = True
+        return evaluate(x, *ctx)
+
+    d = burza("Karlobag", "Barić Draga, prvi red do mora")
+    assert d.status == REJECT and "izvan PGŽ-a: Karlobag" in d.reasons[0]
+    assert burza("Galižana", "Istarska kamena kuća").status == REJECT
+    assert burza("Dramalj", "Dramalj – uređena primorska kuća").status != REJECT
+    assert burza("Rijeka, Donja Drenova", "Samostojeća kuća").jls == "Rijeka"
