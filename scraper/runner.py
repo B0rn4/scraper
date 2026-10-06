@@ -469,23 +469,23 @@ class Runner:
         today = self.now.date().isoformat()
         if state.meta_get("daily:ppv") == today:
             return
-        state.meta_set("daily:ppv", today)
         how = "Na GitHubu: Actions → „PPV – godišnje osvježavanje” → Run workflow."
         if state.meta_get(f"ppv:nova_godina:{self.now.year}") is None:
-            state.meta_set(f"ppv:nova_godina:{self.now.year}", self.stamp)
             text = (f"Sretna Nova godina! PPV u porukama je još za 1.1.{PPV_YEAR}. Kad ISPU objavi PPV za "
                     f"1.1.{self.now.year}., javit ću da pokreneš osvježavanje. {how}")
-            self.telegram.send_text(f"🏛 <b>PPV</b>\n{html.escape(text)}")
+            self.telegram.send_text(f"🏛 <b>PPV</b>\n{html.escape(text)}")   # greška: ponovno sljedeći put
             self._email(f"Scraper: osvježi PPV ({self.now.year})", text)
+            state.meta_set(f"ppv:nova_godina:{self.now.year}", self.stamp)
         if self._ispu is None:
             self._ispu = Ispu()
         year = self._ispu.ppv_year()
         if year and year > PPV_YEAR and state.meta_get(f"ppv:objavljen:{year}") is None:
-            state.meta_set(f"ppv:objavljen:{year}", self.stamp)
             text = f"ISPU je objavio PPV za 1.1.{year}. Pokreni osvježavanje: {how}"
             self.telegram.send_text(f"🏛 <b>Novi PPV ({year})</b>\n{html.escape(text)}")
             self._email(f"Scraper: objavljen PPV {year}", text)
+            state.meta_set(f"ppv:objavljen:{year}", self.stamp)
             self.log(f"PPV: objavljen {year}, poslan podsjetnik")
+        state.meta_set("daily:ppv", today)
 
     def _tender_message(self, t: tenders.Tender, info: dict, found: list[tenders.Lot], jls: str, where: str,
                         verdict: tuple[str, str] | None, prices: AskingPrices | None, deadline: float) -> str:
@@ -605,7 +605,12 @@ class Runner:
             return ""
         old_price = old.get("price")
         if x.price and old_price and x.price < old_price - 1:
-            change = f"{fmt_eur(old_price)} → {fmt_eur(x.price)}"
+            # Usporedba s cijenom iz zadnje poruke (ili tihog bilježenja): poskupljenje pa malo
+            # pojeftinjenje, a i dalje skuplje nego prije, nije sniženje.
+            ref = old.get("notified_price") if old.get("notified_at") else None
+            if ref and x.price >= ref - 1:
+                return None
+            change = f"{fmt_eur(ref or old_price)} → {fmt_eur(x.price)}"
             if old.get("notified_at"):
                 return f"📉 Snižena cijena: {change}"
             return f"📉 Snižena cijena ({change}) – sad odgovara kriterijima"

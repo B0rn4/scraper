@@ -73,3 +73,12 @@ def test_structured_fields(loc):
 def test_name_in_two_places_is_ambiguous(loc):
     r = loc.resolve(text="Martinšćica")  # Kostrena i Cres
     assert r.ambiguous and r.included is True
+
+
+def test_same_settlement_name_resolved_by_text():
+    """Susak (otok, Mali Lošinj) i Sušak (Rijeka) bez dijakritika su isti naziv: odlučuje tekst."""
+    loc = Locator()
+    r = loc.resolve(settlement="Susak", text="Susak (Mali Lošinj) Mali Lošinj, otok Susak - starina")
+    assert r.jls.name == "Mali Lošinj" and r.included is False
+    assert loc.resolve(settlement="Sušak", text="Rijeka, Sušak, kuća").included is True
+    assert loc.resolve(settlement="Susak", text="SUSAK, kuća u najmu").jls is None      # bez drugog traga: ⚠

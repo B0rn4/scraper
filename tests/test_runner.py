@@ -418,3 +418,15 @@ def test_redmi_watches_github(tmp_path):
     runner("2026-10-07T15:00", "2026-10-07T14:55:00+02:00")._check_github(state)
     assert alerts == ["Scraper: GitHub ne radi", "Scraper: GitHub ponovno radi"]
     state.close()
+
+
+def test_price_drop_compared_to_notified_price(tmp_path):
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    ok = Decision(PASS, jls="Punat")
+    state.upsert(listing(300_000), ok, "t1")
+    state.mark_notified("t:1", 300_000, "t1")
+    state.upsert(listing(320_000), ok, "t2")                                  # poskupio
+    assert runner._notify_reason(listing(310_000), ok, state.get("t:1")) is None   # i dalje skuplji nego u poruci
+    assert runner._notify_reason(listing(290_000), ok, state.get("t:1")) == "📉 Snižena cijena: 300.000 € → 290.000 €"
+    state.close()

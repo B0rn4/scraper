@@ -355,6 +355,10 @@ class Locator:
                     return LocationResult(matches[0], True, f"naselje: {settlement}", ambiguous=True)
                 if states == {False}:
                     return LocationResult(matches[0], False, f"naselje: {settlement}")
+                # Npr. Susak (otok, Mali Lošinj) i Sušak (Rijeka): odlučuje drugo mjesto iz teksta.
+                hint = [j for j, f in (self.scan_text(text) if text else []) if j in matches and fold(f) != fold(settlement)]
+                if hint:
+                    return LocationResult(hint[0], hint[0].included, f"naselje: {settlement} ({hint[0].name} prema tekstu)")
                 names = ", ".join(j.name for j in matches)
                 return LocationResult(None, None, f"naselje {settlement} postoji u više mjesta: {names}", ambiguous=True)
         if text:
