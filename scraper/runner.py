@@ -283,6 +283,8 @@ class Runner:
             open_deadline = info.get("rok") and not expired and (not published or published >= oldest)
             if first and not open_deadline and (expired or not published or published < cutoff):
                 state.tender_add(t, self.stamp, f"tiho:{self.stamp}")
+                why = "rok istekao" if expired else "bez datuma i roka" if not published else f"objavljeno {published}"
+                self.log(f"Natječaj bez poruke (prvo čitanje stranice, {why}): {t.title[:70]}")
                 continue
             found = tenders.lots(t.text)
             if t.extra.get("regionalno"):     # PGŽ, CERP, Državne nekretnine: samo čestice na našem području

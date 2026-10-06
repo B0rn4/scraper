@@ -72,6 +72,14 @@
   jls: Rijeka
   nacin: stranica
   url: https://www.rijeka.hr/gradska-uprava/natjecaji-2/raspolaganje-zemljistem-prodaja-pravo-gradenja-sluznosti-i-zakup/
+- naziv: Grad Rijeka (stanovi i poslovni prostori)   # stanovi se preskaču; kuća bi bila ovdje
+  jls: Rijeka
+  nacin: stranica
+  url: https://www.rijeka.hr/gradska-uprava/natjecaji-2/natjecaji-za-prodaju-stanova-poslovnih-prostora/
+- naziv: Grad Rijeka (ostali natječaji)
+  jls: Rijeka
+  nacin: stranica
+  url: https://www.rijeka.hr/gradska-uprava/natjecaji-2/ostali-natjecaji/
 - naziv: Primorsko-goranska županija
   nacin: stranica
   url: https://www.pgz.hr/dokumenti/natjecaji/
