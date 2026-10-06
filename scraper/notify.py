@@ -190,7 +190,9 @@ def _button(url: str, label: str = "Otvori") -> str:
 
 
 MUTE_PREFIX = "nz:"          # callback_data gumba "Ne zanima me" (Telegram: najviše 64 bajta)
-MUTED_LABEL = "🔕 Zabilježeno – bez daljnjih poruka"
+UNMUTE_PREFIX = "pz:"        # callback_data gumba za poništenje
+MUTE_LABEL = "🔕 Ne zanima me"
+MUTED_LABEL = "🔕 Zabilježeno · ↩ dodirni za poništenje"
 
 
 def listing_markup(listing: Listing) -> str:
@@ -198,16 +200,26 @@ def listing_markup(listing: Listing) -> str:
     row = [{"text": "Otvori oglas" if listing.source != "fina" else "Otvori Očevidnik", "url": listing.url}]
     data = MUTE_PREFIX + listing.key
     if len(data.encode("utf-8")) <= 64:
-        row.append({"text": "🔕 Ne zanima me", "callback_data": data})
+        row.append({"text": MUTE_LABEL, "callback_data": data})
     return json.dumps({"inline_keyboard": [row]})
 
 
-def muted_markup(message: dict) -> str:
-    """Gumbi nakon pritiska: poveznica ostaje, umjesto gumba piše da je zabilježeno."""
+def _link_buttons(message: dict) -> list[dict]:
     rows = (message.get("reply_markup") or {}).get("inline_keyboard") or []
-    links = [b for row in rows for b in row if b.get("url")][:1]
-    return json.dumps({"inline_keyboard": [links, [{"text": MUTED_LABEL, "callback_data": "nz-ok"}]] if links
-                       else [[{"text": MUTED_LABEL, "callback_data": "nz-ok"}]]})
+    return [b for row in rows for b in row if b.get("url")][:1]
+
+
+def muted_markup(message: dict, key: str) -> str:
+    """Nakon "Ne zanima me": poveznica ostaje, a gumb pokazuje da je zabilježeno i da se
+    može poništiti (slučajan dodir)."""
+    undo = {"text": MUTED_LABEL, "callback_data": UNMUTE_PREFIX + key}
+    links = _link_buttons(message)
+    return json.dumps({"inline_keyboard": [links, [undo]] if links else [[undo]]})
+
+
+def unmuted_markup(message: dict, key: str) -> str:
+    """Nakon poništenja: opet poveznica i "Ne zanima me", kao u izvornoj poruci."""
+    return json.dumps({"inline_keyboard": [_link_buttons(message) + [{"text": MUTE_LABEL, "callback_data": MUTE_PREFIX + key}]]})
 
 
 class Email:

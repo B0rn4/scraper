@@ -155,6 +155,10 @@ class State:
     def mute(self, key: str, at: str, note: str = "") -> None:
         self.conn.execute("INSERT OR IGNORE INTO muted (key, at, note) VALUES (?, ?, ?)", (key, at, note))
 
+    def unmute(self, key: str) -> None:
+        """Poništenje: oglas i isti oglasi na drugim portalima zapamćeni zbog njega."""
+        self.conn.execute("DELETE FROM muted WHERE key = ? OR note = ?", (key, f"isti kao {key}"))
+
     def muted(self) -> set[str]:
         return {r[0] for r in self.conn.execute("SELECT key FROM muted")}
 

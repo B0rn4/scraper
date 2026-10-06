@@ -374,13 +374,24 @@ def test_mute_button(tmp_path, monkeypatch):
     assert state.muted() == {"t:7"} and state.meta_get("telegram:offset") == "12"
     state.close()
     assert tg.edited[0][0] == 5 and tg.edited[0][1]["inline_keyboard"][0][0]["url"] == "https://x"
-    assert "Zabilježeno" in json.loads(muted_markup({}))["inline_keyboard"][0][0]["text"]
+    undo = json.loads(muted_markup({}, "t:7"))["inline_keyboard"][0][0]
+    assert "poništenje" in undo["text"] and undo["callback_data"] == "pz:t:7"
     run_once()                                            # oba snižena: ništa ne stiže
     assert sent == []
     state = State(tmp_path / "s.db")
     assert "u:9" in state.muted()                         # zapamćen i blizanac
     state.close()
     assert json.loads((tmp_path / "github.json").read_text())["utisani"] == ["t:7", "u:9"]
+    # Slučajan dodir: poništenje vraća poruke i za blizanca, a gumb opet glasi "Ne zanima me".
+    tg.updates = [{"update_id": 12, "callback_query": {"id": "q3", "data": "pz:t:7",
+                   "message": {"message_id": 5, "chat": {"id": 42}, "reply_markup": json.loads(muted_markup({}, "t:7"))}}}]
+    FakeSource.batches = [[listing(270_000, "7"), listing(240_000, "9", source="u")]]
+    run_once()
+    state = State(tmp_path / "s.db")
+    assert state.muted() == set() and state.meta_get("telegram:offset") == "13"
+    state.close()
+    assert tg.edited[-1][1]["inline_keyboard"][0][-1]["callback_data"] == "nz:t:7"
+    assert sorted(sent) == ["t:7", "u:9"]                 # sniženja opet stižu
 
 
 def test_redmi_watches_github(tmp_path):

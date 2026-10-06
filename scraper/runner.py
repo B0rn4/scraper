@@ -18,7 +18,8 @@ from .filters import evaluate
 from .http import Http
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
-from .notify import MUTE_PREFIX, SOURCE_LABELS, Email, Telegram, muted_markup, summary_text
+from .notify import (MUTE_PREFIX, SOURCE_LABELS, UNMUTE_PREFIX, Email, Telegram, muted_markup, summary_text,
+                     unmuted_markup)
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
 from .text import fmt_eur, fold
@@ -226,13 +227,22 @@ class Runner:
             q = u.get("callback_query") or {}
             message = q.get("message") or {}
             data = q.get("data") or ""
-            if not data.startswith(MUTE_PREFIX) or str((message.get("chat") or {}).get("id")) != str(self.telegram.chat_id):
+            if str((message.get("chat") or {}).get("id")) != str(self.telegram.chat_id):
                 continue
-            key = data[len(MUTE_PREFIX):]
-            state.mute(key, self.stamp, "gumb")
-            self.log(f"Ne zanima me: {key}")
-            for call in (lambda: self.telegram.edit_markup(message["chat"]["id"], message["message_id"], muted_markup(message)),
-                         lambda: self.telegram.answer_callback(q["id"], "Zabilježeno")):
+            if data.startswith(MUTE_PREFIX):
+                key = data[len(MUTE_PREFIX):]
+                state.mute(key, self.stamp, "gumb")
+                markup, answer = muted_markup(message, key), "Zabilježeno"
+                self.log(f"Ne zanima me: {key}")
+            elif data.startswith(UNMUTE_PREFIX):
+                key = data[len(UNMUTE_PREFIX):]
+                state.unmute(key)
+                markup, answer = unmuted_markup(message, key), "Poništeno – poruke opet stižu"
+                self.log(f"Ne zanima me poništeno: {key}")
+            else:
+                continue
+            for call in (lambda: self.telegram.edit_markup(message["chat"]["id"], message["message_id"], markup),
+                         lambda: self.telegram.answer_callback(q["id"], answer)):
                 try:
                     call()
                 except Exception as exc:  # noqa: BLE001 – stari upit ili poruka: nije bitno

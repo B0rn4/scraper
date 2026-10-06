@@ -47,7 +47,8 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   prema k.o. samo ⚠, jer k.o. može obuhvaćati više naselja).
 - **Gumb 🔕 Ne zanima me** ispod svakog oglasa: za taj oglas (i isti oglas na drugim
   portalima) više ne stiže ništa, ni sniženje. Pritisak se obradi pri sljedećem
-  pokretanju (do 20 min), a gumb se tada zamijeni oznakom „Zabilježeno”.
+  pokretanju (do 20 min), a gumb se tada zamijeni oznakom „Zabilježeno · ↩ dodirni za
+  poništenje” – ponovni dodir vraća poruke (slučajan dodir).
 - **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
 - **Nadzor:** GitHub provjerava javlja li se Redmi (mail), a Redmi provjerava radi li
   GitHub (Telegram, ako nije pokrenuo scraper 2 h, od 9 h) – tišina inače izgleda kao
