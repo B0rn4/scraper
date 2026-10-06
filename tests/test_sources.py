@@ -261,7 +261,6 @@ def test_nekretnine_detail():
 
 
 def test_realestatecroatia_list_detail_and_incremental():
-    from scraper.http import Http  # noqa: F401 – samo sučelje
     from scraper.sources.realestatecroatia import RealEstateCroatia, parse_detail, parse_list
 
     page = read("realestatecroatia_kuce.html.gz")

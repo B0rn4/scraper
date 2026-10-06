@@ -94,7 +94,9 @@ def test_weekly_excludes_baseline(tmp_path):
 
 
 def test_device_split(tmp_path):
-    names = lambda device: {s.name for s in Runner(tmp_path / "s.db", tmp_path, send=False, device=device).enabled_sources()}
+    def names(device):
+        return {s.name for s in Runner(tmp_path / "s.db", tmp_path, send=False, device=device).enabled_sources()}
+
     assert "njuskalo" not in names("github") and "nekretnine_hr" in names("github")
     assert names("redmi") == {"njuskalo"}
 

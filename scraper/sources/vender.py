@@ -36,7 +36,6 @@ def parse_items(items: list[dict]) -> list[Listing]:
     for x in items:
         terms = [t for group in (x.get("_embedded", {}).get("wp:term") or []) for t in group]
         type_ids = set(x.get("property_type") or [])
-        names = {t["id"]: t["name"] for t in terms}
         if type_ids & HOUSE_TYPES.keys():
             kind, pool = HOUSE, HOUSE_TYPES
         elif type_ids & LAND_TYPES.keys():

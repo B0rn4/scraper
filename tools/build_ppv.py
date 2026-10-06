@@ -1,7 +1,7 @@
-"""Sažima rezultat tools/discover14.py u data/ppv_naselja.json (Plan približnih
+"""Sažima rezultat tools/ppv_preuzmi.py u data/ppv_naselja.json (Plan približnih
 vrijednosti po naseljima i gradovima/općinama).
 
-  python tools/build_ppv.py debug-out/discovery14/naselja_ppv.json.gz
+  python tools/build_ppv.py ppv-out/naselja_ppv.json.gz
 
 Po naselju: raspon vrijednosti građevinskog zemljišta stambene i mješovite namjene
 (€/m²) i vrijednosti stanova po veličini, iz cjenovnih blokova građevinskog
@@ -21,7 +21,7 @@ from scraper.text import fold  # noqa: E402
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "data" / "ppv_naselja.json"
-LAND, FLATS = "382", "383"
+LAND, FLATS, YEAR = "382", "383", "2026"   # slojevi PPV-a 1.1.2026. (stari oblik ulazne datoteke)
 # Namjena uzor-čestice: stambena, mješovita, građevinsko područje naselja.
 RESIDENTIAL = re.compile(r"^(GP|S\d?$|S-|M\d?$|M-)")
 FLAT_SIZES = {"55,01 – 75,00 m2": "55-75", "75,01 – 100,00 m2": "75-100", "od 100,01 m2": "100+"}
@@ -64,15 +64,15 @@ def building(block: str, use: str) -> bool:
     return "GRAĐEVINSK" in block.upper() or "GRAĐEVINSKOG PODRUČJA" in use.upper() or "STAMBEN" in use.upper()
 
 
-def summarize(row: dict) -> dict | None:
+def summarize(row: dict, land_id: str = LAND, flats_id: str = FLATS) -> dict | None:
     land, flats = {}, {}
     for point in row.get("tocke") or []:
         for layer in point.get("slojevi") or []:
-            if layer["sloj"] == LAND:
+            if layer["sloj"] == land_id:
                 block, use, values = land_values(layer["polja"])
                 if values:
                     land[block] = (building(block, use), values)
-            elif layer["sloj"] == FLATS:
+            elif layer["sloj"] == flats_id:
                 block, use, values = flat_values(layer["polja"])
                 if values:
                     flats[block] = (building(block, use), values)
@@ -96,10 +96,10 @@ def summarize(row: dict) -> dict | None:
     return out
 
 
-def build(rows: list[dict]) -> dict:
+def build(rows: list[dict], land_id: str = LAND, flats_id: str = FLATS, year: str = YEAR) -> dict:
     naselja: dict[str, dict] = {}
     for row in rows:
-        item = summarize(row)
+        item = summarize(row, land_id, flats_id)
         if item:
             naselja.setdefault(row["jls"], {})[fold(row["naselje"])] = item
     # Grad/općina (za oglase bez prepoznatog naselja): zemljište kao raspon svih naselja
@@ -120,12 +120,17 @@ def build(rows: list[dict]) -> dict:
         if flats:
             item["stanovi"] = flats
         jls[name] = item
-    return {"izvor": "ISPU, Plan približnih vrijednosti 1.1.2026.", "gradovi_opcine": jls, "naselja": naselja}
+    return {"izvor": f"ISPU, Plan približnih vrijednosti 1.1.{year}.", "godina": int(year), "gradovi_opcine": jls,
+            "naselja": naselja}
 
 
 def main():
-    rows = json.loads(gzip.decompress(Path(sys.argv[1]).read_bytes()))
-    data = build(rows)
+    raw = json.loads(gzip.decompress(Path(sys.argv[1]).read_bytes()))
+    if isinstance(raw, dict):                 # tools/ppv_preuzmi.py: slojevi i godina uz naselja
+        layers = raw["slojevi"]
+        data = build(raw["naselja"], str(layers["zemljista"]), str(layers["stanovi"]), str(layers["godina"]))
+    else:
+        data = build(raw)
     OUT.write_text(json.dumps(data, ensure_ascii=False, indent=1, sort_keys=True), encoding="utf-8")
     n = sum(len(v) for v in data["naselja"].values())
     print(f"{OUT}: {n} naselja, {len(data['gradovi_opcine'])} gradova/općina")

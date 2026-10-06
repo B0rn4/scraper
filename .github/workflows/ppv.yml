@@ -1,0 +1,37 @@
+name: PPV – godišnje osvježavanje
+
+# Ručno, jednom godišnje (nakon što ISPU objavi PPV za 1.1. nove godine): preuzme PPV
+# po naseljima, sažme ga u data/ppv_naselja.json i spremi na istu granu.
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  ppv:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instaliraj ovisnosti
+        run: pip install -r requirements.txt
+
+      - name: Preuzmi PPV po naseljima (ISPU)
+        timeout-minutes: 45
+        run: python tools/ppv_preuzmi.py ppv-out/naselja_ppv.json.gz
+
+      - name: Sažmi u data/ppv_naselja.json i spremi
+        run: |
+          python tools/build_ppv.py ppv-out/naselja_ppv.json.gz
+          git add data/ppv_naselja.json
+          if git diff --cached --quiet; then echo "Bez promjena."; exit 0; fi
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -qm "PPV po naseljima osvježen"
+          git push -q

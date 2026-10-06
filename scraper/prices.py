@@ -2,7 +2,7 @@
 
 1. Plan približnih vrijednosti (PPV, ISPU): vrijednosti iz ostvarenih prodaja po
    cjenovnim blokovima, tablica po naseljima u data/ppv_naselja.json (izrada:
-   tools/discover14.py + tools/build_ppv.py). Postoji za zemljišta i stanove, ne za
+   tools/ppv_preuzmi.py + tools/build_ppv.py, jednom godišnje). Postoji za zemljišta i stanove, ne za
    kuće – za kuće se pokazuje vrijednost stanova slične veličine, kao orijentacija.
 2. Medijan traženih €/m² iz svih oglasa iste vrste koje smo vidjeli u zadnjih godinu
    dana (bilo koje cijene – i skuplji od granice, jer i oni čine tržište): po naselju
@@ -11,6 +11,7 @@
    starina), pa je ovo orijentacija, ne procjena."""
 
 import json
+import re
 import statistics
 from datetime import datetime, timedelta
 from pathlib import Path
@@ -19,6 +20,18 @@ from .models import HOUSE, LAND, Listing
 from .text import fmt_eur, fold
 
 PPV_FILE = Path(__file__).resolve().parent.parent / "data" / "ppv_naselja.json"
+
+
+def _ppv_year(path: Path = PPV_FILE) -> int:
+    """Godina PPV-a u tablici (osvježava se jednom godišnje, tools/ppv_preuzmi.py)."""
+    try:
+        data = json.loads(path.read_text(encoding="utf-8"))
+        return int(data.get("godina") or re.search(r"(\d{4})\.?$", data.get("izvor", "")).group(1))
+    except (OSError, ValueError, AttributeError):
+        return 2026
+
+
+PPV_YEAR = _ppv_year()
 MIN_N = 8
 MAX_AGE_DAYS = 365
 # Što je očito pogrešno upisano (cijena najma, površina u arima…) ne ulazi u medijan.
@@ -108,7 +121,7 @@ def land_note(ppm: float, low: float, high: float, where: str, who: str = "oglas
     else:
         rel = f"{who} u rasponu"
     span = f"{fmt_eur(low)}/m²" if low == high else f"{low:,}–{high:,} €/m²".replace(",", ".")
-    return f"🏛 PPV 2026. ({where}): građevinsko {span} – {rel}"
+    return f"🏛 PPV {PPV_YEAR}. ({where}): građevinsko {span} – {rel}"
 
 
 class Ppv:
@@ -134,7 +147,7 @@ class Ppv:
         return land_short(listing.price / listing.area, *item["zemljiste"])
 
     def note(self, listing: Listing, jls: str, who: str = "oglas") -> str | None:
-        """Npr. "🏛 PPV 2026. Njivice: građevinsko 158–219 €/m² – oglas 15 % iznad gornje"."""
+        """Npr. "🏛 PPV 2026. (Njivice): građevinsko 158–219 €/m² – oglas 15 % iznad gornje"."""
         if not jls or not _ok(listing.kind, listing.price, listing.area) or _agricultural(listing):
             return None
         place = place_of(self.locator, jls, listing.title, listing.settlement)
@@ -158,7 +171,7 @@ class Ppv:
             diff = ppm / value - 1
             rel = "oko te vrijednosti" if abs(diff) < 0.1 else f"{who} {_pct(diff)} % {'iznad' if diff > 0 else 'ispod'}"
             where = f"{where}, medijan naselja" if whole else where
-            return f"🏛 PPV 2026. za STANOVE {key} m², {where}: {fmt_eur(value)}/m² – {rel}"
+            return f"🏛 PPV {PPV_YEAR}. za STANOVE {key} m², {where}: {fmt_eur(value)}/m² – {rel}"
         return None
 
 

@@ -127,6 +127,13 @@ klikni **Kopiraj označene**. Zalijepi popis Claudeu u razgovor.
 - Tajne (GitHub Secrets): `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID`, `SMTP_USER`,
   `SMTP_PASSWORD`, `EMAIL_TO`.
 
+## PPV jednom godišnje
+
+Plan približnih vrijednosti (ISPU) objavljuje se za stanje 1.1. Kad izađe novi, na
+GitHubu pokreni tijek rada **PPV – godišnje osvježavanje** (Actions → Run workflow):
+preuzme vrijednosti po naseljima, sažme ih u `data/ppv_naselja.json` i spremi. Poruke
+same preuzmu novu godinu; PPV na točnoj lokaciji (ISPU) uvijek je najnoviji.
+
 ## Automatsko pokretanje (cron-job.org)
 
 GitHub raspored za ovaj repozitorij ne pokreće workflow, pa ga pokreće besplatni

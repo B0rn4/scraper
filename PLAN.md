@@ -132,7 +132,7 @@ bez stotina poruka.
 2. **2a (gotovo 4. 10. 2026.)** Ostali portali s GitHuba: vender.hr (WordPress API).
    Izostavljeni: nekretnine24.hr (0 oglasa za područje), oglasi.hr (1 oglas),
    trazimstan.hr (većinom najam, robots.txt zabranjuje /api/), gohome.hr (vidi tablicu
-   izvora; mjerni alat `tools/discover9.py`).
+   izvora; mjerni alati za otkrivanje maknuti 6. 10., ostaju u povijesti gita).
    **2b (u tijeku)** Redmi Note 9S, samo za Njuškalo (Realitica izostavljena: 49 od 50
    najnovijih oglasa već je na našim portalima). Ubuntu unutar Termuxa (proot-distro).
    Proba 5. 10.: bez preglednika Njuškalo nakon nekoliko zahtjeva vraća ShieldSquare
@@ -186,8 +186,8 @@ bez stotina poruka.
         zemljišta, stanove/apartmane i poslovne prostore – **ne za kuće**. Vrijednost
         za točku daje `api/v1/gis/identify` (bez prijave). Tablica
         `data/ppv_naselja.json` (191 naselje; 5 točaka oko središta naselja jer
-        središte zna pasti u šumu ili hotel; izrada `tools/discover14.py` na GitHubu
-        pa `tools/build_ppv.py`). U poruci: zemljište prema rasponu građevinskog
+        središte zna pasti u šumu ili hotel; izrada: tijek rada „PPV – godišnje
+        osvježavanje” na GitHubu, `tools/ppv_preuzmi.py` + `tools/build_ppv.py`). U poruci: zemljište prema rasponu građevinskog
         zemljišta stambene/mješovite namjene (ispod donje granice za 45 %+ „neobično
         jeftino”), kuća prema stanovima slične veličine (orijentacija). Bez
         prepoznatog naselja: raspon svih naselja grada/općine. Poljoprivredna
@@ -220,9 +220,10 @@ bez stotina poruka.
       istoimeno mjesto (~Krk). (6. 10.) Vrijeme do Zagreba maknuto iz poruke – popis
       naselja već sadrži samo prihvatljivo udaljena mjesta.
    - Čitanje opisa jezičnim modelom: zasad ne (korisnik će javiti).
-   - **Završni pregled (dogovor 5. 10.):** kad sve faze budu gotove, korisnik još
-     jednom dobiva sve aktivne oglase koji odgovaraju (kao početni popis), uključujući
-     Njuškalo. Nakon toga s Njuškala stižu samo stvarno novi oglasi; stari oglasi koje
+   - **Završni pregled (dogovor 5. 10., dopuna 6. 10.):** kad sve faze budu gotove,
+     korisnik još jednom dobiva sve aktivne oglase koji odgovaraju (kao početni popis),
+     uključujući Njuškalo, te sve aktivne natječaje, FINA dražbe i ponude banaka s našeg
+     područja – sve što se pratilo. Nakon toga s Njuškala stižu samo stvarno novi oglasi; stari oglasi koje
      agencije osvježe i dalje se samo bilježe. Njuškalo za taj pregled čitati s
      filtrima u adresi (područje, cijena, površina) i raspoređeno kroz više pokretanja.
 4. **(gotovo 5. 10.)** Natječaji za prodaju nekretnina (`scraper/tenders.py`, popis
@@ -280,12 +281,14 @@ bez stotina poruka.
      Približna oznaka: samo cjeline i samo kad opis spominje staru jezgru. Uz to
      pravilo za tekst (kulturno dobro, konzervator, zaštićena jezgra). Isto za čestice
      iz natječaja.
-7. **Finiširanje (prijedlog 6. 10., čeka potvrdu).** Redom:
-   1. **Čišćenje i privatnost:** maknuti alate za otkrivanje (`tools/discover*.py`, 40
-      skripti), probne tijekove rada i sadržaj grane `debug` (javni repozitorij, u njoj su
-      spremljene stranice portala s imenima i telefonima oglašivača); provjeriti da u
-      repozitoriju i granama `state`/`state-redmi` nema osobnih podataka ni tajni;
-      osvježiti GitHub akcije (upozorenje o Node.js 20).
+7. **Finiširanje (dogovoreno 6. 10.).** Redom:
+   1. **(gotovo 6. 10.) Čišćenje i privatnost:** maknuti alati za otkrivanje
+      (`tools/discover*.py`, 42 skripte), probni tijekovi rada, opcija „debug” i sirove
+      snimke stranica (`probe/results/**/samples`; sažeci ostaju); grana `debug`
+      obrisana. Telefonski brojevi u testnim primjerima zamijenjeni nulama. GitHub akcije
+      na v6 (Node.js 24). Izrada PPV-a sačuvana kao `tools/ppv_preuzmi.py` i tijek rada
+      „PPV – godišnje osvježavanje” (godinu sloja nalazi sam). Napomena: maknute
+      datoteke ostaju u povijesti gita (javne stranice portala, bez tajni).
    2. **Moje mišljenje:** što scraperu fali, a što je višak – pisani pregled s
       prijedlozima, korisnik odlučuje.
    3. **Moja provjera grešaka:** pregled koda po modulima i podataka u bazi (sumnjive
@@ -295,7 +298,7 @@ bez stotina poruka.
    4. **Svježi pregled koda:** nova instanca (podagent) bez znanja o razgovoru, samo s
       kodom i README/PLAN kao opisom; traži greške. Svaki nalaz provjeravam prije
       popravka (ne zna za odluke poput isključenih naselja).
-   5. **Testovi:** automatski (sad 105) dopuniti cijelim pokretanjem na spremljenim
+   5. **Testovi:** automatski (sad 106) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj
@@ -304,8 +307,9 @@ bez stotina poruka.
    6. **Upute za korisnika** (`UPUTE.md`): značenje svakog retka i oznake u poruci,
       kako promijeniti kriterije i naselja, dodati stranicu natječaja, pauzirati, što
       napraviti kad stigne upozorenje o kvaru.
-   7. **Završni pregled oglasa** (dogovor 5. 10.): svi aktivni oglasi koji odgovaraju,
-      uključujući cijelo Njuškalo preko Redmija; nakon toga redovni rad.
+   7. **Završni pregled** (dogovor 5. 10., dopuna 6. 10.): svi aktivni oglasi koji
+      odgovaraju, uključujući cijelo Njuškalo preko Redmija, te natječaji, FINA dražbe,
+      banke – sve što se prati; nakon toga redovni rad.
    8. **Nakon 1–2 tjedna rada:** s korisnikom proći što je stiglo, a bilo je
       nepotrebno, i što je propušteno; podesiti pravila.
 
