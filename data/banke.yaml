@@ -24,3 +24,9 @@
   url: https://www.croatiabanka.hr/info-centar/prodaja-nekretnina/zemljista/
 - naziv: Croatia banka – natječaji
   url: https://www.croatiabanka.hr/info-centar/prodaja-nekretnina/natjecaji/
+
+# Najava: Novi list je 1. 6. 2026. ugasio tiskanu Butigu (mali oglasi) i najavio novi
+# digitalni oglasnik pod imenom Butiga.hr. Kod bilo koje promjene stranice stiže mail.
+- naziv: Butiga.hr (najava novog oglasnika Novog lista)
+  url: https://www.butiga.hr/
+  svaka_promjena: true

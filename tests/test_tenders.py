@@ -335,3 +335,36 @@ def test_bank_page_watch(tmp_path, monkeypatch):
     state.meta_set("daily:banke", "2000-01-01")
     runner._banks(state)
     assert len(sent) == 1                                        # isti tekst ne stiže ponovno
+
+
+def test_page_watch_any_change_mails(tmp_path, monkeypatch):
+    from scraper import watch
+    from scraper.db import State
+    from scraper.runner import Runner
+
+    pages = {"https://butiga.hr/": "<p>Tiskano izdanje priloga Butiga ugasit će se 1. lipnja 2026.</p>"}
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+    class Http:
+        def get(self, url, **kw):
+            return Resp(pages[url])
+
+    class FakeTelegram:
+        def send_text(self, *a, **k):
+            raise AssertionError("ne na Telegram")
+
+    alerts = []
+    monkeypatch.setattr(watch, "load_pages", lambda: [{"naziv": "Butiga.hr", "url": "https://butiga.hr/", "svaka_promjena": True}])
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner.telegram, runner.http = FakeTelegram(), Http()
+    runner._alert = lambda subject, text: alerts.append((subject, text))
+    state = State(tmp_path / "s.db")
+    runner._banks(state)
+    assert alerts == []
+    pages["https://butiga.hr/"] += "<p>Novi oglasnik Butiga.hr je pokrenut – nekretnine, vozila, posao.</p>"
+    state.meta_set("daily:banke", "2000-01-01")
+    runner._banks(state)
+    assert len(alerts) == 1 and "Novi oglasnik Butiga.hr je pokrenut" in alerts[0][1]

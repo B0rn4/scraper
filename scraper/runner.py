@@ -351,6 +351,14 @@ class Runner:
             stored = state.meta_get(key)
             known = set(json.loads(stored)) if stored else set()
             found, hashes = watch.changes(self.locator, body, known)
+            if page.get("svaka_promjena"):        # najava (npr. novi oglasnik Butiga.hr): mail kod bilo koje promjene
+                fresh = [s for s in watch.segments(body) if watch.digest(s) not in known]
+                if stored is not None and fresh:
+                    self._alert(f"Scraper: promjena na stranici {page['naziv']}",
+                                f"{page['url']}\n\nNovo na stranici:\n" + "\n".join(fresh[:10])
+                                + "\n\nJavi Claudeu ako je pokrenut novi oglasnik.")
+                    self.log(f"{name}: promjena ({len(fresh)} novih odlomaka)")
+                found = []
             if stored is not None and found:
                 self.telegram.send_text(watch.format_change(page["naziv"], found), url=page["url"])
                 self.log(f"{name}: novo s našim područjem ({len(found)})")
