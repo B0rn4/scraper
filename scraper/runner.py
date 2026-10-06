@@ -11,7 +11,7 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from . import dedupe, report, risks, tenders, watch
-from .ispu import Ispu, check_land, gp_text
+from .ispu import Ispu, check_land, gp_text, heritage_warning
 from .prices import AskingPrices, Ppv, land_note, land_short
 from .db import State
 from .filters import evaluate
@@ -241,10 +241,11 @@ class Runner:
             return
         x.extra["gp"] = result.line
         x.extra["gp_neprovjereno"] = house and result.info is None
-        if result.warning:
-            d.warnings.append(result.warning)
-            if d.status == PASS:
-                d.status = WARN
+        for warning in (result.warning, result.heritage):
+            if warning:
+                d.warnings.append(warning)
+                if d.status == PASS:
+                    d.status = WARN
         info = result.info
         if info and info.land_values and x.price and x.area and x.price > 1000 and not house:
             low, high, ppm = min(info.land_values), max(info.land_values), x.price / x.area
@@ -422,6 +423,8 @@ class Runner:
                     deadline = 0
             if point and point.gp != "naselja" and not lot.house:
                 warnings.append(f"{lot.label}: prema ISPU-u {gp_text(point)} – provjeri")
+            if point and point.heritage:
+                warnings.append(f"{lot.label}: {heritage_warning(point.heritage)}")
             unit = lot.unit_price
             parts = []
             if point and point.land_values:

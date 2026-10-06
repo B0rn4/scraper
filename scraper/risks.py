@@ -57,6 +57,12 @@ RULES = [
          ok=_re(r"\bbez (ikakvih )?teret\w*|\bnema (nikakvih )?teret\w*|\bnije opterecen\w*|\bcist\w* od teret\w*"
                 r"|\bbez hipotek\w*|\bslobodn\w* od teret\w*"),
          skip_sources=("fina",)),
+    Rule("kulturno dobro / zaštićena cjelina",
+         _re(r"\bzasticen\w* (kulturn\w* dobr\w*|spomeni\w*|(star\w* |povijesn\w* |gradsk\w* )*jezgr\w*|cjelin\w*)"
+             r"|\bspomeni\w* kulture|\bregist\w* kulturnih dobara|\bkulturn\w* dobr\w*|\bkonzervator\w*"
+             r"|\bkulturno povijesn\w* (urbanistick\w* |ruraln\w* )?(cjelin\w*|jezgr\w*)"
+             r"|\bpod zastitom (drzave|ministarstva|konzerv\w*)"),
+         ok=_re(r"\bnije (zasticen\w*|pod zastitom|kulturno dobro)|\bnije u zasticen|\bizvan zasticen|\bbez konzervator")),
     Rule("izvan građevinskog područja",
          _re(r"\b(izvan|van) gradevinsk\w* (podruc\w*|zon\w*)"),
          ok=_re(r"\bdijelom\b|\bvecim dijelom\b|\bdio\b.{0,20}\bu gradevinsk")),

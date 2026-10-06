@@ -24,6 +24,13 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   kuće: dogradnja i zamjenska gradnja ograničene, provjeriti legalnost); bez točne
   lokacije piše „nije provjereno” (kod kuća se taj redak prvi izostavlja kad je poruka
   preduga). Za zemljišta uz to PPV na samoj lokaciji.
+- **Kulturna baština (⚠, kuće i zemljišta):** u istom upitu ISPU-u i zaštićena kulturna
+  dobra Ministarstva kulture (Z- i P-lista): pojedinačno dobro, kulturno-povijesna
+  cjelina (npr. Krk, Vrbnik, Opatija, Bakar, Omišalj, Baška, šire središte Rijeke),
+  arheološka zona → ⚠ „radovi uz uvjete konzervatora”. Kad je oznaka na karti
+  približna, provjerava se samo cjelina i samo ako opis spominje staru jezgru
+  („vjerojatno u …”). Uz to ⚠ kad opis spominje kulturno dobro, konzervatora ili
+  zaštićenu jezgru.
 - **Naselja:** odluka za svako naselje (prolaz / ⚠ s razlogom: daleko od mora, daleko
   od Rijeke, grad Rijeka / ne stiže) je u `data/naselja_udaljenosti.csv`.
 - **Cijena prema drugim oglasima:** 💰 ispod / 💸 iznad / 📊 oko medijana traženih

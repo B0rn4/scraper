@@ -104,3 +104,54 @@ def test_runner_house_building_zone(tmp_path):
     y.extra["usporedba"] = "📈 " + "dugačka usporedba " * 30
     y.extra["ppv"] = "🏛 " + "dugačak PPV " * 30
     assert "nije provjereno" not in format_listing(y, d)                # prvi otpada kad je poruka preduga
+
+
+def _heritage_layer(catalog, label, name, number, kind, classification):
+    fields = {"Naziv": name, "Županija": "Primorsko-goranska županija", "Vrsta": kind, "Klasifikacija": classification,
+              "Registarski broj": number, "Status zaštite": "Zaštićeno kulturno dobro", "Zona": "G"}
+    return {"catalogId": catalog, "label": {"hr": label},
+            "items": [{"title": label, "items": [{"label": {"hr": k}, "value": v} for k, v in fields.items()]}]}
+
+
+def test_heritage_from_identify_and_check():
+    from scraper.ispu import parse_identify
+
+    krk = "Kulturno-povijesna urbanistička cjelina grada Krka"
+    data = [{"catalogId": "1", "label": {"hr": "Građevinsko područje naselja"}, "items": [{"items": []}]},
+            _heritage_layer("326", "Zaštićena kulturna dobra", krk, "Z-2684", "Kulturnopovijesne cjeline", "urbana cjelina"),
+            _heritage_layer("341", "Urbane cjeline", krk, "Z-2684", "Kulturnopovijesne cjeline", "urbana cjelina"),
+            _heritage_layer("326", "Zaštićena kulturna dobra", "Kuća Fanfogna", "Z-1234", "Pojedinačna kulturna dobra",
+                            "stambena građevina")]
+    info = parse_identify(data)
+    assert info.gp == "naselja" and [h.number for h in info.heritage] == ["Z-2684", "Z-1234"]
+    assert info.heritage[0].area and not info.heritage[1].area
+
+    r = check_land(FakeIspu(info), "Kuća u Krku", 45.0266, 14.5755, False, house=True)
+    assert not r.warning and r.heritage.startswith(f"u kulturno-povijesnoj cjelini „{krk}” (Z-2684); zaštićeno kulturno dobro „Kuća Fanfogna”")
+    assert r.heritage.endswith("radovi uz uvjete konzervatora (oznaka može biti približna)")
+
+    # Približna oznaka: samo kad opis spominje staru jezgru, i samo cjeline.
+    fake = FakeIspu(info)
+    r = check_land(fake, "Kamena kuća u staroj gradskoj jezgri Krka", 45.0266, 14.5755, True, house=True)
+    assert r.line.startswith("🗺 Građevinsko područje: nije provjereno")
+    assert r.heritage.startswith("vjerojatno u kulturno-povijesnoj cjelini") and "Fanfogna" not in r.heritage
+    fake = FakeIspu(info)
+    assert not check_land(fake, "Kuća s pogledom na more", 45.0266, 14.5755, True, house=True).heritage and not fake.calls
+
+
+def test_runner_heritage_warning(tmp_path):
+    from scraper.ispu import Heritage
+    from scraper.models import HOUSE, PASS, WARN, Decision, Listing
+    from scraper.runner import Runner
+
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner._ispu = FakeIspu(PointInfo(gp="naselja", use="(GP) IZGRAĐENI DIO",
+                                      heritage=[Heritage("Kulturno-povijesna cjelina grada Opatije", "Z-5520",
+                                                         "Kulturnopovijesne cjeline", "urbana cjelina")]))
+    x = Listing(source="vender", source_id="1", url="u", title="Kuća Opatija", kind=HOUSE, price=390_000, area=120,
+                extra={"lat": 45.3376, "lon": 14.3058, "priblizna_lokacija": False})
+    d = Decision(PASS, jls="Opatija")
+    runner._check_land(x, d)
+    assert d.status == WARN and d.warnings == [
+        "u kulturno-povijesnoj cjelini „Kulturno-povijesna cjelina grada Opatije” (Z-5520) – radovi uz uvjete "
+        "konzervatora (oznaka može biti približna)"]

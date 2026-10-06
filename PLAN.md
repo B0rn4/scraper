@@ -271,7 +271,15 @@ bez stotina poruka.
    - Građevinsko područje (ISPU) kao kod zemljišta: po k.č. iz opisa ili točnoj oznaci
      na karti. Izvan građevinskog područja → samo ⚠ (oglas stiže). Kuće rijetko imaju
      točnu lokaciju, pa je redak „nije provjereno” prvi koji otpada kad je poruka preduga.
-   - Zaštićeno kulturno dobro / kulturno-povijesna cjelina → ⚠ (u izradi).
+   - Zaštićeno kulturno dobro / kulturno-povijesna cjelina → ⚠. Izvor: slojevi
+     Ministarstva kulture i medija u ISPU-u (Z- i P-lista), u istom upitu kao
+     građevinsko područje (mjerenje 6. 10.: 34 upita bez greške, +0,03 s). Pronađene
+     cjeline: Krk, Vrbnik, Opatija, Bakar, Omišalj, Baška, Rijeka (Korzo, Trsat).
+     Geoportal kulturnih dobara ima i pretragu po čestici/adresi
+     (`api/wfs/get-kulturna-dobra-katastarska-cestica/`) – zasad nije potrebna.
+     Približna oznaka: samo cjeline i samo kad opis spominje staru jezgru. Uz to
+     pravilo za tekst (kulturno dobro, konzervator, zaštićena jezgra). Isto za čestice
+     iz natječaja.
 
 ## Zadaci za korisnika
 

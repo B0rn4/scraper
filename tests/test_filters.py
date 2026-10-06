@@ -171,3 +171,14 @@ def test_place_outside_county_rejected(ctx):
     assert burza("Galižana", "Istarska kamena kuća").status == REJECT
     assert burza("Dramalj", "Dramalj – uređena primorska kuća").status != REJECT
     assert burza("Rijeka, Donja Drenova", "Samostojeća kuća").jls == "Rijeka"
+
+
+def test_heritage_phrases(ctx):
+    def w(desc):
+        return [x for x in evaluate(house(description=desc), *ctx).warnings if x.startswith("kulturno dobro")]
+
+    assert w("Kamena kuća u zaštićenoj staroj gradskoj jezgri, uz suglasnost konzervatora.")
+    assert w("Kuća je upisana u Registar kulturnih dobara RH.")
+    assert w("Nalazi se unutar kulturno-povijesne cjeline grada Kastva.")
+    assert not w("Kuća nije pod zaštitom konzervatora.")
+    assert not w("Novogradnja s pogledom na more, 5 minuta od plaže.")

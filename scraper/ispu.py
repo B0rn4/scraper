@@ -143,6 +143,33 @@ def wkt_centroid(wkt: str) -> tuple[float, float] | None:
 # --- rezultat i klijent -----------------------------------------------------
 
 RESIDENTIAL = re.compile(r"^(GP|S\d?$|S-|M\d?$|M-)")
+# Opis koji spominje staru/povijesnu jezgru (za približnu lokaciju unutar zaštićene cjeline).
+OLD_CORE = re.compile(r"\bstar\w* (gradsk\w* |povijesn\w* )?jezgr|\bpovijesn\w* jezgr|\bu starom gradu\b|\bstari grad\b"
+                      r"|\bstarogradsk|\bkulturno povijesn")
+
+
+@dataclass
+class Heritage:
+    """Zaštićeno nepokretno kulturno dobro (Registar kulturnih dobara, sloj u ISPU-u)."""
+    name: str
+    number: str = ""               # registarski broj: Z-… (zaštićeno) ili P-… (preventivno)
+    kind: str = ""                 # vrsta, npr. "Kulturnopovijesne cjeline"
+    classification: str = ""       # npr. "urbana cjelina", "stambena građevina"
+
+    @property
+    def area(self) -> bool:
+        """Cjelina, zona ili krajolik (a ne pojedinačna građevina)."""
+        return bool(re.search(r"cjelin|zon|krajolik|nalazi", f"{self.kind} {self.classification}", re.I))
+
+    def describe(self) -> str:
+        text = f"{self.kind} {self.classification}".lower()
+        what = ("u arheološkoj zoni" if "arheolo" in text else "u kulturnom krajoliku" if "krajolik" in text
+                else "u kulturno-povijesnoj cjelini" if "cjelin" in text else "zaštićeno kulturno dobro")
+        if self.number.startswith("P"):
+            what = what.replace("zaštićeno", "preventivno zaštićeno") if what.startswith("zaštićeno") \
+                else f"{what} (preventivno zaštićenoj)"
+        name = self.name if len(self.name) <= 80 else self.name[:77] + "…"
+        return f"{what} „{name}”" + (f" ({self.number})" if self.number else "")
 
 
 @dataclass
@@ -153,6 +180,7 @@ class PointInfo:
     use: str = ""                  # pretežita namjena bloka, npr. "(GP) IZGRAĐENI DIO GRAĐEVINSKOG PODRUČJA NASELJA"
     land_values: list[float] = field(default_factory=list)   # PPV građevinskog zemljišta stambene/mješovite namjene
     ppv_label: str = ""
+    heritage: list[Heritage] = field(default_factory=list)  # zaštićena kulturna dobra na točki
 
 
 class Ispu:
@@ -167,14 +195,16 @@ class Ispu:
         self.last_miss = ""              # zašto čestica nije nađena: "ko", "kc" ili "off" (servis ne radi)
 
     def layers(self) -> list[dict]:
-        """Slojevi građevinskog područja i najnoviji PPV zemljišta iz kataloga."""
+        """Slojevi građevinskog područja, najnoviji PPV zemljišta i zaštićena kulturna dobra
+        (Z- i P-lista Ministarstva kulture i medija) iz kataloga."""
         if self._layers is None:
             found: list[dict] = []
             self._walk(self.session.get(API + "gis/catalog-izbornik", timeout=self.timeout).json(), [], found)
             gp = [la for la in found if "Građevinska područja" in la["_path"] and la["hashIdentify"]]
             ppv = [la for la in found if re.match(r"PPV 1\.1\.\d{4}\. – zemljišta", la["label"].get("hr", ""))]
             ppv.sort(key=lambda la: la["label"]["hr"], reverse=True)
-            self._layers = gp + ppv[:1]
+            heritage = [la for la in found if "Nepokretna kulturna dobra po statusu zaštite" in la["_path"] and la["hashIdentify"]]
+            self._layers = gp + ppv[:1] + heritage
         return self._layers
 
     def _walk(self, node, path, out):
@@ -271,7 +301,13 @@ def parse_identify(data) -> PointInfo:
         label = (layer.get("label") or {}).get("hr", "")
         for item in layer.get("items") or []:
             fields = [((x.get("label") or {}).get("hr", ""), x.get("value") or "") for x in item.get("items") or []]
-            if label.startswith("Građevinsko područje"):
+            f = dict(fields)
+            if "Registarski broj" in f:            # kulturno dobro (isti objekt može biti u više slojeva)
+                h = Heritage(f.get("Naziv", "").strip(), f["Registarski broj"].strip(), f.get("Vrsta", ""),
+                             f.get("Klasifikacija", ""))
+                if h.name and all((h.number or h.name) != (o.number or o.name) for o in info.heritage):
+                    info.heritage.append(h)
+            elif label.startswith("Građevinsko područje"):
                 kind = "izvan naselja" if "izvan naselja" in label else "naselja"
                 if info.gp != "naselja":
                     info.gp = kind
@@ -301,6 +337,15 @@ class LandCheck:
     line: str                      # redak za obavijest (🗺 …)
     warning: str = ""              # ⚠ kad zemljište nije u građevinskom području naselja
     info: PointInfo | None = None  # podaci ISPU-a (za PPV na lokaciji)
+    heritage: str = ""             # ⚠ zaštićeno kulturno dobro / cjelina na lokaciji
+
+
+def heritage_warning(items: list[Heritage], caveat: str = "") -> str:
+    """⚠ za zaštićena kulturna dobra na točki: najviše dva, cjeline prve."""
+    if not items:
+        return ""
+    items = sorted(items, key=lambda h: not h.area)[:2]
+    return "; ".join(h.describe() for h in items) + f" – radovi uz uvjete konzervatora{caveat}"
 
 
 def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, approximate: bool,
@@ -320,9 +365,23 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
         info, where = ispu.point(lat, lon), "oznaci na karti oglasa"
     if info is None:
         why = "čestica iz oglasa nije pronađena u katastru" if parcels else "oglas nema točnu lokaciju ni broj čestice"
-        return LandCheck(f"🗺 Građevinsko područje: nije provjereno – {why}")
+        heritage = ""
+        if lat and lon and OLD_CORE.search(fold(text)):
+            # Približna oznaka + opis spominje staru jezgru: provjera samo za cjeline (ne pojedinačne građevine).
+            try:
+                areas = [h for h in ispu.point(lat, lon).heritage if h.area]
+            except Exception:  # noqa: BLE001 – samo dodatna provjera
+                areas = []
+            if areas:
+                heritage = "vjerojatno " + heritage_warning(areas, " (opis spominje staru jezgru, oznaka na karti je približna)")
+        return LandCheck(f"🗺 Građevinsko područje: nije provjereno – {why}", heritage=heritage)
     caveat = " (oznaka može biti približna)" if where.startswith("oznaci") else ""
-    use = info.use.split(") ", 1)[-1].capitalize() if info.use else ""
+    result = _gp_check(info, where, caveat, house, use=info.use.split(") ", 1)[-1].capitalize() if info.use else "")
+    result.heritage = heritage_warning(info.heritage, caveat)
+    return result
+
+
+def _gp_check(info: PointInfo, where: str, caveat: str, house: bool, use: str) -> LandCheck:
     if info.gp == "naselja":
         part = " (neizgrađeni dio)" if "NEIZGRAĐENI" in info.use.upper() else \
             " (izgrađeni dio)" if "IZGRAĐENI" in info.use.upper() else ""
