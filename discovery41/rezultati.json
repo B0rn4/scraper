@@ -1,0 +1,32 @@
+{
+ "Krk jezgra, točno": {
+  "line": "🗺 U građevinskom području naselja (izgrađeni dio) – ISPU, prema oznaci na karti oglasa",
+  "warning": "",
+  "heritage": "u kulturno-povijesnoj cjelini „Kulturno-povijesna urbanistička cjelina grada Krka” (Z-2684) – radovi uz uvjete konzervatora (oznaka može biti približna)"
+ },
+ "Krk jezgra, približno, opis jezgre": {
+  "line": "🗺 Građevinsko područje: nije provjereno – oglas nema točnu lokaciju ni broj čestice",
+  "warning": "",
+  "heritage": "vjerojatno u kulturno-povijesnoj cjelini „Kulturno-povijesna urbanistička cjelina grada Krka” (Z-2684) – radovi uz uvjete konzervatora (opis spominje staru jezgru, oznaka na karti je približna)"
+ },
+ "Krk jezgra, približno, bez opisa": {
+  "line": "🗺 Građevinsko područje: nije provjereno – oglas nema točnu lokaciju ni broj čestice",
+  "warning": "",
+  "heritage": ""
+ },
+ "Opatija centar, točno": {
+  "line": "🗺 U građevinskom području naselja (izgrađeni dio) – ISPU, prema oznaci na karti oglasa",
+  "warning": "",
+  "heritage": "u kulturno-povijesnoj cjelini „Kulturno-povijesna cjelina grada Opatije” (Z-2690) – radovi uz uvjete konzervatora (oznaka može biti približna)"
+ },
+ "Malinska polje, točno": {
+  "line": "🗺 NIJE u građevinskom području – ISPU, prema oznaci na karti oglasa",
+  "warning": "prema ISPU-u kuća nije u građevinskom području (Vrijedno obradivo tlo) – dogradnja i zamjenska gradnja su ograničene, provjeri legalnost (oznaka može biti približna)",
+  "heritage": ""
+ },
+ "Kostrena, točno": {
+  "line": "🗺 U građevinskom području naselja – ISPU, prema oznaci na karti oglasa",
+  "warning": "",
+  "heritage": ""
+ }
+}
