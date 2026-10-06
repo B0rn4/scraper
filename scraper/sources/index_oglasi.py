@@ -152,6 +152,6 @@ class IndexOglasi(Source):
 
     def search_links(self):
         return [
-            ("kuće (filtriraj na PGŽ u pretrazi)", f"{BASE}/nekretnine/prodaja-kuca"),
-            ("zemljišta (filtriraj na PGŽ u pretrazi)", f"{BASE}/nekretnine/prodaja-zemljista"),
+            ("kuće (u pretrazi odaberi Primorsko-goransku, cijenu i površinu)", f"{BASE}/nekretnine/prodaja-kuca"),
+            ("zemljišta (u pretrazi odaberi Primorsko-goransku, cijenu i površinu)", f"{BASE}/nekretnine/prodaja-zemljista"),
         ]

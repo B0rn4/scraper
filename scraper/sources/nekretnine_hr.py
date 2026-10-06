@@ -11,7 +11,7 @@ import re
 
 from ..filters import evaluate
 from ..models import HOUSE, LAND, REJECT, Listing
-from ..text import fold, parse_number
+from ..text import fmt_eur, fmt_m2, fold, parse_number
 from .base import FULL, Source
 
 BASE = "https://www.nekretnine.hr"
@@ -151,7 +151,9 @@ class NekretnineHr(Source):
 
     def search_links(self):
         links = []
-        for category, _, label in CATEGORIES:
-            for jls in self.included_names:
-                links.append((f"{label} – {jls}", f"{BASE}/{category}/{jls_slug(jls)}/"))
+        for category, kind, label in CATEGORIES:
+            price, area = self.limits(kind)
+            links.append((f"{label}, PGŽ, najnovije, do {fmt_eur(price)}, od {fmt_m2(area)}",
+                          f"{BASE}/{category}/{COUNTY_SLUG}/?criterio=data&ordine=desc"
+                          f"&prezzoMassimo={price}&superficieMinima={area}"))
         return links

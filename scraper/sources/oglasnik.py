@@ -6,7 +6,7 @@ import json
 import re
 
 from ..models import HOUSE, LAND, Listing
-from ..text import fold, parse_number
+from ..text import fmt_eur, fmt_m2, fold, parse_number
 from .base import FULL, Source
 
 BASE = "https://oglasnik.hr"
@@ -124,7 +124,11 @@ class Oglasnik(Source):
         return list(found.values())
 
     def search_links(self):
-        return [
-            ("kuće, PGŽ", f"{BASE}/kuce-prodaja?sort=newest&f%5B4%5D%5B{PGZ_LOCATION_ID}%5D=true"),
-            ("zemljišta, PGŽ", f"{BASE}/zemljista-prodajem?sort=newest&f%5B4%5D%5B{PGZ_LOCATION_ID}%5D=true"),
-        ]
+        # Filtri: f[2] cijena, f[45] stambena površina (kuće), f[44] ukupna površina (zemljišta).
+        out = []
+        for category, kind, label, area_id in (("kuce-prodaja", HOUSE, "kuće", 45), ("zemljista-prodajem", LAND, "zemljišta", 44)):
+            price, area = self.limits(kind)
+            out.append((f"{label}, PGŽ, najnovije, do {fmt_eur(price)}, od {fmt_m2(area)}",
+                        f"{BASE}/{category}?sort=newest&f%5B4%5D%5B{PGZ_LOCATION_ID}%5D=true"
+                        f"&f%5B2%5D%5Bmax%5D={price}&f%5B{area_id}%5D%5Bmin%5D={area}"))
+        return out

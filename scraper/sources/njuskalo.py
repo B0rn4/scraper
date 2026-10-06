@@ -19,7 +19,7 @@ from datetime import datetime, timedelta
 from ..browser import Browser
 from ..filters import evaluate
 from ..models import HOUSE, LAND, REJECT, Listing
-from ..text import areas_in_text, parse_number
+from ..text import areas_in_text, fmt_eur, fmt_m2, parse_number
 from .base import FULL, Source
 
 BASE = "https://www.njuskalo.hr"
@@ -208,5 +208,11 @@ class Njuskalo(Source):
         return d.status != REJECT or d.near_miss
 
     def search_links(self):
-        return [(f"{label}, PGŽ, najnovije", _page_url(cat, 1))
-                for (cat, _), label in zip(CATEGORIES, ("Kuće", "Zemljišta"))]
+        out = []
+        for cat, kind in CATEGORIES:
+            price, area = self.limits(kind)
+            extra = f"&livingArea%5Bmin%5D={area}" if kind == HOUSE else ""   # površinu zemljišta postavi na stranici
+            label = (f"kuće, PGŽ, najnovije, do {fmt_eur(price)}, od {fmt_m2(area)}" if kind == HOUSE
+                     else f"zemljišta, PGŽ, najnovije, do {fmt_eur(price)}")
+            out.append((label, _page_url(cat, 1) + f"&price%5Bmax%5D={price}" + extra))
+        return out

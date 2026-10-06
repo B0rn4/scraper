@@ -17,7 +17,7 @@ import re
 
 from ..filters import evaluate
 from ..models import HOUSE, LAND, REJECT, Listing
-from ..text import parse_number
+from ..text import fmt_eur, parse_number
 from .base import FULL, Source
 
 BASE = "https://www.realestatecroatia.com/hrv/"
@@ -120,5 +120,9 @@ class RealEstateCroatia(Source):
         return list(found.values())
 
     def search_links(self):
-        return [("PGŽ, kuće", f"{BASE}list.asp?regija={REGION_PGZ}&vrsta=1&akcija=1&sort=objekt_id&smjer=desc"),
-                ("PGŽ, zemljišta", f"{BASE}list.asp?regija={REGION_PGZ}&vrsta=3&akcija=1&sort=objekt_id&smjer=desc")]
+        out = []
+        for vrsta, kind, label in ((1, HOUSE, "kuće"), (3, LAND, "zemljišta")):
+            price, _ = self.limits(kind)
+            out.append((f"{label}, PGŽ, najnovije, do {fmt_eur(price)} (površinu portal ne filtrira)",
+                        f"{BASE}list.asp?regija={REGION_PGZ}&vrsta={vrsta}&akcija=1&sort=objekt_id&smjer=desc&cijenaDo={price}"))
+        return out

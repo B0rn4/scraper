@@ -14,7 +14,7 @@ import html
 import re
 
 from ..models import HOUSE, LAND, Listing
-from ..text import area_matches, fold, parse_number
+from ..text import area_matches, fmt_eur, fold, parse_number
 from .base import FULL, Source
 
 BASE = "https://burza.com.hr"
@@ -168,5 +168,10 @@ class Burza(Source):
         return out
 
     def search_links(self):
-        return [("Kvarner i Istra, kuće", f"{BASE}/oglasi/nekretnine-kuce-prodaja/{REGION}"),
-                ("Kvarner i Istra, zemljišta", f"{BASE}/oglasi/nekretnine-zemljista-prodaja/{REGION}")]
+        out = []
+        for slug, kind in KINDS:
+            price, _ = self.limits(kind)
+            label = "kuće" if kind == HOUSE else "zemljišta"
+            out.append((f"{label}, Kvarner i Istra, do {fmt_eur(price)} (površinu portal ne filtrira)",
+                        f"{BASE}/oglasi/{slug}/{REGION}?pt={price}"))
+        return out

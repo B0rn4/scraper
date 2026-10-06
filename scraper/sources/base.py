@@ -2,7 +2,7 @@
 
 from ..http import Http
 from ..locations import Locator
-from ..models import Listing
+from ..models import HOUSE, Listing
 
 INCREMENTAL = "incremental"   # redovno pokretanje: samo najnoviji oglasi
 FULL = "full"                 # pregled i početni popis: sve na području
@@ -24,8 +24,14 @@ class Source:
         raise NotImplementedError
 
     def search_links(self) -> list[tuple[str, str]]:
-        """Poveznice na iste pretrage na portalu, za usporedbu u izvještaju."""
+        """Poveznice na iste pretrage na portalu, za usporedbu u izvještaju i ručni pregled
+        (gdje portal to podržava, s filtrom cijene i površine iz kriterija)."""
         return []
+
+    def limits(self, kind: str) -> tuple[int, int]:
+        """(najviša cijena, najmanja površina) iz kriterija za kuće ili zemljišta."""
+        c = self.criteria["kuca" if kind == HOUSE else "zemljiste"]
+        return int(c["max_cijena"]), int(c["min_povrsina"])
 
     @property
     def included_names(self) -> list[str]:
