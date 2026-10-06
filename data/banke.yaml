@@ -1,0 +1,26 @@
+# Banke i leasing kuće: stranice s prodajom preuzetih nekretnina (scraper/watch.py).
+# Čitaju se jednom dnevno; poruka stiže samo kad se pojavi novi tekst koji spominje naše
+# područje. Pregled 6. 10.: na našem području trenutno ništa; leasing kuće nude samo
+# vozila i opremu; Addiko objavljuje na Njuškalu (već pratimo); prisilne prodaje idu kroz
+# FINA e-dražbe (već pratimo).
+
+- naziv: Zagrebačka banka – javni poziv za kupnju nekretnina
+  url: https://www.zaba.hr/home/o-nama/javni-poziv
+- naziv: OTP banka – javni natječaji
+  url: https://www.otpbanka.hr/javni-natjecaji-otp-banke
+- naziv: OTP nekretnine – prodaja (preuzete nekretnine)
+  url: https://www.otpnekretnine.hr/
+- naziv: HBOR – nekretnine
+  url: https://www.hbor.hr/hbor-nekretnine/66
+- naziv: HBOR – prodaja i zakup nekretnina
+  url: https://www.hbor.hr/prodaja-nekretnina
+- naziv: HPB nekretnine – ponuda
+  url: https://www.hpb-nekretnine.hr/hr/ponuda-nekretnina-176/176
+- naziv: Croatia banka – stambene nekretnine
+  url: https://www.croatiabanka.hr/info-centar/prodaja-nekretnina/stambene-nekretnine/
+- naziv: Croatia banka – stambeno-poslovne nekretnine
+  url: https://www.croatiabanka.hr/info-centar/prodaja-nekretnina/stambenoposlovne-nekretnine/
+- naziv: Croatia banka – zemljišta
+  url: https://www.croatiabanka.hr/info-centar/prodaja-nekretnina/zemljista/
+- naziv: Croatia banka – natječaji
+  url: https://www.croatiabanka.hr/info-centar/prodaja-nekretnina/natjecaji/

@@ -10,7 +10,7 @@ from zoneinfo import ZoneInfo
 
 import yaml
 
-from . import dedupe, report, tenders
+from . import dedupe, report, tenders, watch
 from .ispu import Ispu, check_land, gp_text
 from .prices import AskingPrices, Ppv, land_note, land_short
 from .db import State
@@ -179,6 +179,11 @@ class Runner:
             except Exception as exc:  # noqa: BLE001 – natječaji ne smiju zaustaviti oglase
                 self.log(f"Natječaji: GREŠKA {type(exc).__name__}: {exc}")
                 traceback.print_exc()
+            try:
+                self._banks(state)
+            except Exception as exc:  # noqa: BLE001
+                self.log(f"Banke: GREŠKA {type(exc).__name__}: {exc}")
+                traceback.print_exc()
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
                 self._check_redmi(state)
@@ -323,6 +328,35 @@ class Runner:
         state.meta_set("daily:natjecaji", today)
         state.conn.commit()
         self.log(f"Natječaji: novih {len(new)}, poslano {sent}")
+
+    def _banks(self, state: State) -> None:
+        """Stranice banaka s prodajom preuzetih nekretnina (data/banke.yaml), jednom dnevno:
+        poruka samo za novi tekst koji spominje naše područje; prvo čitanje bez poruke."""
+        today = self.now.date().isoformat()
+        if self.device != "github" or not self.telegram or state.meta_get("daily:banke") == today:
+            return
+        for page in watch.load_pages():
+            name, key = f"banke: {page['naziv']}", f"banke:{page['naziv']}"
+            try:
+                body = self.http.get(page["url"]).text
+            except Exception as exc:  # noqa: BLE001
+                failures, alerted = state.health_fail(name, f"{type(exc).__name__}: {exc}")
+                self.log(f"{name}: GREŠKA ({failures}. dan zaredom): {exc}")
+                if failures >= 3 and not alerted:
+                    self._alert(f"Scraper: banke – {page['naziv']} ne radi",
+                                f"Stranica {page['url']} tri dana zaredom vraća grešku:\n{exc}\n\nJavi Claudeu ovu poruku.")
+                    state.mark_alerted(name)
+                continue
+            state.health_ok(name, self.stamp)
+            stored = state.meta_get(key)
+            known = set(json.loads(stored)) if stored else set()
+            found, hashes = watch.changes(self.locator, body, known)
+            if stored is not None and found:
+                self.telegram.send_text(watch.format_change(page["naziv"], found), url=page["url"])
+                self.log(f"{name}: novo s našim područjem ({len(found)})")
+            state.meta_set(key, watch.dumps(hashes | known if len(known) < 5000 else hashes))
+        state.meta_set("daily:banke", today)
+        state.conn.commit()
 
     def _tender_message(self, t: tenders.Tender, info: dict, found: list[tenders.Lot], jls: str, where: str,
                         verdict: tuple[str, str] | None, prices: AskingPrices | None, deadline: float) -> str:

@@ -47,7 +47,7 @@ kriterijima stiže obavijest na mobitel (Telegram). PC ne mora biti upaljen.
 | PGŽ, Ministarstvo državne imovine, CERP | jednom dnevno, ključne riječi | rade iz oblaka |
 | Novi list (mali oglasi) | provjera | stranica radi; treba naći oglasnik |
 | Lokalne agencije | faza 4 | 10–15 najaktivnijih, izdvojenih iz podataka s portala |
-| Banke i leasing kuće | kasnije | prodaja preuzetih nekretnina |
+| Banke i leasing kuće | (6. 10.) praćenje stranica (`scraper/watch.py`, `data/banke.yaml`) | na našem području trenutno ništa (Zaba, OTP, HBOR, HPB, Croatia banka, PBZ nekretnine); leasing kuće (Raiffeisen, OTP, PBZ, UniCredit, Erste) nude samo vozila i opremu; Addiko → Njuškalo; EOS Matrix (stranica za BiH), B2 Kapital i APS bez vlastite ponude; prisilne prodaje → FINA e-dražbe. Poruka 🏦 samo za novi tekst koji spominje naše područje |
 | Facebook Marketplace i grupe | ručno | ugrađene FB obavijesti („Sve objave” u grupama); bez automatizacije |
 
 ### FINA: prepoznavanje lokacije

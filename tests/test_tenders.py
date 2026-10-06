@@ -295,3 +295,43 @@ def test_page_links_filter():
     items = reader.fetch({"naziv": "Grad Rijeka (ostali)", "jls": "Rijeka", "nacin": "stranica", "poveznice": "/bidding/",
                           "url": "https://www.rijeka.hr/gradska-uprava/natjecaji-2/ostali-natjecaji/"})
     assert [t.url for t in items] == ["https://www.rijeka.hr/bidding/natjecaj-za-prodaju-zemljista/"]
+
+
+def test_bank_page_watch(tmp_path, monkeypatch):
+    from scraper import watch
+    from scraper.db import State
+    from scraper.runner import Runner
+
+    old = "<ul><li>N-013 Kuća i dvorište u Stanićima, Kobasičari. Cijena na upit.</li><li>Poslovni prostor u Zagrebu.</li></ul>"
+    pages = {"https://b.hr/prodaja": old}
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+    class Http:
+        def get(self, url, **kw):
+            return Resp(pages[url])
+
+    sent = []
+
+    class FakeTelegram:
+        def send_text(self, text, silent=False, url=""):
+            sent.append((text, url))
+
+    monkeypatch.setattr(watch, "load_pages", lambda: [{"naziv": "Banka X", "url": "https://b.hr/prodaja"}])
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner.telegram, runner.http = FakeTelegram(), Http()
+    state = State(tmp_path / "s.db")
+    runner._banks(state)
+    assert sent == []                                            # prvo čitanje: samo zabilježi
+    pages["https://b.hr/prodaja"] = old.replace("</ul>", "<li>N-101 Kuća u Njivicama, otok Krk, 120 m2. Cijena 250.000 EUR."
+                                                         "</li><li>Poslovno-stambena zgrada u Ročkom Polju, Buzet.</li></ul>")
+    runner._banks(state)
+    assert sent == []                                            # isti dan se ne čita ponovno
+    state.meta_set("daily:banke", "2000-01-01")
+    runner._banks(state)
+    assert len(sent) == 1 and "Njivicama" in sent[0][0] and "Polju" not in sent[0][0] and sent[0][1] == "https://b.hr/prodaja"
+    state.meta_set("daily:banke", "2000-01-01")
+    runner._banks(state)
+    assert len(sent) == 1                                        # isti tekst ne stiže ponovno
