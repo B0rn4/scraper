@@ -304,9 +304,9 @@ class LandCheck:
 
 
 def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, approximate: bool,
-               names: dict[str, str] | None = None) -> LandCheck:
-    """Je li zemljište u građevinskom području: prvo po katastarskoj čestici iz teksta
-    (točno), inače po oznaci na karti oglasa (ako portal kaže da nije približna)."""
+               names: dict[str, str] | None = None, house: bool = False) -> LandCheck:
+    """Je li zemljište (ili kuća) u građevinskom području: prvo po katastarskoj čestici iz
+    teksta (točno), inače po oznaci na karti oglasa (ako portal kaže da nije približna)."""
     parcels = parcels_in_text(text)
     info, where = None, ""
     for ko, kc in parcels[:3]:
@@ -328,9 +328,13 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
             " (izgrađeni dio)" if "IZGRAĐENI" in info.use.upper() else ""
         return LandCheck(f"🗺 U građevinskom području naselja{part} – ISPU, prema {where}", info=info)
     if info.gp == "izvan naselja":
+        why = "kuća je u zoni druge namjene (dogradnja i obnova po pravilima te zone)" if house else "nije za obiteljsku kuću"
         return LandCheck(f"🗺 Građevinsko područje IZVAN naselja – ISPU, prema {where}",
-                         f"građevinsko područje izvan naselja ({use or 'izdvojena namjena'}) – nije za obiteljsku kuću, "
-                         f"provjeri{caveat}", info)
+                         f"građevinsko područje izvan naselja ({use or 'izdvojena namjena'}) – {why}, provjeri{caveat}", info)
+    if house:
+        return LandCheck(f"🗺 NIJE u građevinskom području – ISPU, prema {where}",
+                         f"prema ISPU-u kuća nije u građevinskom području{f' ({use})' if use else ''} – dogradnja i "
+                         f"zamjenska gradnja su ograničene, provjeri legalnost{caveat}", info)
     return LandCheck(f"🗺 NIJE u građevinskom području – ISPU, prema {where}",
                      f"prema ISPU-u nije u građevinskom području{f' ({use})' if use else ''} – provjeri{caveat}", info)
 

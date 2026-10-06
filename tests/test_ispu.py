@@ -75,3 +75,32 @@ def test_runner_marks_land_outside_building_zone(tmp_path):
     runner._check_land(y, d)
     assert d.status == PASS and "(neizgrađeni dio)" in y.extra["gp"]
     assert y.extra["ppv"] == "🏛 PPV 2026. (na lokaciji, blok Brzac - Građevinsko): građevinsko 130 €/m² – oglas 55 % iznad gornje"
+
+
+def test_runner_house_building_zone(tmp_path):
+    """Kuća: izvan građevinskog područja → samo ⚠; bez točne lokacije redak se prvi izostavlja."""
+    from scraper.models import HOUSE, PASS, WARN, Decision, Listing
+    from scraper.notify import format_listing
+    from scraper.runner import Runner
+
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner._ispu = FakeIspu(PointInfo(gp=None, use="(P2) VRIJEDNO OBRADIVO TLO", land_values=[20.0]))
+    x = Listing(source="index_oglasi", source_id="1", url="u", title="Kuća Rasopasno", kind=HOUSE,
+                price=250_000, area=120, extra={"lat": 45.1, "lon": 14.6, "priblizna_lokacija": False})
+    d = Decision(PASS, jls="Dobrinj")
+    runner._check_land(x, d)
+    assert d.status == WARN and d.warnings[0].startswith("prema ISPU-u kuća nije u građevinskom području (Vrijedno")
+    assert "ppv" not in x.extra and not x.extra["gp_neprovjereno"]     # PPV zemljišta nije za kuće
+
+    fake = FakeIspu(PointInfo(gp="naselja", use="(GP) IZGRAĐENI DIO"))
+    runner._ispu = fake
+    y = Listing(source="index_oglasi", source_id="2", url="u", title="Kuća Njivice", kind=HOUSE,
+                price=250_000, area=120, extra={"lat": 45.1, "lon": 14.6, "priblizna_lokacija": True})
+    d = Decision(PASS, jls="Omišalj")
+    runner._check_land(y, d)
+    assert d.status == PASS and y.extra["gp_neprovjereno"] and not fake.calls
+    assert "nije provjereno" in format_listing(y, d)
+    y.description = "x" * 50
+    y.extra["usporedba"] = "📈 " + "dugačka usporedba " * 30
+    y.extra["ppv"] = "🏛 " + "dugačak PPV " * 30
+    assert "nije provjereno" not in format_listing(y, d)                # prvi otpada kad je poruka preduga

@@ -267,6 +267,11 @@ bez stotina poruka.
    - Prvo pokretanje se bilježi bez poruke (ulazi u završni pregled); „cijena na upit”
      (luksuzne vile) se preskače. Novi oglasi koji su već poslani s drugog portala ne
      stižu ponovno (već viđeni).
+6. **(6. 10.) Dodaci za kuće.**
+   - Građevinsko područje (ISPU) kao kod zemljišta: po k.č. iz opisa ili točnoj oznaci
+     na karti. Izvan građevinskog područja → samo ⚠ (oglas stiže). Kuće rijetko imaju
+     točnu lokaciju, pa je redak „nije provjereno” prvi koji otpada kad je poruka preduga.
+   - Zaštićeno kulturno dobro / kulturno-povijesna cjelina → ⚠ (u izradi).
 
 ## Zadaci za korisnika
 

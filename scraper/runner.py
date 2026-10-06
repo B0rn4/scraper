@@ -17,7 +17,7 @@ from .db import State
 from .filters import evaluate
 from .http import Http
 from .locations import Locator
-from .models import LAND, PASS, REJECT, WARN, Decision, Listing
+from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
 from .notify import SOURCE_LABELS, Email, Telegram, summary_text
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
@@ -219,29 +219,34 @@ class Runner:
         return seen
 
     def _check_land(self, x: Listing, d: Decision, deadline: float | None = None) -> None:
-        """Zemljište: građevinsko područje i PPV na točnoj lokaciji (ISPU). Izvan
-        građevinskog područja naselja → ⚠ (oglas i dalje stiže)."""
-        if x.kind != LAND:
+        """Zemljište i kuća: građevinsko područje na točnoj lokaciji (ISPU), za zemljište i
+        PPV. Izvan građevinskog područja naselja → ⚠ (oglas i dalje stiže). Kuća bez točne
+        lokacije: redak "nije provjereno" se prvi izostavlja kad je poruka preduga."""
+        if x.kind not in (LAND, HOUSE):
             return
+        house = x.kind == HOUSE
         if deadline is not None and time.monotonic() > deadline:
             x.extra["gp"] = "🗺 Građevinsko područje: nije provjereno (vremensko ograničenje pokretanja)"
+            x.extra["gp_neprovjereno"] = house
             return
         if self._ispu is None:
             self._ispu = Ispu()
         try:
             result = check_land(self._ispu, f"{x.title}. {x.description}", x.extra.get("lat"), x.extra.get("lon"),
-                                bool(x.extra.get("priblizna_lokacija", True)), self._place_names)
+                                bool(x.extra.get("priblizna_lokacija", True)), self._place_names, house=house)
         except Exception as exc:  # noqa: BLE001 – ISPU nije nužan za obavijest
             self.log(f"ISPU ({x.key}): {type(exc).__name__}: {exc}")
             x.extra["gp"] = "🗺 Građevinsko područje: nije provjereno (ISPU ne odgovara)"
+            x.extra["gp_neprovjereno"] = house
             return
         x.extra["gp"] = result.line
+        x.extra["gp_neprovjereno"] = house and result.info is None
         if result.warning:
             d.warnings.append(result.warning)
             if d.status == PASS:
                 d.status = WARN
         info = result.info
-        if info and info.land_values and x.price and x.area and x.price > 1000:
+        if info and info.land_values and x.price and x.area and x.price > 1000 and not house:
             low, high, ppm = min(info.land_values), max(info.land_values), x.price / x.area
             x.extra["ppv"] = land_note(ppm, low, high, f"na lokaciji, blok {info.block.title()}")
             x.extra["cijena_kratko"] = [t for t in x.extra.get("cijena_kratko", []) if not t.startswith("PPV")] \
