@@ -53,6 +53,14 @@ LUXURY_FACTOR, HUGE_HOUSE_FACTOR = 0.4, 0.2
 # takva "na upit" ne odbija (mjerenje 6. 10.: 4 od 11 izgubljenih kuća u granici bile su takve).
 # "U izgradnji" nije ovdje – tako se oglašavaju i nove luksuzne vile.
 _UNFINISHED = re.compile(r"rohbau|roh bau|zapocet\w* gradnj|nedovrsen\w*|siva faza|grub\w* radov")
+
+
+def not_ready(text: str) -> bool:
+    """Kuća za obnovu, starina, ruševina ili nedovršena gradnja (tekst već prošao fold):
+    zasebna kategorija u usporedbi cijena, jer ima daleko niži €/m² od useljive kuće."""
+    return bool(_RENOVATION.search(text) or _UNFINISHED.search(text))
+
+
 # "Negrađevinsko" i "izvan građevinskog (područja)" nisu građevinsko zemljište.
 _BUILDING_LAND = re.compile(r"(?<!\bne)(?<!\bne )(?<!\bizvan )(?<!\bvan )gradevinsk")
 _AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|maslinik|vocnjak"
@@ -276,6 +284,8 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
 
     if listing.kind == HOUSE and _RENOVATION.search(text):
         listing.extra["za_obnovu"] = True
+    if listing.kind == HOUSE and not_ready(text):
+        listing.extra["kategorija"] = "obnova"      # pamti se u bazi (usporedba cijena)
 
     if reasons:
         return Decision(REJECT, reasons, warnings, jls_name, loc.evidence, near_miss=near_miss_only)

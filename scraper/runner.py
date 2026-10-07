@@ -222,11 +222,9 @@ class Runner:
                                 headline = self._check_seen(state, seen, x, d, old, headline)
                             if headline is not None:
                                 x.extra["ppv"] = self.ppv.note(x, d.jls)
-                                x.extra["prosjek"] = prices.area_note(x) if prices else None
-                                x.extra["usporedba"] = prices.compare(x, d.jls) if prices else None
-                                x.extra["cijena_kratko"] = [t for t in (
-                                    prices.area_short(x) if prices else None, prices.short(x, d.jls) if prices else None,
-                                    self.ppv.short(x, d.jls)) if t]
+                                area, place, short = prices.describe(x, d.jls) if prices else (None, None, None)
+                                x.extra["prosjek"], x.extra["usporedba"] = area, place
+                                x.extra["cijena_kratko"] = [t for t in (short, self.ppv.short(x, d.jls)) if t]
                                 to_notify.append((x, d, headline))
                     except Exception as exc:  # noqa: BLE001
                         errors.append(f"{x.key}: {type(exc).__name__}: {exc}")
@@ -783,11 +781,11 @@ class Runner:
                         lot.notes.append(note)
                         parts.append(self.ppv.short(x, jls) or "")
                 if prices:
-                    lot.notes += [n for n in [prices.compare(x, jls)] if n]
-                    parts.insert(0, prices.short(x, jls) or "")
-                    if lot.size:                  # prosjek područja ovisi o površini
-                        lot.notes += [n for n in [prices.area_note(x)] if n]
-                        parts.insert(0, prices.area_short(x) or "")
+                    # Usporedba s oglasima po kriterijima ovisi o površini; bez nje medijan svih oglasa.
+                    area_line, place_line, brief = prices.describe(x, jls) if lot.size else \
+                        (None, prices.compare(x, jls), prices.short(x, jls))
+                    lot.notes += [n for n in (area_line, place_line) if n]
+                    parts.insert(0, brief or "")
             if unit:
                 short[i] = [p for p in parts if p]
         if info.get("dio"):

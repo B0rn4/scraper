@@ -9,10 +9,13 @@
    ako ih ima barem MIN_N, inače po gradu/općini. Isti oglas na više portala broji se
    jednom. Za zemljišta se broje samo građevinska. Raspon je velik (novogradnja i
    starina), pa je ovo orijentacija, ne procjena.
-3. Prosjek €/m² cijelog područja: oglasi koji odgovaraju kriterijima (nisu odbijeni,
-   cijena i površina u granicama), po razredima površine – €/m² jako pada s površinom
-   (kuća od 80 m² oko 3.200 €/m², od 300 m² oko 1.000). Prosjek bez 10 % najjeftinijih
-   i 10 % najskupljih, da ga pogrešno upisane cijene ne pomaknu."""
+3. Usporedba s oglasima po kriterijima (nisu odbijeni, cijena i površina u granicama;
+   viđeni u zadnjih godinu dana; isti oglas na više portala jednom): koliko je posto
+   tih oglasa jeftinije po m² (točno prebrojano, bez pretpostavke o obliku raspodjele),
+   na cijelom području i u naselju (premalo oglasa: grad/općina). Uspoređuju se oglasi
+   iste vrste, kategorije (kuće za obnovu ili nedovršene zasebno) i razreda površine –
+   €/m² jako pada s površinom (kuća od 80 m² oko 3.200 €/m², od 300 m² oko 1.000). Uz
+   to prosjek područja (bez 10 % najjeftinijih i najskupljih) i medijan naselja."""
 
 import json
 import re
@@ -41,11 +44,13 @@ MAX_AGE_DAYS = 365
 # Što je očito pogrešno upisano (cijena najma, površina u arima…) ne ulazi u medijan.
 PLAUSIBLE = {HOUSE: ((30, 1500), (300, 20_000)), LAND: ((100, 100_000), (5, 3_000))}
 CHEAP, PRICEY, ODD = -0.15, 0.15, -0.45
-# Razredi površine za prosjek područja (donje granice, m²): izmjereno 7. 10. na 542 kuće
-# i 1.111 zemljišta po kriterijima – unutar razreda €/m² je sličan, između razreda nije.
+# Razredi površine (donje granice, m²): izmjereno 7. 10. na 542 kuće i 1.111 zemljišta po
+# kriterijima – unutar razreda €/m² je sličan, između razreda nije. Kuća za obnovu je malo
+# pa se uspoređuju sve veličine zajedno.
 AREA_BANDS = {HOUSE: (70, 100, 130, 170, 250), LAND: (300, 800, 1200, 2500)}
 AREA_MIN_N = 10
 TRIM = 0.1
+RENOVATION = "obnova"
 
 
 def place_of(locator, jls: str, title: str, settlement: str) -> str:
@@ -95,9 +100,11 @@ def build(rows: list[dict], locator, now: datetime) -> dict:
     return {k: {"n": len(v), "med": round(statistics.median(v))} for k, v in values.items() if len(v) >= MIN_N}
 
 
-def band(kind: str, area) -> tuple[int, int | None] | None:
-    """Razred površine (od, do isključivo; do None = i veće) za prosjek područja."""
+def band(kind: str, area, cat: str = "") -> tuple[int, int | None] | None:
+    """Razred površine (od, do isključivo; do None = i veće) za usporedbu."""
     edges = AREA_BANDS.get(kind)
+    if edges and cat == RENOVATION:
+        edges = edges[:1]
     if not edges or not area or area < edges[0]:
         return None
     for lo, hi in zip(edges, (*edges[1:], None)):
@@ -106,7 +113,9 @@ def band(kind: str, area) -> tuple[int, int | None] | None:
     return None
 
 
-def band_label(kind: str, lo: int, hi: int | None) -> str:
+def band_label(kind: str, lo: int, hi: int | None, cat: str = "") -> str:
+    if cat == RENOVATION:
+        return "kuće za obnovu ili nedovršene"
     what = "kuće" if kind == HOUSE else "zemljišta"
     return f"{what} {lo}–{hi - 1} m²" if hi else f"{what} od {lo} m²"
 
@@ -118,26 +127,50 @@ def trimmed_mean(values: list[float], part: float = TRIM) -> float:
     return sum(kept) / len(kept)
 
 
-def build_area(rows: list[dict], now: datetime, criteria: dict) -> dict:
-    """Prosjek €/m² cijelog područja po (vrsta, razred površine) iz oglasa po kriterijima."""
+def category(kind: str, title: str = "", stored: str | None = None) -> str:
+    """Kategorija za usporedbu: kuća "obnova" (za obnovu, starina, ruševina, nedovršena) ili ""
+    (useljiva; zemljišta). Iz baze (prepoznato i u opisu), za starije zapise iz naslova."""
+    from .filters import not_ready
+    if kind != HOUSE:
+        return ""
+    if stored:
+        return stored
+    return RENOVATION if not_ready(fold(title)) else ""
+
+
+def signature(kind: str, jls: str | None, price: float, area: float) -> str:
+    """Isti oglas na više portala: ista vrsta, grad/općina, cijena (na 1.000 €) i površina."""
+    return f"{kind}|{jls}|{round(price, -3):.0f}|{round(area)}"
+
+
+def build_market(rows: list[dict], locator, now: datetime, criteria: dict) -> list[list]:
+    """Oglasi za usporedbu: [€/m², vrsta, kategorija, površina, grad/općina, naselje, potpis, ključevi]."""
     since = (now - timedelta(days=MAX_AGE_DAYS)).isoformat()
-    unique = {}
+    unique: dict[str, list] = {}
     for r in rows:
         limits = criteria.get(r.get("kind")) or {}
-        if r.get("status") == REJECT or not limits or (r.get("last_seen") or "9") < since:
+        if r.get("status") == REJECT or not limits or not r.get("jls") or (r.get("last_seen") or "9") < since:
             continue
         if not _ok(r["kind"], r.get("price"), r.get("area"), r.get("reasons")):
             continue
         if r["price"] > limits.get("max_cijena", float("inf")) or r["area"] < limits.get("min_povrsina", 0):
-            continue                    # npr. parcelacija: stiže i skuplja, ali ne ulazi u prosjek
-        unique.setdefault((r["kind"], r.get("jls"), round(r["price"], -3), round(r["area"])), r)
-    values: dict[tuple, list[float]] = {}
-    for r in unique.values():
-        found = band(r["kind"], r["area"])
-        if found:
-            values.setdefault((r["kind"], *found), []).append(r["price"] / r["area"])
-    return {f"{kind}|{lo}": {"od": lo, "do": hi, "n": len(v), "prosjek": round(trimmed_mean(v))}
-            for (kind, lo, hi), v in values.items() if len(v) >= AREA_MIN_N}
+            continue                    # npr. parcelacija: stiže i skuplja, ali ne ulazi u usporedbu
+        sig = signature(r["kind"], r["jls"], r["price"], r["area"])
+        if sig in unique:
+            unique[sig][7].append(r.get("key") or "")
+            if r.get("category"):
+                unique[sig][2] = r["category"]
+            continue
+        unique[sig] = [round(r["price"] / r["area"]), r["kind"], category(r["kind"], r.get("title"), r.get("category")),
+                       round(r["area"]), r["jls"], place_of(locator, r["jls"], r.get("title"), r.get("settlement")),
+                       sig, [r.get("key") or ""]]
+    return list(unique.values())
+
+
+def share_below(values: list[float], value: float) -> int:
+    """Postotak vrijednosti manjih od zadane (jednake se broje upola)."""
+    below = sum(1 for v in values if v < value) + 0.5 * sum(1 for v in values if v == value)
+    return round(100 * below / len(values))
 
 
 def _names(locator) -> dict[str, str]:
@@ -151,6 +184,11 @@ def _whole(locator, jls: str) -> str:
 
 def _pct(diff: float) -> int:
     return int(round(abs(diff) * 100 / 5) * 5)
+
+
+def _rel(ppm: float, ref: float) -> str:
+    pct = round((ppm / ref - 1) * 100)
+    return "ovaj ≈ isto" if abs(pct) < 3 else f"ovaj {abs(pct)} % {'iznad' if pct > 0 else 'ispod'}"
 
 
 def land_short(ppm: float, low: float, high: float) -> str:
@@ -218,53 +256,97 @@ class Ppv:
 
 
 class AskingPrices:
-    def __init__(self, locator, groups: dict | None = None, stamp: str = "", area: dict | None = None):
+    def __init__(self, locator, groups: dict | None = None, stamp: str = "", market: list | None = None):
         self.locator = locator
         self.groups = groups or {}
-        self.area = area or {}          # prosjek cijelog područja po razredu površine
+        self.market = market or []        # oglasi po kriterijima za usporedbu (build_market)
         self.stamp = stamp
         self.names = _names(locator)
 
     @classmethod
     def from_rows(cls, rows: list[dict], locator, now: datetime, criteria: dict | None = None) -> "AskingPrices":
         return cls(locator, build(rows, locator, now), now.isoformat(timespec="seconds"),
-                   build_area(rows, now, criteria) if criteria else {})
+                   build_market(rows, locator, now, criteria) if criteria else [])
 
     @classmethod
     def from_file(cls, path: Path, locator) -> "AskingPrices":
         data = json.loads(Path(path).read_text(encoding="utf-8"))
-        return cls(locator, data["grupe"], data.get("izracunato", ""), data.get("podrucje"))
+        return cls(locator, data["grupe"], data.get("izracunato", ""), data.get("usporedivi"))
 
     def save(self, path: Path) -> None:
-        Path(path).write_text(json.dumps({"izracunato": self.stamp, "grupe": self.groups, "podrucje": self.area},
-                                         ensure_ascii=False), encoding="utf-8")
+        Path(path).write_text(json.dumps({"izracunato": self.stamp, "grupe": self.groups, "usporedivi": self.market},
+                                         ensure_ascii=False, separators=(",", ":")), encoding="utf-8")
 
-    def _area_stat(self, listing: Listing) -> tuple[dict, float] | None:
+    # --- usporedba s oglasima po kriterijima ---
+
+    def _peers(self, listing: Listing, jls: str) -> dict | None:
+        """Usporedivi oglasi: iste vrste, kategorije i razreda površine, bez samog oglasa (i
+        njegove kopije na drugom portalu). {"podrucje": [...], "mjesto": (gdje, [...])}"""
         if not _ok(listing.kind, listing.price, listing.area) or _agricultural(listing):
             return None
-        found = band(listing.kind, listing.area)
-        stat = self.area.get(f"{listing.kind}|{found[0]}") if found else None
-        return (stat, listing.price / listing.area / stat["prosjek"] - 1) if stat else None
-
-    def area_note(self, listing: Listing) -> str | None:
-        """Redak za obavijest: prosjek €/m² cijelog područja za oglase iste vrste i slične
-        površine, npr. "📐 Prosjek područja, kuće 100–129 m² (113 oglasa): 2.500 €/m² – ovaj 12 % ispod"."""
-        found = self._area_stat(listing)
+        cat = category(listing.kind, listing.title, listing.extra.get("kategorija"))
+        found = band(listing.kind, listing.area, cat)
         if not found:
             return None
-        stat, diff = found
-        pct = round(diff * 100)
-        rel = "ovaj ≈ prosjek" if abs(pct) < 3 else f"ovaj {abs(pct)} % {'iznad' if pct > 0 else 'ispod'}"
-        return (f"📐 Prosjek područja, {band_label(listing.kind, stat['od'], stat['do'])} ({stat['n']} oglasa): "
-                f"{fmt_eur(stat['prosjek'])}/m² – {rel}")
+        sig = signature(listing.kind, jls, listing.price, listing.area)
+        same = [m for m in self.market if m[1] == listing.kind and m[2] == cat and band(m[1], m[3], cat) == found
+                and m[6] != sig and listing.key not in m[7]]
+        out = {"band": found, "cat": cat, "podrucje": [m[0] for m in same], "mjesto": None}
+        if jls:
+            place = place_of(self.locator, jls, listing.title, listing.settlement)
+            local = [m[0] for m in same if m[4] == jls and m[5] == place] if place else []
+            if len(local) >= MIN_N:
+                out["mjesto"] = (self.names.get(place, place.title()), local)
+            else:
+                town = [m[0] for m in same if m[4] == jls]
+                if len(town) >= MIN_N:
+                    out["mjesto"] = (_whole(self.locator, jls), town)
+        return out
 
-    def area_short(self, listing: Listing) -> str | None:
-        """Za sažeti redak: "područje −12 %"."""
-        found = self._area_stat(listing)
-        if not found:
+    def market_notes(self, listing: Listing, jls: str) -> list[str]:
+        """Retci za obavijest, npr.
+        "📐 Područje, kuće 100–129 m² (119): prosjek 2.531 €/m² – ovaj 12 % ispod · skuplji od 31 %"
+        "🏘 Njivice, kuće 100–129 m² (12): medijan 2.900 €/m² – ovaj 20 % ispod · skuplji od 18 %"."""
+        peers = self._peers(listing, jls)
+        if not peers:
+            return []
+        ppm = listing.price / listing.area
+        label = band_label(listing.kind, *peers["band"], peers["cat"])
+        lines = []
+        if len(peers["podrucje"]) >= AREA_MIN_N:
+            values = peers["podrucje"]
+            lines.append(f"📐 Područje, {label} ({len(values)}): prosjek {fmt_eur(round(trimmed_mean(values)))}/m² – "
+                         f"{_rel(ppm, trimmed_mean(values))} · skuplji od {share_below(values, round(ppm))} %")
+        if peers["mjesto"]:
+            where, values = peers["mjesto"]
+            med = statistics.median(values)
+            lines.append(f"🏘 {where}, {label} ({len(values)}): medijan {fmt_eur(round(med))}/m² – "
+                         f"{_rel(ppm, med)} · skuplji od {share_below(values, round(ppm))} %")
+        return lines
+
+    def market_short(self, listing: Listing, jls: str) -> str | None:
+        """Za sažeti redak: "skuplji od 31 % područja, 18 % mjesta"."""
+        peers = self._peers(listing, jls)
+        if not peers:
             return None
-        pct = round(found[1] * 100)
-        return "područje ≈ prosjek" if abs(pct) < 3 else f"područje {'+' if pct > 0 else '−'}{abs(pct)} %"
+        ppm = round(listing.price / listing.area)
+        parts = []
+        if len(peers["podrucje"]) >= AREA_MIN_N:
+            parts.append(f"{share_below(peers['podrucje'], ppm)} % područja")
+        if peers["mjesto"]:
+            parts.append(f"{share_below(peers['mjesto'][1], ppm)} % mjesta")
+        return f"skuplji od {', '.join(parts)}" if parts else None
+
+    def describe(self, listing: Listing, jls: str) -> tuple[str | None, str | None, str | None]:
+        """(redak područja 📐, redak naselja 🏘, sažetak). Bez dovoljno oglasa po kriterijima:
+        medijan svih oglasa u naselju (osim za kuće za obnovu – usporedba s useljivima bi zavarala)."""
+        notes = self.market_notes(listing, jls)
+        if notes:
+            return (next((n for n in notes if n.startswith("📐")), None),
+                    next((n for n in notes if n.startswith("🏘")), None), self.market_short(listing, jls))
+        if category(listing.kind, listing.title, listing.extra.get("kategorija")) == RENOVATION:
+            return None, None, None       # medijan svih kuća (i useljivih) bi zavarao
+        return None, self.compare(listing, jls), self.short(listing, jls)
 
     def _stat(self, listing: Listing, jls: str) -> tuple[dict, str] | None:
         if not jls or not _ok(listing.kind, listing.price, listing.area) or _agricultural(listing):

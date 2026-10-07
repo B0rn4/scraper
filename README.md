@@ -42,15 +42,21 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   zaštićenu jezgru.
 - **Naselja:** odluka za svako naselje (prolaz / ⚠ s razlogom: daleko od mora, daleko
   od Rijeke, grad Rijeka / ne stiže) je u `data/naselja_udaljenosti.csv`.
-- **Cijena prema drugim oglasima:** 💰 ispod / 💸 iznad / 📊 oko medijana traženih
-  €/m² u istom naselju (ako ima barem 8 oglasa), inače u gradu/općini.
-- **Prosjek područja (📐):** prosječni €/m² svih oglasa na cijelom području koji
-  odgovaraju kriterijima (nisu odbijeni, cijena i površina u granicama; isti oglas na
-  više portala jednom; viđeni u zadnjih godinu dana), po razredima površine, jer €/m²
-  jako pada s površinom. Kuće: 70–99, 100–129, 130–169, 170–249 i od 250 m²; zemljišta:
-  300–799, 800–1.199, 1.200–2.499 i od 2.500 m² (7. 10.: kuće 3.230 / 2.530 / 2.120 /
-  1.580 / 1.060 €/m², zemljišta 268 / 193 / 103 / 49 €/m²). Prosjek je bez 10 %
-  najjeftinijih i 10 % najskupljih; razred treba barem 10 oglasa.
+- **Cijena prema drugim oglasima (📐 područje, 🏘 naselje):** usporedba s oglasima koji
+  odgovaraju kriterijima (nisu odbijeni, cijena i površina u granicama; viđeni u zadnjih
+  godinu dana; isti oglas na više portala jednom, a sam oglas i njegova kopija se ne
+  broje; očito pogrešni unosi – €/m² izvan razumnog raspona – izbačeni). Uspoređuju se
+  oglasi iste vrste i razreda površine, jer €/m² jako pada s površinom: kuće 70–99,
+  100–129, 130–169, 170–249 i od 250 m²; zemljišta 300–799, 800–1.199, 1.200–2.499 i od
+  2.500 m². Kuće za obnovu, starine, ruševine i nedovršene (Rohbau) su zasebna
+  kategorija, sve veličine zajedno (prepoznaju se u naslovu i opisu; kategorija se pamti
+  u bazi). Redak kaže prosjek područja (bez 10 % najjeftinijih i najskupljih) ili medijan
+  naselja, koliko je oglas iznad ili ispod, i **od koliko posto tih oglasa je skuplji**
+  (točno prebrojano, jednaki se broje upola). Područje treba barem 10 oglasa, naselje 8;
+  kad naselje nema dovoljno, gleda se cijeli grad/općina. Bez dovoljno oglasa po
+  kriterijima ostaje stara usporedba s medijanom svih oglasa u naselju (💰/💸/📊), osim
+  za kuće za obnovu. Stanje 7. 10. (prosjek €/m²): kuće 3.230 / 2.530 / 2.120 / 1.580 /
+  1.060, zemljišta 268 / 193 / 103 / 49.
 - **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, vlasnički list.
 - **Parking (🚗, kuće):** parkirno mjesto ili garaža iz oglasa, ili okućnica od barem
   100 m². „Nema parkinga”, samo javni parking ili parking nije naveden → ⚠.
@@ -59,9 +65,8 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   zadnja upozorenja) stiže odmah u drugoj poruci, kao odgovor na prvu i bez zvuka; 👎 na
   bilo kojoj od njih vrijedi za oglas. Ne stane li samo naslov oglasa ili „nije
   provjereno”, druge poruke nema.
-- **Sažeti redak (📊):** more (zračno), vožnja do Rijeke, cijena prema prosjeku
-  područja („područje −12 %”), medijanu u naselju ili gradu/općini („mjesto −25 %”) i
-  PPV-u, broj upozorenja.
+- **Sažeti redak (📊):** more (zračno), vožnja do Rijeke, „skuplji od 31 % područja,
+  18 % mjesta” (ili „mjesto −25 %” prema medijanu svih oglasa), PPV, broj upozorenja.
 - **Natječaji (📜):** prodaja nekretnina gradova, općina, PGŽ-a i države na našem
   području: sažeti redak, rok, mjesto, a za svaku česticu (do 3) građevinsko područje,
   početna cijena i €/m² prema PPV-u na lokaciji i medijanu traženih. Odluke iz popisa

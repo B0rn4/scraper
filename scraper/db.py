@@ -74,6 +74,8 @@ class State:
         columns = {r[1] for r in self.conn.execute("PRAGMA table_info(listings)")}
         if "settlement" not in columns:  # dodano za prepoznavanje već viđenih oglasa
             self.conn.execute("ALTER TABLE listings ADD COLUMN settlement TEXT")
+        if "category" not in columns:    # kuća za obnovu / nedovršena (usporedba cijena)
+            self.conn.execute("ALTER TABLE listings ADD COLUMN category TEXT")
 
     def close(self) -> None:
         self.conn.commit()
@@ -99,21 +101,24 @@ class State:
         if old is None:
             self.conn.execute(
                 """INSERT INTO listings (key, source, source_id, first_seen, last_seen, title, url, kind,
-                   price, area, jls, status, reasons, near_miss, settlement)
-                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                   price, area, jls, status, reasons, near_miss, settlement, category)
+                   VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
                 (listing.key, listing.source, listing.source_id, now, now, listing.title, listing.url,
                  listing.kind, listing.price, listing.area, decision.jls, decision.status, reasons,
-                 int(decision.near_miss), listing.settlement),
+                 int(decision.near_miss), listing.settlement, listing.extra.get("kategorija") or None),
             )
         else:
             self.conn.execute(
                 # Površina i naselje ostaju ako ih novi dohvat nema (npr. Njuškalo popis bez
                 # površine zemljišta, a stranica oglasa otvorena je samo prvi put).
+                # Kategorija (za obnovu) ostaje kad je ovaj put samo popis bez opisa.
                 """UPDATE listings SET last_seen = ?, title = ?, url = ?, price = ?, area = COALESCE(?, area),
-                   jls = ?, status = ?, reasons = ?, near_miss = ?, settlement = COALESCE(NULLIF(?, ''), settlement)
+                   jls = ?, status = ?, reasons = ?, near_miss = ?, settlement = COALESCE(NULLIF(?, ''), settlement),
+                   category = COALESCE(?, category)
                    WHERE key = ?""",
                 (now, listing.title, listing.url, listing.price, listing.area, decision.jls,
-                 decision.status, reasons, int(decision.near_miss), listing.settlement, listing.key),
+                 decision.status, reasons, int(decision.near_miss), listing.settlement,
+                 listing.extra.get("kategorija") or None, listing.key),
             )
         if old is None or (listing.price is not None and old.get("price") != listing.price):
             self.conn.execute(
@@ -200,7 +205,7 @@ class State:
     def price_rows(self) -> list[dict]:
         """Svi oglasi s cijenom i površinom (medijan traženih cijena, prosjek područja)."""
         rows = self.conn.execute(
-            "SELECT kind, jls, price, area, title, settlement, reasons, status, last_seen FROM listings "
+            "SELECT key, kind, jls, price, area, title, settlement, reasons, status, category, last_seen FROM listings "
             "WHERE price IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
         )
         return [dict(r) for r in rows]
