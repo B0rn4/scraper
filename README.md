@@ -95,7 +95,11 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   pokretanju (do 20 min; noću u 7:00) i ispod poruke se pojavi „🔕 Ne zanima me · makni 👎
   za poništenje”. Maknuta 👎 (i nakon nekoliko dana) vraća poruke. Reakciju Telegram čuva
   do sljedećeg pokretanja; pritisak gumba ne bi (izgubi se ako ga bot ne preuzme odmah).
-- **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
+- **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi. U tjednom
+  izvještaju su i nove odluke o prostornim planovima naših 14 gradova i općina (Službene
+  novine PGŽ-a i Registar prostornih planova Zavoda za prostorno uređenje PGŽ-a, gdje su i
+  gradovi s vlastitim glasilom); kad odluka mijenja uvjete gradnje, ažurira se
+  `data/uvjeti_gradnje.yaml`. Prvo čitanje samo bilježi postojeće odluke.
 - **Nadzor:** GitHub provjerava javlja li se Redmi (mail), a Redmi provjerava radi li
   GitHub (Telegram, ako nije pokrenuo scraper 2 h, od 9 h) – tišina inače izgleda kao
   „nema novih oglasa”.

@@ -501,6 +501,9 @@ bez stotina poruka.
         2 stana GBP do 400 m²). Ograničenja: Matulji i Dobrinj PPU 2008., Omišalj PPU 2011.
         (tablica izmjena 2017. u PDF-u); tablice UPU-a Poljane, Pehlin i UPU 3 Punat nisu u
         tekstu odluka. Za natječaje redak još ne postoji.
+      - (gotovo) Tjedni izvještaj: nove odluke o prostornim planovima (Službene novine PGŽ-a,
+        tekuća i prošla godina; Zavodov registar prostornih planova) – umjesto obnove
+        uvjeta gradnje jednom godišnje (`scraper/planwatch.py`).
       - (na redu) PPV naselja iz svih cjenovnih blokova građevinskog zemljišta stambene i
         mješovite namjene (medijan uz raspon), umjesto pet točaka oko središta.
       - (na redu) Zona zaštite kulturno-povijesne cjeline (A, B, C) u upozorenju, ako je

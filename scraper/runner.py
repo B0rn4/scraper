@@ -12,7 +12,7 @@ from zoneinfo import ZoneInfo
 
 import yaml
 
-from . import dedupe, report, risks, tenders, watch
+from . import dedupe, planwatch, report, risks, tenders, watch
 from .ispu import Ispu, check_land, gp_text, heritage_warning
 from .plans import Plans
 from .prices import PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
@@ -1258,6 +1258,41 @@ class Runner:
         except Exception as exc:  # noqa: BLE001
             self.log(f"Tjedni izvještaj: GREŠKA {type(exc).__name__}: {exc}")
 
+    def _plan_decisions(self) -> "planwatch.Result | None":
+        """Nove odluke o prostornim planovima (Službene novine PGŽ-a, Zavodov registar)."""
+        def get(url: str) -> str:
+            raw = self.http.get(url).content
+            for enc in ("utf-8", "windows-1250"):
+                try:
+                    return raw.decode(enc)
+                except UnicodeDecodeError:
+                    continue
+            return raw.decode("utf-8", "replace")
+
+        state = State(self.db_path)
+        try:
+            return planwatch.check(get, state, self.now.year)
+        except Exception as exc:  # noqa: BLE001 – izvještaj ide i bez ovog dijela
+            self.log(f"Provjera odluka o planovima nije uspjela: {exc}")
+            return None
+        finally:
+            state.close()
+
+    @staticmethod
+    def _plan_section(plans: "planwatch.Result | None") -> str:
+        e = html.escape
+        head = "<h3>Nove odluke o prostornim planovima</h3>"
+        if plans is None:
+            return head + "<p>Provjera nije uspjela.</p>"
+        items = "".join(f"<li>{e(d.jls)}: <a href='{e(d.url)}'>{e(d.title)}</a></li>" for d in plans.new)
+        out = head + (f"<ul>{items}</ul><p>Ako odluka mijenja uvjete gradnje obiteljske kuće, treba "
+                      f"ažurirati data/uvjeti_gradnje.yaml.</p>" if items
+                      else f"<p>Nijedna (praćeno {plans.known} odluka iz Službenih novina PGŽ-a i "
+                           f"Zavodova registra).</p>")
+        if plans.errors:
+            out += "<p>Nije provjereno: " + e("; ".join(plans.errors)) + "</p>"
+        return out
+
     def weekly(self, record: bool = True) -> bool:
         """Tjedni izvještaj mailom. Kad mail ne prođe, pamti se i pokušava ponovno pri
         sljedećim pokretanjima (record=False: poziva ga redovno pokretanje). Naredba
@@ -1313,8 +1348,14 @@ class Runner:
 <h3>Preskočeni kao već viđeni ({len(dups)})</h3><p>Isti oglas na drugom portalu ili ponovno objavljen,
 bez niže cijene.</p><ul>{dl}</ul>
 <h3>Stanje izvora</h3><ul>{hl}</ul>"""
+        plans = self._plan_decisions()
+        body += self._plan_section(plans)
         text = "Tjedni izvještaj scrapera – otvori HTML verziju maila."
         ok = self._email(f"Scraper: tjedni izvještaj {self.now:%d.%m.%Y.}", text, body) is not False
+        if ok and plans:
+            state = State(self.db_path)
+            plans.save(state)
+            state.close()
         self.log("Tjedni izvještaj poslan." if ok else "Tjedni izvještaj NIJE poslan – ponovno pri sljedećem pokretanju.")
         if record:
             state = State(self.db_path)

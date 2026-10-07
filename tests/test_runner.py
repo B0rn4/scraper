@@ -895,6 +895,7 @@ def test_weekly_report_retried_when_mail_fails(tmp_path):
     r = Runner(tmp_path / "s.db", tmp_path, send=False)
     r.email, r.now = mail, datetime(2026, 10, 12, 7, 15, tzinfo=ZoneInfo("Europe/Zagreb"))
     r.stamp = r.now.isoformat(timespec="seconds")
+    r._plan_decisions = lambda: None                            # bez mreže (tests/test_planwatch.py)
     assert r.weekly() is False and "NIJE poslan" in r.log_lines[-1]
     state = State(tmp_path / "s.db")
     assert state.meta_get("tjedni:neposlan") == r.stamp

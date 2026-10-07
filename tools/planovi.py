@@ -25,6 +25,10 @@ from urllib.parse import urljoin, urlparse
 
 import requests
 
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+
+from scraper.planwatch import SN, SN_PLACES  # noqa: E402
+
 UA = {"User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0 Safari/537.36"}
 START = ["https://zavod.pgz.hr/"]
 DOCS = re.compile(r"\.(pdf|docx?|zip)(\?|$)", re.I)
@@ -85,11 +89,6 @@ def popis(out: Path, start: list[str] | None = None) -> None:
     print(f"{len(pages)} stranica, {len(docs)} dokumenata, {len(queue)} neobiđeno")
 
 
-SN = "https://www.sn.pgz.hr/"
-# Šifre gradova i općina na sn.pgz.hr (Službene novine PGŽ-a).
-SN_PLACES = {"Omišalj": "51513", "Krk": "51500", "Punat": "51521", "Baška": "10007", "Malinska-Dubašnica": "51511",
-             "Vrbnik": "51516", "Dobrinj": "51514", "Opatija": "10006", "Matulji": "51211", "Lovran": "51415",
-             "Rijeka": "51000", "Kostrena": "51221", "Kraljevica": "10001", "Crikvenica": "10003"}
 SN_PLAN = re.compile(r"plan\w* uređenja|prostorn\w* plan|urbanističk|pročišćen", re.I)
 
 
