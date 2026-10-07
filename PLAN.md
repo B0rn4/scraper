@@ -451,7 +451,7 @@ bez stotina poruka.
       (nema greške 409); poruka botu čeka 20 minuta, a pritisak koji bot ne preuzme odmah
       izgubi se. Zato redovno pokretanje nakon posla do sljedećeg (:00, :20, :40) čeka
       pritiske; gumb odmah pokaže „Zabilježeno”. Pritisci se čitaju bez pomaka (offset).
-   5. **Testovi:** automatski (sad 169) dopuniti cijelim pokretanjem na spremljenim
+   5. **Testovi:** automatski (sad 168) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj
