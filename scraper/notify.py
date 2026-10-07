@@ -170,37 +170,38 @@ class Telegram:
                 raise
             self._send_plain(text, url)
 
-    def _send_plain(self, text: str, url: str = "") -> None:
+    def _send_plain(self, text: str, url: str = "") -> dict:
         """Telegram je odbio poruku (400: neispravan HTML, gumb ili adresa): isti tekst bez
         oblikovanja i gumba, s adresom u tekstu – da poruka ipak stigne."""
         plain = html.unescape(re.sub(r"<[^>]+>", "", text))
         if url:
             plain += f"\n{url}"
-        self._call("sendMessage", {"chat_id": self.chat_id, "text": plain[:4000], "disable_web_page_preview": "true"})
+        return self._call("sendMessage", {"chat_id": self.chat_id, "text": plain[:4000], "disable_web_page_preview": "true"})
 
-    def send_listing(self, listing: Listing, decision: Decision, headline: str = "") -> None:
+    def send_listing(self, listing: Listing, decision: Decision, headline: str = "") -> int | None:
+        """Šalje oglas; vraća broj poruke (za reakciju 👎, koja nosi samo broj poruke)."""
         text = format_listing(listing, decision, headline)
         markup = listing_markup(listing)
         if listing.image_url:
             try:
-                self._call("sendPhoto", {"chat_id": self.chat_id, "photo": listing.image_url, "caption": text,
-                                         "parse_mode": "HTML", "reply_markup": markup})
-                return
+                return _message_id(self._call("sendPhoto", {"chat_id": self.chat_id, "photo": listing.image_url,
+                                                            "caption": text, "parse_mode": "HTML", "reply_markup": markup}))
             except (RuntimeError, requests.RequestException):
                 pass  # slika se nije dala dohvatiti (ili Telegram nije odgovorio na vrijeme) – pošalji bez nje
         try:
-            self._call("sendMessage", {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML",
-                                       "disable_web_page_preview": "true", "reply_markup": markup})
+            return _message_id(self._call("sendMessage", {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML",
+                                                          "disable_web_page_preview": "true", "reply_markup": markup}))
         except RuntimeError as exc:
             if not _rejected(exc):
                 raise
-            self._send_plain(text, listing.url)
+            return _message_id(self._send_plain(text, listing.url))
 
     # --- gumb "Ne zanima me": pritisci se čitaju pri pokretanju (nema stalnog poslužitelja) ---
 
     def get_updates(self, offset: int | None, wait: int = 0) -> list[dict]:
-        # Sve vrste (prazan popis); obrađuju se samo pritisci, ostalo se broji (dijagnostika).
-        data = {"timeout": str(wait), "allowed_updates": json.dumps([])}
+        # Pritisci, reakcije (👎 = ne zanima me) i poruke botu (samo se broje). Reakcije treba
+        # tražiti izričito – zadani popis ih ne uključuje.
+        data = {"timeout": str(wait), "allowed_updates": json.dumps(["callback_query", "message_reaction", "message"])}
         if offset:
             data["offset"] = str(offset)
         return self._call("getUpdates", data).get("result") or []
@@ -232,6 +233,11 @@ class Telegram:
                        files={"document": (path.name, fh, "text/html")})
 
 
+def _message_id(body) -> int | None:
+    result = (body or {}).get("result") if isinstance(body, dict) else None
+    return result.get("message_id") if isinstance(result, dict) else None
+
+
 def _rejected(exc: Exception) -> bool:
     """Telegram je trajno odbio sadržaj (400), a ne privremeni kvar."""
     return ": 400 " in str(exc)
@@ -248,6 +254,7 @@ def _button(url: str, label: str = "Otvori") -> str:
 
 
 PROBE = "proba"              # callback_data probnog gumba (naredba "gumbi")
+DISLIKE = "👎"                # reakcija na poruku oglasa = "Ne zanima me" (maknuta = poništenje)
 MUTE_PREFIX = "nz:"          # callback_data gumba "Ne zanima me" (Telegram: najviše 64 bajta)
 UNMUTE_PREFIX = "pz:"        # callback_data gumba za poništenje
 MUTE_LABEL = "🔕 Ne zanima me"

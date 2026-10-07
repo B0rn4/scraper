@@ -1259,3 +1259,56 @@ def test_weekly_report_from_first_monday_run_once(tmp_path):
     runner._retry_weekly(state)
     assert [d.day for d in sent] == [12, 20]                     # nadoknađen
     state.close()
+
+
+def test_dislike_reaction_mutes_and_removal_unmutes(tmp_path):
+    """👎 na poruci oglasa = "Ne zanima me" (Telegram je čuva, ne treba čekati), maknuta 👎 =
+    poništenje. Reakcija nosi samo broj poruke; poruka koju je poslao Redmi, a GitHub je još
+    ne zna, čeka sljedeće pokretanje."""
+    class Tg:
+        chat_id = "42"
+        edited = []
+
+        def edit_markup(self, chat, mid, markup):
+            self.edited.append((mid, json.loads(markup)))
+
+        def get_updates(self, offset, wait=0):
+            return []
+
+    def reaction(uid, mid, old, new):
+        return {"update_id": uid, "message_reaction": {
+            "chat": {"id": 42}, "message_id": mid, "user": {"id": 1}, "date": 0,
+            "old_reaction": [{"type": "emoji", "emoji": e} for e in old],
+            "new_reaction": [{"type": "emoji", "emoji": e} for e in new]}}
+
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    r.telegram = Tg()
+    state = State(tmp_path / "s.db")
+    state.upsert(listing(sid="7"), Decision(PASS, jls="Punat"), "t1")
+    state.remember_message(501, "t:7", "t1")
+    r._handle_updates(state, [reaction(1, 501, [], ["👎"])])
+    assert state.muted() == {"t:7"}
+    assert Tg.edited[-1][0] == 501 and Tg.edited[-1][1]["inline_keyboard"][0][0]["url"] == "https://x"
+    r._handle_updates(state, [reaction(2, 501, ["👎"], ["❤"])])          # zamijenjena drugom reakcijom
+    assert state.muted() == set()
+    r._handle_updates(state, [reaction(3, 999, [], ["👎"])])              # poruka još nepoznata
+    assert state.muted() == set() and json.loads(state.meta_get("reakcije:cekaju"))
+    state.remember_message(999, "t:7", "t2")                              # stiglo stanje s Redmija
+    r._record_presses(state, [])
+    assert state.muted() == {"t:7"} and json.loads(state.meta_get("reakcije:cekaju")) == []
+    state.close()
+
+
+def test_send_listing_returns_message_id(monkeypatch):
+    from scraper import notify
+    from scraper.notify import Telegram
+
+    class Resp:
+        status_code, headers, text = 200, {"content-type": "application/json"}, ""
+
+        def json(self):
+            return {"ok": True, "result": {"message_id": 321}}
+
+    monkeypatch.setattr(notify.requests, "post", lambda *a, **k: Resp())
+    monkeypatch.setattr(notify.time, "sleep", lambda s: None)
+    assert Telegram("t", "1").send_listing(listing(), Decision(PASS, jls="Punat")) == 321

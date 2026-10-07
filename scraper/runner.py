@@ -23,8 +23,8 @@ from .filters import effective_price, evaluate
 from .http import Http, blocked
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
-from .notify import (MUTE_PREFIX, PROBE, SOURCE_LABELS, UNMUTE_PREFIX, Email, Telegram, muted_markup, summary_text,
-                     unmuted_markup)
+from .notify import (DISLIKE, MUTE_PREFIX, PROBE, SOURCE_LABELS, UNMUTE_PREFIX, Email, Telegram, muted_markup, summary_text,
+                     safe_url, unmuted_markup)
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
 from .text import fmt_eur, fold
@@ -336,6 +336,19 @@ class Runner:
         """Pritisak gumba: odmah oznaka na gumbu i odgovor Telegramu; vraća (radnja, ključ)
         za zapis u bazu, ili None (probni gumb, drugi razgovor, nešto drugo). Ne dira bazu,
         pa ga smije zvati i nit koja čeka pritiske."""
+        reaction = u.get("message_reaction")
+        if reaction:                         # 👎 na poruci oglasa = "Ne zanima me"; maknuta = poništenje
+            if str((reaction.get("chat") or {}).get("id")) != str(self.telegram.chat_id):
+                return None
+            before = {r.get("emoji") for r in reaction.get("old_reaction") or []}
+            after = {r.get("emoji") for r in reaction.get("new_reaction") or []}
+            self.log(f"Reakcija na poruku {reaction.get('message_id')}: {''.join(sorted(before)) or '-'} → "
+                     f"{''.join(sorted(after)) or '-'}")
+            if DISLIKE in after and DISLIKE not in before:
+                return "mute_msg", str(reaction.get("message_id"))
+            if DISLIKE in before and DISLIKE not in after:
+                return "unmute_msg", str(reaction.get("message_id"))
+            return None
         q = u.get("callback_query") or {}
         message = q.get("message") or {}
         data = q.get("data") or ""
@@ -362,6 +375,7 @@ class Runner:
         return press
 
     def _record_presses(self, state: State, presses: list[tuple[str, str]]) -> None:
+        presses = self._resolve_reactions(state, presses)
         for action, key in presses:
             if action == "mute":
                 state.mute(key, self.stamp, "gumb")
@@ -372,6 +386,46 @@ class Runner:
         if presses:
             self.muted = state.muted(self._github_info().get("utisani"))
             state.conn.commit()
+
+    def _resolve_reactions(self, state: State, presses: list[tuple[str, str]]) -> list[tuple[str, str]]:
+        """Reakcija nosi samo broj poruke: oglas se traži među porukama koje je poslao GitHub
+        ili Redmi. Poruka s Redmija poslana nakon učitavanja njegova stanja još nije poznata –
+        takva reakcija čeka sljedeće pokretanje (najviše 2 dana). Oznaka na gumbu se mijenja
+        kao kod pritiska."""
+        try:
+            waiting = json.loads(state.meta_get("reakcije:cekaju") or "[]")
+        except ValueError:
+            waiting = []
+        oldest = (self.now - timedelta(days=2)).isoformat(timespec="seconds")
+        todo = [(a, m, t) for a, m, t in waiting if t >= oldest]
+        todo += [(a, m, self.stamp) for a, m in presses if a.endswith("_msg")]
+        if not todo and not waiting:
+            return presses
+        other = State(self.redmi_db) if self._redmi_usable() else None
+        out, still = [p for p in presses if not p[0].endswith("_msg")], []
+        try:
+            for action, message_id, at in todo:
+                key = state.message_key(int(message_id)) or (other.message_key(int(message_id)) if other else None)
+                if not key:
+                    still.append((action, message_id, at))
+                    continue
+                kind = action.removesuffix("_msg")
+                out.append((kind, key))
+                row = state.get(key) or (other.get(key) if other else None) or {}
+                links = {"reply_markup": {"inline_keyboard": [[{"text": "Otvori oglas", "url": safe_url(row["url"])}]]}} \
+                    if row.get("url") else {}
+                markup = muted_markup(links, key) if kind == "mute" else unmuted_markup(links, key)
+                try:
+                    self.telegram.edit_markup(self.telegram.chat_id, int(message_id), markup)
+                except Exception as exc:  # noqa: BLE001 – oznaka nije bitna, zapis jest
+                    self.log(f"Telegram (reakcija): {type(exc).__name__}: {exc}")
+        finally:
+            if other:
+                other.close()
+        if still:
+            self.log(f"Reakcija 👎 na poruku koja još nije poznata (Redmi): {len(still)} čeka sljedeće pokretanje")
+        state.meta_set("reakcije:cekaju", json.dumps(still))
+        return out
 
     def _handle_updates(self, state: State, updates: list[dict]) -> None:
         """Pritisci "Ne zanima me" / poništenje: oznaka na gumbu, odgovor Telegramu, zapis u
@@ -921,8 +975,10 @@ class Runner:
         sent, failed, error = 0, [], ""
         for x, d, headline in to_notify:
             try:
-                self.telegram.send_listing(x, d, headline)
+                message_id = self.telegram.send_listing(x, d, headline)
                 state.mark_notified(x.key, x.price, self.stamp)
+                if isinstance(message_id, int):          # za reakciju 👎 (nosi samo broj poruke)
+                    state.remember_message(message_id, x.key, self.stamp)
                 state.conn.commit()          # poslano je poslano, i ako pokretanje odmah stane
                 sent += 1
             except Exception as exc:  # noqa: BLE001

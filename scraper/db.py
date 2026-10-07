@@ -42,6 +42,11 @@ CREATE TABLE IF NOT EXISTS meta (
     key TEXT PRIMARY KEY,
     value TEXT
 );
+CREATE TABLE IF NOT EXISTS messages (
+    message_id INTEGER PRIMARY KEY,
+    key TEXT NOT NULL,
+    at TEXT
+);
 CREATE TABLE IF NOT EXISTS muted (
     key TEXT PRIMARY KEY,
     at TEXT,
@@ -154,6 +159,14 @@ class State:
 
     def mute(self, key: str, at: str, note: str = "") -> None:
         self.conn.execute("INSERT OR IGNORE INTO muted (key, at, note) VALUES (?, ?, ?)", (key, at, note))
+
+    def remember_message(self, message_id: int, key: str, at: str) -> None:
+        """Poruka s oglasom: reakcija 👎 nosi samo broj poruke, ne oglas."""
+        self.conn.execute("INSERT OR REPLACE INTO messages (message_id, key, at) VALUES (?, ?, ?)", (message_id, key, at))
+
+    def message_key(self, message_id: int) -> str | None:
+        row = self.conn.execute("SELECT key FROM messages WHERE message_id = ?", (message_id,)).fetchone()
+        return row[0] if row else None
 
     def unmute(self, key: str) -> None:
         """Poništenje: oglas i isti oglasi na drugim portalima zapamćeni zbog njega – i
