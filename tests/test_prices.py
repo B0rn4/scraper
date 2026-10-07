@@ -74,6 +74,26 @@ def test_saved_file_and_message_line(loc, tmp_path):
     assert text.index("🏛 PPV") < text.index("💰")   # ostvarene cijene prije traženih
 
 
+def test_ppv_median_of_all_blocks(loc, tmp_path):
+    from scraper.prices import Ppv
+
+    data = {"naselja": {"Omišalj": {"njivice": {"zemljiste": [158, 219], "medijan": 188, "blokova": 3}}},
+            "gradovi_opcine": {"Omišalj": {"zemljiste": [70, 219], "medijan": 136, "naselja": 2, "blokova": 4}}}
+    (tmp_path / "ppv.json").write_text(json.dumps(data), encoding="utf-8")
+    ppv = Ppv(loc, tmp_path / "ppv.json")
+    land = dict(source="t", source_id="1", url="u", kind=LAND, area=600)
+    x = Listing(title="Zemljište Njivice", price=130_000, **land)            # 217 €/m²
+    assert ppv.note(x, "Omišalj") == \
+        "🏛 PPV (Njivice, 3 bloka): građevinsko medijan 188 €/m² (raspon 158–219) – oglas 15 % iznad medijana"
+    assert ppv.short(x, "Omišalj") == "PPV +15 %"
+    y = Listing(title="Zemljište Njivice", price=113_000, **land)            # 188 €/m²
+    assert ppv.note(y, "Omišalj").endswith("oglas ≈ medijan") and ppv.short(y, "Omišalj") == "PPV ≈ medijan"
+    assert ppv.note(Listing(title="Zemljište Njivice", price=45_000, **land), "Omišalj").endswith(
+        "oglas 60 % ispod medijana – neobično jeftino, provjeri zašto")
+    assert ppv.note(Listing(title="Zemljište", price=90_000, **land), "Omišalj").startswith(
+        "🏛 PPV (Omišalj – cijela općina, 2 naselja, 4 bloka): građevinsko medijan 136 €/m² (raspon 70–219)")
+
+
 def test_ppv_note(loc, tmp_path):
     from scraper.prices import Ppv
 

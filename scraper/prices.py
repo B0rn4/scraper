@@ -2,8 +2,9 @@
 
 1. Plan približnih vrijednosti (PPV, ISPU): vrijednosti iz ostvarenih prodaja po
    cjenovnim blokovima, tablica po naseljima u data/ppv_naselja.json (izrada:
-   tools/ppv_preuzmi.py + tools/build_ppv.py, jednom godišnje). Postoji za zemljišta i stanove, ne za
-   kuće – za kuće se pokazuje vrijednost stanova slične veličine, kao orijentacija.
+   tools/ppv_preuzmi.py + tools/build_ppv.py, jednom godišnje): za svako naselje medijan i
+   raspon građevinskog zemljišta stambene i mješovite namjene iz svih njegovih blokova.
+   Samo za zemljišta (za kuće PPV ne postoji).
 2. Medijan traženih €/m² iz svih oglasa iste vrste koje smo vidjeli u zadnjih godinu
    dana (bilo koje cijene – i skuplji od granice, jer i oni čine tržište): po naselju
    ako ih ima barem MIN_N, inače po gradu/općini. Isti oglas na više portala broji se
@@ -209,6 +210,37 @@ def land_note(ppm: float, low: float, high: float, where: str, who: str = "oglas
     return f"🏛 PPV ({where}): građevinsko {span} – {rel}"
 
 
+def _blocks(n: int) -> str:
+    if n % 10 == 1 and n % 100 != 11:
+        return f"{n} blok"
+    if n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14):
+        return f"{n} bloka"
+    return f"{n} blokova"
+
+
+def median_short(ppm: float, med: float) -> str:
+    """Za sažeti redak: prema medijanu PPV-a naselja ("PPV +15 %", "PPV ≈ medijan")."""
+    diff = ppm / med - 1
+    if abs(diff) < 0.05:
+        return "PPV ≈ medijan"
+    return f"PPV {'+' if diff > 0 else '−'}{_pct(diff)} %"
+
+
+def median_note(ppm: float, item: dict, where: str, who: str = "oglas") -> str:
+    """"🏛 PPV (Njivice, 3 bloka): građevinsko medijan 188 €/m² (raspon 158–219) – oglas
+    15 % iznad medijana" – medijan svih vrijednosti građevinskog zemljišta u blokovima naselja."""
+    low, high = (round(v) for v in item["zemljiste"])
+    med = round(item["medijan"])
+    diff = ppm / med - 1
+    rel = f"{who} ≈ medijan" if abs(diff) < 0.05 else \
+        f"{who} {_pct(diff)} % {'iznad' if diff > 0 else 'ispod'} medijana"
+    if ppm < low * (1 + ODD):
+        rel += " – neobično jeftino, provjeri zašto"
+    span = "" if low == high else f" (raspon {low:,}–{high:,})".replace(",", ".")
+    count = f", {_blocks(item['blokova'])}" if item.get("blokova") else ""
+    return f"🏛 PPV ({where}{count}): građevinsko medijan {fmt_eur(med)}/m²{span} – {rel}"
+
+
 class Ppv:
     """Plan približnih vrijednosti po naseljima (ostvarene cijene)."""
     def __init__(self, locator, path: Path = PPV_FILE):
@@ -226,6 +258,8 @@ class Ppv:
         item = (self.places.get(jls, {}).get(place) if place else None) or self.towns.get(jls)
         if not item or not item.get("zemljiste"):
             return None
+        if item.get("medijan"):
+            return median_short(listing.price / listing.area, item["medijan"])
         return land_short(listing.price / listing.area, *item["zemljiste"])
 
     def note(self, listing: Listing, jls: str, who: str = "oglas") -> str | None:
@@ -243,6 +277,10 @@ class Ppv:
             return None
         ppm = listing.price / listing.area
         if listing.kind == LAND and item.get("zemljiste"):
+            if item.get("medijan"):
+                n = item.get("naselja") or 0
+                places = f", {n} {'naselje' if n % 10 == 1 and n % 100 != 11 else 'naselja'}" if whole and n else ""
+                return median_note(ppm, item, f"{where}{places}", who)
             low, high = item["zemljiste"]
             return land_note(ppm, low, high, f"{where}{', raspon naselja' if whole else ''}", who)
         return None

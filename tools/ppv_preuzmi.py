@@ -3,9 +3,13 @@ nakon što Ministarstvo objavi novi PPV (stanje 1.1.). Pokreće se na GitHubu (t
 "PPV – godišnje osvježavanje"), a zatim tools/build_ppv.py sažme rezultat u
 data/ppv_naselja.json.
 
-Za svako naselje naših gradova/općina: središte iz GeoNamesa (kojih nema: OSM
-Nominatim) i četiri točke 300 m oko njega – središte zna pasti u šumu ili hotel.
-Za svaku točku ISPU identify sa slojevima najnovijeg PPV-a za zemljišta i stanove.
+Svi cjenovni blokovi PPV-a zemljišta oko naših naselja, ne samo blok na jednoj točki:
+ISPU-ov WMS posrednik (api/v1/gis/wms) propušta GetFeatureInfo na GeoServer Ministarstva
+kad je u LAYERS sloj iz kataloga (s njegovim layerHash), a u QUERY_LAYERS pravi naziv sloja
+na GeoServeru (npr. Cjenovni_blok_PPV_2025 za PPV 1.1.2026.). Upit nad kvadratom od 4 km
+slikom od jednog piksela (BUFFER=0) vrati sve blokove koji ga sijeku, s nazivom bloka,
+gradom/općinom i vrijednostima zemljišta. Kvadrati su oni oko naselja (GeoNames, kojih
+nema: OSM Nominatim) – more i šume između njih se ne traže.
 
   python tools/ppv_preuzmi.py izlaz/naselja_ppv.json.gz"""
 
@@ -33,7 +37,9 @@ HEADERS = {"User-Agent": "scraper-nekretnina-pgz/1.0 (osobni projekt; github.com
 GEONAMES = "https://download.geonames.org/export/dump/HR.zip"
 NOMINATIM = "https://nominatim.openstreetmap.org/search"
 BBOX = (44.85, 14.15, 45.50, 15.10)          # Kvarner: obala i otoci (jug, zapad, sjever, istok)
-OFFSETS = [(0, 0), (300, 0), (-300, 0), (0, 300), (0, -300)]   # metri (istok, sjever)
+TILE = 4000                                  # stranica kvadrata (m)
+AROUND = 2500                                # kvadrati na ovoj udaljenosti od središta naselja
+FEATURE_COUNT = 1000
 DEADLINE = time.monotonic() + 40 * 60
 
 
@@ -104,35 +110,80 @@ def geocode(missing: list[str]) -> list[dict]:
     return rows
 
 
-def ppv_layers(session) -> tuple[str, dict, dict]:
-    """(godina, sloj zemljišta, sloj stanova) najnovijeg PPV-a u katalogu ISPU-a."""
+def ppv_layer(session) -> dict:
+    """Najnoviji PPV zemljišta: sloj iz kataloga ISPU-a (layers, layerHash, servis) i pravi
+    naziv na GeoServeru – najnoviji Cjenovni_blok_PPV_GGGG (vrijednosti iz godine GGGG
+    vrijede od 1.1. sljedeće; provjerava se poljem ppv_datum)."""
     found: list[dict] = []
     Ispu(session=session)._walk(session.get(API + "gis/catalog-izbornik", timeout=60).json(), [], found)
-    by_year: dict[str, dict] = {}
+    by_year = {}
     for la in found:
-        m = re.match(r"PPV 1\.1\.(\d{4})\. – (zemljišta|stanovi/apartmani)", la["label"].get("hr", ""))
+        m = re.match(r"PPV 1\.1\.(\d{4})\. – zemljišta", la["label"].get("hr", ""))
         if m:
-            by_year.setdefault(m.group(1), {})[m.group(2)] = la
-    year = max(y for y, v in by_year.items() if len(v) == 2)
-    pick = by_year[year]
-    clean = {k: {kk: vv for kk, vv in v.items() if not kk.startswith("_")} for k, v in pick.items()}
-    return year, clean["zemljišta"], clean["stanovi/apartmani"]
+            by_year[m.group(1)] = la
+    year = max(by_year)
+    la = by_year[year]
+    caps = session.get(API + "gis/get-capabilities-servis", timeout=120,
+                       params={"servisId": la["serviceId"], "layers": la["layers"], "layerHash": la["hash"]}).text
+    names = re.findall(r"<Name>(Cjenovni_blok_PPV_(\d{4}))</Name>", caps)
+    name = max(names, key=lambda n: n[1])[0]
+    return {"godina": year, "layers": la["layers"], "hash": la["hash"], "servis": la["serviceId"], "geoserver": name}
 
 
-def parse(data) -> list[dict]:
-    """Odgovor identify → po sloju: oznake i vrijednosti (kao u ISPU-u)."""
+def tiles(rows: list[dict]) -> list[tuple[int, int]]:
+    out = set()
+    for row in rows:
+        x, y = to_htrs(row["lat"], row["lon"])
+        for ix in range(int((x - AROUND) // TILE), int((x + AROUND) // TILE) + 1):
+            for iy in range(int((y - AROUND) // TILE), int((y + AROUND) // TILE) + 1):
+                out.add((ix, iy))
+    return sorted(out)
+
+
+def blocks_in(session, layer: dict, box: tuple[float, float, float, float]) -> list[dict]:
+    """Svi blokovi koji sijeku pravokutnik (svojstva, bez geometrije; uz to središte)."""
+    params = {"layerHash": layer["hash"], "serviceId": layer["servis"], "SERVICE": "WMS", "VERSION": "1.1.1",
+              "REQUEST": "GetFeatureInfo", "LAYERS": layer["layers"], "QUERY_LAYERS": layer["geoserver"],
+              "STYLES": "", "SRS": "EPSG:3765", "BBOX": ",".join(f"{v:.0f}" for v in box), "WIDTH": 1, "HEIGHT": 1,
+              "X": 0, "Y": 0, "BUFFER": 0, "INFO_FORMAT": "application/json", "FEATURE_COUNT": FEATURE_COUNT}
+    for attempt in range(3):              # ISPU zna vratiti prolaznu grešku kod brzih upita
+        r = session.get(API + "gis/wms", params=params, headers=ISPU_HEADERS, timeout=120)
+        if r.status_code == 200 and "json" in (r.headers.get("content-type") or ""):
+            break
+        time.sleep(2 * (attempt + 1))
+    else:
+        raise RuntimeError(f"GetFeatureInfo {box}: HTTP {r.status_code} {r.text[:200]}")
     out = []
-    for layer in data if isinstance(data, list) else (data or {}).get("data") or []:
-        for item in layer.get("items") or []:
-            out.append({"sloj": layer.get("catalogId"),
-                        "polja": [[x["label"]["hr"], x["value"]] for x in item.get("items") or []]})
+    for f in r.json().get("features") or []:
+        props = dict(f.get("properties") or {})
+        props["_id"] = f.get("id")
+        ring = ((f.get("geometry") or {}).get("coordinates") or [[]])[0]
+        if ring and isinstance(ring[0], list) and isinstance(ring[0][0], (int, float)):
+            props["_x"] = round(sum(p[0] for p in ring) / len(ring))
+            props["_y"] = round(sum(p[1] for p in ring) / len(ring))
+        out.append(props)
     return out
+
+
+def collect(session, layer: dict, box: tuple[float, float, float, float], found: dict, depth: int = 0) -> int:
+    """Blokovi pravokutnika u found (po id-u); kad odgovor dosegne FEATURE_COUNT, pravokutnik
+    se dijeli na četiri. Vraća broj upita."""
+    items = blocks_in(session, layer, box)
+    time.sleep(0.5)
+    if len(items) >= FEATURE_COUNT and depth < 3:
+        x0, y0, x1, y1 = box
+        mx, my = (x0 + x1) / 2, (y0 + y1) / 2
+        return 1 + sum(collect(session, layer, b, found, depth + 1)
+                       for b in ((x0, y0, mx, my), (mx, y0, x1, my), (x0, my, mx, y1), (mx, my, x1, y1)))
+    for item in items:
+        found[item["_id"]] = item
+    return 1
 
 
 def main():
     out_path = Path(sys.argv[1] if len(sys.argv) > 1 else "ppv-out/naselja_ppv.json.gz")
     out_path.parent.mkdir(parents=True, exist_ok=True)
-    result = {"slojevi": {}, "naselja": [], "sazetak": {}}
+    result = {"sloj": {}, "naselja": [], "blokovi": [], "sazetak": {}}
 
     def save():
         out_path.write_bytes(gzip.compress(json.dumps(result, ensure_ascii=False).encode("utf-8")))
@@ -142,41 +193,34 @@ def main():
         extra = geocode(missing)
         result["sazetak"] = {"geonames": len(rows), "nedostaje": len(missing), "nominatim": len(extra)}
         rows += extra
+        result["naselja"] = rows
         session = cffi.Session(impersonate="chrome")
         session.get("https://ispu.mgipu.hr/", timeout=60)
-        year, land, flats = ppv_layers(session)
-        result["slojevi"] = {"godina": year, "zemljista": land["id"], "stanovi": flats["id"]}
-        print(f"PPV 1.1.{year}.: slojevi {land['id']} (zemljišta), {flats['id']} (stanovi); {len(rows)} naselja", flush=True)
-        for row in rows:
+        layer = ppv_layer(session)
+        result["sloj"] = layer
+        squares = tiles(rows)
+        print(f"PPV 1.1.{layer['godina']}.: {layer['geoserver']}; {len(rows)} naselja, {len(squares)} kvadrata", flush=True)
+        found: dict[str, dict] = {}
+        requests_ = 0
+        for i, (ix, iy) in enumerate(squares):
             if time.monotonic() > DEADLINE:
-                result["sazetak"]["zaustavljeno"] = f"vrijeme, {len(result['naselja'])} od {len(rows)} naselja"
+                result["sazetak"]["zaustavljeno"] = f"vrijeme, {i} od {len(squares)} kvadrata"
                 break
-            x0, y0 = to_htrs(row["lat"], row["lon"])
-            row["tocke"] = []
-            for dx, dy in OFFSETS:
-                body = {"x": x0 + dx, "y": y0 + dy, "scale": 2000, "layers": [land, flats]}
-                for attempt in range(2):     # ISPU zna vratiti prolaznu grešku kod brzih upita
-                    try:
-                        r = session.post(API + "gis/identify", json=body, headers=ISPU_HEADERS, timeout=60)
-                        if r.status_code == 200 or attempt:
-                            row["tocke"].append({"dx": dx, "dy": dy, "status": r.status_code,
-                                                 "slojevi": parse(r.json()) if r.status_code == 200 else []})
-                            break
-                    except Exception as exc:  # noqa: BLE001
-                        if attempt:
-                            row["tocke"].append({"dx": dx, "dy": dy, "error": str(exc)[:200]})
-                    time.sleep(1)
-                time.sleep(0.3)
-            result["naselja"].append(row)
-            if len(result["naselja"]) % 25 == 0:
-                save()
+            requests_ += collect(session, layer, (ix * TILE, iy * TILE, (ix + 1) * TILE, (iy + 1) * TILE), found)
+            if i % 25 == 0:
+                print(f"{i}/{len(squares)} kvadrata, {len(found)} blokova", flush=True)
+        result["blokovi"] = list(found.values())
+        dates = {b.get("ppv_datum") for b in found.values()}
+        result["sazetak"].update(kvadrata=len(squares), upita=requests_, blokova=len(found), datumi=sorted(map(str, dates)))
+        if f"{layer['godina']}0101" not in dates:
+            result["sazetak"]["greska"] = f"sloj {layer['geoserver']} nema PPV 1.1.{layer['godina']}. (datumi: {sorted(map(str, dates))})"
     except Exception:  # noqa: BLE001
         result["sazetak"]["greska"] = traceback.format_exc()[-3000:]
         print(result["sazetak"]["greska"], flush=True)
     save()
     print(json.dumps(result["sazetak"], ensure_ascii=False), flush=True)
     # Nepotpun popis (greška ili isteklo vrijeme) ne smije prepisati postojeću tablicu.
-    if "greska" in result["sazetak"] or "zaustavljeno" in result["sazetak"] or not result["naselja"]:
+    if "greska" in result["sazetak"] or "zaustavljeno" in result["sazetak"] or not result["blokovi"]:
         sys.exit(1)
 
 
