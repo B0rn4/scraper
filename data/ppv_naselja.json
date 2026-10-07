@@ -27,9 +27,9 @@
    ]
   },
   "Dobrinj": {
-   "blokova": 13,
-   "medijan": 112,
-   "naselja": 14,
+   "blokova": 15,
+   "medijan": 107,
+   "naselja": 19,
    "zemljiste": [
     86,
     234
@@ -45,18 +45,18 @@
    ]
   },
   "Kraljevica": {
-   "blokova": 7,
-   "medijan": 69,
-   "naselja": 5,
+   "blokova": 8,
+   "medijan": 71,
+   "naselja": 6,
    "zemljiste": [
     27,
     153
    ]
   },
   "Krk": {
-   "blokova": 10,
-   "medijan": 145,
-   "naselja": 12,
+   "blokova": 11,
+   "medijan": 160,
+   "naselja": 15,
    "zemljiste": [
     75,
     290
@@ -83,7 +83,7 @@
   "Matulji": {
    "blokova": 12,
    "medijan": 56,
-   "naselja": 12,
+   "naselja": 20,
    "zemljiste": [
     34,
     115
@@ -99,11 +99,11 @@
    ]
   },
   "Opatija": {
-   "blokova": 10,
-   "medijan": 149,
-   "naselja": 16,
+   "blokova": 11,
+   "medijan": 131,
+   "naselja": 17,
    "zemljiste": [
-    49,
+    28,
     641
    ]
   },
@@ -126,11 +126,11 @@
    ]
   },
   "Vrbnik": {
-   "blokova": 3,
+   "blokova": 4,
    "medijan": 83,
-   "naselja": 3,
+   "naselja": 4,
    "zemljiste": [
-    65,
+    58,
     243
    ]
   }
@@ -222,6 +222,14 @@
      86
     ]
    },
+   "dolovo": {
+    "blokova": 1,
+    "medijan": 86,
+    "zemljiste": [
+     86,
+     86
+    ]
+   },
    "gabonjin": {
     "blokova": 1,
     "medijan": 88,
@@ -302,12 +310,44 @@
      164
     ]
    },
+   "suzan": {
+    "blokova": 1,
+    "medijan": 107,
+    "zemljiste": [
+     107,
+     107
+    ]
+   },
+   "sv ivan dobrinjski": {
+    "blokova": 1,
+    "medijan": 86,
+    "zemljiste": [
+     86,
+     86
+    ]
+   },
+   "sv vid dobrinjski": {
+    "blokova": 1,
+    "medijan": 86,
+    "zemljiste": [
+     86,
+     86
+    ]
+   },
    "tribulje": {
     "blokova": 1,
     "medijan": 106,
     "zemljiste": [
      106,
      106
+    ]
+   },
+   "zestilac": {
+    "blokova": 1,
+    "medijan": 117,
+    "zemljiste": [
+     117,
+     117
     ]
    },
    "zupanje": {
@@ -458,6 +498,14 @@
    }
   },
   "Kraljevica": {
+   "bakarac": {
+    "blokova": 1,
+    "medijan": 81,
+    "zemljiste": [
+     81,
+     81
+    ]
+   },
    "kraljevica": {
     "blokova": 2,
     "medijan": 112,
@@ -556,6 +604,14 @@
      126
     ]
    },
+   "milohnici": {
+    "blokova": 1,
+    "medijan": 173,
+    "zemljiste": [
+     173,
+     173
+    ]
+   },
    "muraj": {
     "blokova": 1,
     "medijan": 88,
@@ -588,12 +644,28 @@
      75
     ]
    },
+   "skrbcici": {
+    "blokova": 1,
+    "medijan": 173,
+    "zemljiste": [
+     173,
+     173
+    ]
+   },
    "vrh": {
     "blokova": 1,
     "medijan": 94,
     "zemljiste": [
      94,
      94
+    ]
+   },
+   "zgaljici": {
+    "blokova": 1,
+    "medijan": 75,
+    "zemljiste": [
+     75,
+     75
     ]
    }
   },
@@ -778,12 +850,28 @@
    }
   },
   "Matulji": {
+   "brdce": {
+    "blokova": 1,
+    "medijan": 34,
+    "zemljiste": [
+     34,
+     34
+    ]
+   },
    "bregi": {
     "blokova": 1,
     "medijan": 114,
     "zemljiste": [
      114,
      114
+    ]
+   },
+   "bresca": {
+    "blokova": 1,
+    "medijan": 34,
+    "zemljiste": [
+     34,
+     34
     ]
    },
    "jurdani": {
@@ -808,6 +896,22 @@
     "zemljiste": [
      91,
      91
+    ]
+   },
+   "lipa": {
+    "blokova": 1,
+    "medijan": 34,
+    "zemljiste": [
+     34,
+     34
+    ]
+   },
+   "mali brgud": {
+    "blokova": 1,
+    "medijan": 34,
+    "zemljiste": [
+     34,
+     34
     ]
    },
    "matulji": {
@@ -859,6 +963,38 @@
     ]
    },
    "rupa": {
+    "blokova": 1,
+    "medijan": 34,
+    "zemljiste": [
+     34,
+     34
+    ]
+   },
+   "ruzici": {
+    "blokova": 1,
+    "medijan": 54,
+    "zemljiste": [
+     54,
+     54
+    ]
+   },
+   "sapjane": {
+    "blokova": 1,
+    "medijan": 34,
+    "zemljiste": [
+     34,
+     34
+    ]
+   },
+   "veli brgud": {
+    "blokova": 1,
+    "medijan": 34,
+    "zemljiste": [
+     34,
+     34
+    ]
+   },
+   "zaluki": {
     "blokova": 1,
     "medijan": 34,
     "zemljiste": [
@@ -988,6 +1124,14 @@
     "zemljiste": [
      168,
      399
+    ]
+   },
+   "vela ucka": {
+    "blokova": 1,
+    "medijan": 28,
+    "zemljiste": [
+     28,
+     28
     ]
    },
    "veprinac": {
@@ -1402,6 +1546,14 @@
     "zemljiste": [
      83,
      83
+    ]
+   },
+   "kampelje": {
+    "blokova": 1,
+    "medijan": 72,
+    "zemljiste": [
+     58,
+     85
     ]
    },
    "risika": {
