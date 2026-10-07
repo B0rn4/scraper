@@ -1,0 +1,44 @@
+{
+ "vrijeme": "2026-10-07 18:20:04",
+ "python": "3.14.4",
+ "sustav": "Linux-6.17.0-PRoot-Distro-aarch64-with-glibc2.43",
+ "argumenti": [
+  "--spremi",
+  "https://www.njuskalo.hr/nekretnine/matulji-gradevinsko-zemljiste-2500-m2-oglas-49400708",
+  "https://www.njuskalo.hr/nekretnine/opatija-lovran-gradevinski-teren-dozvolom-oglas-41402604",
+  "https://www.njuskalo.hr/nekretnine/otok-krk-grad-krk-gradevinsko-zemljiste-3256-m2-oglas-49783362",
+  "https://www.njuskalo.hr/nekretnine/otok-krk-vrbnik-okolica-gradevinsko-zemljiste-mirnoj-lokaciji-oglas-41403385"
+ ],
+ "njuskalo_oglas_49400708 [playwright]": {
+  "status": 200,
+  "kB": 99,
+  "s": 3.3,
+  "title": "MATULJI - Građevinsko zemljište, 2500 m2",
+  "oglasa": 0,
+  "captcha": false
+ },
+ "njuskalo_oglas_41403385 [playwright]": {
+  "status": 200,
+  "kB": 82,
+  "s": 2.7,
+  "title": "OTOK KRK, VRBNIK (okolica) - Građevinsko zemljište na mirnoj lokaciji",
+  "oglasa": 0,
+  "captcha": false
+ },
+ "njuskalo_oglas_41402604 [playwright]": {
+  "status": 200,
+  "kB": 114,
+  "s": 2.2,
+  "title": "OPATIJA-LOVRAN - građevinski teren za dozvolom",
+  "oglasa": 0,
+  "captcha": false
+ },
+ "njuskalo_oglas_49783362 [playwright]": {
+  "status": 200,
+  "kB": 97,
+  "s": 3.4,
+  "title": "OTOK KRK,GRAD KRK-GRAĐEVINSKO ZEMLJIŠTE 3256 M2",
+  "oglasa": 0,
+  "captcha": false
+ }
+}
