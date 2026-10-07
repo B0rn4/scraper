@@ -1132,7 +1132,7 @@ def test_listener_thread_from_start_and_state_published_before_waiting(tmp_path,
 
     def short_listener(self):
         listener = real_start(self)
-        listener.deadline = real_time.monotonic() + 0.5          # umjesto do :19 / :39 / :59
+        listener.deadline = real_time.monotonic() + 3            # umjesto do :19 / :39 / :59 (nit staje 2 s prije)
         return listener
 
     monkeypatch.setattr(Runner, "_start_listener", short_listener)
