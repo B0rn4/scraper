@@ -3,7 +3,10 @@
 import dataclasses
 import html
 import json
+import os
 import sqlite3
+import subprocess
+import threading
 import time
 import traceback
 from datetime import datetime, timedelta
@@ -159,7 +162,9 @@ class Runner:
             self.log(f"Rezervno pokretanje: glavni okidač radi (zadnje pokretanje {last[11:16]}), ništa se ne radi.")
             state.close()
             return
-        self._read_feedback(state)
+        listener = self._start_listener() if listen else None
+        if not listener:
+            self._read_feedback(state)
         self.muted = state.muted(self._github_info().get("utisani"))
         self._prev_unsent = self._load_unsent(state)
         seen = self._load_seen(state)
@@ -278,16 +283,21 @@ class Runner:
                 self._check_redmi(state)
             if self.device == "redmi":
                 self._check_github(state)
-            if listen:
-                self._listen_buttons(state)
+            if listener:
+                self._record_presses(state, listener.take())
             if self.device == "github":
-                dedupe.export(state, Path(self.db_path).with_name("seen.json.gz"))
-                # Za Redmi: zadnje pokretanje (nadzor GitHuba) i oglasi označeni "Ne zanima me".
-                info = Path(self.db_path).with_name("github.json.tmp")
-                info.write_text(json.dumps({"zadnje_pokretanje": self.stamp, "utisani": sorted(state.muted())},
-                                           ensure_ascii=False), encoding="utf-8")
-                info.replace(info.with_suffix(""))
+                self._export(state)
+            if listener:
+                state.conn.commit()
+                self._publish()
+                listener.join(max(0.0, listener.deadline - time.monotonic()) + 30)
+                self._record_presses(state, listener.take())
+                self._export(state)
+                self.log(f"Čekanje gumba do {listener.until:%H:%M}: pritisaka {listener.clicks}, "
+                         f"grešaka {listener.errors}")
         finally:
+            if listener:
+                listener.stop()
             state.close()
 
     def _read_feedback(self, state: State) -> None:
@@ -321,37 +331,54 @@ class Runner:
                 self.log(f"Telegram (gumbi, provjera): {type(exc).__name__}: {exc}")
         self._handle_updates(state, updates)
 
-    def _handle_updates(self, state: State, updates: list[dict]) -> None:
-        """Pritisci "Ne zanima me" / poništenje: zapis u bazu, oznaka na gumbu, odgovor
-        Telegramu; zatim potvrda (pomak) da se isti više ne vraćaju."""
-        offset = 0
-        for u in updates:
-            offset = max(offset, int(u["update_id"]) + 1)
-            q = u.get("callback_query") or {}
-            message = q.get("message") or {}
-            data = q.get("data") or ""
-            if str((message.get("chat") or {}).get("id")) != str(self.telegram.chat_id):
-                continue
-            if data.startswith(MUTE_PREFIX):
-                key = data[len(MUTE_PREFIX):]
+    def _press(self, u: dict) -> tuple[str, str] | None:
+        """Pritisak gumba: odmah oznaka na gumbu i odgovor Telegramu; vraća (radnja, ključ)
+        za zapis u bazu, ili None (probni gumb, drugi razgovor, nešto drugo). Ne dira bazu,
+        pa ga smije zvati i nit koja čeka pritiske."""
+        q = u.get("callback_query") or {}
+        message = q.get("message") or {}
+        data = q.get("data") or ""
+        if str((message.get("chat") or {}).get("id")) != str(self.telegram.chat_id):
+            return None
+        if data == PROBE:
+            press, markup, answer = None, None, "Stiglo! Gumb radi."
+        elif data.startswith(MUTE_PREFIX):
+            key = data[len(MUTE_PREFIX):]
+            press, markup, answer = ("mute", key), muted_markup(message, key), "Zabilježeno"
+        elif data.startswith(UNMUTE_PREFIX):
+            key = data[len(UNMUTE_PREFIX):]
+            press, markup, answer = ("unmute", key), unmuted_markup(message, key), "Poništeno – poruke opet stižu"
+        else:
+            return None
+        calls = [lambda: self.telegram.answer_callback(q["id"], answer)]
+        if markup:
+            calls.insert(0, lambda: self.telegram.edit_markup(message["chat"]["id"], message["message_id"], markup))
+        for call in calls:
+            try:
+                call()
+            except Exception as exc:  # noqa: BLE001 – stari upit ili poruka: nije bitno
+                self.log(f"Telegram (gumbi): {type(exc).__name__}: {exc}")
+        return press
+
+    def _record_presses(self, state: State, presses: list[tuple[str, str]]) -> None:
+        for action, key in presses:
+            if action == "mute":
                 state.mute(key, self.stamp, "gumb")
-                markup, answer = muted_markup(message, key), "Zabilježeno"
                 self.log(f"Ne zanima me: {key}")
-            elif data.startswith(UNMUTE_PREFIX):
-                key = data[len(UNMUTE_PREFIX):]
-                state.unmute(key)
-                markup, answer = unmuted_markup(message, key), "Poništeno – poruke opet stižu"
-                self.log(f"Ne zanima me poništeno: {key}")
             else:
-                continue
-            for call in (lambda: self.telegram.edit_markup(message["chat"]["id"], message["message_id"], markup),
-                         lambda: self.telegram.answer_callback(q["id"], answer)):
-                try:
-                    call()
-                except Exception as exc:  # noqa: BLE001 – stari upit ili poruka: nije bitno
-                    self.log(f"Telegram (gumbi): {type(exc).__name__}: {exc}")
+                state.unmute(key)
+                self.log(f"Ne zanima me poništeno: {key}")
+        if presses:
+            self.muted = state.muted(self._github_info().get("utisani"))
+            state.conn.commit()
+
+    def _handle_updates(self, state: State, updates: list[dict]) -> None:
+        """Pritisci "Ne zanima me" / poništenje: oznaka na gumbu, odgovor Telegramu, zapis u
+        bazu; zatim potvrda (pomak) da se isti više ne vraćaju."""
         if not updates:
             return
+        self._record_presses(state, [p for u in updates if (p := self._press(u))])
+        offset = max(int(u["update_id"]) for u in updates) + 1
         state.meta_set("telegram:offset", str(offset))
         state.conn.commit()                  # zapisano, pa tek onda potvrđeno Telegramu
         try:
@@ -359,30 +386,41 @@ class Runner:
         except Exception as exc:  # noqa: BLE001 – nepotvrđeni se ponove (isti ishod)
             self.log(f"Telegram (gumbi, potvrda): {type(exc).__name__}: {exc}")
 
-    def _listen_buttons(self, state: State) -> None:
-        """Do minute prije sljedećeg pokretanja (:00, :20, :40) bez prekida se čekaju pritisci
-        gumba. Pritisak koji bot ne preuzme odmah izgubi se (proba 7. 10.: poruka botu čekala
-        je 20 minuta, pritisci nijednom, a dok bot čeka, stižu odmah); gumb tako i odmah
-        pokaže "Zabilježeno"."""
+    def _start_listener(self) -> "ButtonListener | None":
+        """Od početka pokretanja do minute prije sljedećeg (:00, :20, :40) nit bez prekida
+        čeka pritiske gumba. Pritisak koji bot ne preuzme odmah izgubi se (proba 7. 10.: poruka
+        botu čekala je 20 minuta, pritisci nijednom, a dok bot čeka, stižu odmah); gumb tako i
+        odmah pokaže "Zabilježeno". U bazu ih upisuje glavna nit (_record_presses)."""
         if self.device != "github" or not self.telegram or not hasattr(self.telegram, "get_updates"):
-            return
+            return None
         now = datetime.now(self.now.tzinfo)
         slot = now.replace(second=0, microsecond=0) + timedelta(minutes=20 - now.minute % 20)
-        end = time.monotonic() + (slot - now).total_seconds() - LISTEN_MARGIN
-        clicks = errors = 0
-        while time.monotonic() < end - 2:
-            try:
-                updates = self.telegram.get_updates(None, wait=max(1, min(25, int(end - time.monotonic()))))
-            except Exception as exc:  # noqa: BLE001
-                errors += 1
-                if errors <= 3:
-                    self.log(f"Telegram (čekanje gumba): {type(exc).__name__}: {exc}")
-                time.sleep(5)
-                continue
-            if updates:
-                clicks += sum(1 for u in updates if u.get("callback_query"))
-                self._handle_updates(state, updates)
-        self.log(f"Čekanje gumba do {slot - timedelta(seconds=LISTEN_MARGIN):%H:%M}: pritisaka {clicks}, grešaka {errors}")
+        listener = ButtonListener(self, time.monotonic() + (slot - now).total_seconds() - LISTEN_MARGIN,
+                                  slot - timedelta(seconds=LISTEN_MARGIN))
+        listener.start()
+        return listener
+
+    def _publish(self) -> None:
+        """Na GitHubu: stanje na granu state odmah nakon posla, a ne tek nakon čekanja gumba –
+        Redmi u :10 inače radi sa stanjem starim 30 minuta (isti oglas stigne dvaput)."""
+        script = os.environ.get("SCRAPER_OBJAVA")
+        if not script:
+            return
+        try:
+            done = subprocess.run(["bash", script], capture_output=True, text=True, timeout=240)
+            ok, out = done.returncode == 0, (done.stdout + done.stderr).strip()
+        except (OSError, subprocess.SubprocessError) as exc:
+            ok, out = False, str(exc)
+        self.log("Stanje poslano (prije čekanja gumba)." if ok else f"Stanje nije poslano prije čekanja gumba: {out[-300:]}")
+
+    def _export(self, state: State) -> None:
+        """Za Redmi: sažetak viđenih oglasa, zadnje pokretanje (nadzor GitHuba) i oglasi
+        označeni "Ne zanima me"."""
+        dedupe.export(state, Path(self.db_path).with_name("seen.json.gz"))
+        info = Path(self.db_path).with_name("github.json.tmp")
+        info.write_text(json.dumps({"zadnje_pokretanje": self.stamp, "utisani": sorted(state.muted())},
+                                   ensure_ascii=False), encoding="utf-8")
+        info.replace(info.with_suffix(""))
 
     def button_test(self, minutes: int = 4) -> None:
         """Proba gumba (ručno na GitHubu, naredba "gumbi"): nekoliko minuta se bez prekida
@@ -406,11 +444,6 @@ class Runner:
                 q = u.get("callback_query") or {}
                 self.log(f"Proba gumba: ažuriranje {u.get('update_id')}: "
                          f"{next((k for k in u if k != 'update_id'), '?')} {(q.get('data') or '')[:3]}")
-                if q.get("data") == PROBE:
-                    try:
-                        self.telegram.answer_callback(q["id"], "Stiglo! Gumb radi.")
-                    except Exception as exc:  # noqa: BLE001
-                        self.log(f"Proba gumba (odgovor): {type(exc).__name__}: {exc}")
             total += len(updates)
             if updates:
                 self._handle_updates(state, updates)
@@ -1219,3 +1252,50 @@ bez niže cijene.</p><ul>{dl}</ul>
             state.meta_set("tjedni:neposlan", self.stamp)
             state.close()
         return ok
+
+
+class ButtonListener(threading.Thread):
+    """Čeka pritiske gumba (getUpdates s dugim čekanjem) dok glavna nit čita portale i šalje
+    obavijesti. Odmah odgovara Telegramu (gumb pokaže "Zabilježeno"), a pritiske skuplja za
+    zapis u bazu (take) – bazu dira samo glavna nit."""
+
+    def __init__(self, runner: "Runner", deadline: float, until: datetime):
+        super().__init__(daemon=True)
+        self.runner, self.deadline, self.until = runner, deadline, until
+        self.clicks = self.errors = 0
+        self._presses: list[tuple[str, str]] = []
+        self._lock = threading.Lock()
+        self._halt = threading.Event()
+
+    def take(self) -> list[tuple[str, str]]:
+        with self._lock:
+            out, self._presses = self._presses, []
+        return out
+
+    def stop(self) -> None:
+        self._halt.set()
+
+    def run(self) -> None:
+        tg, offset = self.runner.telegram, None
+        while not self._halt.is_set() and time.monotonic() < self.deadline - 2:
+            try:
+                updates = tg.get_updates(offset, wait=max(1, min(25, int(self.deadline - time.monotonic()))))
+            except Exception as exc:  # noqa: BLE001
+                self.errors += 1
+                if self.errors <= 3:
+                    self.runner.log(f"Telegram (čekanje gumba): {type(exc).__name__}: {exc}")
+                self._halt.wait(5)
+                continue
+            for u in updates:
+                offset = max(offset or 0, int(u["update_id"]) + 1)
+                if u.get("callback_query"):
+                    self.clicks += 1
+                press = self.runner._press(u)
+                if press:
+                    with self._lock:
+                        self._presses.append(press)
+        if offset:
+            try:                              # potvrda zadnjih (inače bi se ponovili)
+                tg.get_updates(offset)
+            except Exception:  # noqa: BLE001 – ponove se sljedeći put (isti ishod)
+                pass
