@@ -4,8 +4,11 @@
 Okruženje u kojem se razvija ne dolazi do stranica planova, pa ovo radi GitHub
 (tijek rada "Planovi – preuzimanje"), a rezultat sprema na granu debug (planovi/):
 
-    python tools/planovi.py popis IZLAZ          obiđe zavod.pgz.hr: svi PDF-ovi s nazivima
+    python tools/planovi.py popis IZLAZ [URL…]   obiđe stranice (zadano zavod.pgz.hr): PDF-ovi s nazivima
     python tools/planovi.py preuzmi IZLAZ URL…   preuzme PDF-ove i pretvori ih u tekst
+
+Uz zadane adrese popis prati samo poveznice koje spominju planove (FOCUS), najviše
+MAX_PER_HOST stranica po stranici – stranice gradova imaju i tisuće vijesti.
 """
 
 import hashlib
@@ -27,20 +30,29 @@ DOCS = re.compile(r"\.(pdf|docx?|zip)(\?|$)", re.I)
 SKIP = re.compile(r"\.(jpe?g|png|gif|svg|css|js|ico|xml|rss|mp4|dwg|tiff?)(\?|$)|^mailto:|^tel:|^javascript:", re.I)
 LINK = re.compile(r"<a\b[^>]*?href=[\"']([^\"'#]+)[\"'][^>]*>(.*?)</a>", re.I | re.S)
 MAX_PAGES = 1500
+MAX_PER_HOST = 120
+FOCUS = re.compile(r"prostor|plan|urban|upu|ppu|dpu|gup|odredb|pro[cč]i[sš][cć]|slu[zž]ben|glasnik|novine|dokument"
+                   r"|download|datotek", re.I)
 
 
 def _text(fragment: str) -> str:
     return re.sub(r"\s+", " ", unescape(re.sub(r"<[^>]+>", " ", fragment))).strip()
 
 
-def popis(out: Path) -> None:
-    host = {urlparse(u).netloc for u in START}
-    queue, seen, docs, pages = deque(START), set(START), {}, []
+def popis(out: Path, start: list[str] | None = None) -> None:
+    focus = bool(start)
+    start = start or START
+    host = {urlparse(u).netloc for u in start}
+    per_host: dict[str, int] = {}
+    queue, seen, docs, pages = deque(start), set(start), {}, []
     session = requests.Session()
     session.headers.update(UA)
     deadline = time.monotonic() + 35 * 60
     while queue and len(pages) < MAX_PAGES and time.monotonic() < deadline:
         url = queue.popleft()
+        if focus and per_host.get(urlparse(url).netloc, 0) >= MAX_PER_HOST:
+            continue
+        per_host[urlparse(url).netloc] = per_host.get(urlparse(url).netloc, 0) + 1
         try:
             resp = session.get(url, timeout=30)
         except requests.RequestException as exc:
@@ -59,11 +71,14 @@ def popis(out: Path) -> None:
             if DOCS.search(link):
                 docs.setdefault(link, {"url": link, "tekst": _text(label)[:200], "stranica": url, "naslov": title})
             elif urlparse(link).netloc in host and link not in seen:
+                if focus and not FOCUS.search(f"{link} {_text(label)}"):
+                    continue
                 seen.add(link)
                 queue.append(link)
         time.sleep(0.3)
     out.mkdir(parents=True, exist_ok=True)
-    (out / "popis.json").write_text(json.dumps({"stranice": pages, "dokumenti": list(docs.values()),
+    name = "popis.json" if not focus else f"popis_{len(list(out.glob('popis_*.json'))) + 1}.json"
+    (out / name).write_text(json.dumps({"stranice": pages, "dokumenti": list(docs.values()),
                                                 "neobidjeno": len(queue)}, ensure_ascii=False, indent=1),
                                     encoding="utf-8")
     print(f"{len(pages)} stranica, {len(docs)} dokumenata, {len(queue)} neobiđeno")
@@ -106,6 +121,6 @@ def preuzmi(out: Path, urls: list[str]) -> None:
 if __name__ == "__main__":
     command, target = sys.argv[1], Path(sys.argv[2])
     if command == "popis":
-        popis(target)
+        popis(target, [u for arg in sys.argv[3:] for u in arg.split()])
     else:
         preuzmi(target, [u for arg in sys.argv[3:] for u in arg.split()])
