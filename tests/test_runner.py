@@ -1090,3 +1090,43 @@ def test_button_test_answers_probe_and_records_mute(tmp_path, monkeypatch):
     state.close()
     assert ("q1", "Stiglo! Gumb radi.") in Tg.answers and Tg.probes == [0.002]
     assert "sukoba s drugim čitačem (409) 1" in r.log_lines[-1]
+
+
+def test_listen_buttons_until_next_run(tmp_path, monkeypatch):
+    """Nakon posla se do sljedećeg pokretanja čekaju pritisci; "Ne zanima me" se zapiše."""
+    import scraper.runner as runner_mod
+    from scraper.notify import listing_markup
+
+    clock = [0.0]
+
+    def monotonic():
+        clock[0] += 30
+        return clock[0]
+
+    monkeypatch.setattr(runner_mod.time, "monotonic", monotonic)
+    monkeypatch.setattr(runner_mod.time, "sleep", lambda s: None)
+    x = listing(sid="7")
+    queue = [[{"update_id": 9, "callback_query": {"id": "q", "data": "nz:t:7", "message": {
+        "message_id": 2, "chat": {"id": 42}, "reply_markup": json.loads(listing_markup(x))}}}]]
+
+    class Tg:
+        chat_id = "42"
+        waits = []
+
+        def get_updates(self, offset, wait=0):
+            self.waits.append(wait)
+            return [] if offset or not queue else queue.pop(0)
+
+        def answer_callback(self, *a):
+            pass
+
+        def edit_markup(self, *a):
+            pass
+
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    r.telegram = Tg()
+    state = State(tmp_path / "s.db")
+    r._listen_buttons(state)
+    assert state.muted() == {"t:7"} and "pritisaka 1" in r.log_lines[-1]
+    assert Tg.waits and max(Tg.waits) <= 25
+    state.close()

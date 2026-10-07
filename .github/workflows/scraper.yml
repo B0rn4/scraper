@@ -97,6 +97,9 @@ jobs:
           # GitHubov raspored je samo rezerva: radi tek kad cron-job.org kasni (inače bi se
           # mogao poklopiti s Redmijem u :10/:30/:50).
           if [ "${{ github.event_name }}" = "schedule" ]; then ARGS="$ARGS --rezerva"; fi
+          # Gumb "Ne zanima me": pritisak koji bot ne preuzme odmah izgubi se (proba 7. 10.),
+          # pa redovno pokretanje nakon posla do sljedećeg (:00, :20, :40) čeka pritiske.
+          if [ "$CMD" = "run" ]; then ARGS="$ARGS --slusaj"; fi
           python -m scraper $CMD $ARGS --redmi-db redmi.db
 
       - name: Spremi stanje

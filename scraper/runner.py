@@ -31,6 +31,7 @@ LAND_CHECK_SECONDS = 120   # najdulje trajanje provjera građevinskog područja 
 TENDER_CHECK_SECONDS = 240  # isto za čestice iz natječaja (jednom dnevno)
 RESERVE_MINUTES = 30        # GitHubov raspored radi samo kad cron-job.org kasni ovoliko
 UNSENT_DAYS = 7             # neposlana obavijest (Telegram ne radi) čeka najviše toliko
+LISTEN_MARGIN = 60          # čekanje gumba završava toliko sekundi prije sljedećeg pokretanja
 
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
@@ -136,10 +137,11 @@ class Runner:
 
     # --- naredbe ---
 
-    def run(self, force: bool = False, reserve: bool = False) -> None:
+    def run(self, force: bool = False, reserve: bool = False, listen: bool = False) -> None:
         """Redovno pokretanje (svakih 20 minuta). reserve: GitHubov raspored (rezerva za
         cron-job.org) – radi samo ako je zadnje pokretanje starije od RESERVE_MINUTES, inače
-        bi se mogao poklopiti s Redmijem (isti oglas dvaput)."""
+        bi se mogao poklopiti s Redmijem (isti oglas dvaput). listen: nakon posla se do
+        sljedećeg pokretanja čekaju pritisci gumba (na GitHubu)."""
         if not force and not self.in_active_hours():
             self.log(f"Izvan radnog vremena ({self.now:%H:%M}), ništa se ne radi.")
             return
@@ -276,6 +278,8 @@ class Runner:
                 self._check_redmi(state)
             if self.device == "redmi":
                 self._check_github(state)
+            if listen:
+                self._listen_buttons(state)
             if self.device == "github":
                 dedupe.export(state, Path(self.db_path).with_name("seen.json.gz"))
                 # Za Redmi: zadnje pokretanje (nadzor GitHuba) i oglasi označeni "Ne zanima me".
@@ -354,6 +358,31 @@ class Runner:
             self.telegram.get_updates(offset)
         except Exception as exc:  # noqa: BLE001 – nepotvrđeni se ponove (isti ishod)
             self.log(f"Telegram (gumbi, potvrda): {type(exc).__name__}: {exc}")
+
+    def _listen_buttons(self, state: State) -> None:
+        """Do minute prije sljedećeg pokretanja (:00, :20, :40) bez prekida se čekaju pritisci
+        gumba. Pritisak koji bot ne preuzme odmah izgubi se (proba 7. 10.: poruka botu čekala
+        je 20 minuta, pritisci nijednom, a dok bot čeka, stižu odmah); gumb tako i odmah
+        pokaže "Zabilježeno"."""
+        if self.device != "github" or not self.telegram or not hasattr(self.telegram, "get_updates"):
+            return
+        now = datetime.now(self.now.tzinfo)
+        slot = now.replace(second=0, microsecond=0) + timedelta(minutes=20 - now.minute % 20)
+        end = time.monotonic() + (slot - now).total_seconds() - LISTEN_MARGIN
+        clicks = errors = 0
+        while time.monotonic() < end - 2:
+            try:
+                updates = self.telegram.get_updates(None, wait=max(1, min(25, int(end - time.monotonic()))))
+            except Exception as exc:  # noqa: BLE001
+                errors += 1
+                if errors <= 3:
+                    self.log(f"Telegram (čekanje gumba): {type(exc).__name__}: {exc}")
+                time.sleep(5)
+                continue
+            if updates:
+                clicks += sum(1 for u in updates if u.get("callback_query"))
+                self._handle_updates(state, updates)
+        self.log(f"Čekanje gumba do {slot - timedelta(seconds=LISTEN_MARGIN):%H:%M}: pritisaka {clicks}, grešaka {errors}")
 
     def button_test(self, minutes: int = 4) -> None:
         """Proba gumba (ručno na GitHubu, naredba "gumbi"): nekoliko minuta se bez prekida
