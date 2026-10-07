@@ -151,7 +151,7 @@ def test_runner_tender_message_with_parcels(tmp_path):
         "🗺 k.č. 1234/5 k.o. Njivice (650 m²): u građevinskom području naselja (neizgrađeni dio)",
         "💶 početna cijena 65.000 € · 100 €/m²",
         "🏛 PPV (na lokaciji, blok Njivice - Građevinsko): građevinsko 158–219 €/m² – početna cijena 35 % ispod donje",
-        "📐 Područje, zemljišta 300–799 m² (31): prosjek 231 €/m² – ovaj 57 % ispod · skuplji od 0 %",
+        "📐 Područje, zemljišta 300–799 m² (31): medijan 225 €/m² – ovaj 56 % ispod · skuplji od 0 %",
         "🏘 Njivice, zemljišta 300–799 m² (10): medijan 200 €/m² – ovaj 50 % ispod · skuplji od 0 %"]
 
 

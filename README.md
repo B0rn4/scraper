@@ -59,13 +59,13 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   100–129, 130–169, 170–249 i od 250 m²; zemljišta 300–799, 800–1.199, 1.200–2.499 i od
   2.500 m². Kuće za obnovu, starine, ruševine i nedovršene (Rohbau) su zasebna
   kategorija, sve veličine zajedno (prepoznaju se u naslovu i opisu; kategorija se pamti
-  u bazi). Redak kaže prosjek područja (bez 10 % najjeftinijih i najskupljih) ili medijan
-  naselja, koliko je oglas iznad ili ispod, i **od koliko posto tih oglasa je skuplji**
-  (točno prebrojano, jednaki se broje upola). Područje treba barem 10 oglasa, naselje 8;
-  kad naselje nema dovoljno, gleda se cijeli grad/općina. Bez dovoljno oglasa po
-  kriterijima ostaje stara usporedba s medijanom svih oglasa u naselju (💰/💸/📊), osim
-  za kuće za obnovu. Stanje 7. 10. (prosjek €/m²): kuće 3.230 / 2.530 / 2.120 / 1.580 /
-  1.060, zemljišta 268 / 193 / 103 / 49.
+  u bazi). Druge podjele (novogradnja, okućnica, vrste zemljišta) korisnik ne želi
+  (8. 10.); dvojne kuće i kuće u nizu se ionako odbijaju. Redak kaže medijan (polovica
+  oglasa jeftinija, polovica skuplja; isti pokazatelj za područje i naselje), koliko je
+  oglas iznad ili ispod, i **od koliko posto tih oglasa je skuplji** (točno prebrojano,
+  jednaki se broje upola). Područje treba barem 10 oglasa, naselje 8; kad naselje nema
+  dovoljno, gleda se cijeli grad/općina. Bez dovoljno oglasa po kriterijima ostaje stara
+  usporedba s medijanom svih oglasa u naselju (💰/💸/📊), osim za kuće za obnovu.
 - **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, vlasnički list.
 - **Parking (🚗, kuće):** parkirno mjesto ili garaža iz oglasa, ili okućnica od barem
   100 m². „Nema parkinga”, samo javni parking ili parking nije naveden → ⚠.

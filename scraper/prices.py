@@ -15,7 +15,8 @@
    na cijelom području i u naselju (premalo oglasa: grad/općina). Uspoređuju se oglasi
    iste vrste, kategorije (kuće za obnovu ili nedovršene zasebno) i razreda površine –
    €/m² jako pada s površinom (kuća od 80 m² oko 3.200 €/m², od 300 m² oko 1.000). Uz
-   to prosjek područja (bez 10 % najjeftinijih i najskupljih) i medijan naselja."""
+   to medijan (polovica oglasa je jeftinija, polovica skuplja) – isti pokazatelj za
+   područje i naselje; pogrešno upisane cijene ga ne pomiču."""
 
 import json
 import re
@@ -49,7 +50,6 @@ CHEAP, PRICEY, ODD = -0.15, 0.15, -0.45
 # pa se uspoređuju sve veličine zajedno.
 AREA_BANDS = {HOUSE: (70, 100, 130, 170, 250), LAND: (300, 800, 1200, 2500)}
 AREA_MIN_N = 10
-TRIM = 0.1
 RENOVATION = "obnova"
 
 
@@ -118,13 +118,6 @@ def band_label(kind: str, lo: int, hi: int | None, cat: str = "") -> str:
         return "kuće za obnovu ili nedovršene"
     what = "kuće" if kind == HOUSE else "zemljišta"
     return f"{what} {lo}–{hi - 1} m²" if hi else f"{what} od {lo} m²"
-
-
-def trimmed_mean(values: list[float], part: float = TRIM) -> float:
-    values = sorted(values)
-    cut = int(len(values) * part)
-    kept = values[cut:len(values) - cut] or values
-    return sum(kept) / len(kept)
 
 
 def category(kind: str, title: str = "", stored: str | None = None) -> str:
@@ -305,7 +298,7 @@ class AskingPrices:
 
     def market_notes(self, listing: Listing, jls: str) -> list[str]:
         """Retci za obavijest, npr.
-        "📐 Područje, kuće 100–129 m² (119): prosjek 2.531 €/m² – ovaj 12 % ispod · skuplji od 31 %"
+        "📐 Područje, kuće 100–129 m² (119): medijan 2.480 €/m² – ovaj 12 % ispod · skuplji od 31 %"
         "🏘 Njivice, kuće 100–129 m² (12): medijan 2.900 €/m² – ovaj 20 % ispod · skuplji od 18 %"."""
         peers = self._peers(listing, jls)
         if not peers:
@@ -315,8 +308,9 @@ class AskingPrices:
         lines = []
         if len(peers["podrucje"]) >= AREA_MIN_N:
             values = peers["podrucje"]
-            lines.append(f"📐 Područje, {label} ({len(values)}): prosjek {fmt_eur(round(trimmed_mean(values)))}/m² – "
-                         f"{_rel(ppm, trimmed_mean(values))} · skuplji od {share_below(values, round(ppm))} %")
+            med = statistics.median(values)
+            lines.append(f"📐 Područje, {label} ({len(values)}): medijan {fmt_eur(round(med))}/m² – "
+                         f"{_rel(ppm, med)} · skuplji od {share_below(values, round(ppm))} %")
         if peers["mjesto"]:
             where, values = peers["mjesto"]
             med = statistics.median(values)

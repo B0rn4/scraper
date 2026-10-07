@@ -109,7 +109,7 @@ def test_market_share_by_size_band_only_listings_within_criteria(loc):
     prices = AskingPrices.from_rows(data, loc, NOW, CRITERIA)
     x = Listing(source="t", source_id="1", url="u", title="Kuća Njivice", kind=HOUSE, price=242_000, area=110)
     area, place, short = prices.describe(x, "Omišalj")
-    assert area == "📐 Područje, kuće 100–129 m² (10): prosjek 2.500 €/m² – ovaj 12 % ispod · skuplji od 0 %"
+    assert area == "📐 Područje, kuće 100–129 m² (10): medijan 2.500 €/m² – ovaj 12 % ispod · skuplji od 0 %"
     # Svih 10 je u Njivicama: naselje ima dovoljno oglasa.
     assert place == "🏘 Njivice, kuće 100–129 m² (10): medijan 2.500 €/m² – ovaj 12 % ispod · skuplji od 0 %"
     assert short == "skuplji od 0 % područja, 0 % mjesta"
@@ -133,9 +133,9 @@ def test_market_renovation_compared_separately(loc):
     ruin = Listing(source="t", source_id="1", url="u", title="Stara kamena kuća za obnovu", kind=HOUSE,
                    price=100_000, area=100)
     assert prices.market_notes(ruin, "Omišalj")[0].startswith(
-        "📐 Područje, kuće za obnovu ili nedovršene (10): prosjek 900 €/m² – ovaj 11 % iznad · skuplji od 100 %")
+        "📐 Područje, kuće za obnovu ili nedovršene (10): medijan 900 €/m² – ovaj 11 % iznad · skuplji od 100 %")
     ready = Listing(source="t", source_id="2", url="u", title="Kuća", kind=HOUSE, price=200_000, area=110)
-    assert "(10): prosjek 2.500" in prices.market_notes(ready, "Omišalj")[0]
+    assert "(10): medijan 2.500" in prices.market_notes(ready, "Omišalj")[0]
     # Kategorija iz opisa (spremljena u bazi) vrijedi i kad naslov ništa ne kaže.
     hidden = Listing(source="t", source_id="3", url="u", title="Kuća", kind=HOUSE, price=100_000, area=100,
                      extra={"kategorija": "obnova"})
@@ -156,7 +156,7 @@ def test_market_saved_for_redmi(loc, tmp_path):
     again = AskingPrices.from_file(tmp_path / "cijene.json", loc)
     land = Listing(source="t", source_id="1", url="u", title="Zemljište", kind=LAND, price=150_000, area=600)
     assert again.market_notes(land, "Omišalj")[0].startswith(
-        "📐 Područje, zemljišta 300–799 m² (12): prosjek 200 €/m² – ovaj 25 % iznad · skuplji od 100 %")
+        "📐 Područje, zemljišta 300–799 m² (12): medijan 200 €/m² – ovaj 25 % iznad · skuplji od 100 %")
     farm = Listing(source="t", source_id="2", url="u", title="Poljoprivredno zemljište", kind=LAND, price=15_000,
                    area=600)
     assert again.market_notes(farm, "Omišalj") == []
