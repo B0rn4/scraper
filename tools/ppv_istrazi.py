@@ -86,54 +86,42 @@ def layer_names(xml: str, tag: str) -> list[tuple[str, str]]:
 
 
 def main(out: Path) -> None:
-    """Četvrti krug: pravi nazivi slojeva PPV-a na GeoServeru iza ISPU-ova WMS posrednika i
-    GetFeatureInfo nad cijelim pravokutnikom (jedan piksel) – svi blokovi odjednom."""
+    """Peti krug: posrednik provjerava LAYERS prema layerHash; QUERY_LAYERS s pravim nazivom."""
     out.mkdir(parents=True, exist_ok=True)
     result: dict = {"pokusaji": []}
     ispu = Ispu()
     s = ispu.session
     s.get(SITE, timeout=60)
-    caps = s.get(API + "gis/get-capabilities-servis",
-                 params={"servisId": "9", "layers": "404", "layerHash": "xM5m5ElZUrM"}, timeout=120).text
-    (out / "wms_9_capabilities.xml").write_text(caps, encoding="utf-8")
-    names = layer_names(caps, "Layer")
-    result["wms_slojevi"] = names
-    for host in ("gis2", "gis1", "gis3"):
-        try:
-            r = s.get(f"https://{host}.mgipu.hr/srv1/RGN_MGIPU_Public/wfs",
-                      params={"service": "WFS", "request": "GetCapabilities"}, timeout=120)
-            if r.status_code == 200:
-                (out / "wfs_public_capabilities.xml").write_text(r.text, encoding="utf-8")
-                result["wfs_javni"] = layer_names(r.text, "FeatureType")
-                break
-        except Exception as exc:  # noqa: BLE001
-            result.setdefault("greske", []).append(f"{host}: {exc}")
-    want = [n for n, t in names if re.search(r"ppv|cjenov|zemlji|blok", f"{n} {t}", re.I)]
-    result["kandidati"] = want
     x, y = to_htrs(*POINT)
     box = f"{x - 1500:.0f},{y - 1500:.0f},{x + 1500:.0f},{y + 1500:.0f}"
-    for name in want[:8]:
+    combos = []
+    for lay, lhash in (("404", "xM5m5ElZUrM"), ("222", "C4wheP5ELdY")):
+        for q in ("Cjenovni_blok_PPV_2025", "eNekretnine_MGIPU_Public:Cjenovni_blok_PPV_2025", "Cjenovni_blok",
+                  "Cjenovni_blok_2025", lay):
+            combos.append((lay, lhash, q))
+    for lay, lhash, q in combos:
         for size, xy in ((1, 0), (101, 50)):
-            params = {"layerHash": "xM5m5ElZUrM", "serviceId": "9", "SERVICE": "WMS", "VERSION": "1.1.1",
-                      "REQUEST": "GetFeatureInfo", "LAYERS": name, "QUERY_LAYERS": name, "STYLES": "",
+            params = {"layerHash": lhash, "serviceId": "9", "SERVICE": "WMS", "VERSION": "1.1.1",
+                      "REQUEST": "GetFeatureInfo", "LAYERS": lay, "QUERY_LAYERS": q, "STYLES": "",
                       "SRS": "EPSG:3765", "BBOX": box, "WIDTH": size, "HEIGHT": size, "X": xy, "Y": xy,
                       "INFO_FORMAT": "application/json", "FEATURE_COUNT": 500}
-            p = probe(s, API + "gis/wms", params, f"GetFeatureInfo {name} {size}x{size}")
+            p = {"layers": lay, "query": q, "piksela": size}
             try:
-                data = json.loads(p.get("odgovor_cijeli") or s.get(API + "gis/wms", params=params, timeout=120).text)
-                feats = data.get("features") or []
-                p["znacajki"] = len(feats)
-                p["primjer"] = [f.get("properties") for f in feats[:3]]
-                p["nazivi"] = sorted({str((f.get("properties") or {}).get(k)) for f in feats
-                                      for k in (f.get("properties") or {}) if re.search(r"naziv|blok|name", k, re.I)})[:80]
+                r = s.get(API + "gis/wms", params=params, timeout=120)
+                p.update(status=r.status_code, vrsta=r.headers.get("content-type"), duljina=len(r.content),
+                         odgovor=r.text[:600])
+                if "json" in (r.headers.get("content-type") or "") and r.status_code == 200:
+                    data = r.json()
+                    feats = data.get("features") or []
+                    p["znacajki"] = len(feats)
+                    p["primjer"] = feats[:2]
+                    p["svojstva"] = [f.get("properties") for f in feats[:60]]
             except Exception as exc:  # noqa: BLE001
-                p["json_greska"] = str(exc)[:200]
+                p["greska"] = f"{type(exc).__name__}: {str(exc)[:200]}"
             result["pokusaji"].append(p)
-            time.sleep(1)
-    for p in result["pokusaji"]:
-        print(p.get("napomena"), p.get("status"), p.get("znacajki"), str(p.get("odgovor"))[:200].replace("\n", " "))
-    print("kandidati:", want)
-    (out / "ppv_istrazi4.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
+            print(lay, q, size, p.get("status"), p.get("znacajki"), str(p.get("odgovor"))[:150].replace("\n", " "))
+            time.sleep(0.8)
+    (out / "ppv_istrazi5.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 if __name__ == "__main__":
