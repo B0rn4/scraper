@@ -506,9 +506,10 @@ bez stotina poruka.
         uvjeta gradnje jednom godišnje (`scraper/planwatch.py`).
       - (gotovo) PPV naselja iz svih cjenovnih blokova građevinskog zemljišta stambene i
         mješovite namjene (medijan uz raspon i broj blokova), umjesto pet točaka oko
-        središta. ISPU-ov WMS posrednik propušta GetFeatureInfo na GeoServer (LAYERS = sloj
-        iz kataloga s layerHash, QUERY_LAYERS = Cjenovni_blok_PPV_GGGG); kvadrat od 4 km
-        slikom od jednog piksela vrati sve blokove. Dio godišnjeg osvježavanja.
+        središta. ISPU-ov WMS posrednik propušta zahtjeve na GeoServer (LAYERS = sloj iz
+        kataloga s layerHash); GetMap u obliku KML (kmattr) vrati sve blokove kvadrata od
+        4 km s atributima i obrisima (GetFeatureInfo vraća samo dio). Naselje bez bloka sa
+        svojim imenom dobiva blokove oko središta. 176 naselja. Dio godišnjeg osvježavanja.
       - (na redu) Zona zaštite kulturno-povijesne cjeline (A, B, C) u upozorenju, ako je
         negdje dostupna u digitalnom obliku. Provjereno 7. 10. (`tools/ispu_istrazi.py`):
         slojevi kulturnih dobara u ISPU-u imaju samo naziv, vrstu i broj, bez zone; ni
