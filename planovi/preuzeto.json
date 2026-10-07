@@ -1187,5 +1187,76 @@
   "status": 200,
   "vrsta": "text/html",
   "velicina": 17949
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Crikvenica/2015_02_1079_donosenje.pdf",
+  "datoteka": "308df3bb_2015_02_1079_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1037421,
+  "znakova": 16682
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Crikvenica/2015_03_1080_donosenje.pdf",
+  "datoteka": "c90063d3_2015_03_1080_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1078096,
+  "znakova": 25757
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Crikvenica/2015_05_1157_donosenje.pdf",
+  "datoteka": "2ae725d2_2015_05_1157_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 955351,
+  "znakova": 10757
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Crikvenica/2015_07_1179_donosenje.pdf",
+  "datoteka": "8bbefafe_2015_07_1179_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 931153,
+  "znakova": 8791
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Crikvenica/2015_08_1176_donosenje.pdf",
+  "datoteka": "c387ced6_2015_08_1176_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1512789,
+  "znakova": 84792
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Crikvenica/2015_10_1132_donosenje.pdf",
+  "datoteka": "54f13af4_2015_10_1132_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1018086,
+  "znakova": 26493
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Crikvenica/2017_29_1293_donosenje.pdf",
+  "datoteka": "d5c6fa64_2017_29_1293_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 825287,
+  "znakova": 27398
+ },
+ {
+  "url": "https://www.sn.pgz.hr/download.asp?id=16251",
+  "datoteka": "9451ec24_download",
+  "status": 200,
+  "vrsta": "application/octet-stream; Charset=UTF-8",
+  "velicina": 837554,
+  "znakova": 140375
+ },
+ {
+  "url": "https://zavod.pgz.hr/Home.aspx?pagename=Registarprostornihplanova",
+  "datoteka": "9709a648_Home",
+  "status": 200,
+  "vrsta": "text/html; charset=utf-8",
+  "velicina": 2501369
  }
 ]
