@@ -138,6 +138,14 @@ def test_heritage_from_identify_and_check():
     fake = FakeIspu(info)
     assert not check_land(fake, "Kuća s pogledom na more", 45.0266, 14.5755, True, house=True).heritage and not fake.calls
 
+    # Zemljište: nova gradnja nije zabranjena, ali uz uvjete konzervatora.
+    r = check_land(FakeIspu(info), "Građevinsko zemljište Krk", 45.0266, 14.5755, False)
+    assert r.heritage.endswith("nova gradnja uz uvjete konzervatora (oblik, visina, materijali) (oznaka može biti približna)")
+    arch = parse_identify([_heritage_layer("326", "Zaštićena kulturna dobra", "Arheološka zona Fulfinum", "Z-555",
+                                           "Arheološka baština", "arheološka zona")])
+    assert check_land(FakeIspu(arch), "Zemljište Omišalj", 45.2, 14.55, False).heritage.endswith(
+        "gradnja uz uvjete konzervatora (moguća arheološka istraživanja) (oznaka može biti približna)")
+
 
 def test_runner_heritage_warning(tmp_path):
     from scraper.ispu import Heritage

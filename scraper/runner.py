@@ -762,7 +762,7 @@ class Runner:
             if point and point.gp != "naselja" and not lot.house:
                 warnings.append(f"{lot.label}: prema ISPU-u {gp_text(point)} – provjeri")
             if point and point.heritage:
-                warnings.append(f"{lot.label}: {heritage_warning(point.heritage)}")
+                warnings.append(f"{lot.label}: {heritage_warning(point.heritage, land=not lot.house)}")
             unit = lot.unit_price
             parts = []
             if point and point.land_values:

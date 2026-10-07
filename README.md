@@ -33,7 +33,10 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 - **Kulturna baština (⚠, kuće i zemljišta):** u istom upitu ISPU-u i zaštićena kulturna
   dobra Ministarstva kulture (Z- i P-lista): pojedinačno dobro, kulturno-povijesna
   cjelina (npr. Krk, Vrbnik, Opatija, Bakar, Omišalj, Baška, šire središte Rijeke),
-  arheološka zona → ⚠ „radovi uz uvjete konzervatora”. Kad je oznaka na karti
+  arheološka zona → ⚠ „radovi uz uvjete konzervatora”. Za zemljište ⚠ „nova gradnja uz
+  uvjete konzervatora (oblik, visina, materijali)”: gradnja nije zabranjena, ali traži
+  posebne uvjete i potvrdu projekta konzervatorskog odjela, a koliko su strogi ovisi o
+  zoni zaštite (A, B, C); u arheološkoj zoni moguća su istraživanja prije gradnje. Kad je oznaka na karti
   približna, provjerava se samo cjelina i samo ako opis spominje staru jezgru
   („vjerojatno u …”). Uz to ⚠ kad opis spominje kulturno dobro, konzervatora ili
   zaštićenu jezgru.

@@ -363,12 +363,20 @@ class LandCheck:
     heritage: str = ""             # ⚠ zaštićeno kulturno dobro / cjelina na lokaciji
 
 
-def heritage_warning(items: list[Heritage], caveat: str = "") -> str:
-    """⚠ za zaštićena kulturna dobra na točki: najviše dva, cjeline prve."""
+def heritage_warning(items: list[Heritage], caveat: str = "", land: bool = False) -> str:
+    """⚠ za zaštićena kulturna dobra na točki: najviše dva, cjeline prve. Za zemljište: nova
+    gradnja nije zabranjena, ali traži posebne uvjete i potvrdu projekta konzervatora
+    (ovisno o zoni zaštite: oblik, visina, materijali; u arheološkoj zoni i istraživanja)."""
     if not items:
         return ""
     items = sorted(items, key=lambda h: not h.area)[:2]
-    return "; ".join(h.describe() for h in items) + f" – radovi uz uvjete konzervatora{caveat}"
+    if not land:
+        what = "radovi uz uvjete konzervatora"
+    elif any("arheolo" in f"{h.kind} {h.classification}".lower() for h in items):
+        what = "gradnja uz uvjete konzervatora (moguća arheološka istraživanja)"
+    else:
+        what = "nova gradnja uz uvjete konzervatora (oblik, visina, materijali)"
+    return "; ".join(h.describe() for h in items) + f" – {what}{caveat}"
 
 
 def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, approximate: bool,
@@ -396,11 +404,12 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
             except Exception:  # noqa: BLE001 – samo dodatna provjera
                 areas = []
             if areas:
-                heritage = "vjerojatno " + heritage_warning(areas, " (opis spominje staru jezgru, oznaka na karti je približna)")
+                heritage = "vjerojatno " + heritage_warning(
+                    areas, " (opis spominje staru jezgru, oznaka na karti je približna)", land=not house)
         return LandCheck(f"🗺 Građevinsko područje: nije provjereno – {why}", heritage=heritage)
     caveat = " (oznaka može biti približna)" if where.startswith("oznaci") else ""
     result = _gp_check(info, where, caveat, house, use=info.use.split(") ", 1)[-1].capitalize() if info.use else "")
-    result.heritage = heritage_warning(info.heritage, caveat)
+    result.heritage = heritage_warning(info.heritage, caveat, land=not house)
     if not info.heritage_checked:
         result.line += " (kulturna dobra nisu provjerena – ISPU nije odgovorio)"
     return result
