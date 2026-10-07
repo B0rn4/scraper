@@ -5,8 +5,12 @@ set -u
 cd "$HOME/scraper" || exit 1
 # Iz crona (*/20) 10 minuta kasnije, između pokretanja na GitHubu (:00, :20, :40): tako
 # svaki uređaj prije čitanja ima stanje drugoga i isti oglas ne stigne dvaput.
-# Ručno pokretanje (iz terminala) kreće odmah.
-[ -t 0 ] || sleep "${REDMI_ODGODA:-600}"
+# Ručno pokretanje (iz terminala) kreće odmah. Čeka se po satu, ne jednim "sleep 600":
+# dok Android spava, "sleep" ne broji vrijeme, pa se čekanje produljivalo do 19 minuta.
+if [ ! -t 0 ]; then
+  wake_at=$(( $(date +%s) + ${REDMI_ODGODA:-600} ))
+  while [ "$(date +%s)" -lt "$wake_at" ]; do sleep 10; done
+fi
 exec 9>/tmp/scraper-redmi.lock
 flock -n 9 || exit 0   # prethodno pokretanje još traje
 
