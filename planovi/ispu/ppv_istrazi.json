@@ -1,15 +1,140 @@
 {
+ "runtime": "(()=>{\"use strict\";var e,g={},v={};function r(e){var n=v[e];if(void 0!==n)return n.exports;var t=v[e]={exports:{}};return g[e].call(t.exports,t,t.exports,r),t.exports}r.m=g,e=[],r.O=(n,t,o,i)=>{if(!t){var a=1/0;for(f=0;f<e.length;f++){for(var[t,o,i]=e[f],l=!0,d=0;d<t.length;d++)(!1&i||a>=i)&&Object.keys(r.O).every(p=>r.O[p](t[d]))?t.splice(d--,1):(l=!1,i<a&&(a=i));if(l){e.splice(f--,1);var s=o();void 0!==s&&(n=s)}}return n}i=i||0;for(var f=e.length;f>0&&e[f-1][2]>i;f--)e[f]=e[f-1];e[f]=[t,o,i]},r.n=e=>{var n=e&&e.__esModule?()=>e.default:()=>e;return r.d(n,{a:n}),n},(()=>{var n,e=Object.getPrototypeOf?t=>Object.getPrototypeOf(t):t=>t.__proto__;r.t=function(t,o){if(1&o&&(t=this(t)),8&o||\"object\"==typeof t&&t&&(4&o&&t.__esModule||16&o&&\"function\"==typeof t.then))return t;var i=Object.create(null);r.r(i);var f={};n=n||[null,e({}),e([]),e(e)];for(var a=2&o&&t;\"object\"==typeof a&&!~n.indexOf(a);a=e(a))Object.getOwnPropertyNames(a).forEach(l=>f[l]=()=>t[l]);return f.default=()=>t,r.d(i,f),i}})(),r.d=(e,n)=>{for(var t in n)r.o(n,t)&&!r.o(e,t)&&Object.defineProperty(e,t,{enumerable:!0,get:n[t]})},r.f={},r.e=e=>Promise.all(Object.keys(r.f).reduce((n,t)=>(r.f[t](e,n),n),[])),r.u=e=>e+\".\"+{14:\"c63c6c6b6d44a0eab6c2\",358:\"5889ae610ca85437563a\",374:\"dfb7305bbc86857d4fab\",467:\"6b47028dc338d9080994\",834:\"4096ba837820e4f962d8\",977:\"ded0b001b37316d0d505\"}[e]+\".js\",r.miniCssF=e=>\"styles.e9c496be34fb193a1e8c.css\",r.o=(e,n)=>Object.prototype.hasOwnProperty.call(e,n),(()=>{var e={},n=\"geoportal-web:\";r.l=(t,o,i,f)=>{if(e[t])e[t].push(o);else{var a,l;if(void 0!==i)for(var d=document.getElementsByTagName(\"script\"),s=0;s<d.length;s++){var c=d[s];if(c.getAttribute(\"src\")==t||c.getAttribute(\"data-webpack\")==n+i){a=c;break}}a||(l=!0,(a=document.createElement(\"script\")).charset=\"utf-8\",a.timeout=120,r.nc&&a.setAttribute(\"nonce\",r.nc),a.setAttribute(\"data-webpack\",n+i),a.src=r.tu(t)),e[t]=[o];var u=(_,p)=>{a.onerror=a.onload=null,clearTimeout(b);var y=e[t];if(delete e[t],a.parentNode&&a.parentNode.removeChild(a),y&&y.forEach(h=>h(p)),_)return _(p)},b=setTimeout(u.bind(null,void 0,{type:\"timeout\",target:a}),12e4);a.onerror=u.bind(null,a.onerror),a.onload=u.bind(null,a.onload),l&&document.head.appendChild(a)}}})(),r.r=e=>{\"undefined\"!=typeof Symbol&&Symbol.toStringTag&&Object.defineProperty(e,Symbol.toStringTag,{value:\"Module\"}),Object.defineProperty(e,\"__esModule\",{value:!0})},(()=>{var e;r.tu=n=>(void 0===e&&(e={createScriptURL:t=>t},\"undefined\"!=typeof trustedTypes&&trustedTypes.createPolicy&&(e=trustedTypes.createPolicy(\"angular#bundler\",e))),e.createScriptURL(n))})(),r.p=\"./\",(()=>{var e={666:0};r.f.j=(o,i)=>{var f=r.o(e,o)?e[o]:void 0;if(0!==f)if(f)i.push(f[2]);else if(666!=o){var a=new Promise((c,u)=>f=e[o]=[c,u]);i.push(f[2]=a);var l=r.p+r.u(o),d=new Error;r.l(l,c=>{if(r.o(e,o)&&(0!==(f=e[o])&&(e[o]=void 0),f)){var u=c&&(\"load\"===c.type?\"missing\":c.type),b=c&&c.target&&c.target.src;d.message=\"Loading chunk \"+o+\" failed.\\n(\"+u+\": \"+b+\")\",d.name=\"ChunkLoadError\",d.type=u,d.request=b,f[1](d)}},\"chunk-\"+o,o)}else e[o]=0},r.O.j=o=>0===e[o];var n=(o,i)=>{var d,s,[f,a,l]=i,c=0;for(d in a)r.o(a,d)&&(r.m[d]=a[d]);if(l)var u=l(r);for(o&&o(i);c<f.length;c++)r.o(e,s=f[c])&&e[s]&&e[s][0](),e[f[c]]=0;return r.O(u)},t=self.webpackChunkgeoportal_web=self.webpackChunkgeoportal_web||[];t.forEach(n.bind(null,0)),t.push=n.bind(null,t.push.bind(t))})()})();",
  "skripte": [
   "./runtime.194157a16dc812f93697.js",
   "./polyfills.e9249e2268273499663b.js",
-  "./main.00be0338c829db4222f2.js"
+  "./main.00be0338c829db4222f2.js",
+  "./14.c63c6c6b6d44a0eab6c2.js",
+  "./358.5889ae610ca85437563a.js",
+  "./374.dfb7305bbc86857d4fab.js",
+  "./467.6b47028dc338d9080994.js",
+  "./834.4096ba837820e4f962d8.js",
+  "./977.ded0b001b37316d0d505.js",
+  "./14-es2015.c63c6c6b6d44a0eab6c2.js",
+  "./358-es2015.5889ae610ca85437563a.js",
+  "./374-es2015.dfb7305bbc86857d4fab.js",
+  "./467-es2015.6b47028dc338d9080994.js",
+  "./834-es2015.4096ba837820e4f962d8.js",
+  "./977-es2015.ded0b001b37316d0d505.js"
  ],
  "kontekst": [
-  "r revision number in the eKatalog ISPU ID, the map published here might not be valid.\"},\"search\":{\"inputPlaceholder\":\"Search...\",\"searchFor\":\"Search string:\"},\"identify\":{\"windowTitle\":\"Layer info\",\"notifyTitle\":\"Layer info\",\"notifyNoLayerVisible\":\"No active layers on which this action is enabled.\",\"notifyLayerHidden\":\"Zoom in",
-  "vom prozoru, objavljene karte mo\\u017eda nisu vi\\u0161e va\\u017ee\\u0107e.\"},\"search\":{\"inputPlaceholder\":\"Pretra\\u017ei...\",\"searchFor\":\"Tra\\u017eeni pojam:\"},\"identify\":{\"windowTitle\":\"Info o slojevima\",\"notifyTitle\":\"Info o slojevima\",\"notifyNoLayerVisible\":\"Nije uklju\\u010den niti jedan sloj na kojem je omogu\\u0107ena ova a",
-  "enje izvora.\",\"poveznica\":\"poveznici.\"},\"brownfield\":{\"naslov\":\"Brownfields in the Republic of Croatia\",\"opis\":\"The brownfields dataset accessible through this WFS originates from the Brownfields Register. Data entry is performed by spatial planning institutes of counties and the City of Zagreb. The Register is a web-GIS "
+  "enje izvora.\",\"poveznica\":\"poveznici.\"},\"brownfield\":{\"naslov\":\"Brownfields in the Republic of Croatia\",\"opis\":\"The brownfields dataset accessible through this WFS originates from the Brownfields Register. Data entry is performed by spatial planning institutes of counties and the City of Zagreb. The Register is a web-GIS ",
+  "0:d.params)||void 0===u?void 0:u.layers,hash:null===(C=l.extensionData)||void 0===C?void 0:C.layerHash,label:l.label}});return this.http.post(t.N.geoportalUrl+\"gis/identify\",{x:p,y:D,scale:P,layers:c})}setNewData(p){this.identifyData$.next(p)}}return e.\\u0275fac=function(p){return new(p||e)(a.\\u0275\\u0275inject(y.eN))},e.\\",
+  "etLayerUrl(ue){const Ce=ue.url.split(\" \").join(\"\").split(\",\");return ue.isExternal||Ce.forEach((et,Dt)=>{Ce[Dt]=et.startsWith(\"pp-layer/\")?`${va.N.geoportalUrl}gis/prostorni-plan-${et.split(\"/\").slice(1).join(\"/\")}`:`${va.N.geoportalUrl}gis/${et}`}),Ce}createOlTileLayerAsync(ue){var Ce=this;return(0,i.Z)(function*(){yield ",
+  "ernal||Ce.forEach((et,Dt)=>{Ce[Dt]=et.startsWith(\"pp-layer/\")?`${va.N.geoportalUrl}gis/prostorni-plan-${et.split(\"/\").slice(1).join(\"/\")}`:`${va.N.geoportalUrl}gis/${et}`}),Ce}createOlTileLayerAsync(ue){var Ce=this;return(0,i.Z)(function*(){yield Ce.zone.runOutsideAngular((0,i.Z)(function*(){let et=null,Dt=null;ue.extensio",
+  "urn Ce&&Date.now()-Ce.dateTime<3e5?Ce.value:null}getCapabilitiesAsync(ue,Ce,et,Dt){var wn=this;return(0,i.Z)(function*(){const Rn=null!==ue?ue:Ce,Hn=null!==ue?\"gis/get-capabilities-url\":\"gis/get-capabilities-servis\";let qn=new Ni.x;null!==ue?qn=qn.append(\"url\",ue):(qn=qn.append(\"servisId\",Ce),qn=qn.append(\"layers\",Dt),qn=q",
+  "ime<3e5?Ce.value:null}getCapabilitiesAsync(ue,Ce,et,Dt){var wn=this;return(0,i.Z)(function*(){const Rn=null!==ue?ue:Ce,Hn=null!==ue?\"gis/get-capabilities-url\":\"gis/get-capabilities-servis\";let qn=new Ni.x;null!==ue?qn=qn.append(\"url\",ue):(qn=qn.append(\"servisId\",Ce),qn=qn.append(\"layers\",Dt),qn=qn.append(\"layerHash\",et));c",
+  "ntIndex=E,this.appState.map.setCurrentScaleResolution(this.scales[E],this.resolutions[E])}navigateToFeatureById(E,R,X){const _t=pr.y[R]>-1?`${lr.N.geoportalUrl}gis/prostorni-plan-geom`:`${lr.N.geoportalUrl}gis/search-geom`;let Nt=new xi.x;Nt=Nt.append(\"id\",E.toString()),Nt=Nt.append(\"source\",R.toString()),Nt=Nt.append(\"has",
+  "olution(this.scales[E],this.resolutions[E])}navigateToFeatureById(E,R,X){const _t=pr.y[R]>-1?`${lr.N.geoportalUrl}gis/prostorni-plan-geom`:`${lr.N.geoportalUrl}gis/search-geom`;let Nt=new xi.x;Nt=Nt.append(\"id\",E.toString()),Nt=Nt.append(\"source\",R.toString()),Nt=Nt.append(\"hash\",X.toString()),this.http.get(_t,{params:Nt})",
+  "ibilityToolRefresh())})}getDokument(Ae,ct){ct.stopPropagation(),this.documents[Ae]?this.openDocument(Ae):(this.showLoader=!0,this.http.get(`${he.N.geoportalUrl}gis/data?${Ae}`).subscribe(Ht=>{if(this.showLoader=!1,Ht){const vt=new te.Q(Ht);this.documents[Ae]=vt,this.openDocument(Ae)}},()=>{this.showLoader=!1}))}openDocumen",
+  "ync()}downloadFeatureGML(Ae){var ct=this;return(0,i.Z)(function*(){let Ht=new xe.x;Ht=Ht.append(\"featureId\",Ae);const vt=yield ct.http.get(`${he.N.geoportalUrl}gis/feature-download`,{params:Ht,responseType:\"arraybuffer\"}).toPromise(),_n=6e4*(new Date).getTimezoneOffset(),Mt=new Date(Date.now()-_n).toISOString().slice(0,-1)",
+  "tp=Ae,this.showLoader=!1}ngOnInit(){}saveToPdfAsync(){var Ae=this;return(0,i.Z)(function*(){try{Ae.showLoader=!0;const ct=yield Ae.http.post(he.N.geoportalUrl+\"gis/prostorni-plan-odredba/download\",{id:Ae.id,infoHash:Ae.infoHash},{observe:\"response\",responseType:\"arraybuffer\"}).toPromise();if(ct){Ae.showLoader=!1;let Ht=ct.",
+  "fo_en\":\"upute\"===ct?Ht=\"upute_en\":\"upute_reg\"===ct||\"pristupacnost\"===ct&&(Ht=\"pristupacnost_en\"));const _n=this.tabData[Ae];this.http.get(`${he.N.geoportalUrl}gis/data?type=${Ht}`).subscribe(Mt=>{const Xt=new te.Q(Mt);Xt.title=\"\",this.showLoader-=1,_n.isFetched=!0,_n.documents=[Xt]},Mt=>{_n.isFetched=!0,this.showLoader-=1",
+  "translate.currentLang);const vt=this.id.toString().toLowerCase().startsWith(\"pp\")||this.id.toString().toLowerCase().startsWith(\"dokument\")?`${he.N.geoportalUrl}gis/prostorni-plan-poveznica`:`${he.N.geoportalUrl}gis/catalog-poveznica`;this.http.get(vt,{params:Ht}).subscribe(_n=>{this.showLoader-=1,this.tabData[Ae].isFetched",
+  "void 0===et.hidpi||et.hidpi,Ce.image_=null,Ce.imageSize_=[0,0],Ce.renderedRevision_=0,Ce.ratio_=void 0!==et.ratio?et.ratio:1.5,Ce}return dt(Ne,Yt),Ne.prototype.getFeatureInfoUrl=function(ue,Ce,et,Dt){if(void 0!==this.url_){var wn=(0,h.U2)(et),Rn=this.getProjection();Rn&&Rn!==wn&&(Ce=ce(Rn,wn,ue,Ce),ue=(0,h.vs)(ue,wn,Rn));var Hn=(0,l",
+  "=et.serverType,Ce.hidpi_=void 0===et.hidpi||et.hidpi,Ce.tmpExtent_=(0,l.lJ)(),Ce.updateV13_(),Ce.setKey(Ce.getKeyForParams_()),Ce}return it(Ne,Yt),Ne.prototype.getFeatureInfoUrl=function(ue,Ce,et,Dt){var wn=(0,h.U2)(et),Rn=this.getProjection(),Hn=this.getTileGrid();Hn||(Hn=this.getTileGridForProjection(wn));var qn=Hn.getZForResoluti",
+  "n=(0,h.U2)(et),Rn=this.getProjection();Rn&&Rn!==wn&&(Ce=ce(Rn,wn,ue,Ce),ue=(0,h.vs)(ue,wn,Rn));var Hn=(0,l.p8)(ue,Ce,0,at),qn={SERVICE:\"WMS\",VERSION:m,REQUEST:\"GetFeatureInfo\",FORMAT:\"image/png\",TRANSPARENT:!0,QUERY_LAYERS:this.params_.LAYERS};(0,g.f0)(qn,this.params_,Dt);var vi=Math.floor((ue[0]-Hn[0])/Ce),wi=Math.floor((Hn[3]-ue[1",
+  ",this.tmpSize),Bi=(0,l.f3)(Bi,wi*xi,Bi)),Rn&&Rn!==wn&&(wi=ce(Rn,wn,ue,wi),Bi=(0,h.$A)(Bi,wn,Rn),ue=(0,h.vs)(ue,wn,Rn));var lr={SERVICE:\"WMS\",VERSION:m,REQUEST:\"GetFeatureInfo\",FORMAT:\"image/png\",TRANSPARENT:!0,QUERY_LAYERS:this.params_.LAYERS};(0,g.f0)(lr,this.params_,Dt);var pr=Math.floor((ue[0]-Bi[0])/wi),rr=Math.floor((Bi[3]-ue[1",
+  "oundLongitude:(0,t.Pr)(a.fy),southBoundLatitude:(0,t.Pr)(a.fy),northBoundLatitude:(0,t.Pr)(a.fy)}),S=(0,t.C5)(e,{GetCapabilities:(0,t.Pr)(Y),GetMap:(0,t.Pr)(Y),GetFeatureInfo:(0,t.Pr)(Y)}),_=(0,t.C5)(e,{Format:(0,t.ke)(a.s2),DCPType:(0,t.ke)(function(Le,Ft){return(0,t.O)({},b,Le,Ft)})}),b=(0,t.C5)(e,{HTTP:(0,t.Pr)(function(Le,Ft){re",
+  "Number.isInteger(ue.extensionData.zIndex)?ue.extensionData.zIndex:0,minResolution:wn.min,maxResolution:wn.max,preload:\"bing\"===ue.extensionData.type?1/0:0};if(\"wfs\"===ue.extensionData.type?(et=new kr.Z({minResolution:wn.min,maxResolution:wn.max,zIndex:Number.isInteger(ue.extensionData.zIndex)?ue.extensionData.zIndex:0}),e",
+  "6Proj().slice(0,2),extent:Ce.mapConfigService.maxDisplayExtentForHTRS96Proj().slice(),resolutions:Ce.mapConfigService.getMapResolutions().reverse()}));else if(\"wfs\"===ue.extensionData.type){const Hn=Ce.getLayerUrl(ue.extensionData)[0],qn=ue.extensionData.params.layers,vi=!!ue.extensionData.isExternal;Dt=new sr.Z({format:n",
+  "(ue.extensionData)[0],qn=ue.extensionData.params.layers,vi=!!ue.extensionData.isExternal;Dt=new sr.Z({format:new Vr.Z,loader:(wi,Bi,zi,xi,lr)=>{const pr=`${Hn}/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=${qn}&outputFormat=application/json&srsname=EPSG:3765&bbox=`+wi.join(\",\")+\",EPSG:3765\";Ca.vectorSourceLoa",
+  "7),t.\\u0275\\u0275listener(\"click\",function(Ht){t.\\u0275\\u0275restoreView(Ae);const vt=t.\\u0275\\u0275nextContext().$implicit;return t.\\u0275\\u0275nextContext(3).wfsGetMoreInfo(vt.viseOPodacima,Ht)}),t.\\u0275\\u0275text(1),t.\\u0275\\u0275pipe(2,\"translate\"),t.\\u0275\\u0275elementEnd()}if(2&it){const Ae=t.\\u0275\\u0275nextContex",
+  "275\\u0275advance(3),t.\\u0275\\u0275textInterpolate1(\" \",t.\\u0275\\u0275pipeBind1(14,18,Ae.opis),\" \"),t.\\u0275\\u0275advance(2),t.\\u0275\\u0275property(\"ngIf\",\"info_wfs\"===ct.tip&&null!==Ae.viseOPodacima),t.\\u0275\\u0275advance(1),t.\\u0275\\u0275property(\"ngIf\",\"info_wfs\"===ct.tip&&null!==Ae.poveznica),t.\\u0275\\u0275advance(3),t",
+  "\\u0275\\u0275advance(2),t.\\u0275\\u0275property(\"ngIf\",\"info_wfs\"===ct.tip&&null!==Ae.viseOPodacima),t.\\u0275\\u0275advance(1),t.\\u0275\\u0275property(\"ngIf\",\"info_wfs\"===ct.tip&&null!==Ae.poveznica),t.\\u0275\\u0275advance(3),t.\\u0275\\u0275textInterpolate(t.\\u0275\\u0275pipeBind1(20,20,\"nippWfs.projekcija\")),t.\\u0275\\u0275advan",
+  "terpolate(Ae.projekcija),t.\\u0275\\u0275advance(1),t.\\u0275\\u0275property(\"ngIf\",0!==Ae.url.length),t.\\u0275\\u0275advance(1),t.\\u0275\\u0275property(\"ngIf\",\"info_wfs\"===ct.tip),t.\\u0275\\u0275advance(2),t.\\u0275\\u0275property(\"matRippleCentered\",!0),t.\\u0275\\u0275advance(1),t.\\u0275\\u0275textInterpolate1(\" \",Ae.expanded?t.\\u",
+  "umentWindow=new t.EventEmitter}ngOnInit(){this.allData=[{naziv:\"Mre\\u017ene usluge (WMS)\",tip:\"info_wms\",poruke:[]},{naziv:\"Mre\\u017ene usluge (WFS)\",tip:\"info_wfs\",poruke:[{naslov:\"nippWfs.gradjevinskaPodrucja.naslov\",opis:\"nippWfs.gradjevinskaPodrucja.opis\",projekcija:\"HTRS96/TM\",pristupUslizi:\"nippWfs.gradjevinskaPodru",
+  "ekcija:\"HTRS96/TM\",pristupUslizi:\"nippWfs.geohazardi.pristupUslizi\",pristupUsluziMail:null,viseOPodacima:null,url:[\"https://gis1.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis2.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis3.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"],povezni",
+  "di.pristupUslizi\",pristupUsluziMail:null,viseOPodacima:null,url:[\"https://gis1.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis2.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis3.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"],poveznica:\"nippWfs.geohazardi.poveznica\"},{naslov:\"nippWf",
+  "cima:null,url:[\"https://gis1.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis2.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis3.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"],poveznica:\"nippWfs.geohazardi.poveznica\"},{naslov:\"nippWfs.brownfield.naslov\",opis:\"nippWfs.brownfield.opis",
+  "PU_Public/wfs\",\"https://gis2.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis3.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\",\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"],poveznica:\"nippWfs.geohazardi.poveznica\"},{naslov:\"nippWfs.brownfield.naslov\",opis:\"nippWfs.brownfield.opis\",projekcija:\"HTRS96/TM\",pristupUslizi:\"nippWfs.br",
+  "nData)[0],qn=ue.extensionData.params.layers,vi=!!ue.extensionData.isExternal;Dt=new sr.Z({format:new Vr.Z,loader:(wi,Bi,zi,xi,lr)=>{const pr=`${Hn}/wfs?service=WFS&version=1.1.0&request=GetFeature&typename=${qn}&outputFormat=application/json&srsname=EPSG:3765&bbox=`+wi.join(\",\")+\",EPSG:3765\";Ca.vectorSourceLoadFunction(pr",
+  "ull,this.openDocumentWindow=new t.EventEmitter}ngOnInit(){this.allData=[{naziv:\"Mre\\u017ene usluge (WMS)\",tip:\"info_wms\",poruke:[]},{naziv:\"Mre\\u017ene usluge (WFS)\",tip:\"info_wfs\",poruke:[{naslov:\"nippWfs.gradjevinskaPodrucja.naslov\",opis:\"nippWfs.gradjevinskaPodrucja.opis\",projekcija:\"HTRS96/TM\",pristupUslizi:\"nippWfs.g",
+  ",et,Dt,wn){if((0,ht.h)(void 0!==this.url_,9),wn[this.v13_?\"CRS\":\"SRS\"]=Dt.getCode(),\"STYLES\"in this.params_||(wn.STYLES=\"\"),1!=et)switch(this.serverType_){case\"geoserver\":var Rn=90*et+.5|0;\"FORMAT_OPTIONS\"in wn?wn.FORMAT_OPTIONS+=\";dpi:\"+Rn:wn.FORMAT_OPTIONS=\"dpi:\"+Rn;break;case\"mapserver\":wn.MAP_RESOLUTION=90*et;break;case\"car",
+  "rls;if(Hn){if(Rn.WIDTH=Ce[0],Rn.HEIGHT=Ce[1],Rn[this.v13_?\"CRS\":\"SRS\"]=wn.getCode(),\"STYLES\"in this.params_||(Rn.STYLES=\"\"),1!=Dt)switch(this.serverType_){case\"geoserver\":var qn=90*Dt+.5|0;\"FORMAT_OPTIONS\"in Rn?Rn.FORMAT_OPTIONS+=\";dpi:\"+qn:Rn.FORMAT_OPTIONS=\"dpi:\"+qn;break;case\"mapserver\":Rn.MAP_RESOLUTION=90*Dt;break;case\"car",
+  "ensionData.layerHash,serviceId:ue.extensionData.layerHash?ue.extensionData.serviceId:null},crossOrigin:Ce.resolveCrossOriginParam(ue.extensionData),serverType:\"geoserver\"}),ue.extensionData.isExternal||Dt.setImageLoadFunction(Ca.imageTileLoadFunction);else if([\"wms\",\"gwc\"].indexOf(ue.extensionData.type)>-1)ue.extensionData.exte",
+  "t).pipe((0,Se.K)(()=>(0,A.of)([])),(0,U.b)(()=>this.koLoading=!1)))))}getKOList(t){let o=new w.x;return o=o.append(\"input\",t),this.http.get(`${g.N.geoportalUrl}gis/search-kat-opcina`,{params:o}).pipe((0,ye.U)(a=>a.map(i=>new Ve(i.maticniBroj,i.labela))))}addToList(t){this.dataSource.push(t),this.kcTableEl.renderRows()}remo",
+  "n;this.findKcDisabled=!0,this.showLoader.emit(!0);let a=new w.x;a=a.append(\"labela\",o),a=a.append(\"maticniBroj\",t.value.ko.mbr),this.http.get(g.N.geoportalUrl+\"gis/info-lokacija-kat-cestica\",{params:a}).subscribe(i=>{this.addToList({koMbr:t.value.ko.mbr,koLabel:t.value.ko.naziv,kcLabel:o,wkt:i,id:Date.now()});const s=this.",
+  "etapodaciGetInProgres=!1}set getData(t){t&&this.getPPData()}ngOnInit(){this.getPPData()}getPPData(){this.showLoader.emit(!0),this.http.post(`${g.N.geoportalUrl}gis/info-lokacija-prostorni-plan-extent-wkt`,{geom:this.geom,hash:this.hash,status:this.ppType}).subscribe(t=>{const o=this.tabData.find(a=>a.ppType===this.ppType);",
+  "s.translate.currentLang;if(this.infoData.pdf[t])this.showPdf(t);else{this.showLoader=!0;let o=new w.x;o=o.append(\"language\",t),this.http.post(g.N.geoportalUrl+\"gis/info-lokacija-print\",{geom:this.infoData.obuhvat.geom,hash:this.infoData.obuhvat.hash,isPoint:this.infoData.odabranoPodrucjeIsPoint},{params:o,responseType:\"arr",
+  "aAsync(),i))return new Promise((s,c)=>{a.showLoader=!0;const d=new FormData;d.append(\"geom\",t),d.append(\"g-recaptcha-response\",i),a.http.post(g.N.geoportalUrl+\"gis/info-lokacija-obuhvat\",d).subscribe(m=>{a.odabirPodrucjaKcPretragom=!1,a.infoData.obuhvat={geom:m.geom,hash:m.hash},o&&a.getOdabranoPodrucje(),a.showLoader=!1,s",
+  ")})}),this.changeInfoType(0,0,!1)}getCestice(t,o){return this.showLoader=!0,this.infoLokGeomSource.clear(),new Promise((a,i)=>{this.http.post(g.N.geoportalUrl+\"gis/\"+t,{geom:this.infoData.obuhvat.geom,hash:this.infoData.obuhvat.hash}).subscribe(s=>{this.infoData[o]=[],s.forEach(c=>{this.infoData[o].push({wkt:c.geom,koNaziv",
+  "ent();this.mapService.navigateToExtent(o),setTimeout(()=>{this.infoLokHighlightFeature(t)},750)}getPPUvid(){this.showLoader=!0,this.http.post(g.N.geoportalUrl+\"gis/info-lokacija-nadlezni-odjel\",{geom:this.infoData.obuhvat.geom,hash:this.infoData.obuhvat.hash}).subscribe(t=>{this.infoData.planoviUvid={nadlezniUredi:[]},this",
+  ",this.showLoader=!1},t=>{this.showLoader=!1,403==t.status&&this.ponoviDohvatPostojecegObuhvata()})}getRPJ(){this.showLoader=!0,this.http.post(g.N.geoportalUrl+\"gis/info-lokacija-prostorne-jedinice\",{geom:this.infoData.obuhvat.geom,hash:this.infoData.obuhvat.hash}).subscribe(t=>{this.infoData.registarPJ=[],t.forEach(o=>this",
+  "t?\"Settlement\":\"Naselje\"),a}getDozvola(t){this.showLoader=!0;const o=\"gradjevinaObuhvat\"===t?\"dozvoleObuhvat\":\"dozvoleCestica\";this.http.post(g.N.geoportalUrl+\"gis/info-lokacija-\"+(\"gradjevinaObuhvat\"===t?\"dozvole-obuhvat\":\"dozvole-cestica\"),{geom:this.infoData.obuhvat.geom,hash:this.infoData.obuhvat.hash}).subscribe(i=>{t",
+  "tureById(t,o,a)}downloadFeatureGML(t){var o=this;return(0,T.Z)(function*(){let a=new w.x;a=a.append(\"featureId\",t);const i=yield o.http.get(`${g.N.geoportalUrl}gis/feature-download`,{params:a,responseType:\"arraybuffer\"}).toPromise(),s=6e4*(new Date).getTimezoneOffset(),c=new Date(Date.now()-s).toISOString().slice(0,-1),d=c",
+  "type:\"text/plain;charset=utf-8\"});(0,R.saveAs)(v,\"Geoportal-geom-export-\"+d+\"-\"+f+\".gml\")})()}getPojmovnik(){this.showLoader=!0,this.http.get(g.N.geoportalUrl+\"gis/data?type=pojmovnik_prostornog_uredjenja\").subscribe(t=>{this.infoData.pojmovnikPdfSrc=re.e.base64ToArrayBuffer(t.source),this.showLoader=!1},()=>this.showLoade"
  ],
- "adrese": [],
+ "adrese": [
+  "${u.N.geoportalUrl}satelit/wms",
+  "GetFeatureInfo",
+  "WMS",
+  "WMTS",
+  "geoserver",
+  "http://www.opengis.net/ows/1.1",
+  "http://www.opengis.net/wms",
+  "http://www.opengis.net/wmts/1.0",
+  "https://brownfield.mpgi.hr/ows_public/wfs",
+  "info_wms",
+  "wms",
+  "wms-url-form-container",
+  "wmts"
+ ],
+ "url_ovi": [
+  "http://a",
+  "http://a/c%20d?a=1&c=3",
+  "http://earth.google.com/kml/2.0",
+  "http://earth.google.com/kml/2.1",
+  "http://earth.google.com/kml/2.2",
+  "http://example.com",
+  "http://jspdf.default.namespaceuri/",
+  "http://schemas.opengis.net/gml/2.1.2/feature.xsd",
+  "http://schemas.opengis.net/gml/3.1.1/profiles/gmlsfProfile/1.0.0/gmlsf.xsd",
+  "http://schemas.opengis.net/gml/3.2.1/gml.xsd",
+  "http://www.apis-it.hr",
+  "http://www.google.com/kml/ext/2.2",
+  "http://www.opengis.net/gml",
+  "http://www.opengis.net/gml/3.2",
+  "http://www.opengis.net/gml/srs/epsg.xml",
+  "http://www.opengis.net/kml/2.2",
+  "http://www.opengis.net/ows/1.1",
+  "http://www.opengis.net/wms",
+  "http://www.opengis.net/wmts/1.0",
+  "http://www.w3.org/1998/Math/MathML",
+  "http://www.w3.org/1998/MathML/",
+  "http://www.w3.org/1999/02/22-rdf-syntax-ns",
+  "http://www.w3.org/1999/XSL/Transform",
+  "http://www.w3.org/1999/xhtml",
+  "http://www.w3.org/1999/xlink",
+  "http://www.w3.org/2000/svg",
+  "http://www.w3.org/2000/xmlns/",
+  "http://www.w3.org/2001/XMLSchema-instance",
+  "http://www.w3.org/XML/1998/namespace",
+  "http://x",
+  "https://a",
+  "https://brownfield.mpgi.hr/ows_public/wfs",
+  "https://cdn.jsdelivr.net/npm/pdfjs-dist",
+  "https://cdnjs.cloudflare.com/ajax/libs/pdfobject/2.1.1/pdfobject.min.js",
+  "https://dev.virtualearth.net/REST/v1/Imagery/Metadata/",
+  "https://developers.google.com/kml/schema/kml22gx.xsd",
+  "https://europa.eu/youreurope/",
+  "https://g.co/ng/security",
+  "https://gis1.mgipu.hr/srv1/RGN_MGIPU_Public/wfs",
+  "https://gis2.mgipu.hr/srv1/RGN_MGIPU_Public/wfs",
+  "https://gis3.mgipu.hr/srv1/RGN_MGIPU_Public/wfs",
+  "https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs",
+  "https://github.com/angular/flex-layout/issues/381",
+  "https://katalog.mgipu.hr/details/c0017406-6f14-46a3-8de5-c9403f56aa60",
+  "https://maps.google.com/mapfiles/kml/pushpin/ylw-pushpin.png",
+  "https://material.angular.io/guide/theming",
+  "https://mpgi.gov.hr",
+  "https://mpgi.gov.hr/o-ministarstvu-15/djelokrug/prostorno-uredjenje-3335/prostorni-planovi-8193/informacije-o-planovima-u-izradi/3485",
+  "https://openlayers.org/en/",
+  "https://service-url",
+  "https://unpkg.com/pdfjs-dist",
+  "https://www.google.com/recaptcha/api.js?hl=${this.translate.currentLang}&onload=onRecaptchaLoadCallback&render=explicit",
+  "https://www.microsoft.com/maps/product/terms.html"
+ ],
  "cvorovi": [
   {
    "id": "130",
@@ -122,7 +247,7 @@
   {
    "mjerilo": 2000,
    "dodatno": {
-    "tolerance": 200
+    "featureCount": 100
    },
    "status": 200,
    "blokovi": [
@@ -132,7 +257,7 @@
   {
    "mjerilo": 2000,
    "dodatno": {
-    "buffer": 500
+    "feature_count": 100
    },
    "status": 200,
    "blokovi": [
@@ -140,34 +265,23 @@
    ]
   },
   {
-   "mjerilo": 10000,
-   "dodatno": {},
-   "status": 200,
-   "blokovi": [
-    "382: SRŠIĆI - ŠUMA ",
-    "382: NJIVICE - OBRADIVO TLO I ŠUME"
-   ]
-  },
-  {
-   "mjerilo": 10000,
+   "mjerilo": 2000,
    "dodatno": {
-    "tolerance": 200
+    "maxFeatures": 100
    },
    "status": 200,
    "blokovi": [
-    "382: SRŠIĆI - ŠUMA ",
-    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+    "382: SRŠIĆI - ŠUMA "
    ]
   },
   {
-   "mjerilo": 10000,
+   "mjerilo": 2000,
    "dodatno": {
-    "buffer": 500
+    "limit": 100
    },
    "status": 200,
    "blokovi": [
-    "382: SRŠIĆI - ŠUMA ",
-    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+    "382: SRŠIĆI - ŠUMA "
    ]
   },
   {
@@ -182,7 +296,7 @@
   {
    "mjerilo": 50000,
    "dodatno": {
-    "tolerance": 200
+    "featureCount": 100
    },
    "status": 200,
    "blokovi": [
@@ -193,7 +307,7 @@
   {
    "mjerilo": 50000,
    "dodatno": {
-    "buffer": 500
+    "feature_count": 100
    },
    "status": 200,
    "blokovi": [
@@ -202,18 +316,9 @@
    ]
   },
   {
-   "mjerilo": 250000,
-   "dodatno": {},
-   "status": 200,
-   "blokovi": [
-    "382: SRŠIĆI - ŠUMA ",
-    "382: NJIVICE - OBRADIVO TLO I ŠUME"
-   ]
-  },
-  {
-   "mjerilo": 250000,
+   "mjerilo": 50000,
    "dodatno": {
-    "tolerance": 200
+    "maxFeatures": 100
    },
    "status": 200,
    "blokovi": [
@@ -222,9 +327,9 @@
    ]
   },
   {
-   "mjerilo": 250000,
+   "mjerilo": 50000,
    "dodatno": {
-    "buffer": 500
+    "limit": 100
    },
    "status": 200,
    "blokovi": [
@@ -244,7 +349,7 @@
   {
    "mjerilo": 1000000,
    "dodatno": {
-    "tolerance": 200
+    "featureCount": 100
    },
    "status": 200,
    "blokovi": [
@@ -255,7 +360,29 @@
   {
    "mjerilo": 1000000,
    "dodatno": {
-    "buffer": 500
+    "feature_count": 100
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 1000000,
+   "dodatno": {
+    "maxFeatures": 100
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 1000000,
+   "dodatno": {
+    "limit": 100
    },
    "status": 200,
    "blokovi": [
@@ -264,5 +391,138 @@
    ]
   }
  ],
- "wms": []
+ "pogadjanja": [
+  {
+   "url": "geoserver/wfs?service=WFS&request=GetCapabilities",
+   "status": 404,
+   "vrsta": "text/html",
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "geoserver/ows?service=WFS&request=GetCapabilities",
+   "status": 404,
+   "vrsta": "text/html",
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "geoserver/wms?service=WMS&request=GetCapabilities",
+   "status": 404,
+   "vrsta": "text/html",
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "wfs?service=WFS&request=GetCapabilities",
+   "status": 404,
+   "vrsta": "text/html",
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "api/v1/gis/services",
+   "status": 404,
+   "vrsta": null,
+   "odgovor": ""
+  },
+  {
+   "url": "api/v1/gis/service/9",
+   "status": 404,
+   "vrsta": null,
+   "odgovor": ""
+  },
+  {
+   "url": "api/v1/gis/wms/9",
+   "status": 404,
+   "vrsta": null,
+   "odgovor": ""
+  },
+  {
+   "url": "api/v1/servisi",
+   "status": 404,
+   "vrsta": null,
+   "odgovor": ""
+  },
+  {
+   "url": "api/v1/gis/catalog-servisi",
+   "status": 404,
+   "vrsta": null,
+   "odgovor": ""
+  },
+  {
+   "url": "api/v1/gis/servisi",
+   "status": 404,
+   "vrsta": null,
+   "odgovor": ""
+  }
+ ],
+ "wms": [
+  {
+   "url": "https://ispu.mgipu.hr/${u.N.geoportalUrl}satelit/wms",
+   "sloj": "404",
+   "status": 404,
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/${u.N.geoportalUrl}satelit/wms",
+   "sloj": "222",
+   "status": 404,
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/WMS",
+   "sloj": "404",
+   "status": 404,
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/WMS",
+   "sloj": "222",
+   "status": 404,
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/geoserver",
+   "sloj": "404",
+   "status": 404,
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/geoserver",
+   "sloj": "222",
+   "status": 404,
+   "odgovor": "<html>\r\n<head><title>404 Not Found</title></head>\r\n<body>\r\n<center><h1>404 Not Found</h1></center>\r\n<hr><center>nginx/1.16.1</center>\r\n</body>\r\n</html>\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n<!-- a padding to disable MSIE and Chrome friendly error page -->\r\n"
+  },
+  {
+   "url": "http://www.opengis.net/ows/1.1",
+   "sloj": "404",
+   "status": 200,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<schema targetNamespace=\"http://www.opengis.net/ows/1.1\" \nxmlns:ows=\"http://www.opengis.net/ows/1.1\" \nxmlns=\"http://www.w3.org/2001/XMLSchema\" \nelementFormDefault=\"qualified\" version=\"1.1.0.3\" xml:lang=\"en\">\n\t<annotation>\n\t\t<appinfo>owsAll.xsd</appinfo>\n\t\t<documentation>This XML Schema Document includes and imports, directly and indirectly, all the XML Schemas defined by the OWS Common Implemetation Specification.\n\t\t\n\t\tOWS is an OGC Standard.\n\t\tCopyright (c) 2006,2010 Open Geospatial Consortium.\n\t\tTo obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .\n\t\t</documentation>\n\t</annotation>\n\t<!-- ==============================================================\n\t\tincludes and imports\n\t============================================================== -->\n\t<include schemaLocation=\"owsGetResourceByID.xsd\"/>\n\t<include schemaLocation=\"owsExceptionReport.xsd\"/>\n\t<include schemaLocation=\"owsDomainType.xsd\"/>\n\t<include schemaLocation=\"owsContents.xsd\"/>\n\t<include schemaLocation=\"owsInputOutputData.xsd\"/>\n</schema>\n"
+  },
+  {
+   "url": "http://www.opengis.net/ows/1.1",
+   "sloj": "222",
+   "status": 200,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<schema targetNamespace=\"http://www.opengis.net/ows/1.1\" \nxmlns:ows=\"http://www.opengis.net/ows/1.1\" \nxmlns=\"http://www.w3.org/2001/XMLSchema\" \nelementFormDefault=\"qualified\" version=\"1.1.0.3\" xml:lang=\"en\">\n\t<annotation>\n\t\t<appinfo>owsAll.xsd</appinfo>\n\t\t<documentation>This XML Schema Document includes and imports, directly and indirectly, all the XML Schemas defined by the OWS Common Implemetation Specification.\n\t\t\n\t\tOWS is an OGC Standard.\n\t\tCopyright (c) 2006,2010 Open Geospatial Consortium.\n\t\tTo obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .\n\t\t</documentation>\n\t</annotation>\n\t<!-- ==============================================================\n\t\tincludes and imports\n\t============================================================== -->\n\t<include schemaLocation=\"owsGetResourceByID.xsd\"/>\n\t<include schemaLocation=\"owsExceptionReport.xsd\"/>\n\t<include schemaLocation=\"owsDomainType.xsd\"/>\n\t<include schemaLocation=\"owsContents.xsd\"/>\n\t<include schemaLocation=\"owsInputOutputData.xsd\"/>\n</schema>\n"
+  },
+  {
+   "url": "http://www.opengis.net/wms",
+   "sloj": "404",
+   "status": 200,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<schema targetNamespace=\"http://www.opengis.net/wms\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:wms=\"http://www.opengis.net/wms\" xmlns=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" version=\"1.3.0.2\">\n\t\n\t<!--\n\t\tWMS is an OGC Standard.\n\t\tCopyright (c) 2004,2010 Open Geospatial Consortium.\n\t\tTo obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .\n\t-->\n\n\t<import namespace=\"http://www.w3.org/1999/xlink\" schemaLocation=\"http://www.w3.org/1999/xlink.xsd\"/>\n\t<!-- ********************************************************************* -->\n\t<!-- **  The Top-Level Element.                                         ** -->\n\t<!-- ********************************************************************* -->\n\t<element name=\"WMS_Capabilities\">\n\t\t<annotation>\n\t\t\t<documentation>\n        A WMS_Capabilities document is returned in response to a\n        GetCapabilities request made on a WMS.\n      </documentation>\n\t\t</annotation>\n\t\t<complexType>\n\t\t\t<sequence>\n\t\t\t\t<element ref=\"wms:Service\"/>\n\t\t\t\t<element ref=\"wms:Capability\"/>\n\t\t\t</sequence>\n\t\t\t<attribute name=\"version\" type=\"string\" fixed=\"1.3.0\"/>\n\t\t\t<attribute name=\"updateSequence\" type=\"string\"/>\n\t\t</complexType>\n\t</element>\n\t<!-- ********************************************************************* -->\n\t<!-- **  Elements Used In Multiple Places.                              ** -->\n\t<!-- ********************************************************************* -->\n\t<element name=\"Name\" type=\"string\">\n\t\t<annotation>\n\t\t\t<documentation>\n        The Name is typically for machine-to-machine communication.\n      </documentation>\n\t\t</annotation>\n\t</element>\n\t<element name=\"Title\" type=\"string\">\n\t\t<annotation>\n\t\t\t<documentation>\n        The Title is for informative display to a human.\n      </documentation>\n\t\t</annotation>\n\t</element>\n\t<element name=\"Abstract\" type=\"string\">\n\t\t<annotation>\n\t\t\t<documentation>\n        The abstract is a longer narrative description of an object.\n      </documentation>\n\t\t</annotation>\n\t</element>\n\t<element name=\"KeywordList\">\n\t\t<annotation>\n\t\t\t<documentation>\n        List of keywords or keyword phrases to help catalog searching.\n      </documentation>\n\t\t</annotation>\n\t\t<complexType>\n\t\t\t<sequence>\n\t\t\t\t<element ref=\"wms:Keyword\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>\n\t\t\t</sequence>\n\t\t</complexType>\n\t</element>\n\t<element name=\"Keyword\">\n\t\t<annotation>\n\t\t\t<documentation>\n        A single keyword or phrase.\n      </documentation>\n\t\t</annotation>\n\t\t<complexType>\n\t\t\t<simpleContent>\n\t\t\t\t<extension base=\"string\">\n\t\t\t\t\t<attribute name=\"vocabulary\" type=\"string\"/>\n\t\t\t\t</extension>\n\t\t\t</simpleContent>\n\t\t</complexType>\n\t</element>\n\t<element name=\"OnlineResource\">\n\t\t<annotation>\n\t\t\t<documentation>\n        An OnlineResource is typically an HTTP URL.  The URL is placed in\n        the xlink:href attribute, and the value \"simple\" is placed in the\n        xlink:type attribute.\n      </documentation>\n\t\t</annotation>\n\t\t<complexType>\n\t\t\t<"
+  },
+  {
+   "url": "http://www.opengis.net/wms",
+   "sloj": "222",
+   "status": 200,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<schema targetNamespace=\"http://www.opengis.net/wms\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:wms=\"http://www.opengis.net/wms\" xmlns=\"http://www.w3.org/2001/XMLSchema\" elementFormDefault=\"qualified\" version=\"1.3.0.2\">\n\t\n\t<!--\n\t\tWMS is an OGC Standard.\n\t\tCopyright (c) 2004,2010 Open Geospatial Consortium.\n\t\tTo obtain additional rights of use, visit http://www.opengeospatial.org/legal/ .\n\t-->\n\n\t<import namespace=\"http://www.w3.org/1999/xlink\" schemaLocation=\"http://www.w3.org/1999/xlink.xsd\"/>\n\t<!-- ********************************************************************* -->\n\t<!-- **  The Top-Level Element.                                         ** -->\n\t<!-- ********************************************************************* -->\n\t<element name=\"WMS_Capabilities\">\n\t\t<annotation>\n\t\t\t<documentation>\n        A WMS_Capabilities document is returned in response to a\n        GetCapabilities request made on a WMS.\n      </documentation>\n\t\t</annotation>\n\t\t<complexType>\n\t\t\t<sequence>\n\t\t\t\t<element ref=\"wms:Service\"/>\n\t\t\t\t<element ref=\"wms:Capability\"/>\n\t\t\t</sequence>\n\t\t\t<attribute name=\"version\" type=\"string\" fixed=\"1.3.0\"/>\n\t\t\t<attribute name=\"updateSequence\" type=\"string\"/>\n\t\t</complexType>\n\t</element>\n\t<!-- ********************************************************************* -->\n\t<!-- **  Elements Used In Multiple Places.                              ** -->\n\t<!-- ********************************************************************* -->\n\t<element name=\"Name\" type=\"string\">\n\t\t<annotation>\n\t\t\t<documentation>\n        The Name is typically for machine-to-machine communication.\n      </documentation>\n\t\t</annotation>\n\t</element>\n\t<element name=\"Title\" type=\"string\">\n\t\t<annotation>\n\t\t\t<documentation>\n        The Title is for informative display to a human.\n      </documentation>\n\t\t</annotation>\n\t</element>\n\t<element name=\"Abstract\" type=\"string\">\n\t\t<annotation>\n\t\t\t<documentation>\n        The abstract is a longer narrative description of an object.\n      </documentation>\n\t\t</annotation>\n\t</element>\n\t<element name=\"KeywordList\">\n\t\t<annotation>\n\t\t\t<documentation>\n        List of keywords or keyword phrases to help catalog searching.\n      </documentation>\n\t\t</annotation>\n\t\t<complexType>\n\t\t\t<sequence>\n\t\t\t\t<element ref=\"wms:Keyword\" minOccurs=\"0\" maxOccurs=\"unbounded\"/>\n\t\t\t</sequence>\n\t\t</complexType>\n\t</element>\n\t<element name=\"Keyword\">\n\t\t<annotation>\n\t\t\t<documentation>\n        A single keyword or phrase.\n      </documentation>\n\t\t</annotation>\n\t\t<complexType>\n\t\t\t<simpleContent>\n\t\t\t\t<extension base=\"string\">\n\t\t\t\t\t<attribute name=\"vocabulary\" type=\"string\"/>\n\t\t\t\t</extension>\n\t\t\t</simpleContent>\n\t\t</complexType>\n\t</element>\n\t<element name=\"OnlineResource\">\n\t\t<annotation>\n\t\t\t<documentation>\n        An OnlineResource is typically an HTTP URL.  The URL is placed in\n        the xlink:href attribute, and the value \"simple\" is placed in the\n        xlink:type attribute.\n      </documentation>\n\t\t</annotation>\n\t\t<complexType>\n\t\t\t<"
+  },
+  {
+   "url": "https://brownfield.mpgi.hr/ows_public/wfs",
+   "sloj": "404",
+   "greska": "Failed to perform, curl: (28) Connection timed out after 60003 milliseconds. See https://curl.se/libcurl/c/libcurl-errors.html first for more details."
+  },
+  {
+   "url": "https://brownfield.mpgi.hr/ows_public/wfs",
+   "sloj": "222",
+   "greska": "Failed to perform, curl: (28) Connection timed out after 60002 milliseconds. See https://curl.se/libcurl/c/libcurl-errors.html first for more details."
+  }
+ ]
 }
