@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       naredba:
-        description: "popis (obiđi stranice; bez adresa zavod.pgz.hr) ili preuzmi (PDF-ovi u tekst)"
+        description: "popis (obiđi stranice; bez adresa zavod.pgz.hr), preuzmi (PDF-ovi u tekst) ili ispu (slojevi)"
         type: choice
-        options: [popis, preuzmi]
+        options: [popis, preuzmi, ispu]
         default: popis
       adrese:
         description: "Adrese odvojene razmakom: početne stranice (popis) ili PDF-ovi (preuzmi)"
@@ -52,7 +52,12 @@ jobs:
         timeout-minutes: 45
         env:
           ADRESE: ${{ inputs.adrese }}
-        run: python tools/planovi.py "${{ inputs.naredba }}" debug-out/planovi $ADRESE
+        run: |
+          if [ "${{ inputs.naredba }}" = ispu ]; then
+            python tools/ispu_istrazi.py debug-out/planovi/ispu
+          else
+            python tools/planovi.py "${{ inputs.naredba }}" debug-out/planovi $ADRESE
+          fi
 
       - name: Spremi na granu debug
         if: always()
