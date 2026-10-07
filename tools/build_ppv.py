@@ -10,7 +10,8 @@ ili općinu iz svog polja ppv_cb_grop. Za grad/općinu (oglas bez prepoznatog na
 medijan i raspon svih vrijednosti njezinih naselja. Kad blok nema grad/općinu, određuje se
 po nazivu naselja, a kad isti naziv postoji u više njih, po najbližem središtu naselja.
 Naselje bez bloka sa svojim imenom (zaseok unutar bloka "KOSTRENA - GRAĐEVINSKO 1") dobiva
-blokove građevinskog područja u kojima leži njegovo središte ili točka 300 m od njega."""
+blokove u kojima leži njegovo središte ili točka 300 m od njega (opet najprije blokove
+građevinskog područja)."""
 
 import gzip
 import json
@@ -115,11 +116,11 @@ def build(blocks: list[dict], locator: Locator, year: str, rows: list[dict] | No
         if not place or (jls_name, place) in found or row.get("lat") is None:
             continue
         x0, y0 = to_htrs(row["lat"], row["lon"])
-        hits = [bid for bid, jls in owners.items() if jls and jls.name == jls_name
-                and by_id[bid].get("_obris") and building(by_id[bid])
+        hits = [bid for bid, jls in owners.items() if jls and jls.name == jls_name and by_id[bid].get("_obris")
                 and any(inside(x0 + dx, y0 + dy, ring) for dx, dy in OFFSETS for ring in by_id[bid]["_obris"])]
         if hits:
-            found[(jls_name, place)] = {True: hits, False: []}
+            found[(jls_name, place)] = {True: [b for b in hits if building(by_id[b])],
+                                        False: [b for b in hits if not building(by_id[b])]}
 
     def summary(ids) -> dict:
         vals = [v for bid in ids for v in land_values(by_id[bid])]
