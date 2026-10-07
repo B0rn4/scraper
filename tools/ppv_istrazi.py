@@ -22,7 +22,12 @@ from scraper.ispu import API, HEADERS, Ispu, to_htrs  # noqa: E402
 
 SITE = "https://ispu.mgipu.hr/"
 POINT = (45.1636, 14.5517)                  # Njivice, središte
-SCALES = [2000, 10000, 50000, 250000, 1000000]
+SCALES = [2000, 50000, 1000000]
+GUESSES = ["geoserver/wfs?service=WFS&request=GetCapabilities", "geoserver/ows?service=WFS&request=GetCapabilities",
+           "geoserver/wms?service=WMS&request=GetCapabilities", "wfs?service=WFS&request=GetCapabilities",
+           "api/v1/gis/services", "api/v1/gis/service/9", "api/v1/gis/wms/9", "api/v1/servisi",
+           "api/v1/gis/catalog-servisi", "api/v1/gis/servisi"]
+ANY_URL = re.compile(r"https?://[\w.\-]+(?:/[\w\-./{}$?=&%]*)?")
 URLS = re.compile(r"""["'`]([^"'`\s]{0,80}(?:api/v1/[\w\-/{}$.]+|[Ww][Mm][SsTt][Ss]?\b[^"'`\s]{0,60}|"""
                   r"""geoserver[^"'`\s]{0,80}|/ows[^"'`\s]{0,40}|MapServer[^"'`\s]{0,40}|GetFeatureInfo[^"'`\s]{0,40}))["'`]""")
 
@@ -56,20 +61,34 @@ def main(out: Path) -> None:
     try:
         html = s.get(SITE, timeout=60).text
         scripts = re.findall(r'<script[^>]+src="([^"]+)"', html)
+        runtime = next((x for x in scripts if "runtime" in x), "")
+        if runtime:                       # Angular: dijelovi aplikacije učitavaju se naknadno
+            rt = s.get(urljoin(SITE, runtime), timeout=60).text
+            result["runtime"] = rt[:8000]
+            pairs = re.findall(r'(\d+|"[\w\-]+"):"([0-9a-f]{16,20})"', rt)
+            scripts += [f"./{k.strip(chr(34))}.{v}.js" for k, v in pairs]
+            scripts += [f"./{k.strip(chr(34))}-es2015.{v}.js" for k, v in pairs]
         result["skripte"] = scripts
         found: dict[str, int] = {}
-        for src in scripts[:20]:
+        hosts: dict[str, int] = {}
+        for src in scripts[:120]:
             try:
                 js = s.get(urljoin(SITE, src), timeout=60).text
             except Exception as exc:  # noqa: BLE001
                 result.setdefault("greske", []).append(f"{src}: {exc}")
                 continue
+            if js.lstrip().startswith("<"):
+                continue                  # nepostojeći dio: stranica aplikacije umjesto skripte
             for m in URLS.finditer(js):
                 found[m.group(1)] = found.get(m.group(1), 0) + 1
-            for word in ("identify", "getFeatureInfo", "GetFeatureInfo", "wfs", "WFS", "bbox", "BBOX"):
-                for m in list(re.finditer(re.escape(word), js))[:15]:
+            for m in ANY_URL.finditer(js):
+                hosts[m.group(0)[:150]] = hosts.get(m.group(0)[:150], 0) + 1
+            for word in ("gis/", "getFeatureInfo", "GetFeatureInfo", "wfs", "WFS", "geoserver", "featureCount",
+                         "feature_count", "FEATURE_COUNT"):
+                for m in list(re.finditer(re.escape(word), js))[:12]:
                     result.setdefault("kontekst", []).append(js[max(0, m.start() - 160):m.end() + 160])
         result["adrese"] = sorted(found)
+        result["url_ovi"] = sorted(hosts)
     except Exception as exc:  # noqa: BLE001
         result["greska_js"] = f"{type(exc).__name__}: {exc}"
 
@@ -85,7 +104,7 @@ def main(out: Path) -> None:
     x, y = to_htrs(*POINT)
     result["identify"] = []
     for scale in SCALES:
-        for extra in ({}, {"tolerance": 200}, {"buffer": 500}):
+        for extra in ({}, {"featureCount": 100}, {"feature_count": 100}, {"maxFeatures": 100}, {"limit": 100}):
             body = {"x": x, "y": y, "scale": scale, "layers": layers, **extra}
             try:
                 r = s.post(API + "gis/identify", json=body, headers=HEADERS, timeout=60)
@@ -95,6 +114,16 @@ def main(out: Path) -> None:
             except Exception as exc:  # noqa: BLE001
                 result["identify"].append({"mjerilo": scale, "dodatno": extra, "greska": str(exc)[:300]})
             time.sleep(1.2)
+
+    result["pogadjanja"] = []
+    for g in GUESSES:
+        try:
+            r = s.get(SITE + g, timeout=60)
+            result["pogadjanja"].append({"url": g, "status": r.status_code, "vrsta": r.headers.get("content-type"),
+                                         "odgovor": r.text[:1500]})
+        except Exception as exc:  # noqa: BLE001
+            result["pogadjanja"].append({"url": g, "greska": str(exc)[:200]})
+        time.sleep(0.5)
 
     # WMS GetFeatureInfo nad pravokutnikom ~2 x 2 km oko točke, slika 1 x 1 piksel.
     result["wms"] = []
