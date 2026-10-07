@@ -1131,5 +1131,61 @@
   "vrsta": "application/octet-stream; Charset=UTF-8",
   "velicina": 138459,
   "znakova": 88072
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&izdanje=791&mjesto=10006&odluka=49",
+  "datoteka": "0651050b_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 203489
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&izdanje=1009&mjesto=51513&odluka=12",
+  "datoteka": "03fc8e5c_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 183411
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&izdanje=2129&mjesto=51521&odluka=5",
+  "datoteka": "019544d2_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 144509
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&izdanje=784&mjesto=51000&odluka=64",
+  "datoteka": "8d5e754c_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 162644
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=43075",
+  "datoteka": "dd340f52_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 122709
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=39917",
+  "datoteka": "ea499f15_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 73052
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=35169",
+  "datoteka": "327131cd_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 30511
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=42112",
+  "datoteka": "b6c4186f_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 17949
  }
 ]
