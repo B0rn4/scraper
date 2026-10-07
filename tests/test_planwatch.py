@@ -11,8 +11,11 @@ SN_PAGE = """<table>
 </table>"""
 
 REGISTRY = """<table>
-<tr><td>Grad Crikvenica</td><td>UPU Dramalj centar – III. izmjene</td>
-<td><a href="/sn_jls/Crikvenica/2026_270_1900_donosenje.pdf">2026-270</a></td></tr>
+<tr id="plan-1"><td><span>Grad/Opcina:</span><div>Crikvenica</div></td>
+<td class="strong"><span>Broj sluzbenog glasila:</span><div><a href="https://zavod.pgz.hr/sn_jls/Crikvenica/2026_270_1900_donosenje.pdf"
+ target="_blank">2026-270</a></div></td>
+<td><span>Naziv plana:</span><div class="namePlan">Odluka o donošenju III. izmjena i dopuna UPU Dramalj centar</div></td>
+<td class="lastRow"><div>Donesen</div></td></tr>
 <tr><td>Grad Bakar</td><td>PPU</td><td><a href="/sn_jls/Bakar/2026_10_1901_donosenje.pdf">2026-10</a></td></tr>
 <tr><td>Općina Moščenička Draga</td><td>UPU 3</td><td><a href="/sn_jls/Moscenicka_Draga/2026_5_1902_izrada.pdf">x</a></td></tr>
 <tr><td>Općina Malinska-Dubašnica</td><td>PPUO</td><td><a href="/sn_jls/Malinska_Dubasnica/2026_5_1903_izrada.pdf">x</a></td></tr>
@@ -30,7 +33,7 @@ def test_registry_only_our_municipalities_with_row_text():
     found = planwatch.registry_decisions(REGISTRY, "https://zavod.pgz.hr/Home.aspx?pagename=Registarprostornihplanova")
     assert [(d.jls, d.url.rsplit("/", 1)[1]) for d in found] == [
         ("Crikvenica", "2026_270_1900_donosenje.pdf"), ("Malinska-Dubašnica", "2026_5_1903_izrada.pdf")]
-    assert "UPU Dramalj centar – III. izmjene" in found[0].title
+    assert found[0].title == "Odluka o donošenju III. izmjena i dopuna UPU Dramalj centar (glasilo 2026-270)"
     assert found[1].title.startswith("odluka o izradi – ")
 
 

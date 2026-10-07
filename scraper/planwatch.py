@@ -63,7 +63,7 @@ def sn_decisions(html: str, jls: str, base: str = SN) -> list[PlanDecision]:
 
 def registry_decisions(html: str, base: str = REGISTRY) -> list[PlanDecision]:
     """Odluke iz Zavodova registra (sn_jls/<grad>/<godina>_<broj>_<id>_<vrsta>.pdf) za naše
-    gradove i općine. Opis je tekst retka tablice u kojem je poveznica."""
+    gradove i općine: naziv plana i broj glasila iz retka tablice u kojem je poveznica."""
     ours = {fold(name).replace("-", " "): name for name in SN_PLACES}
     out = []
     for m in LINK.finditer(html or ""):
@@ -76,11 +76,14 @@ def registry_decisions(html: str, base: str = REGISTRY) -> list[PlanDecision]:
             continue
         start = html.rfind("<tr", 0, m.start())
         end = html.find("</tr>", m.end())
-        row = _text(html[start:end]) if start != -1 and end != -1 and end - start < 5000 else ""
-        kind = re.search(r"_(donosenje|izrada\d*|transformacija\w*|izmjena\w*)\.pdf$", folder.group(2), re.I)
-        title = row or _text(m.group(2))
-        if kind and kind.group(1).lower().startswith("izrada"):
-            title = f"odluka o izradi – {title}"
+        row = html[start:end] if start != -1 and end != -1 and end - start < 8000 else ""
+        name = re.search(r'class="namePlan"[^>]*>(.*?)</div>', row, re.S)
+        gazette = _text(m.group(2))
+        if name:                          # registar: naziv plana i broj glasila u retku tablice
+            title = f"{_text(name.group(1))} (glasilo {gazette})"
+        else:
+            kind = re.search(r"_izrada\d*\.pdf$", folder.group(2), re.I)
+            title = ("odluka o izradi – " if kind else "") + (_text(row) or gazette)
         out.append(PlanDecision(jls, title[:300], link))
     return out
 
