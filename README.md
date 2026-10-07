@@ -40,7 +40,9 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   zona se ne zna, piše raspon i „zona nepoznata”; izgrađeni / neizgrađeni dio naselja
   (gdje ga plan razlikuje, npr. Punat) dolazi s ISPU-a. Gdje UPU pokriva samo dio naselja
   (npr. Dramalj centar), zona kaže koji dio; na kraju retka kratka napomena gdje je važna
-  (Baška: u staroj jezgri nove kuće nisu dopuštene). Čestica manja od najmanje → ⚠.
+  (Baška: u staroj jezgri nove kuće nisu dopuštene). Gdje u naselju postoji detaljni plan
+  uređenja za stanovanje (DPU – Krk, Omišalj, riječki kvartovi…), redak to kaže: za česticu
+  u njegovu obuhvatu vrijede uvjeti DPU-a. Čestica manja od najmanje → ⚠.
   Podaci su prepisani iz planova u `data/uvjeti_gradnje.yaml` (izvor i članak uz svaki,
   godina teksta u nazivu plana – plan se od tada mogao mijenjati). Planovi su preuzeti
   tijekom rada „Planovi – preuzimanje” (`tools/planovi.py`).

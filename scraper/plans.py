@@ -4,7 +4,12 @@ najmanja građevna čestica, koeficijent izgrađenosti (kig) i iskoristivosti (k
 Vrijedi UPU naselja ako postoji, inače PPU grada/općine. Vrijednosti ovise o zoni i
 površini čestice: bira se pravilo za površinu iz oglasa; kad zona nije poznata, a pravila
 se po zonama razlikuju, redak pokazuje raspon i to kaže. Podaci su prepisani iz planova
-(izvor uz svaki), ne traže se pri svakom pokretanju."""
+(izvor uz svaki), ne traže se pri svakom pokretanju.
+
+Dijelovi nekih naselja imaju i detaljni plan uređenja (DPU, stariji planovi koji ostaju na
+snazi; novi se od 2013. ne donose). Za česticu u njegovu obuhvatu vrijede njegovi, detaljniji
+uvjeti, a obuhvat nije poznat bez karte – redak zato samo kaže da u naselju postoji DPU
+("DPU u dijelu naselja: Mali Kankul, Turči…")."""
 
 from dataclasses import dataclass, field
 from pathlib import Path
@@ -67,7 +72,12 @@ class Plans:
     def __init__(self, path: Path = PLANS_FILE):
         data = yaml.safe_load(Path(path).read_text(encoding="utf-8")) if Path(path).exists() else None
         self.plans: list[Plan] = []
+        self.dpu: dict[tuple[str, str], list[str]] = {}      # (grad/općina, naselje) → DPU-i za stanovanje
         for item in data or []:
+            if "dpu" in item:
+                for place in item.get("naselja") or []:
+                    self.dpu.setdefault((item["jls"], fold(place)), []).extend(item["dpu"])
+                continue
             rules = [Rule(**r) for r in item.pop("pravila", [])]
             item["naselja"] = [fold(n) for n in item.get("naselja") or []]
             self.plans.append(Plan(**item, pravila=rules))
@@ -112,6 +122,9 @@ class Plans:
                 parts.append(f"kis {_span(kis)}")
         if plan.napomena:
             parts.append(plan.napomena)
+        dpu = self.dpu.get((jls, fold(place or "")))
+        if dpu:
+            parts.append("DPU u dijelu naselja: " + ", ".join(dpu[:2]) + ("…" if len(dpu) > 2 else ""))
         line = f"📏 {where}: " + " · ".join(parts)
         warning = ""
         if area and mins and area < min(mins):

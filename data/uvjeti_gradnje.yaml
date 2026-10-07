@@ -509,3 +509,59 @@
   url: https://zavod.pgz.hr/sn_jls/Crikvenica/2023_186_1718_donosenje.pdf
   pravila:
     - {cestica: 400, iznimno: 360, kig: 0.3, kis: 1.2}
+
+# --- Detaljni planovi uređenja (DPU) za stanovanje, na snazi prema Registru prostornih planova
+# Zavoda (https://zavod.pgz.hr/planovi_i_izvjesca/registar-prostornih-planova, 7. 10. 2026.).
+# Obuhvat (koje čestice) vidi se samo na karti plana, pa poruka kaže da DPU u naselju postoji.
+# DPU-i za groblja, radne, turističke i sportske zone nisu navedeni. ---
+- jls: Krk
+  naselja: [Krk]
+  dpu: [Mali Kankul, Turči, Kartec, Garbecaj, Radićeva ulica, Kružni tok]
+- jls: Omišalj
+  naselja: [Omišalj]
+  dpu: [centar Omišlja, Pesja]
+- jls: Lovran
+  naselja: [Lovranska Draga]
+  dpu: [Lovranska Draga]
+- jls: Vrbnik
+  naselja: [Vrbnik]
+  dpu: [Vrani]
+- jls: Rijeka
+  naselja: [Martinkovac]
+  dpu: [Martinkovac]
+- jls: Rijeka
+  naselja: [Drenova]
+  dpu: [Drenova-Bok, POS Donja Drenova]
+- jls: Rijeka
+  naselja: [Trsat, Trsat Sušak]
+  dpu: [Trsat, povijesna jezgra Trsata]
+- jls: Rijeka
+  naselja: [Rastočine]
+  dpu: [Rastočine]
+- jls: Rijeka
+  naselja: [Zamet]
+  dpu: [Braće Fućak, Gornji Zamet, Minakovo]
+- jls: Rijeka
+  naselja: [Škurinje]
+  dpu: [Škurinjsko Plase]
+- jls: Rijeka
+  naselja: [Srdoči]
+  dpu: [Srdoči]
+- jls: Rijeka
+  naselja: [Rujevica]
+  dpu: [Rujevica]
+- jls: Rijeka
+  naselja: [Krnjevo]
+  dpu: [središte Krnjeva]
+- jls: Rijeka
+  naselja: [Brajda]
+  dpu: [Brajda]
+- jls: Rijeka
+  naselja: [Potok]
+  dpu: [Potok]
+- jls: Rijeka
+  naselja: [Stari Grad, Centar]
+  dpu: [Stari grad]
+- jls: Rijeka
+  naselja: [Pećine]
+  dpu: [Pećine]

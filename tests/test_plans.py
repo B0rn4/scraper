@@ -127,3 +127,15 @@ def test_runner_adds_rules_line_with_part_of_settlement_from_ispu(tmp_path):
     runner._check_land(y, d, deadline=0)
     assert y.extra["uvjeti"].startswith("📏 UPU Njivice (2025): min. čest. 400 m²")
     assert d.status == WARN and d.warnings[-1].startswith("čestica 350 m² manja je od najmanje za samostojeću kuću")
+
+
+def test_dpu_note_for_settlement(tmp_path):
+    (tmp_path / "u.yaml").write_text(DATA + """
+- jls: Omišalj
+  naselja: [Omišalj]
+  dpu: [centar Omišlja, Pesja, A, B]
+""", encoding="utf-8")
+    plans = Plans(tmp_path / "u.yaml")
+    line, _ = plans.check(land(600), "Omišalj", "Omišalj")
+    assert line.endswith(" · DPU u dijelu naselja: centar Omišlja, Pesja…")
+    assert "DPU" not in plans.check(land(600), "Omišalj", "Njivice")[0]
