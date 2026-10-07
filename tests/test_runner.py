@@ -1046,3 +1046,47 @@ def test_unsent_keeps_first_time_and_expires_after_a_week(tmp_path):
     runner.now += timedelta(days=2)                            # više od tjedan dana: odustaje se
     assert runner._unsent(state, seen, set()) == []
     state.close()
+
+
+def test_button_test_answers_probe_and_records_mute(tmp_path, monkeypatch):
+    """Proba gumba: probni gumb odmah dobije odgovor, "Ne zanima me" se zapiše, a 409
+    (isti bot čita još netko) se izbroji."""
+    import scraper.runner as runner_mod
+    from scraper.notify import PROBE, listing_markup
+
+    monkeypatch.setattr(runner_mod.time, "sleep", lambda s: None)
+    x = listing(sid="7")
+    batches = [RuntimeError("Telegram getUpdates: 409 Conflict: terminated by other getUpdates request"),
+               [{"update_id": 5, "callback_query": {"id": "q1", "data": PROBE, "message": {"message_id": 1, "chat": {"id": 42}}}},
+                {"update_id": 6, "callback_query": {"id": "q2", "data": "nz:t:7", "message": {
+                    "message_id": 2, "chat": {"id": 42}, "reply_markup": json.loads(listing_markup(x))}}}]]
+
+    class Tg:
+        chat_id = "42"
+        answers, probes = [], []
+
+        def send_probe(self, minutes):
+            self.probes.append(minutes)
+
+        def get_updates(self, offset, wait=0):
+            if offset or not batches:
+                return []
+            item = batches.pop(0)
+            if isinstance(item, Exception):
+                raise item
+            return item
+
+        def answer_callback(self, qid, text):
+            self.answers.append((qid, text))
+
+        def edit_markup(self, *a):
+            pass
+
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    r.telegram = Tg()
+    r.button_test(minutes=0.002)
+    state = State(tmp_path / "s.db")
+    assert state.muted() == {"t:7"} and state.meta_get("telegram:offset") == "7"
+    state.close()
+    assert ("q1", "Stiglo! Gumb radi.") in Tg.answers and Tg.probes == [0.002]
+    assert "sukoba s drugim čitačem (409) 1" in r.log_lines[-1]

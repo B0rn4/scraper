@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       naredba:
-        description: "run = redovno odmah, raspored = redovno ali samo 7–23 h (za vanjski servis), pregled = pregledni izvještaj, test = probna poruka i mail, tjedni = tjedni izvještaj"
+        description: "run = redovno odmah, raspored = redovno ali samo 7–23 h (za vanjski servis), pregled = pregledni izvještaj, test = probna poruka i mail, tjedni = tjedni izvještaj, gumbi = proba gumba „Ne zanima me” (4 min)"
         type: choice
-        options: [run, raspored, pregled, test, tjedni]
+        options: [run, raspored, pregled, test, tjedni, gumbi]
         default: run
       izvori:
         description: "Samo ovi izvori (npr. nekretnine_hr,fina); prazno = svi"

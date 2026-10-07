@@ -20,7 +20,7 @@ from .filters import effective_price, evaluate
 from .http import Http, blocked
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
-from .notify import (MUTE_PREFIX, SOURCE_LABELS, UNMUTE_PREFIX, Email, Telegram, muted_markup, summary_text,
+from .notify import (MUTE_PREFIX, PROBE, SOURCE_LABELS, UNMUTE_PREFIX, Email, Telegram, muted_markup, summary_text,
                      unmuted_markup)
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
@@ -299,7 +299,6 @@ class Runner:
         except Exception as exc:  # noqa: BLE001 – gumb nije nužan za rad
             self.log(f"Telegram (gumbi): {type(exc).__name__}: {exc}")
             return
-        offset = 0
         clicks = [u for u in updates if u.get("callback_query")]
         if clicks:
             self.log(f"Telegram (gumbi): {len(clicks)} novih pritisaka")
@@ -316,6 +315,12 @@ class Runner:
                          f"greška {info.get('last_error_message') or '-'}")
             except Exception as exc:  # noqa: BLE001
                 self.log(f"Telegram (gumbi, provjera): {type(exc).__name__}: {exc}")
+        self._handle_updates(state, updates)
+
+    def _handle_updates(self, state: State, updates: list[dict]) -> None:
+        """Pritisci "Ne zanima me" / poništenje: zapis u bazu, oznaka na gumbu, odgovor
+        Telegramu; zatim potvrda (pomak) da se isti više ne vraćaju."""
+        offset = 0
         for u in updates:
             offset = max(offset, int(u["update_id"]) + 1)
             q = u.get("callback_query") or {}
@@ -349,6 +354,39 @@ class Runner:
             self.telegram.get_updates(offset)
         except Exception as exc:  # noqa: BLE001 – nepotvrđeni se ponove (isti ishod)
             self.log(f"Telegram (gumbi, potvrda): {type(exc).__name__}: {exc}")
+
+    def button_test(self, minutes: int = 4) -> None:
+        """Proba gumba (ručno na GitHubu, naredba "gumbi"): nekoliko minuta se bez prekida
+        čekaju pritisci. Probni gumb odmah dobije odgovor ("Stiglo"), pritisak "Ne zanima me"
+        se zapiše kao i inače. Greška 409 znači da isti bot u isto vrijeme čita još netko."""
+        if not self.telegram:
+            self.log("Telegram nije postavljen.")
+            return
+        state = State(self.db_path)
+        self.telegram.send_probe(minutes)
+        end, total, conflicts = time.monotonic() + minutes * 60, 0, 0
+        while time.monotonic() < end:
+            try:
+                updates = self.telegram.get_updates(None, wait=max(1, min(25, int(end - time.monotonic()))))
+            except Exception as exc:  # noqa: BLE001
+                conflicts += ": 409 " in str(exc)
+                self.log(f"Proba gumba: {type(exc).__name__}: {exc}")
+                time.sleep(3)
+                continue
+            for u in updates:
+                q = u.get("callback_query") or {}
+                self.log(f"Proba gumba: ažuriranje {u.get('update_id')}: "
+                         f"{next((k for k in u if k != 'update_id'), '?')} {(q.get('data') or '')[:3]}")
+                if q.get("data") == PROBE:
+                    try:
+                        self.telegram.answer_callback(q["id"], "Stiglo! Gumb radi.")
+                    except Exception as exc:  # noqa: BLE001
+                        self.log(f"Proba gumba (odgovor): {type(exc).__name__}: {exc}")
+            total += len(updates)
+            if updates:
+                self._handle_updates(state, updates)
+        self.log(f"Proba gumba gotova: ažuriranja {total}, sukoba s drugim čitačem (409) {conflicts}")
+        state.close()
 
     def _load_pending(self, state: State, name: str) -> list[Listing]:
         """Oglasi koje izvor prošli put nije stigao otvoriti (izvor ih otvara ovaj put)."""

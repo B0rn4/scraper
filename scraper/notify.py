@@ -198,12 +198,19 @@ class Telegram:
 
     # --- gumb "Ne zanima me": pritisci se čitaju pri pokretanju (nema stalnog poslužitelja) ---
 
-    def get_updates(self, offset: int | None) -> list[dict]:
+    def get_updates(self, offset: int | None, wait: int = 0) -> list[dict]:
         # Sve vrste (prazan popis); obrađuju se samo pritisci, ostalo se broji (dijagnostika).
-        data = {"timeout": "0", "allowed_updates": json.dumps([])}
+        data = {"timeout": str(wait), "allowed_updates": json.dumps([])}
         if offset:
             data["offset"] = str(offset)
         return self._call("getUpdates", data).get("result") or []
+
+    def send_probe(self, minutes: int) -> None:
+        """Proba gumba: poruka s gumbom na koji bot odgovara odmah dok proba traje."""
+        markup = json.dumps({"inline_keyboard": [[{"text": "🧪 Proba gumba", "callback_data": PROBE}]]})
+        self._call("sendMessage", {"chat_id": self.chat_id, "reply_markup": markup, "text": (
+            f"🧪 Proba gumba: idućih {minutes} minute klikni gumb ispod, a zatim i „Ne zanima me” na nekom "
+            "oglasu. Ako radi, odmah stiže potvrda na vrhu ekrana.")})
 
     def me(self) -> dict:
         return self._call("getMe", {}).get("result") or {}
@@ -240,6 +247,7 @@ def _button(url: str, label: str = "Otvori") -> str:
     return json.dumps({"inline_keyboard": [[{"text": label, "url": safe_url(url)}]]})
 
 
+PROBE = "proba"              # callback_data probnog gumba (naredba "gumbi")
 MUTE_PREFIX = "nz:"          # callback_data gumba "Ne zanima me" (Telegram: najviše 64 bajta)
 UNMUTE_PREFIX = "pz:"        # callback_data gumba za poništenje
 MUTE_LABEL = "🔕 Ne zanima me"
