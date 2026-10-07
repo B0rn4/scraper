@@ -449,13 +449,15 @@ bez stotina poruka.
       Uz to (stvaran kvar 7. 10.): pritisci „Ne zanima me” nisu stizali. Proba (naredba
       `gumbi`): dok bot bez prekida čeka, pritisak stiže odmah, a nitko drugi bota ne čita
       (nema greške 409); poruka botu čeka 20 minuta, a pritisak koji bot ne preuzme odmah
-      izgubi se. Zato redovno pokretanje nakon posla do sljedećeg (:00, :20, :40) čeka
-      pritiske; gumb odmah pokaže „Zabilježeno”. Pritisci se čitaju bez pomaka (offset).
+      izgubi se. Prvo je pokretanje čekalo pritiske do sljedećeg (:00, :20, :40); zatim je
+      gumb zamijenjen reakcijom 👎 na poruku: Telegram je čuva (proba: stigla je), pa nema
+      čekanja. Reakcija nosi samo broj poruke – pri slanju se pamti koja je poruka koji oglas
+      (i na Redmiju). Maknuta 👎 poništava. Pritisci se čitaju bez pomaka (offset).
       **Šesta runda (7. 10., nova instanca, simulacija tri tjedna rada GitHuba i Redmija s
       lažnim satom, tržištem, ispadima i pritiscima gumba):** 7 nalaza, svi popravljeni (uz test):
       - čekanje gumba (dodano isti dan) odgađalo je slanje stanja do :19, pa je Redmi u :10
         radio sa stanjem starim 30 minuta – isti oglas s Njuškala stizao je drugi put (48 parova
-        u 21 dan). Stanje se sad šalje odmah nakon posla; pritiske čeka nit od početka pokretanja;
+        u 21 dan). Popravljeno, a zatim je čekanje i ukinuto (reakcija 👎 umjesto gumba);
       - sniženje već javljenog oglasa koje se ne uspije poslati više se nije ponavljalo;
       - luksuzna vila „na upit” (luksuz samo u opisu) nakon obnove oglasa stizala je kao „sad
         odgovara” (popis nema opis);

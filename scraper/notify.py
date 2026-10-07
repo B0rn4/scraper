@@ -206,13 +206,6 @@ class Telegram:
             data["offset"] = str(offset)
         return self._call("getUpdates", data).get("result") or []
 
-    def send_probe(self, minutes: int) -> None:
-        """Proba gumba: poruka s gumbom na koji bot odgovara odmah dok proba traje."""
-        markup = json.dumps({"inline_keyboard": [[{"text": "🧪 Proba gumba", "callback_data": PROBE}]]})
-        self._call("sendMessage", {"chat_id": self.chat_id, "reply_markup": markup, "text": (
-            f"🧪 Proba gumba: idućih {minutes} minute klikni gumb ispod, a zatim i „Ne zanima me” na nekom "
-            "oglasu. Ako radi, odmah stiže potvrda na vrhu ekrana.")})
-
     def me(self) -> dict:
         return self._call("getMe", {}).get("result") or {}
 
@@ -253,20 +246,18 @@ def _button(url: str, label: str = "Otvori") -> str:
     return json.dumps({"inline_keyboard": [[{"text": label, "url": safe_url(url)}]]})
 
 
-PROBE = "proba"              # callback_data probnog gumba (naredba "gumbi")
 DISLIKE = "👎"                # reakcija na poruku oglasa = "Ne zanima me" (maknuta = poništenje)
 MUTE_PREFIX = "nz:"          # callback_data gumba "Ne zanima me" (Telegram: najviše 64 bajta)
 UNMUTE_PREFIX = "pz:"        # callback_data gumba za poništenje
-MUTE_LABEL = "🔕 Ne zanima me"
-MUTED_LABEL = "🔕 Zabilježeno · ↩ dodirni za poništenje"
+MUTE_LABEL = "🔕 Ne zanima me"             # gumb u starijim porukama (prije reakcije 👎)
+MUTED_LABEL = "🔕 Ne zanima me · makni 👎 za poništenje"
+MUTED_INFO = "nz-info"                         # oznaka bez radnje (poništenje je micanje 👎)
 
 
 def listing_markup(listing: Listing) -> str:
-    """Gumbi ispod oglasa: otvori oglas i "Ne zanima me" (više nikakvih poruka o njemu)."""
+    """Gumb ispod oglasa: otvori oglas. "Ne zanima me" je reakcija 👎 na poruku: Telegram je
+    čuva do sljedećeg pokretanja, a pritisak gumba izgubi se ako ga bot ne preuzme odmah."""
     row = [{"text": "Otvori oglas" if listing.source != "fina" else "Otvori Očevidnik", "url": safe_url(listing.url)}]
-    data = MUTE_PREFIX + listing.key
-    if len(data.encode("utf-8")) <= 64:
-        row.append({"text": MUTE_LABEL, "callback_data": data})
     return json.dumps({"inline_keyboard": [row]})
 
 
@@ -276,16 +267,17 @@ def _link_buttons(message: dict) -> list[dict]:
 
 
 def muted_markup(message: dict, key: str) -> str:
-    """Nakon "Ne zanima me": poveznica ostaje, a gumb pokazuje da je zabilježeno i da se
-    može poništiti (slučajan dodir)."""
-    undo = {"text": MUTED_LABEL, "callback_data": UNMUTE_PREFIX + key}
+    """Nakon "Ne zanima me": poveznica ostaje, a ispod oznaka da je zabilježeno i kako se
+    poništava (micanjem reakcije 👎)."""
+    info = {"text": MUTED_LABEL, "callback_data": MUTED_INFO}
     links = _link_buttons(message)
-    return json.dumps({"inline_keyboard": [links, [undo]] if links else [[undo]]})
+    return json.dumps({"inline_keyboard": [links, [info]] if links else [[info]]})
 
 
 def unmuted_markup(message: dict, key: str) -> str:
-    """Nakon poništenja: opet poveznica i "Ne zanima me", kao u izvornoj poruci."""
-    return json.dumps({"inline_keyboard": [_link_buttons(message) + [{"text": MUTE_LABEL, "callback_data": MUTE_PREFIX + key}]]})
+    """Nakon poništenja: samo poveznica, kao u izvornoj poruci."""
+    links = _link_buttons(message)
+    return json.dumps({"inline_keyboard": [links] if links else []})
 
 
 class Email:

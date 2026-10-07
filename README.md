@@ -52,10 +52,11 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   odbijaju – cijena po m² im je daleko ispod medijana. Mjereno na 12.378 oglasa s
   cijenom: od kuća u granici pravilo bi izgubilo 3 goleme (660–810 m²). S
   realestatecroatia.com i burze „na upit” se i dalje preskače.
-- **Gumb 🔕 Ne zanima me** ispod svakog oglasa: za taj oglas (i isti oglas na drugim
-  portalima) više ne stiže ništa, ni sniženje. Pritisak se obradi pri sljedećem
-  pokretanju (do 20 min), a gumb se tada zamijeni oznakom „Zabilježeno · ↩ dodirni za
-  poništenje” – ponovni dodir vraća poruke (slučajan dodir).
+- **„Ne zanima me” = reakcija 👎 na poruku oglasa** (dugi pritisak → 👎): za taj oglas (i
+  isti oglas na drugim portalima) više ne stiže ništa, ni sniženje. Obradi se pri sljedećem
+  pokretanju (do 20 min; noću u 7:00) i ispod poruke se pojavi „🔕 Ne zanima me · makni 👎
+  za poništenje”. Maknuta 👎 (i nakon nekoliko dana) vraća poruke. Reakciju Telegram čuva
+  do sljedećeg pokretanja; pritisak gumba ne bi (izgubi se ako ga bot ne preuzme odmah).
 - **Mail:** tjedni izvještaj ponedjeljkom i poruka ako neki izvor prestane raditi.
 - **Nadzor:** GitHub provjerava javlja li se Redmi (mail), a Redmi provjerava radi li
   GitHub (Telegram, ako nije pokrenuo scraper 2 h, od 9 h) – tišina inače izgleda kao

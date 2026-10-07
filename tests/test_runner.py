@@ -340,7 +340,9 @@ def test_mute_button(tmp_path, monkeypatch):
 
     x = listing(sid="7")
     buttons = json.loads(listing_markup(x))["inline_keyboard"][0]
-    assert buttons[0]["url"] == "https://x" and buttons[1]["callback_data"] == "nz:t:7"
+    assert [b["url"] for b in buttons] == ["https://x"]           # "Ne zanima me" je reakcija 👎
+    old_buttons = {"inline_keyboard": [[{"text": "Otvori oglas", "url": "https://x"},
+                                        {"text": "🔕 Ne zanima me", "callback_data": "nz:t:7"}]]}
 
     class Tg:
         chat_id = "42"
@@ -348,9 +350,8 @@ def test_mute_button(tmp_path, monkeypatch):
         def __init__(self):
             self.edited, self.sent, self.confirmed = [], [], set()
             self.updates = [
-                {"update_id": 10, "callback_query": {"id": "q1", "data": "nz:t:7",
-                 "message": {"message_id": 5, "chat": {"id": 42},
-                             "reply_markup": json.loads(listing_markup(x))}}},
+                {"update_id": 10, "callback_query": {"id": "q1", "data": "nz:t:7",   # gumb starije poruke
+                 "message": {"message_id": 5, "chat": {"id": 42}, "reply_markup": old_buttons}}},
                 {"update_id": 11, "callback_query": {"id": "q2", "data": "nz:t:8", "message": {"message_id": 6, "chat": {"id": 99}}}},
             ]
 
@@ -387,8 +388,8 @@ def test_mute_button(tmp_path, monkeypatch):
     assert state.muted() == {"t:7"} and state.meta_get("telegram:offset") == "12"
     state.close()
     assert tg.edited[0][0] == 5 and tg.edited[0][1]["inline_keyboard"][0][0]["url"] == "https://x"
-    undo = json.loads(muted_markup({}, "t:7"))["inline_keyboard"][0][0]
-    assert "poništenje" in undo["text"] and undo["callback_data"] == "pz:t:7"
+    info = json.loads(muted_markup({}, "t:7"))["inline_keyboard"][0][0]
+    assert "makni 👎" in info["text"] and info["callback_data"] == "nz-info"
     run_once()                                            # oba snižena: ništa ne stiže
     assert sent == []
     state = State(tmp_path / "s.db")
@@ -403,7 +404,7 @@ def test_mute_button(tmp_path, monkeypatch):
     state = State(tmp_path / "s.db")
     assert state.muted() == set() and state.meta_get("telegram:offset") == "13"
     state.close()
-    assert tg.edited[-1][1]["inline_keyboard"][0][-1]["callback_data"] == "nz:t:7"
+    assert tg.edited[-1][1]["inline_keyboard"] == []                   # poništeno: bez oznake
     assert sorted(sent) == ["t:7", "u:9"]                 # sniženja opet stižu
     # Pritisak s manjim brojem od zapamćenog (novi bot; nakon tjedan dana bez pritisaka broj je
     # nasumičan) ne smije se izgubiti.
@@ -1027,7 +1028,6 @@ def test_telegram_rejected_message_sent_as_plain_text_and_long_flood_wait(monkey
         tg.send_text("x")
     assert all(s < 60 for s in sleeps)
 
-
 def test_unsent_keeps_first_time_and_expires_after_a_week(tmp_path):
     from datetime import timedelta
 
@@ -1046,111 +1046,6 @@ def test_unsent_keeps_first_time_and_expires_after_a_week(tmp_path):
     runner.now += timedelta(days=2)                            # više od tjedan dana: odustaje se
     assert runner._unsent(state, seen, set()) == []
     state.close()
-
-
-def test_button_test_answers_probe_and_records_mute(tmp_path, monkeypatch):
-    """Proba gumba: probni gumb odmah dobije odgovor, "Ne zanima me" se zapiše, a 409
-    (isti bot čita još netko) se izbroji."""
-    import scraper.runner as runner_mod
-    from scraper.notify import PROBE, listing_markup
-
-    monkeypatch.setattr(runner_mod.time, "sleep", lambda s: None)
-    x = listing(sid="7")
-    batches = [RuntimeError("Telegram getUpdates: 409 Conflict: terminated by other getUpdates request"),
-               [{"update_id": 5, "callback_query": {"id": "q1", "data": PROBE, "message": {"message_id": 1, "chat": {"id": 42}}}},
-                {"update_id": 6, "callback_query": {"id": "q2", "data": "nz:t:7", "message": {
-                    "message_id": 2, "chat": {"id": 42}, "reply_markup": json.loads(listing_markup(x))}}}]]
-
-    class Tg:
-        chat_id = "42"
-        answers, probes = [], []
-
-        def send_probe(self, minutes):
-            self.probes.append(minutes)
-
-        def get_updates(self, offset, wait=0):
-            if offset or not batches:
-                return []
-            item = batches.pop(0)
-            if isinstance(item, Exception):
-                raise item
-            return item
-
-        def answer_callback(self, qid, text):
-            self.answers.append((qid, text))
-
-        def edit_markup(self, *a):
-            pass
-
-    r = Runner(tmp_path / "s.db", tmp_path, send=False)
-    r.telegram = Tg()
-    r.button_test(minutes=0.002)
-    state = State(tmp_path / "s.db")
-    assert state.muted() == {"t:7"} and state.meta_get("telegram:offset") == "7"
-    state.close()
-    assert ("q1", "Stiglo! Gumb radi.") in Tg.answers and Tg.probes == [0.002]
-    assert "sukoba s drugim čitačem (409) 1" in r.log_lines[-1]
-
-
-def test_listener_thread_from_start_and_state_published_before_waiting(tmp_path, monkeypatch):
-    """Pritisak usred čitanja portala: gumb odmah pokaže "Zabilježeno", a oglas se zapiše.
-    Stanje se na granu šalje odmah nakon posla (Redmi u :10 treba stanje ovog pokretanja),
-    a nakon čekanja još jednom (github.json s novim utišanim oglasom)."""
-    import time as real_time
-
-    import scraper.runner as runner_mod
-    from scraper.notify import listing_markup
-
-    x = listing(sid="7")
-    queue = [[{"update_id": 9, "callback_query": {"id": "q", "data": "nz:t:7", "message": {
-        "message_id": 2, "chat": {"id": 42}, "reply_markup": json.loads(listing_markup(x))}}}]]
-
-    class Tg:
-        chat_id = "42"
-        edited, answers = [], []
-
-        def get_updates(self, offset, wait=0):
-            if offset or not queue:
-                real_time.sleep(0.02)
-                return []
-            return queue.pop(0)
-
-        def answer_callback(self, qid, text):
-            self.answers.append(text)
-
-        def edit_markup(self, chat, mid, markup):
-            self.edited.append(json.loads(markup))
-
-        def send_listing(self, *a):
-            pass
-
-    published = tmp_path / "objava.txt"
-    script = tmp_path / "objava.sh"
-    script.write_text(f'cat "{tmp_path}/github.json" >> "{published}"; echo >> "{published}"\n')
-    monkeypatch.setenv("SCRAPER_OBJAVA", str(script))
-    real_start = Runner._start_listener
-
-    def short_listener(self):
-        listener = real_start(self)
-        listener.deadline = real_time.monotonic() + 3            # umjesto do :19 / :39 / :59 (nit staje 2 s prije)
-        return listener
-
-    monkeypatch.setattr(Runner, "_start_listener", short_listener)
-    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
-    FakeSource.modes, FakeSource.batches = [], [[listing(sid="0", area=60)]]
-    r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
-    r.cfg["izvori"] = {"fake": True}
-    r.telegram = Tg()
-    r._send_report = lambda *a, **k: None
-    r._banks = r._tenders = r._ppv_reminder = lambda *a, **k: None
-    r.run(force=True, listen=True)
-    state = State(tmp_path / "s.db")
-    assert state.muted() == {"t:7"}
-    state.close()
-    assert Tg.answers == ["Zabilježeno"] and "poništenje" in json.dumps(Tg.edited, ensure_ascii=False)
-    assert published.read_text().strip()                      # objavljeno prije čekanja
-    assert json.loads((tmp_path / "github.json").read_text())["utisani"] == ["t:7"]
-    assert any("Čekanje gumba do" in line and "pritisaka 1" in line for line in r.log_lines)
 
 
 # --- šesta runda (simulacija tjedana rada) ---

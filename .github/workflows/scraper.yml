@@ -11,9 +11,9 @@ on:
   workflow_dispatch:
     inputs:
       naredba:
-        description: "run = redovno odmah, raspored = redovno ali samo 7–23 h (za vanjski servis), pregled = pregledni izvještaj, test = probna poruka i mail, tjedni = tjedni izvještaj, gumbi = proba gumba „Ne zanima me” (4 min)"
+        description: "run = redovno odmah, raspored = redovno ali samo 7–23 h (za vanjski servis), pregled = pregledni izvještaj, test = probna poruka i mail, tjedni = tjedni izvještaj"
         type: choice
-        options: [run, raspored, pregled, test, tjedni, gumbi]
+        options: [run, raspored, pregled, test, tjedni]
         default: run
       izvori:
         description: "Samo ovi izvori (npr. nekretnine_hr,fina); prazno = svi"
@@ -97,10 +97,6 @@ jobs:
           # GitHubov raspored je samo rezerva: radi tek kad cron-job.org kasni (inače bi se
           # mogao poklopiti s Redmijem u :10/:30/:50).
           if [ "${{ github.event_name }}" = "schedule" ]; then ARGS="$ARGS --rezerva"; fi
-          # Gumb "Ne zanima me": pritisak koji bot ne preuzme odmah izgubi se (proba 7. 10.),
-          # pa redovno pokretanje od početka do sljedećeg (:00, :20, :40) čeka pritiske. Stanje
-          # šalje odmah nakon čitanja portala (Redmi u :10 treba ovo stanje), a zatim još jednom.
-          if [ "$CMD" = "run" ]; then ARGS="$ARGS --slusaj"; export SCRAPER_OBJAVA=tools/spremi_stanje.sh; fi
           python -m scraper $CMD $ARGS --redmi-db redmi.db
 
       - name: Spremi stanje
