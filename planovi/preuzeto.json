@@ -440,5 +440,120 @@
   "vrsta": "application/pdf",
   "velicina": 1801239,
   "znakova": 9861
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=mjesta&tip=20",
+  "datoteka": "f61627fa_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 16802
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=mjesta&tip=10",
+  "datoteka": "6f98471c_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 14033
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=pretraga",
+  "datoteka": "eacfd898_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 165420
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=arhiva",
+  "datoteka": "ca894167_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 28445
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Grad_Kraljevica_IZ_16_06_2026.pdf",
+  "datoteka": "78cadbb7_Grad_Kraljevica_IZ_16_06_2026",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 6208020,
+  "znakova": 721003
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Opcina_Matulji_IZ_08_04_2026.pdf",
+  "datoteka": "bd01471c_Opcina_Matulji_IZ_08_04_2026",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 18811466,
+  "znakova": 386900
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Opcina_Kostrena_IZ_27_02_2026.pdf",
+  "datoteka": "3596c909_Opcina_Kostrena_IZ_27_02_2026",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 18805265,
+  "znakova": 474524
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Grad_Opatija_IZ_06_03_2026.pdf",
+  "datoteka": "f2b6b016_Grad_Opatija_IZ_06_03_2026",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 9319135,
+  "znakova": 768191
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Grad_Crikvenica_IZ_23_07_2025.pdf",
+  "datoteka": "2b38f2b1_Grad_Crikvenica_IZ_23_07_2025",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 6955804,
+  "znakova": 378279
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Opcina_Baska_IZ_02_03_2023.pdf",
+  "datoteka": "7be0b421_Opcina_Baska_IZ_02_03_2023",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 2380890,
+  "znakova": 381853
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Grad_Krk_IZ_11_03_2021.pdf",
+  "datoteka": "649f1f91_Grad_Krk_IZ_11_03_2021",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 29916048,
+  "znakova": 305
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Grad_Rijeka_IZ_20_02_2020.pdf",
+  "datoteka": "4afadd24_Grad_Rijeka_IZ_20_02_2020",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 7900828,
+  "znakova": 545900
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Opcina_Malinska_Dubasnica_IZ_23_03_2017.pdf",
+  "datoteka": "90c7e0be_Opcina_Malinska_Dubasnica_IZ_23_03_2017",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 13541511,
+  "znakova": 251560
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Opcina_Lovran_IZ_19_12_2013.pdf",
+  "datoteka": "91042ad2_Opcina_Lovran_IZ_19_12_2013",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 2482893,
+  "znakova": 145
+ },
+ {
+  "url": "https://zavod.pgz.hr/Home.aspx?pagename=Stanjeuprostoru",
+  "datoteka": "d5d9e9d9_Home",
+  "status": 200,
+  "vrsta": "text/html; charset=utf-8",
+  "velicina": 273071
  }
 ]
