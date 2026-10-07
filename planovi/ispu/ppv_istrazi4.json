@@ -1,0 +1,652 @@
+{
+ "pokusaji": [
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok",
+    "QUERY_LAYERS": "Cjenovni_blok",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok",
+    "QUERY_LAYERS": "Cjenovni_blok",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2018 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2018",
+    "QUERY_LAYERS": "Cjenovni_blok_2018",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2018 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2018",
+    "QUERY_LAYERS": "Cjenovni_blok_2018",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2019 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2019",
+    "QUERY_LAYERS": "Cjenovni_blok_2019",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2019 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2019",
+    "QUERY_LAYERS": "Cjenovni_blok_2019",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2020 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2020",
+    "QUERY_LAYERS": "Cjenovni_blok_2020",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2020 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2020",
+    "QUERY_LAYERS": "Cjenovni_blok_2020",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2021 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2021",
+    "QUERY_LAYERS": "Cjenovni_blok_2021",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2021 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2021",
+    "QUERY_LAYERS": "Cjenovni_blok_2021",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2022 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2022",
+    "QUERY_LAYERS": "Cjenovni_blok_2022",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2022 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2022",
+    "QUERY_LAYERS": "Cjenovni_blok_2022",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2023 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2023",
+    "QUERY_LAYERS": "Cjenovni_blok_2023",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2023 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2023",
+    "QUERY_LAYERS": "Cjenovni_blok_2023",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2024 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2024",
+    "QUERY_LAYERS": "Cjenovni_blok_2024",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo Cjenovni_blok_2024 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "Cjenovni_blok_2024",
+    "QUERY_LAYERS": "Cjenovni_blok_2024",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 500
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}",
+   "znacajki": 0,
+   "primjer": [],
+   "nazivi": []
+  }
+ ],
+ "wms_slojevi": [
+  [
+   "Administrativna_podrucja",
+   "GeoServer Web Map Service"
+  ],
+  [
+   "Cjenovni_blok",
+   "Cjenovni_blok"
+  ],
+  [
+   "Cjenovni_blok_2018",
+   "Cjenovni_blok_2018"
+  ],
+  [
+   "Cjenovni_blok_2019",
+   "Cjenovni_blok_2019"
+  ],
+  [
+   "Cjenovni_blok_2020",
+   "Cjenovni_blok_2020"
+  ],
+  [
+   "Cjenovni_blok_2021",
+   "Cjenovni_blok_2021"
+  ],
+  [
+   "Cjenovni_blok_2022",
+   "Cjenovni_blok_2022"
+  ],
+  [
+   "Cjenovni_blok_2023",
+   "Cjenovni_blok_2023"
+  ],
+  [
+   "Cjenovni_blok_2024",
+   "Cjenovni_blok_2024"
+  ],
+  [
+   "Cjenovni_blok_2025",
+   "Cjenovni_blok_2025"
+  ],
+  [
+   "Cjenovni_blok_PPV_2018",
+   "Cjenovni_blok_PPV_2018"
+  ],
+  [
+   "Cjenovni_blok_PPV_2019",
+   "Cjenovni_blok_PPV_2019"
+  ],
+  [
+   "Cjenovni_blok_PPV_2020",
+   "Cjenovni_blok_PPV_2020"
+  ],
+  [
+   "Cjenovni_blok_PPV_2021",
+   "Cjenovni_blok_PPV_2021"
+  ],
+  [
+   "Cjenovni_blok_PPV_2022",
+   "Cjenovni_blok_PPV_2022"
+  ],
+  [
+   "Cjenovni_blok_PPV_2023",
+   "Cjenovni_blok_PPV_2023"
+  ],
+  [
+   "Cjenovni_blok_PPV_2024",
+   "Cjenovni_blok_PPV_2024"
+  ],
+  [
+   "Cjenovni_blok_PPV_2025",
+   "Cjenovni_blok_PPV_2025"
+  ],
+  [
+   "Cjenovni_blok_poslovni_prostori_kupoprodaje_2025",
+   "Cjenovni blok - poslovni prostori - kupoprodaje 2025"
+  ],
+  [
+   "Cjenovni_blok_poslovni_prostori_zakup_2025",
+   "Cjenovni blok - poslovni prostori - zakup 2025"
+  ],
+  [
+   "Cjenovni_blok_stanovi_2019_pilot",
+   "Cjenovni_blok_stanovi_2019_pilot"
+  ],
+  [
+   "Cjenovni_blok_stanovi_2020_pilot",
+   "Cjenovni_blok_stanovi_2020_pilot"
+  ],
+  [
+   "Cjenovni_blok_stanovi_2023",
+   "Cjenovni_blok_stanovi_2023"
+  ],
+  [
+   "Cjenovni_blok_stanovi_2024",
+   "Cjenovni_blok_stanovi_2024"
+  ],
+  [
+   "Cjenovni_blok_stanovi_2025",
+   "Cjenovni_blok_stanovi_2025"
+  ],
+  [
+   "Cjenovni_blok_stanovi_najam_2024",
+   "Cjenovni_blok_stanovi_najam_2024"
+  ],
+  [
+   "Cjenovni_blok_stanovi_najam_2025",
+   "Cjenovni_blok_stanovi_najam_2025"
+  ],
+  [
+   "Promet_nekretnina",
+   "Promet_nekretnina"
+  ],
+  [
+   "grad_opcina_adm_pod",
+   "grad_opcina_adm_pod"
+  ],
+  [
+   "zbirka_kc",
+   "zbirka_kc"
+  ]
+ ],
+ "wfs_javni": [
+  [
+   "RGN_MGIPU_Public:RGN_kliziste_inventar",
+   "RGN_kliziste_inventar"
+  ],
+  [
+   "RGN_MGIPU_Public:RGN_kliziste_podloznost",
+   "RGN_kliziste_podloznost"
+  ],
+  [
+   "RGN_MGIPU_Public:RGN_likvefakcija_inventar",
+   "RGN_likvefakcija_inventar"
+  ],
+  [
+   "RGN_MGIPU_Public:RGN_likvefakcija_podloznost",
+   "RGN_likvefakcija_podloznost"
+  ],
+  [
+   "RGN_MGIPU_Public:RGN_nepovoljno_za_gradnju",
+   "RGN_nepovoljno_za_gradnju"
+  ],
+  [
+   "RGN_MGIPU_Public:RGN_podzemna_voda_dubina",
+   "RGN_podzemna_voda_dubina"
+  ],
+  [
+   "RGN_MGIPU_Public:RGN_vrtaca_inventar",
+   "RGN_vrtaca_inventar"
+  ],
+  [
+   "RGN_MGIPU_Public:RGN_vrtaca_podloznost",
+   "RGN_vrtaca_podloznost"
+  ]
+ ],
+ "kandidati": [
+  "Cjenovni_blok",
+  "Cjenovni_blok_2018",
+  "Cjenovni_blok_2019",
+  "Cjenovni_blok_2020",
+  "Cjenovni_blok_2021",
+  "Cjenovni_blok_2022",
+  "Cjenovni_blok_2023",
+  "Cjenovni_blok_2024",
+  "Cjenovni_blok_2025",
+  "Cjenovni_blok_PPV_2018",
+  "Cjenovni_blok_PPV_2019",
+  "Cjenovni_blok_PPV_2020",
+  "Cjenovni_blok_PPV_2021",
+  "Cjenovni_blok_PPV_2022",
+  "Cjenovni_blok_PPV_2023",
+  "Cjenovni_blok_PPV_2024",
+  "Cjenovni_blok_PPV_2025",
+  "Cjenovni_blok_poslovni_prostori_kupoprodaje_2025",
+  "Cjenovni_blok_poslovni_prostori_zakup_2025",
+  "Cjenovni_blok_stanovi_2019_pilot",
+  "Cjenovni_blok_stanovi_2020_pilot",
+  "Cjenovni_blok_stanovi_2023",
+  "Cjenovni_blok_stanovi_2024",
+  "Cjenovni_blok_stanovi_2025",
+  "Cjenovni_blok_stanovi_najam_2024",
+  "Cjenovni_blok_stanovi_najam_2025"
+ ]
+}
