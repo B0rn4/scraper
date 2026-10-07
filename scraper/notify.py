@@ -182,6 +182,11 @@ class Telegram:
             data["offset"] = str(offset)
         return self._call("getUpdates", data).get("result") or []
 
+    def webhook_info(self) -> dict:
+        """Stanje dostave (getWebhookInfo): postavljen webhook ili zaostale poruke objasne
+        zašto getUpdates ne vraća pritiske gumba."""
+        return self._call("getWebhookInfo", {}).get("result") or {}
+
     def answer_callback(self, query_id: str, text: str) -> None:
         self._call("answerCallbackQuery", {"callback_query_id": query_id, "text": text})
 

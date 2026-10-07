@@ -275,6 +275,16 @@ class Runner:
         except Exception as exc:  # noqa: BLE001 – gumb nije nužan za rad
             self.log(f"Telegram (gumbi): {type(exc).__name__}: {exc}")
             return
+        if updates:
+            self.log(f"Telegram (gumbi): {len(updates)} novih pritisaka")
+        elif hasattr(self.telegram, "webhook_info"):
+            try:                        # dijagnostika: zašto nema pritisaka (webhook, zaostale poruke)
+                info = self.telegram.webhook_info()
+                if info.get("url") or info.get("pending_update_count") or info.get("last_error_message"):
+                    self.log(f"Telegram (gumbi): webhook={info.get('url') or '-'} na čekanju="
+                             f"{info.get('pending_update_count')} greška={info.get('last_error_message') or '-'}")
+            except Exception as exc:  # noqa: BLE001
+                self.log(f"Telegram (gumbi, provjera): {type(exc).__name__}: {exc}")
         for u in updates:
             offset = max(offset, int(u["update_id"]) + 1)
             q = u.get("callback_query") or {}
