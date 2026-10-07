@@ -84,7 +84,7 @@
 - jls: Malinska-Dubašnica
   plan: UPU 1 Malinska, Radići (2013)
   naselja: [Malinska, Radići]
-  izvor: "UPU 1 Malinska, Radići (GP-1), SN PGŽ 14/13, čl. 68–69 (izmjene 3/14 i 2015. ne mijenjaju te članke)"
+  izvor: "UPU 1 Malinska, Radići (GP-1), SN PGŽ 14/13, čl. 68–69 (izmjene 2014., 2015. i 2017. ne mijenjaju te članke)"
   url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=27287
   pravila:
     - {cestica: 500, kig: 0.25, kis: 0.75, tlocrt: 200, gbp: 400}
@@ -146,7 +146,7 @@
   naselja: [Baška, Zarok]
   izvor: "UPU 1 Baška (N1-1) i UPU 2 Baška-Zarok (N1-2), SN PGŽ 24/12, usklađeni s PPUO-om u SN PGŽ 2/18 (UPU 1 čl. 114 i 121, UPU 2 čl. 42) – čestica najviše 1.350 m²"
   url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=36814
-  napomena: "u kulturno-povijesnoj cjelini i do 100 m od obale u Zaroku nove kuće nisu dopuštene"
+  napomena: "u staroj jezgri i uz obalu Zaroka nove kuće nisu dopuštene"
   pravila:
     - {cestica: 500, kig: 0.25, kis: 0.75, tlocrt: 150, gbp: 400}
 - jls: Baška
@@ -159,7 +159,7 @@
 # --- Dobrinj ---
 - jls: Dobrinj
   plan: PPUO Dobrinj (2008)
-  izvor: "PPUO Dobrinj (2008.), čl. 37, 69–71"
+  izvor: "PPUO Dobrinj (2008.), čl. 37, 69–71 (usklađenje 2020., SN PGŽ 38/20, mijenja samo čl. 31 i 34)"
   url: https://dobrinj.hr/Dokumenti/prostorni_plan_uredenja_opcina_dobrinj.pdf
   pravila:
     - {od: 0, do: 500, cestica: 400, iznimno: 350, kig: 0.25, kis: 0.75, gbp: 450}
@@ -438,7 +438,7 @@
 
 # --- Crikvenica (UPU-i pokrivaju samo dijelove naselja; ostatak po PPUG-u, pa "zona" kaže koji dio) ---
 - jls: Crikvenica
-  plan: UPU-i Crikvenice (2009–2022) / PPUG (2023)
+  plan: UPU-i i PPUG Crikvenice (2009–2023)
   naselja: [Crikvenica]
   izvor: "UPU Crikvenica centar, pročišćeni tekst, SN Grada Crikvenice 153/2022; UPU Crikvenica sjever – Hrusta, SN PGŽ 44/07 i 16/09, čl. 28; UPU Duga, SN PGŽ 49/11, čl. 18; ostalo PPUG 2023, čl. 29 – sve obiteljska kuća GBP do 400 m²"
   url: https://zavod.pgz.hr/sn_jls/Crikvenica/2022_153_1657_donosenje.pdf

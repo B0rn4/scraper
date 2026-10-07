@@ -35,7 +35,9 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   s izračunom za površinu iz oglasa: „📏 UPU Njivice (2025): min. čest. 400 m² · kig 0,35
   (tlocrt ≤ 210 m²) · kis 0,8 (GBP ≤ 400 m²)”. Kad plan propisuje različito po zonama, a
   zona se ne zna, piše raspon i „zona nepoznata”; izgrađeni / neizgrađeni dio naselja
-  (gdje ga plan razlikuje, npr. Punat) dolazi s ISPU-a. Čestica manja od najmanje → ⚠.
+  (gdje ga plan razlikuje, npr. Punat) dolazi s ISPU-a. Gdje UPU pokriva samo dio naselja
+  (npr. Dramalj centar), zona kaže koji dio; na kraju retka kratka napomena gdje je važna
+  (Baška: u staroj jezgri nove kuće nisu dopuštene). Čestica manja od najmanje → ⚠.
   Podaci su prepisani iz planova u `data/uvjeti_gradnje.yaml` (izvor i članak uz svaki,
   godina teksta u nazivu plana – plan se od tada mogao mijenjati). Planovi su preuzeti
   tijekom rada „Planovi – preuzimanje” (`tools/planovi.py`).
