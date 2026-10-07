@@ -1,0 +1,400 @@
+{
+ "pokusaji": [
+  {
+   "url": "https://gis1.mgipu.hr/srv1/RGN_MGIPU_Public/wfs",
+   "napomena": "javni WFS Ministarstva",
+   "parametri": {
+    "service": "WFS",
+    "request": "GetCapabilities"
+   },
+   "status": 502,
+   "vrsta": "text/html; charset=iso-8859-1",
+   "duljina": 341,
+   "odgovor": "<!DOCTYPE HTML PUBLIC \"-//IETF//DTD HTML 2.0//EN\">\n<html><head>\n<title>502 Proxy Error</title>\n</head><body>\n<h1>Proxy Error</h1>\n<p>The proxy server received an invalid\r\nresponse from an upstream server.<br />\r\nThe proxy server could not handle the request<p>Reason: <strong>Error reading from remote server</strong></p></p>\n</body></html>\n"
+  },
+  {
+   "url": "https://gis2.mgipu.hr/srv1/RGN_MGIPU_Public/wfs",
+   "napomena": "javni WFS Ministarstva",
+   "parametri": {
+    "service": "WFS",
+    "request": "GetCapabilities"
+   },
+   "status": 200,
+   "vrsta": "application/xml",
+   "duljina": 101578,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><wfs:WFS_Capabilities version=\"2.0.0\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"http://www.opengis.net/wfs/2.0\" xmlns:wfs=\"http://www.opengis.net/wfs/2.0\" xmlns:ows=\"http://www.opengis.net/ows/1.1\" xmlns:gml=\"http://www.opengis.net/gml/3.2\" xmlns:fes=\"http://www.opengis.net/fes/2.0\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xs=\"http://www.w3.org/2001/XMLSchema\" xsi:schemaLocation=\"http://www.opengis.net/wfs/2.0 https://gis4.mgipu.hr/srv1/schemas/wfs/2.0/wfs.xsd http://inspire.ec.europa.eu/schemas/inspire_dls/1.0 https://inspire.ec.europa.eu/schemas/inspire_dls/1.0/inspire_dls.xsd\" xmlns:xml=\"http://www.w3.org/XML/1998/namespace\" xmlns:inspire_dls=\"http://inspire.ec.europa.eu/schemas/inspire_dls/1.0\" xmlns:inspire_common=\"http://inspire.ec.europa.eu/schemas/common/1.0\" xmlns:RGN_MGIPU_Public=\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\" updateSequence=\"309567\"><ows:ServiceIdentification><ows:Title>GeoServer Web Feature Service</ows:Title><ows:Abstract>This is the reference implementation of WFS 1.0.0 and WFS 1.1.0, supports all WFS operations including Transaction.</ows:Abstract><ows:Keywords><ows:Keyword>WFS</ows:Keyword><ows:Keyword>WMS</ows:Keyword><ows:Keyword>GEOSERVER</ows:Keyword></ows:Keywords><ows:ServiceType>WFS</ows:ServiceType><ows:ServiceTypeVersion>2.0.0</ows:ServiceTypeVersion><ows:Fees>NONE</ows:Fees><ows:AccessConstraints>NONE</ows:AccessConstraints></ows:ServiceIdentification><ows:ServiceProvider><ows:ProviderName>Ministarstvo prostornoga uređenja, graditeljstva i državne imovine-Zavod za prostorni razvoj</ows:ProviderName><ows:ServiceContact><ows:IndividualName/><ows:PositionName/><ows:ContactInfo><ows:Phone><ows:Voice/><ows:Facsimile/></ows:Phone><ows:Address><ows:DeliveryPoint/><ows:City>Zagreb</ows:City><ows:AdministrativeArea/><ows:PostalCode>10000</ows:PostalCode><ows:Country>Hrvatska/Croatia</ows:Country><ows:ElectronicMailAddress>ISPU-help@mpgi.hr</ows:ElectronicMailAddress></ows:Address></ows:ContactInfo></ows:ServiceContact></ows:ServiceProvider><ows:OperationsMetadata><ows:Operation name=\"GetCapabilities\"><ows:DCP><ows:HTTP><ows:Get xlink:href=\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"/><ows:Post xlink:href=\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"/></ows:HTTP></ows:DCP><ows:Parameter name=\"AcceptVersions\"><ows:AllowedValues><ows:Value>1.0.0</ows:Value><ows:Value>1.1.0</ows:Value><ows:Value>2.0.0</ows:Value></ows:AllowedValues></ows:Parameter><ows:Parameter name=\"AcceptFormats\"><ows:AllowedValues><ows:Value>text/xml</ows:Value></ows:AllowedValues></ows:Parameter><ows:Parameter name=\"Sections\"><ows:AllowedValues><ows:Value>ServiceIdentification</ows:Value><ows:Value>ServiceProvider</ows:Value><ows:Value>OperationsMetadata</ows:Value><ows:Value>FeatureTypeList</ows:Value><ows:Value>Filter_Capabilities</ows:Value></ows:AllowedValues></ows:Parameter></ows:Operation><ows:Operation name=\"DescribeFeatureType\"><ows:DCP><ows:HTTP><ows:Get xlink:href=\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"/><ows:Post xlink:href=\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"/></ows:HTTP></ows:DCP><ows:Parameter name=\"outputFormat\"><ows:AllowedValues><ows:Value>application/gml+xml; version=3.2</ows:Value></ows:AllowedValues></ows:Parameter></ows:Operation><ows:Operation name=\"GetFeature\"><ows:DCP><ows:HTTP><ows:Get xlink:href=\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"/><ows:Post xlink:href=\"https://gis4.mgipu.hr/srv1/RGN_MGIPU_Public/wfs\"/></ows:HTTP></ows:DCP><ows:Parameter name=\"resultType\"><ows:AllowedValues><ows:Value>results</ows:Value><ows:Value>hits</ows:Value></ows:AllowedValues></ows:Parameter><ows:Parameter name=\"outputFormat\"><ows:AllowedValues><ows:Value>application/gml+xml; version=3.2</ows:Value><ows:Value>GML2</ows:Value><ows:Value>KML</ows:Value><ows:Value>SHAPE-ZIP</ows:Value><ows:Value>application/json</ows:Value><ows:Value>application/vnd.google-earth.kml xml</ows:Value><ows:Value>application/vnd.google-eart"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetMap 404",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.3.0",
+    "REQUEST": "GetMap",
+    "LAYERS": "404",
+    "STYLES": "",
+    "CRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 64,
+    "HEIGHT": 64,
+    "FORMAT": "image/png"
+   },
+   "status": 200,
+   "vrsta": "image/png",
+   "duljina": 3693,
+   "odgovor": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000@\u0000\u0000\u0000@\b\u0002\u0000\u0000\u0000%\u000b�\u0000\u0000\u000e4IDATx^�Z\u0007tTU\u001aή�g=g���L\b�R\u0012��\"�B\u0004$\u0004P\u0004\u0004�%Di!Ҕ�&�4�(\u001c�\u0015\u0004\u000b�\u0014AAdiҋiS�\u001bI\u0018����dR����y�0�̼\f$9ǝs�;o�������r�sc�����\u0004�<d\u00053j����9��\b�2A\u0017*׽\u0014\u0007�������L�\u0012h,0��W'�T\bx\u0016&\t<٬(����S\u0002�3#;��\fUb6~\u0018���$\u000025?4\u000by�$�l|��C8�-g���/��]\u001f޸elþ\u0011��C��\u000e�_3�9,��!���m{\u0006$K����I�����\u0004N��c\u0017��+O~�����r�膙\u000b�*m�\n�UoE�\u0004�w7`�����\\��/O�I0���e_R����y3��֗�h��ש\u0004Z��P�:��B�.�rK�ˮ�(��j!�q�L���\u0001�m\u0002��\u0011y���r(R�\u0016\r��쫈��N��{ju���E?ɽ�Og?C\u001d\u0003�e�։<-V$j�\u0016���1~?H}�;��\t�.\u0010`\u0018I�\u001a��j�,'\u0002�\u0002\u0001\u001cyQu�\u0005կ��7�\u0014q]���c\u001b]�\u001f��~jO59#`[�J$·��\u000f\u0004�\u0013�49\u0018h�\r��Q.\u0011�+��Gn����$=�V��\u0013-��E���o��\\!05Z��\"/�+\u0004�&�x�d_\u0005�=\u001f�\u001ad\bv�\u0000�Ϗ��\u001eW'=�\\��&A���\u001dX~Q�Xl��\u0010u#ل-wi�\u001c\u001f@K���\u0006W8�ln\u0010�d�nr�=���\u0011zJ���_�J�:F��f�Y�����\u0013\b��)ͮL�F4N\t�Z\t�(��Ijb?����֨\u00130�҄��OL�!����\u0012�C\u0002U\u0007����ajW\b�M�;)�î���\u000bh\u0005&�+tr\u000bz�\u0011�2��\u0000�g�\u001d<C�\u0007\u000e�^\u0015�����T�Hວ\u0002��)\u0001#�;U�\u000eS\u0007(\f����D>�''�0�S�\"oZRɽ�uw-���ݠ6�>�/s��o���\n���Ƥe�ƐB�\rW\u001a�\u001d�G��@��\u0010���̃Ej���B\u001dgᠸ��\u0018I�\u0001el�K��� \u0012���\u0019�\bBcJ���\u001c�\u0004\u0013g?p{Z\u0002�.\u000b\u0016�vj2��7�LBXUP�J\u0004ތt\u001a\u0002�NΞ�z4�=��\u001b�e�ԁ�>;Be����D�O�B��r���J��b(XHd`�\n�\u0011���.���\u0013\u001a���{��>ag������\nA\u0000ǯ>]�Z(�\u000fm�Q�C�e�#eŽI�h�\f��f�K��?�X}�2\u0003�y\u0006�\u000fM`~��q���И\u0018�l�l�\n�3m�Q�k�\u0019#�Խ��\"]�U���#��\u0012?���Ez֗Kb\u001fO�3�n�\u0010�꠼v\u0013�5Z���=�K�_��;׻\rK\u001a����M\"TޢE���c\u0017O�Z�3��z�i\n���Hcϭk\u0017\u0001M�A؍\\:�\"YC����H�'ua\u001bI�F���\rQ\u0000���f6�*������!\u001f�\u0003zٺ�;\\\r有�\u0002w,�ɗ@\u0000+�\u0004y�d��e\u001c�\"\u000e�1ƛ#~u��Л���m������X�i�\u001e�\u001a\u0002\u000fWjR\u0007)\u0010N�W�\u0005)b�,\\%����}�L��-�\u000f��p`8Y��\u0010$Iz2�]d�\u0007\u001d\u0007WV��U�̗� �$��_G��蟘@�l\u0002G�\u0007+�_2�(�g���l���H�˓��̩#{�\u001d�U\u001f�|8\rB_�6�W}�$p��\u0012�kbϭ��\u0012\u0002F&{,��:\u0004y �|�G� �E\u001e\b��\n#\u0002\u001b��ܧ��`ۘ��~\u0016��\\6G/7�\r�x��SoO*�b��U\u0002P\u00188m �\f��JU\\ ;c-\u0014���=\u0004�J�M+^�\n��-�L�^�\"X�r�UO�n�?�\b�d$n�}\u0018}'�\u000e:��m+�t,��E\u0006P\u000f$�\u0010�-\u0001�\u0017�M3\u0000�\u000e\u001d��c��M����ص˾���.RФ\u0018�ޫ���=�]J��~��P�1�!z�f�9^`\r��{��'\u0015y�W~�R�^�R�~�нF�!S^!����S��M\u0004�\u0013 ˙�R��5�3�\u0007��1��O�T�V(I|��>\u000f�3�\u0013�Awu\u0006��\u0010\u001fE�[̘�bl~�dx�a�4�\u0011z9\u000f7ys~�S�\u0007!�|��]�\u000f_!��ۣ\u0004W8>r��$�,�8��K���E]�p��)�\u0019ܠm���B\b\r�\u001b\u0018�d�V�m]��{\b=�\u0005�Z�Y��\u0003�_8S\u000b�tϧb��YY$�k����\u000eOص�H̥5��P�\u0011۵t��9o���)�Z����u\u0014m&-�,\u0000D\n���!xl�����҈��\u0018��_�N.���p[��6\u0001�Jr:Pt]u7\u000e\u0002y�N�\u0019�t�g\u001d\u001b`�\u0018�|魀�E�V�\u001e�Cj�\b\u0018�LiCI�B�\nս0\u000e�xt�\u0019����a5'xT��\u0012�!(9:qJ@\u0015��&\u000f0�\u0007&�|n��\u001a��\u00019h�f���\u0018�ſ\u000f��\u0018��\u001e9&Ps����}rؤ��3�&�s�333B�\u0000�-�\u0016���KxBG����\u0001��C@���X�C�M�޹��ϛsJ\b��ZX?K*<�|\u00125g>�\u001d\u001d���c��zdO\u0000�-���_��2�!zT�L�l\u00119O����\u0014}s��u�0> �l\u001a\u0005�\u001b\u000e��(�\u001c��$`d��I\u0019jO�w�\u001e�ys���$3+LY�M#�#G�3�\u0001�gE��\u0004P�{bʝ��kBtOo�9p[\u001f� �\u0015J\u0003�G\u001d�@�G�\u0005\u0001b�\"�$<��\u001f\u0007���oD=|V\"O&v/C�6��\u000b�^/�i\u001d2�c�;�\u001e�MHs{�=&P���}J�\\�\u000b�\u0004ا��\n�U!*���\u001d����x�\u001b�\u000f�t��8�\u000f�čY��d�W\"�r�]�|m@>r��\u0011������af\\��\u001ff\\�pp����]�w�6�\t  \u0013�M�=]A/??-u`6��\u0014��\\�\u000eV�o͸�\u0004�eQM\u001b��3^�Q�\"�U\t��e�\u001fi#�$C\u000e�x�%�i�Pn���_~z�/\u001b��F\u0000�覰��v����7���m�BM\u0005�ӝ\u0011��&�Ƈ�a|̩�\f��z��΢\u0019�j3z$�F�J�rJDN�%�#�CW���7�<d��z׷�ȼ+�\u001e�\u001c�\u000f�#c����i[���o�\t@m\u0004\u001eU8u�:�!b�%j��B\u001f\u0005��\u0010�\u000fW�r�)\u000fY��+\u0012�W\u000b�Uţ��'M��w.٣\u0010�\u0001\u0010^\u001c����\u001a[\u000e\u0016\u0002�є%V���\u0000�.d��e��I\u0018��\u0018�\u001bY��B�X����\u001bA� ���@�\b�y\u001a��r\u0010�\f�\u0003m���\u0010~\"j\u0010w-l?>Wz0,|>�W\b\u0018+~�؂\u0000No�<)��1<�DG���\u001a,6kY�FW��6@R\r�\u0016\u0019�\u0004+�f\u0000������p��d��Ļ��׺\bZ<\r3\u0007w\u00108{\u000b����]\u0018�-nu��B\u000fZ\u001f�؃\u001c\u0004�~�pO_\u0006֟�W^�V@���,X�z��tje��\u0013E���N��5\u001a�<Ҵ!�\u001cQ���\u000b(���\u001b|�\u0001\u000e߽����T�ܝ���\tY��q\u001c�ϝz�\u0005�5�6Е7�lJ�c�\u000b=�b�\u0012�1:��\u001b�as�\u0016}���y3�6��Z+\u0005���:��m9��V\u001b���T��N���9\u0011H�S����!i\"�J���{\u0014Z\t`���JW�\u001c\u001bѹ�T \u0000������r�ѩO�D=\bDJ@>��\u0007|Ղ����ab+���x��\r�\u001c���!�\u001b5��{A�!�:\u0015\"w�nM���\u0003\u0002&\u0019��Ԅ�hp�R���V\u0002��ŧ!�7�b��\u000e\u0006����R��$�1:�)����(��mqָ�\r���$ۅ!�.��M\u001e��Ŧ��\u0013�\tԄGv*D�Ή\u0000�TY���\u0014�VnӃ\u0000[\u0002Ekw���+���(��\u001bx�{�N}J\u0004j\"A�%\u0019K�rb�I��-���>h��\u0007G؃@P��ѩ\u0010�;wӤ��|��0�HX\u001aH�m����=x\u00149����K~J�{��\u0018�s�i#��G���nB��\r��<=�f�Ml�\u0017$���\u000b��1B�4\u0000�?\u001bAX�8�B=\u00005��-x�{�k\u0013�\u001b�J��@�κ���\u000f�G\u001f\u0005bl\u0006�y���8Z�ٯܲ�\u0001�.��wpp�A8���\u0018���e��H��\u001a$%�h���;�^6i:\u0011`�\u001dnz*ޞ�����|߻�\u0004�M��C�n'~�]0�N\u000fR}�`�\u001f��\u00047ޣ�����.���׌\u000b��(�v��\u0016xH#f�\u0004\\q\u0003b|�\u0003�\t5��\u0004y1��\u001a{K�6��!=5\u0017�˦[\"P[\u001a�~�5�w������}��@\u0011^���G��m\u001d����ٜ�\u0017��\u0016�j��z����/.D>����`�un�\nt\u000f��na�[�W\u0007d[ƀ�\u0018��\u00039T�^���ʎ�z\u0011��\u000f�j�jU �%\u0000\u0000\u0000\u0000IEND�B`�"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo 404 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.3.0",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "404",
+    "QUERY_LAYERS": "404",
+    "STYLES": "",
+    "CRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "I": 0,
+    "J": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 300
+   },
+   "status": 400,
+   "vrsta": "application/json",
+   "duljina": 127,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Dogodila se greška pri izvršavanju upita. Molimo pokušajte ponovo.\",\"errors\":null,\"data\":null}"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo 1.1.1 404 1x1",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "404",
+    "QUERY_LAYERS": "404",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 300
+   },
+   "status": 200,
+   "vrsta": "application/vnd.ogc.se_xml",
+   "duljina": 414,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"http://geosrvc02dl.prod.gzaop.local/geoserver/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1.1.1\" >   <ServiceException code=\"LayerNotDefined\" locator=\"GetFeatureInfoKvpParser\">\n      eNekretnine_MGIPU_Public:404: no such layer on this server\n</ServiceException></ServiceExceptionReport>"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo 404 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.3.0",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "404",
+    "QUERY_LAYERS": "404",
+    "STYLES": "",
+    "CRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "I": 50,
+    "J": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 300
+   },
+   "status": 400,
+   "vrsta": "application/json",
+   "duljina": 127,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Dogodila se greška pri izvršavanju upita. Molimo pokušajte ponovo.\",\"errors\":null,\"data\":null}"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo 1.1.1 404 101x101",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "404",
+    "QUERY_LAYERS": "404",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 300
+   },
+   "status": 200,
+   "vrsta": "application/vnd.ogc.se_xml",
+   "duljina": 414,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"http://geosrvc02dl.prod.gzaop.local/geoserver/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1.1.1\" >   <ServiceException code=\"LayerNotDefined\" locator=\"GetFeatureInfoKvpParser\">\n      eNekretnine_MGIPU_Public:404: no such layer on this server\n</ServiceException></ServiceExceptionReport>"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms/wfs",
+   "napomena": "WFS gis/wms/wfs 404",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "service": "WFS",
+    "version": "1.1.0",
+    "request": "GetFeature",
+    "typename": "404",
+    "outputFormat": "application/json",
+    "srsname": "EPSG:3765",
+    "bbox": "345336,5002972,348336,5005972,EPSG:3765"
+   },
+   "status": 404,
+   "vrsta": null,
+   "duljina": 0,
+   "odgovor": ""
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wfs",
+   "napomena": "WFS gis/wfs 404",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "service": "WFS",
+    "version": "1.1.0",
+    "request": "GetFeature",
+    "typename": "404",
+    "outputFormat": "application/json",
+    "srsname": "EPSG:3765",
+    "bbox": "345336,5002972,348336,5005972,EPSG:3765"
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetCapabilities 404",
+   "parametri": {
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.3.0",
+    "REQUEST": "GetCapabilities"
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetMap 222",
+   "parametri": {
+    "layerHash": "C4wheP5ELdY",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.3.0",
+    "REQUEST": "GetMap",
+    "LAYERS": "222",
+    "STYLES": "",
+    "CRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 64,
+    "HEIGHT": 64,
+    "FORMAT": "image/png"
+   },
+   "status": 200,
+   "vrsta": "image/png",
+   "duljina": 3268,
+   "odgovor": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0000@\u0000\u0000\u0000@\b\u0002\u0000\u0000\u0000%\u000b�\u0000\u0000\f�IDATx^͚��\u001cu\u0015��_�l�A�\t\u0002�`H\f�\t�h�\u0007\u0006\u0001\u000b*)�\u0004��\u0000��V\fha!� W!J0J�\u0012%�\u0007\"\u001a\u0011,/<ⱳ���7��{��=�}��׿���lOO�Nb��ښ��������\u001d��^�\u0018e��K|ޥz6Q����pM9J\u001aV�u��:�ּ��g(��T��gw�,\u0003ɉ��עm�\u0002�sLN\u0016i�%Z�-}vɝ���\f\u0014NE�����ggp�\u0016gw�\u0015\u0003�x�G\to�hTj:{Z(�F��ҁ�$'�\u0017\u001b{::��H�'C=��ӯ$�A��𽕬���]!!��\"��E�g���@~ù?�\u001e�~�޾�?�H4�QVi\u0013���\u0015Ze\u0006ƞ��́hW�~�\u000e3�\\�<���Ϟݻ�'�\u001c�\u0004���4���x_v�\u001bю�\u0004\u001aV��y�њ��\u0007�T$�����KE��\u00190�F�\u0012\r�\u0004�\u0013/�XӼ\u0001\u000f�u^\u0017H.T�BG�hc�U~\u0007A�c3?K��\u001ej~�O�@�oI�s&MkL�<��W\".\u00180���łǞ�\r|6R�1��bS�<Zϭ�ޛ�m[�M��5����j�O�\u001c��?b\t;(�*Ώv���t�\u000e%^����z�Q��\u0015\u0003i\u0016ʄb�h���i�3{�\u001e\r�j�X\u0004Ӿ5P� \u0011dwڻHkY�s3�9Ƕ\u000bÊ����mK �q�\u0000�{��;�\u000e��<1�p��گ�4�B�t�\"5��s8��+#�ALy�\u0017�����Q/bZ&�ϥ���DX���\\�@���_M�r�\t{=��%�\u0006�n䚜�r\b\u001d\u001fp�\u0004�\u000fN�m\u001bޥ'G-\u000f�8�Ÿ���@�]Ա���-��\u0007�<����ӹKP<�g�x�H�\u001d\"��\u000b|)�(>(�2o\u0006���\u0019�\u0016�\u001e��}q�)^ֺ��P���5b�s��F�F�'�l\b\u001e˄mԲe��\f\u0018���M���n�čdB9ao�V���\u0007�[��\u0007�ɹ�ѱM���26aC=�`o!\f���F��CB�Gǩ+\n|o&��o\u0005�����%�\u0012� 1]�\u001b��\r�^�|�\u001fN�]��.�\u0001s˾���\u0011\u0013�f�9��8\n3@���B�Bj\u0006���\f\"*\u001cLk��K��c�\u0004q8\u000e\u0017�\u0016z\u0002�]7��F\u001e\u0015c�p�\u001f\r�>)�\u0003\u000bsxq����%��\u001f����A3\u0019�)\b\bp�\u0012#\u0019�U\u0015\u0003ɑl�y\"�cW���;�2��2�����\u0011ul���?X'\u0010��ԟ'\u0007\b�0�u0g\u00101�Y\u0015\u0003�\u0007_�{f#Kf\f区�:��Ax�Q��.�f����)F\u0006�\tW\\;���s��T��`m-�-�U1U���վ�\u0002\u0003�\u0000P\u001a3C��d���\u0014Q���\f�g^\u0017,�d�\r\u0017���0\u0012c�&\u0013��;Z�ɡg\r\u0000��V�\u000f:�aL\u001e\u0014�o��\u0000'8WXk�\u0011��RB\u0000\u0007����q\u001eU�B�#����@��\b\"�i��G\u001b{Ɖ\u0014Һ�sE����zS�c�:-Ql\u0004��T\u00075�e��f��}\u0011�>+�\u001bӇ\u00058(M���9d\u0018C\u000f\bn\u0019���\u0003w�!��C$IiU4�8X�k\u0011�\u0006�\u0003�E:S?��Z�c\u0000�/\n\u0003��}ė���u��ш\u0003PO$nX)~)��u\"���K\u0005\u000f\u0003\"���\u0016�Q%�����)�\u00103I\u0003�7���k\u0006�\u0016\"o����)t�/3IgS�6���~r<�\u000b\u0018!\u001a�ґ\u001f\u001c}\"ں���C���6\u001b�� 5S�\u0000\u000eɱR�r�\u0000\n\u0003 a��-\u0001�\u0014�U;*\u0006�} \u000b.*\u0017�\u0010��_:�i\u001c\u0017��i�H�msY�#\u001b�\u0012\u0007�ʞk|���W�*3@:�zE+���\nq2��<\u001b#��\t�]�\u0007\u001aŏ�\nI\t\u001e�ӸJj\u0002�Z�J�B| ;y ַ'\f\u0010Rx�#�Ho��l\\��n\u0013/(Z���Ɓ\b\u0016'7]�QV�-4��Ǻ%�7�+���\u001e\u0015�\r���{���4\u0007�\u001fI�\u0003�,yz\u0001oȨ�\"\u001f:S�\fU���\t�\u001bV�xz�\u00011�+R�V(��\u0016�P�R�n�ҝB�\u0014����\"N�S\u000105��sà[/���\u001e\u001e�N�sP���oe\u0006 Z�\u0015�Z&����J=\u0002R���{Rx\u0013�7��k-�k�a�?C_���R&�ܹs\\0`\u0018�;D��\by�9���/Y�M\u001a��\u0010|�\u0005b0(4����_%`x.\u001d\u000b\u001e����Qď����^�P��-\u0006�\n%l�-i;\u0011z�$:/tb \u0013�)���\u0006�n���|]�c�5�\u0001,�:Լ�ٙ�rO�2@�R�d�nj�I�l�:���\u0004\u0003��&�7\u0013�c;*��r4�kܞ\u0001�\u0005���8$u�\tb\u0016�9nD)��O�\u0000I&�R\u0006�\u0017)\u000b�l�\u0000���\u0014�F\u0005�v��@��`�-�z3,p�l�5�\u0016\u00179c\u0002���\u0012�q>��O�`)\u0003��\u0019�\u0013���v�b@�S�}��u]0ҚN\f���\u0013\u0015\"p��\u0016�x�b\u0006r\u0006u2�=�jY�!��V\u000b�6��{v\u0005��͗�*zj<\u0005�KX0��t(���ѫ���;��!\t��\u0015��\u0010��Yxw�\u0018�=�v��\u0017<\u001a-\fu&���p�gچ�@;�\u0005�\u0010?�w��Q4���kI\u0011\u001b�ʲH�h\u0013�l�>���s��\u0007#\u0014�\u00154\u0000��ᔩi\u00033�\n��\fh&�i%xN�z��t���o/P�f\u0019�����\u0007M�S���\u001e�& t�*\f\u0002�)5��A+�� P�\u001bTҸZ���Qc��:��U!\fٱ\u0015��R\u0017�}\u0016]��\u0007�s �b�b\u0018[��\u001d��G�Q���q���[R��o��ҭ���v\u0002qZ2��R'Uj��=�*\nν�7poD����X\f\u0004�Q(�ﭠ�X��6��\u0007p>j#d�n\u0000\u0019��nK�� ���A\u001a%�S/K����ۗ���\u0017Dh�\u0000E\u0004\u001eO\u001d�w��\u0005�\u0000�h7\u0014n!��ڗ��0g�]>�_�5�X��Oq�\u0013��-��ʞ�^h$sH2\n����\u0012H�\u001c\u0016��G�\\�Z仮\u0016\u0003�W�q\u000eN�'kp|��K\t\u001d}L�n��g\\��R���BGii0c��\u0000u\u000erg�����^\u0012�_�mf�\nj��\nh�a�\u0005<�xQ�Qw\r�FU��K����g\u0007�;�\f}��\u0002S�&?*�\u0000\"�\\�)O�\u0010\u000b���9q���@c\u000e�\u0013?c\u0005�|��xhb50\u001c��Jj�Y^�j\u0006��;N�bp�T\u000b����#\u000eT�<p�xnZ��PP��\u001a(@�\nw\u0001��x \\X��燪��d)\u0016��.7n�J\"�Y^\u0003\u0005DV��\u0004�\t��W�|߁��ўɘ;\u0019\f�,\f� g�!��`5ĹY[�n�2[7�\"A(��t~Lj\u0010���z�\f#�{��1�L�Ҭ�\u001b'�톈j���\u000f��ʔ��}a>��\u0007���r\u0005'\u0003\u001e\u0001^�7\u0001��\u0018�Ň�����\u001b�$\u000ehtl\n��� �dd��(�\u0017\fF;���[g�\u0004`��G�\u0001p�\u0002<��\"XAؓ#�W���\u0011ᜯ�܈�\f͑\u0013�s�<\u0003�T�I�j4L\u000b/P4sJ�\u0010!�Al�\f\u0011�f�\u001aZ\u0006��C�<\u000f���%�'\u000fI7i���F\u0010\u0019\u0019}���\u0004i�-���W?�F:B�\u0001L�0\u0001\u0016?y(.6��\u0012CE*D�9��R{�d�|���'�G�ِ[�o��U�\u0001II\u001c�SZn�A.�7P��k�bi\u0006{��p�(��hoF�f%\u000bf�����H�F\u0018�:.����b�\u0002>~�(��n�E�\u0017�`\u001e�\u0004d\u0007\u0015�\u0007�\t�Fq&$7\f��' JU�*�r�\u0013菀�Q�\u001a>� \u000e\u001c�|$kV�Uւ\b;��#�\u001c�t1֏�\u0018k�N\u001eqw]o=%h�\u000f\u0015!�a\u0019���\\!Ż��XG];�[�^�hռV\f��7T�6���Y}�R\"�LT\u001c����3��Ϝ����`�?\u0001����\u0019U\t�/ȃ�D��\u0000\u0000\u0000\u0000IEND�B`�"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo 222 1x1",
+   "parametri": {
+    "layerHash": "C4wheP5ELdY",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.3.0",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "222",
+    "QUERY_LAYERS": "222",
+    "STYLES": "",
+    "CRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "I": 0,
+    "J": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 300
+   },
+   "status": 400,
+   "vrsta": "application/json",
+   "duljina": 127,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Dogodila se greška pri izvršavanju upita. Molimo pokušajte ponovo.\",\"errors\":null,\"data\":null}"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo 1.1.1 222 1x1",
+   "parametri": {
+    "layerHash": "C4wheP5ELdY",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "222",
+    "QUERY_LAYERS": "222",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 1,
+    "HEIGHT": 1,
+    "X": 0,
+    "Y": 0,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 300
+   },
+   "status": 200,
+   "vrsta": "application/vnd.ogc.se_xml",
+   "duljina": 414,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"http://geosrvc02dl.prod.gzaop.local/geoserver/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1.1.1\" >   <ServiceException code=\"LayerNotDefined\" locator=\"GetFeatureInfoKvpParser\">\n      eNekretnine_MGIPU_Public:222: no such layer on this server\n</ServiceException></ServiceExceptionReport>"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo 222 101x101",
+   "parametri": {
+    "layerHash": "C4wheP5ELdY",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.3.0",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "222",
+    "QUERY_LAYERS": "222",
+    "STYLES": "",
+    "CRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "I": 50,
+    "J": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 300
+   },
+   "status": 400,
+   "vrsta": "application/json",
+   "duljina": 127,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Dogodila se greška pri izvršavanju upita. Molimo pokušajte ponovo.\",\"errors\":null,\"data\":null}"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetFeatureInfo 1.1.1 222 101x101",
+   "parametri": {
+    "layerHash": "C4wheP5ELdY",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.1.1",
+    "REQUEST": "GetFeatureInfo",
+    "LAYERS": "222",
+    "QUERY_LAYERS": "222",
+    "STYLES": "",
+    "SRS": "EPSG:3765",
+    "BBOX": "345336,5002972,348336,5005972",
+    "WIDTH": 101,
+    "HEIGHT": 101,
+    "X": 50,
+    "Y": 50,
+    "INFO_FORMAT": "application/json",
+    "FEATURE_COUNT": 300
+   },
+   "status": 200,
+   "vrsta": "application/vnd.ogc.se_xml",
+   "duljina": 414,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"http://geosrvc02dl.prod.gzaop.local/geoserver/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1.1.1\" >   <ServiceException code=\"LayerNotDefined\" locator=\"GetFeatureInfoKvpParser\">\n      eNekretnine_MGIPU_Public:222: no such layer on this server\n</ServiceException></ServiceExceptionReport>"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms/wfs",
+   "napomena": "WFS gis/wms/wfs 222",
+   "parametri": {
+    "layerHash": "C4wheP5ELdY",
+    "serviceId": "9",
+    "service": "WFS",
+    "version": "1.1.0",
+    "request": "GetFeature",
+    "typename": "222",
+    "outputFormat": "application/json",
+    "srsname": "EPSG:3765",
+    "bbox": "345336,5002972,348336,5005972,EPSG:3765"
+   },
+   "status": 404,
+   "vrsta": null,
+   "duljina": 0,
+   "odgovor": ""
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wfs",
+   "napomena": "WFS gis/wfs 222",
+   "parametri": {
+    "layerHash": "C4wheP5ELdY",
+    "serviceId": "9",
+    "service": "WFS",
+    "version": "1.1.0",
+    "request": "GetFeature",
+    "typename": "222",
+    "outputFormat": "application/json",
+    "srsname": "EPSG:3765",
+    "bbox": "345336,5002972,348336,5005972,EPSG:3765"
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/wms",
+   "napomena": "GetCapabilities 222",
+   "parametri": {
+    "layerHash": "C4wheP5ELdY",
+    "serviceId": "9",
+    "SERVICE": "WMS",
+    "VERSION": "1.3.0",
+    "REQUEST": "GetCapabilities"
+   },
+   "status": 403,
+   "vrsta": "application/json",
+   "duljina": 99,
+   "odgovor": "{\"succeeded\":false,\"message\":\"Neovlašten pristup resursima aplikacije.\",\"errors\":null,\"data\":null}"
+  },
+  {
+   "url": "https://ispu.mgipu.hr/api/v1/gis/get-capabilities-servis",
+   "napomena": "get-capabilities-servis",
+   "parametri": {
+    "servisId": "9",
+    "layers": "404",
+    "layerHash": "xM5m5ElZUrM"
+   },
+   "status": 200,
+   "vrsta": "text/xml",
+   "duljina": 256693,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><WMS_Capabilities xmlns:inspire_vs=\"http://inspire.ec.europa.eu/schemas/inspire_vs/1.0\" xmlns:inspire_common=\"http://inspire.ec.europa.eu/schemas/common/1.0\" version=\"1.3.0\" updateSequence=\"309667\" xmlns=\"http://www.opengis.net/wms\" xmlns:xlink=\"http://www.w3.org/1999/xlink\" xmlns:xsi=\"http://www.w3.org/2001/XMLSchema-instance\" xsi:schemaLocation=\"http://www.opengis.net/wms http://geosrvc02dl.prod.gzaop.local/geoserver/schemas/wms/1.3.0/capabilities_1_3_0.xsd http://inspire.ec.europa.eu/schemas/inspire_vs/1.0 https://inspire.ec.europa.eu/schemas/inspire_vs/1.0/inspire_vs.xsd\">\n  <Service>\n    <Name>WMS</Name>\n    <Title>GeoServer Web Map Service</Title>\n    <Abstract>A compliant implementation of WMS plus most of the SLD extension (dynamic styling). Can also generate PDF, SVG, KML, GeoRSS</Abstract>\n    <KeywordList>\n      <Keyword>WMS</Keyword>\n      <Keyword>GEOSERVER</Keyword>\n    </KeywordList>\n    <OnlineResource xlink:type=\"simple\" xlink:href=\"http://geoserver.org\"/>\n    <ContactInformation>\n      <ContactPersonPrimary>\n        <ContactPerson>Claudius Ptolomaeus</ContactPerson>\n        <ContactOrganization>OSGeo</ContactOrganization>\n      </ContactPersonPrimary>\n      <ContactPosition>Chief Geographer</ContactPosition>\n      <ContactAddress>\n        <AddressType>Work</AddressType>\n        <Address/>\n        <City>Alexandria</City>\n        <StateOrProvince>Egypt</StateOrProvince>\n        <PostCode/>\n        <Country>Roman Empire</Country>\n      </ContactAddress>\n      <ContactVoiceTelephone/>\n      <ContactFacsimileTelephone/>\n      <ContactElectronicMailAddress>claudius.ptolomaeus@mercury.olympus.gov</ContactElectronicMailAddress>\n    </ContactInformation>\n    <Fees>NONE</Fees>\n    <AccessConstraints>NONE</AccessConstraints>\n  </Service>\n  <Capability>\n    <Request>\n      <GetCapabilities>\n        <Format>text/xml</Format>\n        <DCPType>\n          <HTTP>\n            <Get>\n              <OnlineResource xlink:type=\"simple\" xlink:href=\"http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/ows?SERVICE=WMS&amp;\"/>\n            </Get>\n            <Post>\n              <OnlineResource xlink:type=\"simple\" xlink:href=\"http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/ows?SERVICE=WMS&amp;\"/>\n            </Post>\n          </HTTP>\n        </DCPType>\n      </GetCapabilities>\n      <GetMap>\n        <Format>image/png</Format>\n        <Format>application/atom+xml</Format>\n        <Format>application/json;type=utfgrid</Format>\n        <Format>application/pdf</Format>\n        <Format>application/rss+xml</Format>\n        <Format>application/vnd.google-earth.kml+xml</Format>\n        <Format>application/vnd.google-earth.kml+xml;mode=networklink</Format>\n        <Format>application/vnd.google-earth.kmz</Format>\n        <Format>image/geotiff</Format>\n        <Format>image/geotiff8</Format>\n        <Format>image/gif</Format>\n        <Format>image/jpeg</Format>\n        <Format>image/png; mode=8bit</Format>\n        <Format>image/svg+xml</Format>\n        <Format>image/tiff</Format>\n        <Format>image/tiff8</Format>\n        <Format>image/vnd.jpeg-png</Format>\n        <Format>image/vnd.jpeg-png8</Format>\n        <Format>text/html; subtype=openlayers</Format>\n        <Format>text/html; subtype=openlayers2</Format>\n        <Format>text/html; subtype=openlayers3</Format>\n        <DCPType>\n          <HTTP>\n            <Get>\n              <OnlineResource xlink:type=\"simple\" xlink:href=\"http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/ows?SERVICE=WMS&amp;\"/>\n            </Get>\n          </HTTP>\n        </DCPType>\n      </GetMap>\n      <GetFeatureInfo>\n        <Format>text/plain</Format>\n        <Format>application/vnd.ogc.gml</Format>\n        <Format>text/xml</Format>\n        <Format>application/vnd.ogc.gml/3.1.1</Format>\n        <Format>text/xml; subtype=gml/3.1.1</Format>\n        <Format>text/html</Format>\n        <Format>application/json</Format>\n    "
+  }
+ ],
+ "ne_wms_slojevi": []
+}
