@@ -194,6 +194,17 @@ def test_njuskalo_fetch_old_and_new(fina):
     assert 0 < len(detail_calls) <= 8  # samo oglasi koji bi mogli proći, najviše 8
     assert sum("prodaja-kuca" in u for u in browser.calls) == 1  # najstariji na 1. stranici je stariji od since
 
+    # Jedan neobičan broj (druga numeracija, pogrešno pročitan) ne čini sve nove oglase starima.
+    for known in ({str(45_180_000 - i) for i in range(30)} | {"1051234567"}, {"45180000", "1051234567"}):
+        items = {x.source_id: x for x in Njuskalo(None, Locator(), load_config()["kriteriji"], browser=browser)
+                 .fetch(INCREMENTAL, known)}
+        assert items["41395237"].extra.get("stari_oglas") and items["45131418"].extra.get("stari_oglas") is None
+
+
+# Zemljišta: popis nije prazan (prazna prva stranica kategorije je greška izvora).
+LAND_ITEM = {"code": 9999, "title": "Zemljište", "price": 5_000_000, "summary": {"area": 900},
+             "countyName": "Primorsko-goranska", "cityName": "Omišalj", "settlementName": "Njivice", "smartLink": "z"}
+
 
 class FakeHttp:
     """Popis i oglasi index.hr bez mreže; bilježi pozive."""
@@ -215,7 +226,7 @@ class FakeHttp:
             return Resp({"data": [self.ads[url.split("code=")[1].split("&")[0]]]})
         if "category=houses-for-sale" in url:
             return Resp({"data": self.items, "nextPage": -1})
-        return Resp({"data": [], "nextPage": -1})
+        return Resp({"data": [LAND_ITEM], "nextPage": -1})
 
 
 def test_index_opens_new_matching_ads():
@@ -290,7 +301,7 @@ def test_realestatecroatia_list_detail_and_incremental():
             self.urls.append(url)
             if "detail.asp" in url:
                 return Resp(read("realestatecroatia_oglas.html.gz"))
-            return Resp(page if "vrsta=1" in url else "")
+            return Resp(page if "page=1&" in url + "&" or "vrsta=1" in url else "")   # zemljišta: isti popis
 
     http = Http()
     cfg = load_config()
@@ -334,7 +345,7 @@ def test_burza_list_detail_and_fetch():
             self.urls.append(url)
             if url.rstrip("/").split("/")[-1].isdigit():
                 return Resp(read("burza_oglas.html.gz"))
-            return Resp(page if "kuce" in url and ("crikvenica" in url or url.endswith("kvarner-i-istra")) else "")
+            return Resp(page if ("kuce" in url and "crikvenica" in url) or url.endswith("kvarner-i-istra") else "")
 
     cfg = load_config()
     http = Http()
@@ -371,7 +382,7 @@ def test_detail_limit_defers_instead_of_sending_without_area(monkeypatch, fina):
             self.urls.append(url)
             if "detail.asp" in url:
                 return Resp(read("realestatecroatia_oglas.html.gz"))
-            return Resp(page if "vrsta=1" in url and "page=1" in url else "")
+            return Resp(page if url.endswith("page=1") else "")      # zemljišta: isti popis
 
     monkeypatch.setattr(realestatecroatia, "MAX_DETAILS", 2)
     cfg = load_config()
@@ -444,7 +455,7 @@ def test_index_reads_more_pages_while_new(fina):
                     return self.data
             if "houses-for-sale" in url:
                 return Resp({"data": [item(page * 100 + i) for i in range(24)], "nextPage": page + 1})
-            return Resp({"data": [], "nextPage": -1})
+            return Resp({"data": [LAND_ITEM], "nextPage": -1})
 
     http = Paged([], {})
     src = index_oglasi.IndexOglasi(http, Locator(), load_config()["kriteriji"])
@@ -480,7 +491,7 @@ def test_index_reads_on_while_page_is_recent(fina):
                     return self.data
             if "houses-for-sale" in url:
                 return Resp({"data": pages.get(page, []), "nextPage": page + 1})
-            return Resp({"data": [], "nextPage": -1})
+            return Resp({"data": [LAND_ITEM], "nextPage": -1})
 
     http = Paged([], {})
     src = index_oglasi.IndexOglasi(http, Locator(), load_config()["kriteriji"])
@@ -575,3 +586,80 @@ def test_njuskalo_real_pages_price_on_request_and_per_m2():
     assert (po_m2.area, po_m2.plot_area, po_m2.settlement) == (334, 490, "Krasica")
     d = evaluate(po_m2, crit, loc)
     assert "cijena 1.135.600 € > 400.000 €" in d.reasons
+
+
+def test_empty_category_is_source_error():
+    """Jedna kategorija (zemljišta) prazna, a kuće rade: greška izvora, a ne tiho ništa
+    (promijenjena adresa kategorije, stranica održavanja s HTTP 200)."""
+    from scraper.sources import burza, realestatecroatia, vender
+    from scraper.sources.base import INCREMENTAL
+
+    class Resp:
+        def __init__(self, text="", data=None):
+            self.text, self.data, self.headers = text, data, {}
+
+        def json(self):
+            return self.data
+
+    class Http:
+        def __init__(self, answer):
+            self.answer = answer
+
+        def get(self, url, **kw):
+            return self.answer(url)
+
+    cfg, loc = load_config()["kriteriji"], Locator()
+    houses = {"code": 1, "title": "Kuća", "price": 900_000, "summary": {"area": 120}, "countyName": "Primorsko-goranska",
+              "cityName": "Omišalj", "settlementName": "Njivice", "smartLink": "k"}
+    cases = [
+        index_oglasi.IndexOglasi(Http(lambda u: Resp(data={"data": [houses] if "houses" in u else [], "nextPage": -1})),
+                                 loc, cfg),
+        oglasnik.Oglasnik(Http(lambda u: Resp(read("oglasnik_kuce.html.gz") if "kuce" in u else "<html>Održavanje</html>")),
+                          loc, cfg),
+        realestatecroatia.RealEstateCroatia(
+            Http(lambda u: Resp(read("realestatecroatia_kuce.html.gz") if "vrsta=1" in u else "")), loc, cfg),
+        burza.Burza(Http(lambda u: Resp(read("burza_kuce.html.gz") if "kuce" in u else "")), loc, cfg),
+    ]
+    for src in cases:
+        with pytest.raises(RuntimeError, match="praz|nema oglasa"):
+            src.fetch(INCREMENTAL, set())
+
+    # vender.hr promijeni oznake vrsta: sve bi bilo "nije kuća ni zemljište" i tiho odbijeno.
+    data = json.loads(read("vender_pgz.json.gz"))
+    for x in data:
+        x["property_type"] = [999999]
+    with pytest.raises(RuntimeError, match="nijedan oglas"):
+        vender.Vender(Http(lambda u: Resp(data=data)), loc, cfg).fetch(INCREMENTAL, set())
+
+
+def test_hanging_detail_pages_stop_after_time_budget(monkeypatch):
+    """Stranice oglasa ne odgovaraju (svaka troši ~85 s): nakon DETAIL_SECONDS izvor ih više
+    ne otvara u ovom pokretanju, nego ih odgađa – inače pokretanje prijeđe ograničenje posla."""
+    from scraper.sources import base, realestatecroatia
+    from scraper.sources.base import INCREMENTAL
+
+    clock = [1000.0]
+    monkeypatch.setattr(base.time, "monotonic", lambda: clock[0])
+    page = read("realestatecroatia_kuce.html.gz")
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+    class Http:
+        def __init__(self):
+            self.details, self.retries = 0, set()
+
+        def get(self, url, retries=None, **kw):
+            if "detail.asp" in url:
+                self.details += 1
+                self.retries.add(retries)
+                clock[0] += 85
+                raise RuntimeError("Timeout")
+            return Resp(page if url.endswith("page=1") else "")
+
+    http = Http()
+    src = realestatecroatia.RealEstateCroatia(http, Locator(), load_config()["kriteriji"])
+    src.fetch(INCREMENTAL, set())
+    assert http.details == 3 and http.retries == {base.DETAIL_RETRIES}   # 0, 85, 170 s; nakon 255 s staje
+    assert len(src.deferred) > 3                                       # ostali čekaju sljedeće pokretanje

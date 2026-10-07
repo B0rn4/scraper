@@ -1,5 +1,6 @@
 """HTTP s pristojnim razmakom između zahtjeva i ponovnim pokušajima."""
 
+import re
 import time
 from urllib.parse import urlparse
 
@@ -8,6 +9,22 @@ from curl_cffi import requests as cffi
 
 class FetchError(RuntimeError):
     pass
+
+
+_BLOCKED = re.compile(r"just a moment|attention required|access denied|checking your browser|ddos|captcha"
+                      r"|service unavailable|maintenance|privremeno nedostupn|u izradi", re.I)
+
+
+def blocked(text: str) -> str:
+    """Stranica zaštite od robota ili održavanja koju poslužitelj vrati s HTTP 200 ("Just a
+    moment…"): njezin naslov, inače prazno. Takva stranica nije "nema ničeg novog"."""
+    head = (text or "")[:50000]
+    m = re.search(r"(?is)<title[^>]*>(.*?)</title>", head)
+    title = " ".join(m.group(1).split())[:100] if m else ""
+    # Ne "challenge-platform": Cloudflare tu skriptu ubacuje i u obične stranice.
+    if _BLOCKED.search(title) or "_cf_chl_opt" in head:
+        return title or "zaštita od robota"
+    return ""
 
 
 class Http:
@@ -19,10 +36,10 @@ class Http:
         self._last: dict[str, float] = {}
         self.requests = 0
 
-    def get(self, url: str, **kwargs):
+    def get(self, url: str, retries: int | None = None, **kwargs):
         host = urlparse(url).netloc
         error = None
-        for attempt in range(self.retries + 1):
+        for attempt in range((self.retries if retries is None else retries) + 1):
             wait = self.delay - (time.monotonic() - self._last.get(host, 0))
             if wait > 0:
                 time.sleep(wait)

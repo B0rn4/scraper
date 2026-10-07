@@ -99,7 +99,11 @@ class Vender(Source):
                    f"&orderby=date&order=desc&per_page={PER_PAGE}&page={page}&_fields={FIELDS}"
                    f"&_embed=wp:term,wp:featuredmedia")
             resp = self.http.get(url)
-            for x in parse_items(resp.json()):
+            items = parse_items(resp.json())
+            if items and all(x.kind == OTHER for x in items):
+                # Traže se samo kuće i zemljišta: portal je promijenio oznake vrsta.
+                raise RuntimeError("vender.hr: nijedan oglas nije kuća ni zemljište (promjena vrsta?)")
+            for x in items:
                 found.setdefault(x.source_id, x)
             if page >= int(resp.headers.get("x-wp-totalpages") or 1):
                 break

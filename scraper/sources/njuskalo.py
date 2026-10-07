@@ -14,13 +14,14 @@ na našem području otvara i stranica oglasa (površine, vrsta, opis, koordinate
 
 import html
 import re
+import statistics
 from datetime import datetime
 
 from ..browser import Browser
 from ..filters import evaluate
 from ..models import HOUSE, LAND, REJECT, Listing
 from ..text import areas_in_text, fmt_eur, fmt_m2, parse_number
-from .base import FULL, Source
+from .base import FULL, Source, details_deadline, past
 
 BASE = "https://www.njuskalo.hr"
 REGION = "primorsko-goranska"
@@ -151,6 +152,17 @@ def _page_url(category: str, page: int) -> str:
     return f"{BASE}/{category}/{REGION}?sort=new" + (f"&page={page}" if page > 1 else "")
 
 
+def _old_threshold(known_ids: set[str], found: dict[str, Listing]) -> float | None:
+    """Brojevi oglasa do ovog su "stari" (ponovno objavljeni). Polazi od medijana 50 najvećih
+    poznatih brojeva, ne od najvećeg, i bez brojeva većih od svih na trenutnim stranicama:
+    jedan neobičan broj (druga numeracija, pogrešno pročitan) inače bi sve nove oglase
+    proglasio starima."""
+    newest = max((int(k) for k in found if k.isdigit()), default=None)
+    top = sorted((int(k) for k in known_ids if k.isdigit() and (newest is None or int(k) <= newest + OLD_MARGIN)),
+                 reverse=True)[:50]
+    return statistics.median(top) - OLD_MARGIN if top else None
+
+
 class Njuskalo(Source):
     name = "njuskalo"
     label = "Njuškalo"
@@ -163,8 +175,6 @@ class Njuskalo(Source):
     def fetch(self, mode, known_ids):
         browser = self.browser or Browser()
         own_browser = self.browser is None
-        numeric = [int(x) for x in known_ids if x.isdigit()]
-        threshold = max(numeric) - OLD_MARGIN if numeric else None
         since = self.since_time()
         found: dict[str, Listing] = {}
         try:
@@ -188,7 +198,8 @@ class Njuskalo(Source):
                         break
             if mode != FULL:
                 self.add_pending(found, known_ids)
-            details, later, blocked = 0, set(), False
+            threshold = _old_threshold(known_ids, found)
+            details, later, blocked, deadline = 0, set(), False, details_deadline()
             for x in found.values():
                 if x.source_id in known_ids:
                     continue
@@ -197,7 +208,7 @@ class Njuskalo(Source):
                 elif mode != FULL and self._worth_detail(x):
                     # Sljedeći put (bez stranice oglasa stigao bi bez površine); nakon captche
                     # se u ovom pokretanju više ne otvara nijedan oglas.
-                    if details >= MAX_DETAILS or blocked:
+                    if details >= MAX_DETAILS or blocked or past(deadline):
                         self.defer(x)
                         later.add(x.source_id)
                         continue

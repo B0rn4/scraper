@@ -16,7 +16,7 @@ from pathlib import Path
 from ..filters import evaluate
 from ..models import HOUSE, LAND, REJECT, Listing
 from ..text import fold
-from .base import FULL, Source
+from .base import DETAIL_RETRIES, FULL, Source, details_deadline, past
 
 BASE = "https://www.index.hr/oglasi"
 CATEGORIES = [
@@ -142,6 +142,8 @@ class IndexOglasi(Source):
             while page <= max_pages:
                 data = self._api(category, page)
                 items = parse_items(data, category_hr, kind)
+                if page == 1 and not items:   # kuća i zemljišta u PGŽ-u uvijek ima
+                    raise RuntimeError(f"index.hr: kategorija {category_hr} je prazna (promjena stranice?)")
                 new = [x for x in items if x.source_id not in known_ids and x.source_id not in found]
                 for x in items:
                     found.setdefault(x.source_id, x)
@@ -149,16 +151,16 @@ class IndexOglasi(Source):
                     break
                 page += 1
         if mode != FULL:
-            details = 0
+            details, deadline = 0, details_deadline()
             for x in found.values():
-                if details >= MAX_DETAILS:
+                if details >= MAX_DETAILS or past(deadline):
                     break
                 if x.source_id in known_ids or not self._worth_detail(x):
                     continue
                 details += 1
                 try:
                     parse_single(self.http.get(f"{BASE}/api/aditem/single-ad?code={x.source_id}&format=1",
-                                               headers=JSON_HEADERS).json(), x)
+                                               headers=JSON_HEADERS, retries=DETAIL_RETRIES).json(), x)
                 except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
                     x.extra["detalji_greska"] = str(exc)[:200]
         return list(found.values())

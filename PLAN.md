@@ -413,7 +413,7 @@ bez stotina poruka.
         80 m², 300.000 € (Njuškalo, index.hr, oglasnik) i Matulji, zemljište 717 m², 145.000 €.
         Odbijeni se više ne bilježe tiho; postojeći (oko 4.800) jednokratno oslobođeni;
       - neuspjela obavijest ponavljala se samo ako je portal ponovno prikaže – sad se pamti
-        (najviše 2 dana) i šalje sljedeći put;
+        (najviše 2 dana, od pete runde 7) i šalje sljedeći put;
       - moj popravak iz treće runde: „Soline, građevinsko”, „Atraktivan građevinski teren”,
         „Fužine, građevinsko” nisu se prepoznavali kao građevinsko (riječ završava na „ne”/„van”);
       - natječaj: čestica sa „zgradom”, „ruševinom” ili „starinom” mjerena kao zemljište (180 m²
@@ -423,7 +423,30 @@ bez stotina poruka.
       - kuća za 1.200–3.000 € uz 180–400 m² je cijena po m² (prije ukupna – prolazila je);
       - „suvlasnički dio zajedničkog puta/dvorišta/parkirališta” uz kuću više se ne odbija;
       - „500m2” u naslovu (bez razmaka) spajao je dva različita zemljišta kao isti oglas.
-   5. **Testovi:** automatski (sad 152) dopuniti cijelim pokretanjem na spremljenim
+
+      **Peta runda (7. 10., nova instanca, namjerno izazvani kvarovi):** 15 nalaza, svi
+      provjereni skriptom i popravljeni (uz test koji na starom kodu pada):
+      - jedan neispravan oglas (portal promijeni polje) rušio je cijelo pokretanje, a izvor se
+        vodio kao ispravan – sad se taj oglas preskače; kad ne prođe većina, greška izvora;
+      - pokretanje prekinuto prije slanja (istek vremena, Android ugasi Termux) gubilo je nove
+        oglase – red obavijesti se sprema odmah nakon svakog izvora;
+      - dnevna kopija stanja: neuspjelo preuzimanje starih kopija brisalo je svih 7 dana; slanje
+        stanja na granu state sad ima 3 pokušaja;
+      - mail ne radi → upozorenja idu na Telegram; Telegram ne prima ništa 3 pokretanja
+        zaredom → jedan mail (i jedan kad proradi);
+      - poruku koju Telegram odbije (400: HTML, adresa gumba) šalje se kao običan tekst;
+        „čekaj 900 s” (429) više ne zaustavlja pokretanje;
+      - prazna kategorija (zemljišta) na portalu i vender.hr bez ijedne kuće/zemljišta su
+        greška izvora, a ne tiha nula;
+      - natječaji i banke: stranica zaštite od robota („Just a moment…”) ili održavanja s
+        HTTP 200, RSS koji nije RSS i stranica bez poveznica su greška, a ne „ništa novo”;
+        greške se broje najviše jednom dnevno; neuspjelo slanje za banke se ponavlja;
+      - zaglavljene stranice oglasa: najviše 4 minute otvaranja po izvoru, ostali se odgađaju;
+      - Njuškalo: jedan neobično velik broj oglasa činio je sve nove oglase „starima” (tiho);
+      - Redmi: skraćen seen.json.gz i vrijeme bez zone u github.json rušili su pokretanje;
+        sažetak i github.json pišu se preko privremene datoteke;
+      - tjedni izvještaj: neuspio mail bilježio se kao „poslan” – sad se ponavlja (do 2 dana).
+   5. **Testovi:** automatski (sad 166) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj

@@ -3,6 +3,7 @@
 import html
 import json
 import os
+import re
 import smtplib
 import ssl
 import time
@@ -147,7 +148,10 @@ class Telegram:
             resp = requests.post(f"{self.base}/{method}", data=data, files=files, timeout=60)
             body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
             if resp.status_code == 429:
-                time.sleep(int(body.get("parameters", {}).get("retry_after", 5)) + 1)
+                retry = int(body.get("parameters", {}).get("retry_after", 5))
+                if retry > 60:               # dugo čekanje ("flood wait"): pokušava se sljedeće pokretanje
+                    raise RuntimeError(f"Telegram {method}: 429 čekanje {retry} s")
+                time.sleep(retry + 1)
                 continue
             if not body.get("ok"):
                 raise RuntimeError(f"Telegram {method}: {resp.status_code} {body.get('description', resp.text[:200])}")
@@ -159,7 +163,20 @@ class Telegram:
                 "disable_web_page_preview": "true", "disable_notification": str(silent).lower()}
         if url:
             data["reply_markup"] = _button(url)
-        self._call("sendMessage", data)
+        try:
+            self._call("sendMessage", data)
+        except RuntimeError as exc:
+            if not _rejected(exc):
+                raise
+            self._send_plain(text, url)
+
+    def _send_plain(self, text: str, url: str = "") -> None:
+        """Telegram je odbio poruku (400: neispravan HTML, gumb ili adresa): isti tekst bez
+        oblikovanja i gumba, s adresom u tekstu – da poruka ipak stigne."""
+        plain = html.unescape(re.sub(r"<[^>]+>", "", text))
+        if url:
+            plain += f"\n{url}"
+        self._call("sendMessage", {"chat_id": self.chat_id, "text": plain[:4000], "disable_web_page_preview": "true"})
 
     def send_listing(self, listing: Listing, decision: Decision, headline: str = "") -> None:
         text = format_listing(listing, decision, headline)
@@ -171,8 +188,13 @@ class Telegram:
                 return
             except (RuntimeError, requests.RequestException):
                 pass  # slika se nije dala dohvatiti (ili Telegram nije odgovorio na vrijeme) – pošalji bez nje
-        self._call("sendMessage", {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML",
-                                   "disable_web_page_preview": "true", "reply_markup": markup})
+        try:
+            self._call("sendMessage", {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML",
+                                       "disable_web_page_preview": "true", "reply_markup": markup})
+        except RuntimeError as exc:
+            if not _rejected(exc):
+                raise
+            self._send_plain(text, listing.url)
 
     # --- gumb "Ne zanima me": pritisci se čitaju pri pokretanju (nema stalnog poslužitelja) ---
 
@@ -197,6 +219,11 @@ class Telegram:
         with open(path, "rb") as fh:
             self._call("sendDocument", {"chat_id": self.chat_id, "caption": caption[:1000], "parse_mode": "HTML"},
                        files={"document": (path.name, fh, "text/html")})
+
+
+def _rejected(exc: Exception) -> bool:
+    """Telegram je trajno odbio sadržaj (400), a ne privremeni kvar."""
+    return ": 400 " in str(exc)
 
 
 def safe_url(url: str) -> str:

@@ -12,7 +12,7 @@ import re
 from ..filters import evaluate
 from ..models import HOUSE, LAND, REJECT, Listing
 from ..text import fmt_eur, fmt_m2, fold, parse_number
-from .base import FULL, Source
+from .base import DETAIL_RETRIES, FULL, Source, details_deadline, past
 
 BASE = "https://www.nekretnine.hr"
 COUNTY_SLUG = "primorsko-goranska-zupanija"
@@ -120,15 +120,15 @@ class NekretnineHr(Source):
                 self._crawl(f"{BASE}/{category}/{COUNTY_SLUG}/", kind, found, known_ids, max_pages=1,
                             stop_on_known=False, sort="dataModifica")
         if mode != FULL:
-            details = 0
+            details, deadline = 0, details_deadline()
             for x in found.values():
-                if details >= MAX_DETAILS:
+                if details >= MAX_DETAILS or past(deadline):
                     break
                 if x.source_id in known_ids or not self._worth_detail(x):
                     continue
                 details += 1
                 try:
-                    parse_detail(self.http.get(x.url).text, x)
+                    parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x)
                 except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
                     x.extra["detalji_greska"] = str(exc)[:200]
         return list(found.values())

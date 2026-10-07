@@ -151,5 +151,7 @@ class Seen:
 def export(state, path: Path) -> int:
     """Sažetak viđenih oglasa za drugi uređaj (GitHub → Redmi)."""
     rows = [[r[f] for f in FIELDS] for r in state.seen_rows()]
-    Path(path).write_bytes(gzip.compress(json.dumps(rows, ensure_ascii=False).encode("utf-8")))
+    tmp = Path(f"{path}.tmp")                 # prekid usred pisanja ne ostavlja pola datoteke
+    tmp.write_bytes(gzip.compress(json.dumps(rows, ensure_ascii=False).encode("utf-8")))
+    tmp.replace(path)
     return len(rows)

@@ -1,5 +1,6 @@
 """Zajednička sučelja izvora."""
 
+import time
 from datetime import datetime, timedelta
 
 from ..http import Http
@@ -10,6 +11,19 @@ INCREMENTAL = "incremental"   # redovno pokretanje: samo najnoviji oglasi
 FULL = "full"                 # pregled i početni popis: sve na području
 MAX_ATTEMPTS = 3              # stranica oglasa ne odgovara 3 puta → oglas stiže s podacima s popisa
 SINCE_MARGIN = timedelta(minutes=15)
+# Otvaranje stranica oglasa: najviše toliko sekundi po izvoru i pokretanju, s jednim ponovnim
+# pokušajem. Zaglavljene stranice oglasa inače produlje pokretanje preko ograničenja posla
+# (45 min) i tada ne stigne ništa; ostali oglasi čekaju sljedeće pokretanje.
+DETAIL_SECONDS = 240
+DETAIL_RETRIES = 1
+
+
+def details_deadline() -> float:
+    return time.monotonic() + DETAIL_SECONDS
+
+
+def past(deadline: float) -> bool:
+    return time.monotonic() > deadline
 
 
 class Source:

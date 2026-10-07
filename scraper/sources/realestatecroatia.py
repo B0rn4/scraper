@@ -19,7 +19,7 @@ import re
 from ..filters import evaluate
 from ..models import HOUSE, LAND, REJECT, Listing
 from ..text import fmt_eur, parse_number
-from .base import FULL, Source
+from .base import DETAIL_RETRIES, FULL, Source, details_deadline, past
 
 BASE = "https://www.realestatecroatia.com/hrv/"
 REGION_PGZ = 8
@@ -99,6 +99,8 @@ class RealEstateCroatia(Source):
             cap = self.criteria[key]["max_cijena"]
             for page in range(1, (250 if mode == FULL else 10) + 1):   # redovno: staje kod poznatih
                 items = parse_list(self._list(vrsta, cap, page), kind)
+                if page == 1 and not items:      # kuća i zemljišta u PGŽ-u uvijek ima
+                    raise RuntimeError(f"realestatecroatia.com: popis {key} je prazan (promjena stranice?)")
                 for x in items:
                     if x.price:                      # "cijena na upit" se preskače
                         found.setdefault(x.source_id, x)
@@ -111,17 +113,17 @@ class RealEstateCroatia(Source):
         if mode == FULL:
             return list(found.values())
         self.add_pending(found, known_ids)
-        out, details = [], 0
+        out, details, deadline = [], 0, details_deadline()
         for x in sorted(found.values(), key=lambda x: (not x.extra.get("odgodjen"), -int(x.source_id))):
             if x.source_id in known_ids or evaluate(x, self.criteria, self.locator).status == REJECT:
                 out.append(x)
                 continue
-            if details >= MAX_DETAILS:
+            if details >= MAX_DETAILS or past(deadline):
                 self.defer(x)          # otvara se sljedeći put (bez površine bi stigao kao ⚠)
                 continue
             details += 1
             try:
-                parse_detail(self.http.get(x.url).text, x)
+                parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x)
             except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                 x.extra["detalji_greska"] = str(exc)[:200]
                 if self.defer(x, failed=True):

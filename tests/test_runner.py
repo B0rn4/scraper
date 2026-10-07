@@ -1,5 +1,7 @@
 """Logika obavijesti (nov oglas, snižena cijena, početni popis) bez mreže."""
 
+import json
+
 from scraper import report
 from scraper.db import State
 from scraper.models import HOUSE, PASS, REJECT, Decision, Listing
@@ -127,7 +129,8 @@ def test_silent_baseline_and_reposted_old_ads(tmp_path, monkeypatch):
         r = Runner(tmp_path / "s.db", tmp_path / "out", send=False, device="redmi")
         r.cfg["izvori"] = {"quiet": "redmi"}
         r._send_report = lambda *a, **k: sent.append(("report",))
-        r._send_notifications = lambda state, items: sent.extend((x.source_id, h) for x, d, h in items)
+        r._send_notifications = lambda state, items: [
+            (sent.append((x.source_id, h)), state.mark_notified(x.key, x.price, r.stamp)) for x, d, h in items]
         r.run(force=True)
 
     run_once()
@@ -138,7 +141,8 @@ def test_silent_baseline_and_reposted_old_ads(tmp_path, monkeypatch):
     run_once()
     assert len(sent) == 1 and sent[0][0] == "2" and sent[0][1].startswith("📉")
     state = State(tmp_path / "s.db")
-    assert state.meta_get("last_run") and [r["source_id"] for r in state.notified_since("2000")] == []
+    # Tiho zabilježeni (početak praćenja, stari oglas) nisu u poslanima; poslani jesu.
+    assert state.meta_get("last_run") and sorted(r["source_id"] for r in state.notified_since("2000")) == ["2", "3"]
     state.close()
 
 
@@ -424,6 +428,32 @@ def test_redmi_watches_github(tmp_path):
     runner("2026-10-07T14:20", "2026-10-07T11:40:00+02:00")._check_github(state)   # samo jednom
     runner("2026-10-07T15:00", "2026-10-07T14:55:00+02:00")._check_github(state)
     assert alerts == ["Scraper: GitHub ne radi", "Scraper: GitHub ponovno radi"]
+    runner("2026-10-07T16:00", "2026-10-07T15:50:00")._check_github(state)        # bez zone: zagrebačko vrijeme
+    runner("2026-10-07T16:00", "jučer")._check_github(state)                        # neispravno: bez pada
+    assert len(alerts) == 2
+    state.close()
+
+
+def test_corrupt_files_on_phone_do_not_crash(tmp_path):
+    """Prekinut prijenos na Redmiju: skraćen seen.json.gz (EOFError) samo se zabilježi;
+    sažetak se na GitHubu piše preko privremene datoteke."""
+    import gzip
+    import json
+
+    from scraper import dedupe
+
+    good = gzip.compress(json.dumps([]).encode())
+    (tmp_path / "seen.json.gz").write_bytes(good[: len(good) // 2])
+    r = Runner(tmp_path / "r.db", tmp_path / "out", send=False, device="redmi", seen_file=tmp_path / "seen.json.gz")
+    state = State(tmp_path / "r.db")
+    r._load_seen(state)
+    assert any("nije učitan" in line for line in r.log_lines)
+    (tmp_path / "seen.json.gz").unlink()
+    r._load_seen(state)
+    assert any("ne postoji" in line for line in r.log_lines)
+    assert dedupe.export(state, tmp_path / "seen.json.gz") == 0
+    assert json.loads(gzip.decompress((tmp_path / "seen.json.gz").read_bytes())) == []
+    assert not list(tmp_path.glob("*.tmp"))
     state.close()
 
 
@@ -483,9 +513,16 @@ def _runs(tmp_path, monkeypatch, batches, configure=None):
             (sent.append((x.key, h)), state.mark_notified(x.key, x.price, r.stamp)) for x, d, h in items]
         if configure:
             configure(r, i)
-        r.run(force=True)
+        try:
+            r.run(force=True)
+        except Killed:
+            pass
         out.append(sent)
     return out
+
+
+class Killed(BaseException):
+    """Pokretanje prekinuto izvana (istek vremena posla, Android ugasi Termux)."""
 
 
 def test_failed_send_does_not_lose_property_on_two_portals(tmp_path, monkeypatch):
@@ -823,3 +860,178 @@ def test_failed_send_is_retried_even_if_portal_no_longer_lists_it(tmp_path, monk
     runner_mod_send = Runner._send_notifications
     _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [listing(sid="1")], [listing(sid="2")]], configure)
     assert sorted(calls) == ["t:1", "t:2"]                     # t:1 više nije na popisu, a ipak stiže
+
+
+def test_weekly_report_retried_when_mail_fails(tmp_path):
+    """Mail ne prolazi u ponedjeljak: izvještaj se ne bilježi kao poslan, nego se šalje pri
+    sljedećem redovnom pokretanju; nakon dva dana neuspjeha stiže upozorenje."""
+    from datetime import datetime, timedelta
+    from zoneinfo import ZoneInfo
+
+    class Mail:
+        ok = False
+
+        def __init__(self):
+            self.sent = []
+
+        def send(self, subject, *a, **k):
+            if not self.ok:
+                raise OSError("SMTP: Connection unexpectedly closed")
+            self.sent.append(subject)
+
+    mail = Mail()
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    r.email, r.now = mail, datetime(2026, 10, 12, 7, 15, tzinfo=ZoneInfo("Europe/Zagreb"))
+    r.stamp = r.now.isoformat(timespec="seconds")
+    assert r.weekly() is False and "NIJE poslan" in r.log_lines[-1]
+    state = State(tmp_path / "s.db")
+    assert state.meta_get("tjedni:neposlan") == r.stamp
+    r._retry_weekly(state)                                      # mail i dalje ne radi
+    assert state.meta_get("tjedni:neposlan") and mail.sent == []
+    mail.ok = True
+    r._retry_weekly(state)
+    assert mail.sent == ["Scraper: tjedni izvještaj 12.10.2026."] and not state.meta_get("tjedni:neposlan")
+    r._retry_weekly(state)
+    assert len(mail.sent) == 1                                  # samo jednom
+
+    alerts = []
+    r._alert = lambda subject, text: alerts.append(subject) or True
+    state.meta_set("tjedni:neposlan", (r.now - timedelta(days=3)).isoformat())
+    r._retry_weekly(state)
+    assert alerts == ["Scraper: tjedni izvještaj nije poslan"] and not state.meta_get("tjedni:neposlan")
+    state.close()
+
+
+# --- peta runda (ubrizgavanje kvarova) ---
+
+def test_one_bad_listing_does_not_stop_the_run(tmp_path, monkeypatch):
+    """Portal promijeni jedno polje: oglas koji se ne da obraditi preskače se, ostali stižu;
+    kad se ne da obraditi većina, to je greška izvora (upozorenje nakon 3), a ne pad pokretanja."""
+    import scraper.runner as runner_mod
+
+    real = runner_mod.evaluate
+
+    def evaluate(x, *a, **k):
+        if x.title.startswith("pokvaren"):
+            raise TypeError("'<' not supported between instances of 'str' and 'int'")
+        return real(x, *a, **k)
+
+    monkeypatch.setattr(runner_mod, "evaluate", evaluate)
+    bad = [listing(sid=f"9{i}", title=f"pokvaren {i}") for i in range(3)]
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [bad[0], listing(sid="1"), listing(sid="2")], bad])
+    assert sorted(k for k, _ in sent[1]) == ["t:1", "t:2"]
+    state = State(tmp_path / "s.db")
+    health = next(h for h in state.health_all() if h["source"] == "fake")
+    assert health["failures"] == 1 and "3 od 3 oglasa" in health["last_error"]
+    assert state.meta_get("last_run")                          # pokretanje je završilo
+    state.close()
+
+
+def test_listing_survives_run_killed_before_sending(tmp_path, monkeypatch):
+    """Pokretanje stane nakon spremanja oglasa, a prije slanja: sljedeće ga pošalje i kad ga
+    portal više ne prikazuje (novi su ga pomaknuli dalje od pročitanih stranica)."""
+    def configure(r, i):
+        if i == 1:
+            def killed(state, items):
+                raise Killed()
+            r._send_notifications = killed
+
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [listing(sid="1")], [listing(sid="0", area=60)]],
+                 configure)
+    assert [k for k, _ in sent[2]] == ["t:1"]
+
+
+def test_alert_falls_back_to_telegram_when_mail_fails(tmp_path):
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    texts = []
+
+    class Tg:
+        def send_text(self, text, **k):
+            texts.append(text)
+
+    class Mail:
+        ok = False
+
+        def send(self, *a, **k):
+            if not self.ok:
+                raise OSError("535 Username and Password not accepted")
+
+    runner.telegram, runner.email = Tg(), Mail()
+    assert runner._alert("Scraper: izvor x ne radi", "503") is True and "izvor x ne radi" in texts[0]
+    runner.email.ok = True
+    assert runner._alert("Scraper: izvor y ne radi", "503") is True and len(texts) == 1   # mail prošao
+    runner.email = None                                       # Redmi: bez maila
+    assert runner._alert("Scraper: GitHub ne radi", "") is True and len(texts) == 2
+
+
+def test_telegram_down_is_reported_by_mail_once(tmp_path):
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    mails = []
+    runner.email = object()
+    runner._email = lambda subject, *a, **k: mails.append(subject) or True
+    state = State(tmp_path / "s.db")
+    for _ in range(5):
+        runner._telegram_health(state, "RuntimeError: Telegram sendMessage: 403 Forbidden: bot was blocked by the user")
+    assert mails == ["Scraper: Telegram ne prima poruke"]
+    runner._telegram_health(state, None)
+    runner._telegram_health(state, None)
+    assert mails == ["Scraper: Telegram ne prima poruke", "Scraper: Telegram ponovno radi"]
+    state.close()
+
+
+def test_telegram_rejected_message_sent_as_plain_text_and_long_flood_wait(monkeypatch):
+    """Telegram odbije poruku (400: neispravan HTML, adresa gumba): ista poruka stiže kao
+    običan tekst s adresom. Dugo čekanje (429, retry_after 900 s) ne zaustavlja pokretanje."""
+    import pytest
+
+    from scraper import notify
+    from scraper.notify import Telegram
+
+    posts, sleeps = [], []
+
+    class Resp:
+        def __init__(self, status, body):
+            self.status_code, self.body, self.headers, self.text = status, body, {"content-type": "application/json"}, ""
+
+        def json(self):
+            return self.body
+
+    def post(url, data=None, files=None, timeout=None):
+        posts.append(dict(data))
+        if "parse_mode" in data:
+            return Resp(400, {"ok": False, "description": "Bad Request: BUTTON_URL_INVALID"})
+        return Resp(200, {"ok": True})
+
+    monkeypatch.setattr(notify.requests, "post", post)
+    monkeypatch.setattr(notify.time, "sleep", sleeps.append)
+    tg = Telegram("t", "1")
+    tg.send_text("<b>Natječaj</b> – k.č. 12 &amp; 13", url="javascript:alert(1)")
+    assert posts[-1]["text"] == "Natječaj – k.č. 12 & 13\njavascript:alert(1)" and "reply_markup" not in posts[-1]
+    x = listing()
+    tg.send_listing(x, Decision(PASS, jls="Punat"))
+    assert "parse_mode" not in posts[-1] and posts[-1]["text"].endswith("https://x")
+
+    monkeypatch.setattr(notify.requests, "post", lambda *a, **k: Resp(429, {"ok": False, "parameters": {"retry_after": 900}}))
+    with pytest.raises(RuntimeError, match="429"):
+        tg.send_text("x")
+    assert all(s < 60 for s in sleeps)
+
+
+def test_unsent_keeps_first_time_and_expires_after_a_week(tmp_path):
+    from datetime import timedelta
+
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    ok = Decision(PASS, jls="Punat")
+    state.upsert(listing(), ok, "t1")
+    first = (runner.now - timedelta(days=6)).isoformat(timespec="seconds")
+    state.meta_set("neposlano", json.dumps([{"oglas": listing().to_dict(), "odluka": {"status": PASS, "jls": "Punat"},
+                                            "naslov": "", "od": first}]))
+    runner._prev_unsent = runner._load_unsent(state)
+    runner._remember_unsent(state, runner._prev_unsent)       # ponovno ne uspije: "od" ostaje prvo vrijeme
+    assert json.loads(state.meta_get("neposlano"))[0]["od"] == first
+    seen = runner._load_seen(state)
+    assert [x.key for x, _, _ in runner._unsent(state, seen, set())] == ["t:1"]
+    runner.now += timedelta(days=2)                            # više od tjedan dana: odustaje se
+    assert runner._unsent(state, seen, set()) == []
+    state.close()

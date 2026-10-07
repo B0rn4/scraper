@@ -120,6 +120,8 @@ class Oglasnik(Source):
             while page <= max_pages:
                 url = f"{BASE}/{category}?sort=newest&page={page}&f%5B4%5D%5B{PGZ_LOCATION_ID}%5D=true"
                 listings = parse_page(self.http.get(url).text, kind)
+                if page == 1 and not listings:   # kuća i zemljišta u PGŽ-u uvijek ima
+                    raise RuntimeError(f"oglasnik.hr: na stranici {category} nema oglasa (promjena stranice?)")
                 new = [x for x in listings if x.source_id not in known_ids and x.source_id not in found]
                 for x in listings:
                     found.setdefault(x.source_id, x)

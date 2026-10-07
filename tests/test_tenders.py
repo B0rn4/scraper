@@ -16,6 +16,9 @@ class Resp:
         return json.loads(self.text)
 
 
+MENU = "".join(f'<a href="/izbornik-{i}">Izbornik {i}</a>' for i in range(5))   # prava stranica ima izbornik
+
+
 class FakeHttp:
     def __init__(self, routes):
         self.routes, self.calls = routes, []
@@ -53,7 +56,7 @@ def test_reader_wp_rss_page():
     rss = ("<rss><channel><item><title>Natječaj za prodaju nekretnine</title><link>https://b.hr/n1</link>"
            "<pubDate>Mon, 21 Sep 2026 08:00:00 +0000</pubDate><description><![CDATA[Opis]]></description></item></channel></rss>")
     page = ('<a href="/natjecaj-zemljiste">NATJEČAJ-prodaja zemljišta u Dobrinju</a><a href="/kultura">Javni poziv za kulturu</a>'
-            "<a href='/x.pdf'>Natječaj za prodaju nekretnine u Zagrebu</a>")
+            "<a href='/x.pdf'>Natječaj za prodaju nekretnine u Zagrebu</a>" + MENU)
     http = FakeHttp({"wp-json": wp, "b.hr": rss, "dobrinj": page, "pgz": page})
     reader = Reader(http, Locator())
     items = reader.fetch({"naziv": "Općina Malinska-Dubašnica", "jls": "Malinska-Dubašnica", "nacin": "wp", "url": "https://m.hr/"})
@@ -290,7 +293,7 @@ def test_shares_groups_and_docx():
 def test_page_links_filter():
     page = ('<a href="/gradska-uprava/natjecaji-2/raspolaganje-zemljistem-prodaja/">Raspolaganje zemljištem – prodaja, pravo '
             'građenja, služnosti i zakup</a><a href="/bidding/natjecaj-za-prodaju-zemljista/">Natječaj za prodaju zemljišta u '
-            'vlasništvu Grada Rijeke</a>')
+            'vlasništvu Grada Rijeke</a>' + MENU)
     reader = Reader(FakeHttp({"rijeka": page}), Locator())
     items = reader.fetch({"naziv": "Grad Rijeka (ostali)", "jls": "Rijeka", "nacin": "stranica", "poveznice": "/bidding/",
                           "url": "https://www.rijeka.hr/gradska-uprava/natjecaji-2/ostali-natjecaji/"})
@@ -483,3 +486,78 @@ def test_fourth_review_tender_rules():
     for building in ("zgrada i dvorište", "u naravi ruševina i dvorište", "kuća i dvor"):
         found = tenders.lots(f"Predmet prodaje je k.č. 512 k.o. Vrbnik, {building} površine 180 m2, početna cijena 60.000,00 EUR.")
         assert found and found[0].house, building
+
+
+CHALLENGE = ("<!DOCTYPE html><html><head><title>Just a moment...</title></head><body><p>Enable JavaScript and cookies "
+             "to continue</p><script src='/cdn-cgi/challenge-platform/h/b/orchestrate/chl_page/v1'></script></body></html>")
+
+
+def test_challenge_page_is_an_error_not_an_empty_list():
+    """Zaštita od robota ili održavanje s HTTP 200: greška stranice (nakon 3 dana mail),
+    a ne "nema novih objava" zauvijek."""
+    import pytest
+
+    from scraper.http import blocked
+
+    assert blocked(CHALLENGE) == "Just a moment..."
+    assert blocked("<html><head><title>Natječaji – Općina Baška</title></head><body>…<script src='/cdn-cgi/"
+                   "challenge-platform/scripts/jsd/main.js'></script></body></html>") == ""
+    reader = Reader(FakeHttp({"b.hr": CHALLENGE, "dobrinj": CHALLENGE, "omisalj": "<html><body>Uskoro</body></html>"}),
+                    Locator())
+    for site in ({"naziv": "Općina Baška", "jls": "Baška", "nacin": "rss", "url": "https://b.hr/"},
+                 {"naziv": "Općina Dobrinj", "jls": "Dobrinj", "nacin": "stranica", "url": "https://dobrinj.hr/natj"},
+                 {"naziv": "Općina Omišalj", "jls": "Omišalj", "nacin": "stranica", "url": "https://omisalj.hr/natj"}):
+        with pytest.raises(RuntimeError):
+            reader.fetch(site)
+
+
+def test_bank_page_errors_counted_once_a_day_and_send_failure(tmp_path, monkeypatch):
+    """Stranica banke: zaštita od robota je greška; ponovno čitanje istog dana (prekinuto
+    pokretanje) ne broji drugi "dan zaredom"; neuspjelo slanje na Telegram ne ruši čitanje
+    ostalih stranica i novi tekst stiže sljedeći put."""
+    from scraper import watch
+    from scraper.db import State
+    from scraper.runner import Runner
+
+    pages = {"https://a.hr/": CHALLENGE,
+             "https://b.hr/": "<ul><li>N-013 Poslovni prostor u Zagrebu, Ilica.</li></ul>"}
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+    class Http:
+        def get(self, url, **kw):
+            return Resp(pages[url])
+
+    sent, broken = [], [False]
+
+    class FakeTelegram:
+        def send_text(self, text, silent=False, url=""):
+            if broken[0]:
+                raise RuntimeError("Telegram sendMessage: 502 Bad Gateway")
+            sent.append(text)
+
+    monkeypatch.setattr(watch, "load_pages", lambda: [{"naziv": "Banka A", "url": "https://a.hr/"},
+                                                      {"naziv": "Banka B", "url": "https://b.hr/"}])
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner.telegram, runner.http = FakeTelegram(), Http()
+    alerts = []
+    runner._alert = lambda subject, text: alerts.append(subject) or True
+    state = State(tmp_path / "s.db")
+    for _ in range(3):                                   # isti dan, tri pokretanja (prva dva prekinuta)
+        state.meta_set("daily:banke", "")
+        runner._banks(state)
+    health = {h["source"]: h for h in state.health_all()}
+    assert health["banke: Banka A"]["failures"] == 1 and alerts == []
+    assert "Just a moment" in health["banke: Banka A"]["last_error"]
+
+    pages["https://b.hr/"] = pages["https://b.hr/"].replace("</ul>", "<li>N-101 Kuća u Njivicama, otok Krk, 120 m2.</li></ul>")
+    broken[0] = True
+    state.meta_set("daily:banke", "")
+    runner._banks(state)                                 # ne ruši se
+    assert sent == [] and state.meta_get("daily:banke")
+    broken[0] = False
+    state.meta_set("daily:banke", "")
+    runner._banks(state)
+    assert len(sent) == 1 and "Njivicama" in sent[0]     # novi tekst nije zaboravljen

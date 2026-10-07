@@ -15,7 +15,7 @@ import re
 
 from ..models import HOUSE, LAND, Listing
 from ..text import area_matches, fmt_eur, fold, parse_number
-from .base import FULL, Source
+from .base import DETAIL_RETRIES, FULL, Source, details_deadline, past
 
 BASE = "https://burza.com.hr"
 REGION = "kvarner-i-istra"
@@ -130,6 +130,8 @@ class Burza(Source):
         out = []
         for page in pages:
             items = parse_list(self._page(slug, location, page), kind, place)
+            if page == 1 and not items and location == REGION:   # cijela regija nikad nije prazna
+                raise RuntimeError(f"burza.com.hr: popis {slug} je prazan (promjena stranice?)")
             out += [x for x in items if x.price]              # "cijena na upit" se preskače
             if len(items) < PAGE_SIZE:
                 break
@@ -137,7 +139,7 @@ class Burza(Source):
 
     def _detail(self, x: Listing) -> bool:
         try:
-            parse_detail(self.http.get(x.url).text, x)
+            parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x)
             return True
         except Exception as exc:  # noqa: BLE001
             x.extra["detalji_greska"] = str(exc)[:200]
@@ -164,11 +166,11 @@ class Burza(Source):
             for x in self._list(slug, kind, REGION, "", REGION_PAGES):
                 found.setdefault(x.source_id, x)
         self.add_pending(found, known_ids)
-        out, details = [], 0
+        out, details, deadline = [], 0, details_deadline()
         for x in found.values():
             if x.source_id in known_ids:                       # mjesto i površina iz ranijeg dohvata
                 out.append(x)
-            elif details < MAX_DETAILS:
+            elif details < MAX_DETAILS and not past(deadline):
                 details += 1
                 if self._detail(x) or not self.defer(x, failed=True):
                     out.append(x)

@@ -116,7 +116,12 @@ jobs:
           git init -q && git checkout -q -b state && git add -A
           git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
             commit -qm "Stanje $(date -u +%Y-%m-%dT%H:%M:%SZ)"
-          git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" state
+          # Neuspjelo spremanje znači da sljedeće pokretanje ponovno pošalje iste poruke: 3 pokušaja.
+          for i in 1 2 3; do
+            git push -qf "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" state && exit 0
+            echo "Spremanje stanja nije uspjelo (pokušaj $i)"; sleep $((i * 10))
+          done
+          exit 1
 
       - name: Dnevna kopija stanja (zadnjih 7 dana)
         if: success()
@@ -127,8 +132,13 @@ jobs:
           rm -rf /tmp/kopija && mkdir -p /tmp/kopija && cd /tmp/kopija && git init -q
           # Kao kod učitavanja stanja: samo grana koja ne postoji je nova; greška ne briše stare kopije.
           rc=0; git ls-remote --exit-code --heads "$REPO" state-kopija > /dev/null || rc=$?
-          if [ $rc -eq 0 ]; then git fetch -q --depth=1 "$REPO" state-kopija && git checkout -q FETCH_HEAD -- .
-          elif [ $rc -ne 2 ]; then echo "Grana state-kopija nije provjerena (greška $rc) – kopija se preskače"; exit 0; fi
+          if [ $rc -eq 2 ]; then echo "Grana state-kopija ne postoji – prva kopija."
+          elif [ $rc -ne 0 ]; then echo "Grana state-kopija nije provjerena (greška $rc) – kopija se preskače"; exit 0
+          else
+            # Bez starih kopija se ne sprema (inače bi push obrisao sedmodnevnu povijest).
+            git fetch -q --depth=1 "$REPO" state-kopija || { echo "Kopije nisu preuzete – kopija se preskače"; exit 0; }
+            git checkout -q FETCH_HEAD -- . || { echo "Kopije nisu raspakirane – kopija se preskače"; exit 0; }
+          fi
           if [ -f "state-$DAY.db.gz" ]; then echo "Kopija za $DAY već postoji."; exit 0; fi
           gzip -c "$GITHUB_WORKSPACE/state.db" > "state-$DAY.db.gz"
           if [ -f "$GITHUB_WORKSPACE/redmi.db" ]; then gzip -c "$GITHUB_WORKSPACE/redmi.db" > "redmi-$DAY.db.gz"; fi

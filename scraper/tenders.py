@@ -17,6 +17,7 @@ from urllib.parse import urljoin, urlparse
 
 import yaml
 
+from .http import blocked
 from .ispu import _KO, parcel_mentions
 from .text import area_matches, areas_in_text, fmt_eur, fmt_m2, fold, parse_number
 
@@ -389,6 +390,8 @@ class Reader:
         for word in ("prodaj",):
             params = {"s": word, "feed": "rss2"} if site.get("nacin") == "rss" else None
             xml = self.http.get(site["url"], params=params).text
+            if blocked(xml) or not re.search(r"<(rss|feed)\b", xml):
+                raise RuntimeError(f"umjesto RSS-a stigla je stranica: {blocked(xml) or ' '.join(xml[:150].split())}")
             for block in re.findall(r"<item>(.*?)</item>", xml, re.S):
                 def tag(name, b=block):
                     m = re.search(rf"<{name}>(.*?)</{name}>", b, re.S)
@@ -407,6 +410,10 @@ class Reader:
 
     def _page(self, site: dict) -> list[Tender]:
         page = self.http.get(site["url"])
+        if blocked(page.text):
+            raise RuntimeError(f"stranica zaštite ili održavanja: {blocked(page.text)}")
+        if len(re.findall(r"<a\s", page.text, re.I)) < 5:      # prava stranica uvijek ima izbornik
+            raise RuntimeError(f"stranica bez poveznica (promjena stranice?): {' '.join(page.text[:150].split())}")
         base = str(getattr(page, "url", site["url"]))
         out, seen = [], set()
         for href, inner in re.findall(r"""<a[^>]+href=["']([^"'#]+)["'][^>]*>(.*?)</a>""", page.text, re.S | re.I):
@@ -415,6 +422,8 @@ class Reader:
                 continue
             title = _TEASER.split(full, 1)[0].split(" | ")[0].strip()   # "Natječaj … Na temelju članka 48. …"
             url = urljoin(base, html.unescape(href))
+            if not url.startswith(("http://", "https://")):              # javascript:, mailto:
+                continue
             if url.rstrip("/") in (base.rstrip("/"), site["url"].rstrip("/")):   # sama stranica (izbornik)
                 continue
             if site.get("poveznice") and site["poveznice"] not in url:          # npr. Rijeka: samo /bidding/
