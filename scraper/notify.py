@@ -199,8 +199,8 @@ class Telegram:
     # --- gumb "Ne zanima me": pritisci se čitaju pri pokretanju (nema stalnog poslužitelja) ---
 
     def get_updates(self, offset: int | None) -> list[dict]:
-        # Poruke botu se ne obrađuju, samo broje (dijagnostika: stiže li išta ovom botu).
-        data = {"timeout": "0", "allowed_updates": json.dumps(["callback_query", "message"])}
+        # Sve vrste (prazan popis); obrađuju se samo pritisci, ostalo se broji (dijagnostika).
+        data = {"timeout": "0", "allowed_updates": json.dumps([])}
         if offset:
             data["offset"] = str(offset)
         return self._call("getUpdates", data).get("result") or []

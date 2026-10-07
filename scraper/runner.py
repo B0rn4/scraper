@@ -308,9 +308,11 @@ class Runner:
                 info, name = self.telegram.webhook_info(), self.telegram.me().get("username") or "?"
                 other = sum(1 for u in clicks if str(((u["callback_query"].get("message") or {}).get("chat") or {})
                                                      .get("id")) != str(self.telegram.chat_id))
+                kinds = [f"{u.get('update_id')}:{next((k for k in u if k != 'update_id'), '?')}" for u in updates]
                 self.log(f"Telegram (gumbi): bot @{name[:2]}…{name[-5:]}, pritisaka {len(clicks)} (iz drugog "
-                         f"razgovora {other}), poruka botu {len(updates) - len(clicks)}, na čekanju "
+                         f"razgovora {other}), ažuriranja {', '.join(kinds) or '-'}, na čekanju "
                          f"{info.get('pending_update_count')}, webhook {'da' if info.get('url') else 'ne'}, "
+                         f"dopušteno {info.get('allowed_updates') or 'zadano'}, "
                          f"greška {info.get('last_error_message') or '-'}")
             except Exception as exc:  # noqa: BLE001
                 self.log(f"Telegram (gumbi, provjera): {type(exc).__name__}: {exc}")
