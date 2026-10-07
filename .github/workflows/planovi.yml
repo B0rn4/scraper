@@ -1,0 +1,70 @@
+name: Planovi – preuzimanje
+
+# Ručno, za razvoj: prostorni planovi (PPU, UPU) s kojih se čitaju uvjeti gradnje za
+# zemljišta. Okruženje za razvoj ne dolazi do tih stranica, pa ih preuzima GitHub i
+# sprema na granu debug (planovi/).
+on:
+  workflow_dispatch:
+    inputs:
+      naredba:
+        description: "popis (obiđi zavod.pgz.hr) ili preuzmi (PDF-ovi u tekst)"
+        type: choice
+        options: [popis, preuzmi]
+        default: popis
+      adrese:
+        description: "Za preuzmi: adrese PDF-ova, odvojene razmakom"
+        required: false
+        default: ""
+
+permissions:
+  contents: write
+
+concurrency:
+  group: debug-branch
+  cancel-in-progress: false
+
+jobs:
+  planovi:
+    runs-on: ubuntu-latest
+    timeout-minutes: 55
+    steps:
+      - uses: actions/checkout@v6
+
+      - uses: actions/setup-python@v6
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Instaliraj ovisnosti
+        run: |
+          pip install -r requirements.txt
+          sudo apt-get install -y -qq poppler-utils > /dev/null
+
+      - name: Grana debug
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          git clone -q --depth 1 --branch debug "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git" debug-out \
+            || { mkdir debug-out && git -C debug-out init -q && git -C debug-out checkout -q -b debug \
+                 && git -C debug-out remote add origin "https://x-access-token:${GITHUB_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"; }
+
+      - name: Planovi
+        timeout-minutes: 45
+        env:
+          ADRESE: ${{ inputs.adrese }}
+        run: python tools/planovi.py "${{ inputs.naredba }}" debug-out/planovi $ADRESE
+
+      - name: Spremi na granu debug
+        if: always()
+        run: |
+          cd debug-out
+          git add -A planovi
+          git diff --cached --quiet && { echo "Bez promjena."; exit 0; }
+          git -c user.name="github-actions[bot]" -c user.email="41898282+github-actions[bot]@users.noreply.github.com" \
+            commit -qm "Planovi: ${{ inputs.naredba }}"
+          for i in 1 2 3; do
+            git push -q origin HEAD:debug && exit 0
+            git pull -q --rebase origin debug || true
+            sleep $((i * 5))
+          done
+          exit 1
