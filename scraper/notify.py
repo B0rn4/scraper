@@ -106,7 +106,7 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
         lines.append(("cinjenice", ("" if facts[0].startswith("🔨") else "🏗 ") + e(" · ".join(facts))))
     if listing.extra.get("parcelacija"):            # stiže neovisno o cijeni i površini
         lines.append(("parcelacija", f"✂️ {e(listing.extra['parcelacija'])}"))
-    for key in ("parking_redak", "gp", "ppv", "usporedba"):
+    for key in ("parking_redak", "gp", "ppv", "prosjek", "usporedba"):
         if listing.extra.get(key):
             # Kuća bez točne lokacije: "nije provjereno" je najmanje važan redak.
             kind = "gp_neprovjereno" if key == "gp" and listing.extra.get("gp_neprovjereno") else key
@@ -121,7 +121,8 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
         lines.append(("fina", f"⚖ {e(sud or '')} {e(spis or '')}".strip()))
     lines.append(("naslov_oglasa", f"<i>{e(listing.title[:150])}</i>"))
     # Predugo: redom izostavi manje važne retke.
-    for drop in ("gp_neprovjereno", "naslov_oglasa", "usporedba", "cinjenice", "ppv", "parking_redak", "mjesto"):
+    for drop in ("gp_neprovjereno", "naslov_oglasa", "usporedba", "cinjenice", "ppv", "prosjek", "parking_redak",
+                 "mjesto"):
         if len("\n".join(t for _, t in lines)) <= 1000:
             break
         lines = [(k, t) for k, t in lines if k != drop]

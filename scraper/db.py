@@ -198,9 +198,9 @@ class State:
         return [dict(r) for r in rows]
 
     def price_rows(self) -> list[dict]:
-        """Svi oglasi s cijenom i površinom (za medijan traženih cijena)."""
+        """Svi oglasi s cijenom i površinom (medijan traženih cijena, prosjek područja)."""
         rows = self.conn.execute(
-            "SELECT kind, jls, price, area, title, settlement, reasons, last_seen FROM listings "
+            "SELECT kind, jls, price, area, title, settlement, reasons, status, last_seen FROM listings "
             "WHERE price IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
         )
         return [dict(r) for r in rows]

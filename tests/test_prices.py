@@ -90,3 +90,60 @@ def test_ppv_note(loc, tmp_path):
     assert ppv.note(Listing(title="Poljoprivredno zemljište Njivice", price=45_000, **land), "Omišalj") is None
     house = Listing(source="t", source_id="2", url="u", title="Kuća u Njivicama", kind=HOUSE, price=300_000, area=120)
     assert ppv.note(house, "Omišalj") is None             # za kuće PPV ne postoji (stanovi su zavaravali)
+
+
+CRITERIA = {HOUSE: {"max_cijena": 400_000, "min_povrsina": 70}, LAND: {"max_cijena": 300_000, "min_povrsina": 300}}
+
+
+def area_rows(n, ppm, area, kind=HOUSE, status="prolazi", **kw):
+    return [dict(r, status=status) for r in rows(n, "Omišalj", "Kuća Njivice", ppm, kind=kind, area=area, **kw)]
+
+
+def test_area_average_by_size_band_only_listings_within_criteria(loc):
+    from scraper.prices import AREA_MIN_N
+
+    data = (area_rows(AREA_MIN_N, 2500, 110)                         # razred 100–129 m²
+            + area_rows(AREA_MIN_N, 9000, 115, status="odbijen")     # odbijeni ne ulaze
+            + area_rows(AREA_MIN_N, 5000, 120, status="upozorenje")  # skuplji od granice (parcelacija i sl.) ne ulaze
+            + area_rows(AREA_MIN_N, 1000, 300)                       # drugi razred
+            + area_rows(AREA_MIN_N - 1, 3000, 80))                   # premalo oglasa u razredu
+    data.append(dict(data[0], price=110 * 15_000))                   # pogrešno upisana: izvan granice cijene
+    prices = AskingPrices.from_rows(data, loc, NOW, CRITERIA)
+    assert prices.area[f"{HOUSE}|100"]["n"] == AREA_MIN_N
+    assert prices.area[f"{HOUSE}|100"]["prosjek"] == 2500
+    assert prices.area[f"{HOUSE}|250"]["prosjek"] == 1000
+    assert f"{HOUSE}|70" not in prices.area
+    x = Listing(source="t", source_id="1", url="u", title="Kuća", kind=HOUSE, price=242_000, area=110)
+    assert prices.area_note(x) == ("📐 Prosjek područja, kuće 100–129 m² (10 oglasa): 2.500 €/m² – ovaj 12 % ispod")
+    assert prices.area_short(x) == "područje −12 %"
+    big = Listing(source="t", source_id="2", url="u", title="Kuća", kind=HOUSE, price=310_000, area=300)
+    assert prices.area_note(big).startswith("📐 Prosjek područja, kuće od 250 m² (10 oglasa): 1.000 €/m² – ovaj 3 % iznad")
+    same = Listing(source="t", source_id="3", url="u", title="Kuća", kind=HOUSE, price=301_000, area=300)
+    assert prices.area_note(same).endswith("ovaj ≈ prosjek") and prices.area_short(same) == "područje ≈ prosjek"
+    small = Listing(source="t", source_id="4", url="u", title="Kuća", kind=HOUSE, price=240_000, area=80)
+    assert prices.area_note(small) is None
+
+
+def test_area_average_land_saved_for_redmi(loc, tmp_path):
+    data = (area_rows(12, 200, 600, kind=LAND)
+            + area_rows(12, 20, 600, kind=LAND, reasons='["nije građevinsko (Poljoprivredno)"]'))
+    prices = AskingPrices.from_rows(data, loc, NOW, CRITERIA)
+    prices.save(tmp_path / "cijene.json")
+    again = AskingPrices.from_file(tmp_path / "cijene.json", loc)
+    land = Listing(source="t", source_id="1", url="u", title="Zemljište", kind=LAND, price=150_000, area=600)
+    assert again.area_note(land) == "📐 Prosjek područja, zemljišta 300–799 m² (12 oglasa): 200 €/m² – ovaj 25 % iznad"
+    farm = Listing(source="t", source_id="2", url="u", title="Poljoprivredno zemljište", kind=LAND, price=15_000,
+                   area=600)
+    assert again.area_note(farm) is None
+    # Stara datoteka (Redmi prije ove promjene) nema prosjek područja.
+    (tmp_path / "stara.json").write_text(json.dumps({"izracunato": "", "grupe": {}}), encoding="utf-8")
+    assert AskingPrices.from_file(tmp_path / "stara.json", loc).area_note(land) is None
+
+
+def test_area_line_in_message_after_ppv(loc):
+    x = Listing(source="t", source_id="1", url="u", title="Zemljište Njivice", kind=LAND, price=150_000, area=600)
+    x.extra["ppv"] = "🏛 PPV (Njivice): građevinsko 158–219 €/m² – oglas 15 % iznad gornje"
+    x.extra["prosjek"] = "📐 Prosjek područja, zemljišta 300–799 m² (12 oglasa): 200 €/m² – ovaj 25 % iznad"
+    x.extra["usporedba"] = "💸 25 % iznad medijana traženih (Njivice: 200 €/m², 40 oglasa)"
+    text = format_listing(x, Decision(status=WARN, jls="Omišalj"))
+    assert text.index("🏛 PPV") < text.index("📐") < text.index("💸")

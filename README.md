@@ -41,11 +41,19 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   od Rijeke, grad Rijeka / ne stiže) je u `data/naselja_udaljenosti.csv`.
 - **Cijena prema drugim oglasima:** 💰 ispod / 💸 iznad / 📊 oko medijana traženih
   €/m² u istom naselju (ako ima barem 8 oglasa), inače u gradu/općini.
+- **Prosjek područja (📐):** prosječni €/m² svih oglasa na cijelom području koji
+  odgovaraju kriterijima (nisu odbijeni, cijena i površina u granicama; isti oglas na
+  više portala jednom; viđeni u zadnjih godinu dana), po razredima površine, jer €/m²
+  jako pada s površinom. Kuće: 70–99, 100–129, 130–169, 170–249 i od 250 m²; zemljišta:
+  300–799, 800–1.199, 1.200–2.499 i od 2.500 m² (7. 10.: kuće 3.230 / 2.530 / 2.120 /
+  1.580 / 1.060 €/m², zemljišta 268 / 193 / 103 / 49 €/m²). Prosjek je bez 10 %
+  najjeftinijih i 10 % najskupljih; razred treba barem 10 oglasa.
 - **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, vlasnički list.
 - **Parking (🚗, kuće):** parkirno mjesto ili garaža iz oglasa, ili okućnica od barem
   100 m². „Nema parkinga”, samo javni parking ili parking nije naveden → ⚠.
-- **Sažeti redak (📊):** more (zračno), vožnja do Rijeke, cijena prema
-  prosjeku i PPV-u, broj upozorenja.
+- **Sažeti redak (📊):** more (zračno), vožnja do Rijeke, cijena prema prosjeku
+  područja („područje −12 %”), medijanu u naselju ili gradu/općini („mjesto −25 %”) i
+  PPV-u, broj upozorenja.
 - **Natječaji (📜):** prodaja nekretnina gradova, općina, PGŽ-a i države na našem
   području: sažeti redak, rok, mjesto, a za svaku česticu (do 3) građevinsko područje,
   početna cijena i €/m² prema PPV-u na lokaciji i medijanu traženih. Odluke iz popisa

@@ -135,7 +135,8 @@ def test_runner_tender_message_with_parcels(tmp_path):
 
     runner = Runner(tmp_path / "s.db", tmp_path, send=False)
     runner._ispu = FakeIspu()
-    prices = AskingPrices(runner.locator, {f"{LAND}|Omišalj|njivice": {"n": 20, "med": 200}})
+    prices = AskingPrices(runner.locator, {f"{LAND}|Omišalj|njivice": {"n": 20, "med": 200}},
+                          area={f"{LAND}|300": {"od": 300, "do": 800, "n": 40, "prosjek": 250}})
     text = "Predmet prodaje: k.č. 1234/5 k.o. Njivice, početna cijena 65.000,00 EUR."
     t = Tender("n1", "Općina Omišalj", "Omišalj", "Natječaj za prodaju zemljišta u Njivicama", "https://o.hr/n1",
                TODAY.isoformat(), text)
@@ -143,13 +144,14 @@ def test_runner_tender_message_with_parcels(tmp_path):
     message = runner._tender_message(t, tenders.details(text), found, "Omišalj", tenders.place_text(t, found), None,
                                      prices, 10 ** 12)
     lines = message.splitlines()
-    assert lines[2] == "📊 more 0,3 km · Rijeka 35 min · cijena −50 % od prosjeka · PPV −35 %"
-    assert lines[4:9] == [
+    assert lines[2] == "📊 more 0,3 km · Rijeka 35 min · područje −60 % · mjesto −50 % · PPV −35 %"
+    assert lines[4:10] == [
         "📍 Omišalj – Njivice",
         "🗺 k.č. 1234/5 k.o. Njivice (650 m²): u građevinskom području naselja (neizgrađeni dio)",
         "💶 početna cijena 65.000 € · 100 €/m²",
         "🏛 PPV (na lokaciji, blok Njivice - Građevinsko): građevinsko 158–219 €/m² – početna cijena 35 % ispod donje",
-        "💰 50 % ispod medijana traženih (Njivice: 200 €/m², 20 oglasa)"]
+        "💰 50 % ispod medijana traženih (Njivice: 200 €/m², 20 oglasa)",
+        "📐 Prosjek područja, zemljišta 300–799 m² (40 oglasa): 250 €/m² – ovaj 60 % ispod"]
 
 
 def test_runner_tenders_first_day_and_later(tmp_path, monkeypatch):

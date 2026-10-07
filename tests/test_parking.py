@@ -49,8 +49,8 @@ def test_summary_line():
     crit, loc = load_config()["kriteriji"], Locator()
     x = house("Kuća s garažom." + LONG, title="Kuća Bogovići", municipality="Malinska-Dubašnica")
     d = evaluate(x, crit, loc)
-    x.extra["cijena_kratko"] = ["cijena −20 % od prosjeka"]
-    assert summary_line(x, d) == "📊 more 0,6 km · Rijeka 40 min · cijena −20 % od prosjeka · ⚠ 1"
+    x.extra["cijena_kratko"] = ["mjesto −20 %"]
+    assert summary_line(x, d) == "📊 more 0,6 km · Rijeka 40 min · mjesto −20 % · ⚠ 1"
     assert "📍 Malinska-Dubašnica – Bogovići" in format_listing(x, d)
     y = house("Kuća s garažom." + LONG, title="Kuća", municipality="Krk")     # samo grad: mjere za mjesto Krk
     d = evaluate(y, crit, loc)
