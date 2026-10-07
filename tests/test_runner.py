@@ -1151,3 +1151,111 @@ def test_listener_thread_from_start_and_state_published_before_waiting(tmp_path,
     assert published.read_text().strip()                      # objavljeno prije čekanja
     assert json.loads((tmp_path / "github.json").read_text())["utisani"] == ["t:7"]
     assert any("Čekanje gumba do" in line and "pritisaka 1" in line for line in r.log_lines)
+
+
+# --- šesta runda (simulacija tjedana rada) ---
+
+def test_failed_price_drop_is_retried(tmp_path, monkeypatch):
+    """Sniženje već javljenog oglasa ne prođe (Telegram ne radi): stiže sljedeći put, iako
+    je cijena u bazi već nova i portal ga više ne prikazuje kao promjenu."""
+    calls = []
+
+    class Tg:
+        chat_id = "1"
+        fail = False
+
+        def send_listing(self, x, d, h):
+            if Tg.fail:
+                raise RuntimeError("502")
+            calls.append((x.key, h))
+
+        def send_text(self, *a, **k):
+            pass
+
+        def send_document(self, *a, **k):
+            pass
+
+    def configure(r, i):
+        r.telegram = Tg()
+        r._send_notifications = Runner._send_notifications.__get__(r)
+        Tg.fail = i == 2
+
+    batches = [[listing(sid="0", area=60)], [listing(287_400, "1")], [listing(259_000, "1")], [listing(259_000, "1")]]
+    _runs(tmp_path, monkeypatch, batches, configure)
+    assert [k for k, _ in calls] == ["t:1", "t:1"] and calls[1][1].startswith("📉")
+
+
+def test_luxury_on_request_stays_rejected_with_list_only_data():
+    from scraper.models import WARN
+
+    prev = {"reasons": json.dumps(["cijena na upit – luksuzna, procjena ≈ 900.000 € (medijan traženih Opatija: 3.000 €/m²)"])}
+    d = Decision(WARN, warnings=["cijena na upit – procjena ≈ 900.000 €"], jls="Opatija")
+    assert Runner._keep_text_reject(d, prev, on_request=True).status == REJECT
+    assert Runner._keep_text_reject(d, prev, on_request=False) is d        # sad ima cijenu: nova odluka
+
+
+def test_unmute_reaches_copy_of_copy(tmp_path):
+    state = State(tmp_path / "s.db")
+    state.mute("t:1", "t", "gumb")
+    state.mute("u:2", "t", "isti kao t:1")
+    state.mute("v:3", "t", "isti kao u:2")
+    state.mute("w:4", "t", "gumb")
+    state.unmute("t:1")
+    assert state.muted() == {"w:4"}
+    state.close()
+
+
+def test_pricier_lookalike_after_raise_is_a_different_house(tmp_path):
+    """A je javljen za 306.200 €, zatim poskupio na 324.600 €. Druga kuća iste površine za
+    310.300 € nije ni jeftinija ni iste cijene – stiže kao nova, ne kao "već viđen"."""
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    ok = Decision(PASS, jls="Punat")
+    kamena = "Kamena kuća s konobom, Punat"
+    state.upsert(listing(306_200, "1", 126, kamena), ok, "t1")
+    state.mark_notified("t:1", 306_200, "t1")
+    state.upsert(listing(324_600, "1", 126, kamena), ok, "t2")
+    seen = runner._load_seen(state)
+    assert runner._check_seen(state, seen, listing(310_300, "2", 124, kamena, source="u"), ok, None, "") == ""
+    seen = runner._load_seen(state)
+    assert runner._check_seen(state, seen, listing(306_500, "3", 125, kamena, source="v"), ok, None, "") is None
+    seen = runner._load_seen(state)
+    assert "sad jeftiniji" in runner._check_seen(state, seen, listing(280_000, "4", 126, kamena, source="w"),
+                                                 ok, None, "")
+    state.close()
+
+
+def test_seen_copy_with_existing_row_is_marked(tmp_path):
+    """Kopija koja već ima red (npr. nakon poništenja "Ne zanima me") bilježi se kao viđena."""
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    ok = Decision(PASS, jls="Punat")
+    kamena = "Kamena kuća s konobom, Punat"
+    state.upsert(listing(300_000, "1", title=kamena), ok, "t1")
+    state.mark_notified("t:1", 300_000, "t1")
+    b = listing(300_000, "2", title=kamena, source="u")
+    state.upsert(b, ok, "t2")                                   # red postoji, nije javljen
+    old = state.get("u:2")
+    assert runner._check_seen(state, runner._load_seen(state), b, ok, old, "") is None
+    assert state.get("u:2")["notified_at"] == "dup:t:1"
+    state.close()
+
+
+def test_weekly_report_from_first_monday_run_once(tmp_path):
+    from datetime import datetime, timedelta
+    from zoneinfo import ZoneInfo
+
+    sent = []
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner.weekly = lambda record=True: sent.append(runner.now) or True
+    state = State(tmp_path / "s.db")
+    tz = ZoneInfo("Europe/Zagreb")
+    for day, hour in ((7, 9), (12, 7), (12, 7), (13, 7)):       # srijeda (prvi put), pon, pon, uto
+        runner.now = datetime(2026, 10, day, hour, tzinfo=tz)
+        runner._retry_weekly(state)
+    assert [d.day for d in sent] == [12]
+    runner.now += timedelta(days=7)                              # sljedeći tjedan: ponedjeljak propušten
+    runner.now = datetime(2026, 10, 20, 7, tzinfo=tz)            # utorak
+    runner._retry_weekly(state)
+    assert [d.day for d in sent] == [12, 20]                     # nadoknađen
+    state.close()

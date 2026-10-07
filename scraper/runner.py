@@ -208,7 +208,8 @@ class Runner:
                         d = evaluate(x, self.criteria, self.locator, prices)
                         partial = x.extra.get("opis_skracen") or x.extra.get("samo_popis")
                         if prev and d.notify and partial and prev.get("status") == REJECT:
-                            d = self._keep_text_reject(d, prev)
+                            d = self._keep_text_reject(d, prev, effective_price(
+                                x.price, x.area, bool(x.extra.get("ukupna_cijena")), x.kind) is None)
                         old = state.upsert(x, d, self.stamp)
                         decided.append((x, d))
                         if silent_baseline or (old is None and x.extra.get("stari_oglas")):
@@ -488,14 +489,15 @@ class Runner:
         return False
 
     @staticmethod
-    def _keep_text_reject(d: Decision, prev: dict) -> Decision:
+    def _keep_text_reject(d: Decision, prev: dict, on_request: bool = False) -> Decision:
         """Oglas odbijen zbog podatka sa stranice oglasa (rečenica iz punog opisa, vrsta kuće
-        ili zemljišta) ostaje odbijen kad ovaj put imamo samo podatke s popisa – inače bi
-        stiglo lažno "sad odgovara"."""
+        ili zemljišta, luksuz iz opisa kod "cijene na upit") ostaje odbijen kad ovaj put imamo
+        samo podatke s popisa – inače bi stiglo lažno "sad odgovara"."""
         labels = tuple(r.label for r in risks.RULES if r.reject)
         kept = [r for r in json.loads(prev.get("reasons") or "[]")
                 if r.startswith(labels) or "(vrsta: " in r
-                or (r.startswith("nije građevinsko (") and not r.endswith("(naslov)"))]
+                or (r.startswith("nije građevinsko (") and not r.endswith("(naslov)"))
+                or (on_request and r.startswith("cijena na upit – luksuzna"))]
         return Decision(REJECT, kept, jls=d.jls, location_evidence=d.location_evidence) if kept else d
 
     def _load_seen(self, state: State) -> dedupe.Seen:
@@ -841,8 +843,21 @@ class Runner:
                 return min(values) if values else None
             cheapest = min(twins, key=lambda r: lowest(r) or float("inf"))
             low = lowest(cheapest)
+
+            def same_price(r):               # ±1 % od cijene koju blizanac ima ili je imao u poruci
+                return any(v and v > 100 and abs(x.price - v) <= v * dedupe.PRICE_TOLERANCE
+                           for v in (r["price"], r.get("notified_price")))
+            if x.price and low is not None and x.price >= low * (1 - dedupe.PRICE_TOLERANCE) \
+                    and not any(same_price(t) for t in twins):
+                # Nije jeftinija ni iste cijene: "do 30 % skuplji raniji oglas" vrijedi samo za
+                # sniženja, pa je ovo druga kuća (blizanac je u međuvremenu poskupio).
+                twins = []
+        if twins:
             if not x.price or low is None or x.price >= low * (1 - dedupe.PRICE_TOLERANCE):
-                if old is None:
+                if old is None or not old.get("notified_at"):
+                    # Zabilježen kao viđen i kad je red već postojao (npr. nakon poništenja
+                    # "Ne zanima me"): inače se provjerava svaki put, a kasnije sniženje stiže
+                    # kao "sad odgovara kriterijima".
                     state.mark_notified(x.key, x.price, f"dup:{cheapest['key']}")
                 self.log(f"Već viđen ({cheapest['key']}): {x.title[:60]}")
                 return None
@@ -971,7 +986,7 @@ class Runner:
         for x, d, headline in self._prev_unsent:
             row = state.get(x.key)
             if (x.key in queued or x.key in self.muted or self._unsent_since.get(x.key, "") < oldest or not row
-                    or row.get("notified_at") or row.get("status") == REJECT):
+                    or (row.get("notified_at") and not self._undelivered_drop(x, row)) or row.get("status") == REJECT):
                 continue
             if any(seen.delivered(t, x.key) for t in seen.twins(dedupe.row(x, d), cheaper_ok=False)):
                 continue
@@ -979,6 +994,15 @@ class Runner:
         if out:
             self.log(f"Ponovno slanje neposlanih obavijesti: {len(out)}")
         return out
+
+    @staticmethod
+    def _undelivered_drop(x: Listing, row: dict) -> bool:
+        """Sniženje koje nije stiglo: oglas je već javljen, a cijena u redu čekanja niža je od
+        one iz zadnje poruke (cijena u bazi je već nova, pa ga _notify_reason više ne javlja)."""
+        total = bool(x.extra.get("ukupna_cijena"))
+        price = effective_price(x.price, x.area, total, x.kind)
+        sent = effective_price(row.get("notified_price"), row.get("area") or x.area, total, x.kind)
+        return bool(price and sent and price < sent - 1)
 
     def _send_baseline(self, state: State, baseline) -> None:
         entries, sources = [], []
@@ -1178,11 +1202,31 @@ class Runner:
         if not ok:
             raise SystemExit(1)
 
+    def _week(self) -> str:
+        year, week, _ = self.now.isocalendar()
+        return f"{year}-{week:02d}"
+
     def _retry_weekly(self, state: State) -> None:
-        """Tjedni izvještaj koji nije otišao (mail nije radio) šalje se ponovno pri
-        redovnom pokretanju, najviše dva dana; zatim upozorenje (i na Telegram)."""
+        """Tjedni izvještaj šalje prvo redovno pokretanje u ponedjeljak (zasebno pokretanje u
+        7:15 čekalo bi u redu iza pokretanja koje čeka gumbe, a takvo GitHub može otkazati);
+        propušten ponedjeljak se nadoknađuje. Ako mail ne prođe, ponavlja se pri redovnim
+        pokretanjima najviše dva dana; zatim upozorenje (i na Telegram)."""
+        if self.device != "github":
+            return
+        last = state.meta_get("tjedni:tjedan")
+        if not state.meta_get("tjedni:neposlan") and last != self._week() \
+                and (self.now.weekday() == 0 or last is not None):
+            state.conn.commit()
+            try:
+                if self.weekly(record=False):
+                    state.meta_set("tjedni:tjedan", self._week())
+                else:
+                    state.meta_set("tjedni:neposlan", self.stamp)
+            except Exception as exc:  # noqa: BLE001
+                self.log(f"Tjedni izvještaj: GREŠKA {type(exc).__name__}: {exc}")
+            return
         failed_at = state.meta_get("tjedni:neposlan")
-        if self.device != "github" or not failed_at:
+        if not failed_at:
             return
         state.conn.commit()
         if self._age(failed_at) is not None and self._age(failed_at) > timedelta(days=2):
@@ -1194,12 +1238,21 @@ class Runner:
         try:
             if self.weekly(record=False):
                 state.meta_set("tjedni:neposlan", "")
+                state.meta_set("tjedni:tjedan", self._week())
         except Exception as exc:  # noqa: BLE001
             self.log(f"Tjedni izvještaj: GREŠKA {type(exc).__name__}: {exc}")
 
     def weekly(self, record: bool = True) -> bool:
         """Tjedni izvještaj mailom. Kad mail ne prođe, pamti se i pokušava ponovno pri
-        sljedećim pokretanjima (record=False: poziva ga to ponavljanje)."""
+        sljedećim pokretanjima (record=False: poziva ga redovno pokretanje). Naredba
+        "tjedni" (ručno ili stari okidač u 7:15) ne šalje ponovno izvještaj već poslan ovaj tjedan."""
+        if record:
+            state = State(self.db_path)
+            done = state.meta_get("tjedni:tjedan") == self._week()
+            state.close()
+            if done:
+                self.log("Tjedni izvještaj je ovaj tjedan već poslan.")
+                return True
         since = (self.now - timedelta(days=7)).isoformat(timespec="seconds")
         counts, notified, near, health, dups = {}, [], [], [], []
         paths = [self.db_path] + ([self.redmi_db] if self._redmi_usable() else [])
@@ -1247,9 +1300,9 @@ bez niže cijene.</p><ul>{dl}</ul>
         text = "Tjedni izvještaj scrapera – otvori HTML verziju maila."
         ok = self._email(f"Scraper: tjedni izvještaj {self.now:%d.%m.%Y.}", text, body) is not False
         self.log("Tjedni izvještaj poslan." if ok else "Tjedni izvještaj NIJE poslan – ponovno pri sljedećem pokretanju.")
-        if record and not ok:
+        if record:
             state = State(self.db_path)
-            state.meta_set("tjedni:neposlan", self.stamp)
+            state.meta_set("tjedni:neposlan" if not ok else "tjedni:tjedan", self.stamp if not ok else self._week())
             state.close()
         return ok
 

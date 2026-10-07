@@ -163,7 +163,8 @@ Redmijem).
 - Zaglavlja: `Authorization: Bearer <token>`, `Accept: application/vnd.github+json`,
   `X-GitHub-Api-Version: 2022-11-28`
 - Tijelo: `{"ref":"claude/real-estate-scraper-primorska-jrlscq","inputs":{"naredba":"raspored"}}`
-- Tjedni izvještaj: isti poziv ponedjeljkom u 7:15 s `"naredba":"tjedni"`.
+- Tjedni izvještaj šalje prvo redovno pokretanje u ponedjeljak (od 7. 10.); poseban poziv
+  s `"naredba":"tjedni"` više nije potreban (ako postoji, ne šalje izvještaj drugi put).
 - Token: GitHub fine-grained token samo za ovaj repozitorij, dozvola **Actions: Read and write**.
 
 `raspored` poštuje radno vrijeme 7–23 h, a ručni `run` radi odmah.

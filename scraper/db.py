@@ -156,8 +156,15 @@ class State:
         self.conn.execute("INSERT OR IGNORE INTO muted (key, at, note) VALUES (?, ?, ?)", (key, at, note))
 
     def unmute(self, key: str) -> None:
-        """Poništenje: oglas i isti oglasi na drugim portalima zapamćeni zbog njega."""
-        self.conn.execute("DELETE FROM muted WHERE key = ? OR note = ?", (key, f"isti kao {key}"))
+        """Poništenje: oglas i isti oglasi na drugim portalima zapamćeni zbog njega – i
+        njihove kopije (lanac "isti kao B", a B "isti kao A")."""
+        keys, todo = set(), [key]
+        while todo:
+            k = todo.pop()
+            if k not in keys:
+                keys.add(k)
+                todo += [r[0] for r in self.conn.execute("SELECT key FROM muted WHERE note = ?", (f"isti kao {k}",))]
+        self.conn.executemany("DELETE FROM muted WHERE key = ?", [(k,) for k in keys])
 
     def muted(self, remote: set[str] | None = None) -> set[str]:
         """Utišani oglasi. S popisom s drugog uređaja (Redmi dobiva popis s GitHuba): taj

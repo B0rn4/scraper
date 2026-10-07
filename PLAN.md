@@ -451,7 +451,20 @@ bez stotina poruka.
       (nema greške 409); poruka botu čeka 20 minuta, a pritisak koji bot ne preuzme odmah
       izgubi se. Zato redovno pokretanje nakon posla do sljedećeg (:00, :20, :40) čeka
       pritiske; gumb odmah pokaže „Zabilježeno”. Pritisci se čitaju bez pomaka (offset).
-   5. **Testovi:** automatski (sad 168) dopuniti cijelim pokretanjem na spremljenim
+      **Šesta runda (7. 10., nova instanca, simulacija tri tjedna rada GitHuba i Redmija s
+      lažnim satom, tržištem, ispadima i pritiscima gumba):** 7 nalaza, svi popravljeni (uz test):
+      - čekanje gumba (dodano isti dan) odgađalo je slanje stanja do :19, pa je Redmi u :10
+        radio sa stanjem starim 30 minuta – isti oglas s Njuškala stizao je drugi put (48 parova
+        u 21 dan). Stanje se sad šalje odmah nakon posla; pritiske čeka nit od početka pokretanja;
+      - sniženje već javljenog oglasa koje se ne uspije poslati više se nije ponavljalo;
+      - luksuzna vila „na upit” (luksuz samo u opisu) nakon obnove oglasa stizala je kao „sad
+        odgovara” (popis nema opis);
+      - tjedni izvještaj u 7:15 čekao bi u redu iza pokretanja koje čeka gumbe (GitHub takav
+        može otkazati) – sad ga šalje prvo redovno pokretanje u ponedjeljak;
+      - druga kuća iste površine utišana kao „već viđena” kad je prva u međuvremenu poskupjela;
+      - poništenje „Ne zanima me” nije stizalo do kopije kopije;
+      - kopija s već postojećim redom (nakon poništenja) nije se bilježila kao viđena.
+   5. **Testovi:** automatski (sad 174) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj
