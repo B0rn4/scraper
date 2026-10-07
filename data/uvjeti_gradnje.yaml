@@ -440,7 +440,7 @@
 - jls: Crikvenica
   plan: UPU-i i PPUG Crikvenice (2009–2023)
   naselja: [Crikvenica]
-  izvor: "UPU Crikvenica centar, pročišćeni tekst, SN Grada Crikvenice 153/2022; UPU Crikvenica sjever – Hrusta, SN PGŽ 44/07 i 16/09, čl. 28; UPU Duga, SN PGŽ 49/11, čl. 18; ostalo PPUG 2023, čl. 29 – sve obiteljska kuća GBP do 400 m²"
+  izvor: "UPU Crikvenica centar, pročišćeni tekst, SN Grada Crikvenice 153/2022; UPU Crikvenica sjever – Hrusta, SN PGŽ 44/07 i 16/09, čl. 28 (izmjene SN Grada Crikvenice 2/15 ga ne mijenjaju); UPU Duga, SN PGŽ 49/11, čl. 18; ostalo PPUG 2023, čl. 29 – sve obiteljska kuća GBP do 400 m²"
   url: https://zavod.pgz.hr/sn_jls/Crikvenica/2022_153_1657_donosenje.pdf
   pravila:
     - {zona: "centar / Hrusta", cestica: 400, iznimno: 360, kig: 0.3, kis: 0.9, tlocrt: 200, gbp: 400}
@@ -448,7 +448,7 @@
 - jls: Crikvenica
   plan: UPU Dramalj centar (2008) / PPUG (2023)
   naselja: [Dramalj]
-  izvor: "UPU Dramalj centar, SN PGŽ 18/08, poglavlje 4.1 (nova gradnja 600 m², dovršeni dijelovi 400 m² – kartografski prikaz 4a); izvan UPU-a PPUG 2023, čl. 29"
+  izvor: "UPU Dramalj centar, SN PGŽ 18/08, čl. 41 (nova gradnja 600 m², dovršeni dijelovi 400 m² – kartografski prikaz 4a; izmjene SN Grada Crikvenice 3/15 brišu samo iznimke za DPU centra); izvan UPU-a PPUG 2023, čl. 29"
   url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=14577
   pravila:
     - {zona: "centar – nova gradnja", cestica: 600, kig: 0.3, kis: 0.9, tlocrt: 200, gbp: 400}
@@ -457,19 +457,19 @@
 - jls: Crikvenica
   plan: UPU Jadranovo centar (2008) / PPUG (2023)
   naselja: [Jadranovo]
-  izvor: "UPU 9 Jadranovo centar (NA 21), SN PGŽ 18/08 (nova gradnja 600 m², dovršeni dijelovi 400 m²); izvan UPU-a PPUG 2023, čl. 29"
+  izvor: "UPU 9 Jadranovo centar (NA 21), SN PGŽ 18/08, čl. 38 (nova gradnja 600 m², dovršeni dijelovi 400 m²; izmjene SN Grada Crikvenice 10/15 ga ne mijenjaju); izvan UPU-a PPUG 2023, čl. 29"
   url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=14578
   pravila:
     - {zona: "centar – nova gradnja", cestica: 600, kig: 0.3, kis: 0.9, tlocrt: 200, gbp: 400}
     - {zona: "centar – dovršeni dio", cestica: 400, kig: 0.3, kis: 0.9, tlocrt: 200, gbp: 400}
     - {zona: "izvan centra", cestica: 400, iznimno: 360, kig: 0.3, kis: 1.2}
 - jls: Crikvenica
-  plan: UPU 5 Tončićevo (2008)
+  plan: UPU 5 Tončićevo (2015)
   naselja: [Tončićevo]
-  izvor: "UPU 5 Tončićevo, SN PGŽ 26/08 (samostojeće: čestica 750–1.200 m²)"
-  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=14895
+  izvor: "UPU 5 Tončićevo, SN PGŽ 26/08, čl. 19; izmjene SN Grada Crikvenice 5/15 (čestica 500 umjesto 750 m², najviše 1.200 m²)"
+  url: https://zavod.pgz.hr/sn_jls/Crikvenica/2015_05_1157_donosenje.pdf
   pravila:
-    - {cestica: 750, kig: 0.25, kis: 0.75, tlocrt: 200, gbp: 400}
+    - {cestica: 500, kig: 0.25, kis: 0.75, tlocrt: 200, gbp: 400}
 - jls: Crikvenica
   plan: UPU Selce (2009) / PPUG (2023)
   naselja: [Selce]
