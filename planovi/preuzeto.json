@@ -1258,5 +1258,28 @@
   "status": 200,
   "vrsta": "text/html; charset=utf-8",
   "velicina": 2501369
+ },
+ {
+  "url": "https://arhiva.opatija.hr/files/file/sjednice/31/1-Prijedlog-UPU-a-naselja-Poljane-menderi-Strmice-(UPU20).pdf",
+  "datoteka": "fd4dd13b_-Prijedlog-UPU-a-naselja-Poljane-menderi-Strmice-_UPU20_",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 434625,
+  "znakova": 171999
+ },
+ {
+  "url": "https://arhiva.punat.hr/sites/default/files/2020-02-Odredbe.pdf",
+  "datoteka": "d09a66ce_2020-02-Odredbe",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1179738,
+  "znakova": 321621
+ },
+ {
+  "url": "https://zavod.pgz.hr/planovi_i_izvjesca/registar-prostornih-planova",
+  "datoteka": "148e571a_registar-prostornih-planova",
+  "status": 200,
+  "vrsta": "text/html; charset=utf-8",
+  "velicina": 2501369
  }
 ]
