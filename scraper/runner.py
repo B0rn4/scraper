@@ -300,14 +300,18 @@ class Runner:
             self.log(f"Telegram (gumbi): {type(exc).__name__}: {exc}")
             return
         offset = 0
-        if updates:
-            self.log(f"Telegram (gumbi): {len(updates)} novih pritisaka")
-        elif hasattr(self.telegram, "webhook_info"):
-            try:                        # dijagnostika: zašto nema pritisaka (webhook, zaostale poruke)
-                info = self.telegram.webhook_info()
-                if info.get("url") or info.get("pending_update_count") or info.get("last_error_message"):
-                    self.log(f"Telegram (gumbi): webhook={info.get('url') or '-'} na čekanju="
-                             f"{info.get('pending_update_count')} greška={info.get('last_error_message') or '-'}")
+        clicks = [u for u in updates if u.get("callback_query")]
+        if clicks:
+            self.log(f"Telegram (gumbi): {len(clicks)} novih pritisaka")
+        if hasattr(self.telegram, "webhook_info"):
+            try:                        # dijagnostika: stiže li išta ovom botu (bez imena u javnom zapisu)
+                info, name = self.telegram.webhook_info(), self.telegram.me().get("username") or "?"
+                other = sum(1 for u in clicks if str(((u["callback_query"].get("message") or {}).get("chat") or {})
+                                                     .get("id")) != str(self.telegram.chat_id))
+                self.log(f"Telegram (gumbi): bot @{name[:2]}…{name[-5:]}, pritisaka {len(clicks)} (iz drugog "
+                         f"razgovora {other}), poruka botu {len(updates) - len(clicks)}, na čekanju "
+                         f"{info.get('pending_update_count')}, webhook {'da' if info.get('url') else 'ne'}, "
+                         f"greška {info.get('last_error_message') or '-'}")
             except Exception as exc:  # noqa: BLE001
                 self.log(f"Telegram (gumbi, provjera): {type(exc).__name__}: {exc}")
         for u in updates:
