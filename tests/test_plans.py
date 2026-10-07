@@ -85,6 +85,24 @@ def test_real_table_loads_and_covers_all_municipalities():
             assert 0 < r.kig <= 1 and (r.kis is None or 0 < r.kis <= 3)
     assert plans.find("Omišalj", "Njivice").plan.startswith("UPU Njivice")
     assert plans.find("Omišalj", "Omišalj").plan.startswith("PPUO Omišalj")
+    # UPU naselja ima prednost i kad je i PPU vezan uz popis naselja (Malinska, Krk, Kraljevica).
+    assert plans.find("Malinska-Dubašnica", "Malinska").plan.startswith("UPU 1 Malinska")
+    assert plans.find("Kraljevica", "Šmrika").plan.startswith("UPU 23 Šmrika")
+    assert plans.find("Kraljevica", "Kraljevica").plan.startswith("PPUG Kraljevica")
+
+
+def test_note_ends_the_line(tmp_path):
+    (tmp_path / "u.yaml").write_text("""
+- jls: Baška
+  plan: UPU 1 Baška
+  naselja: [Baška]
+  napomena: "u kulturno-povijesnoj cjelini nove kuće nisu dopuštene"
+  pravila:
+    - {cestica: 500, kig: 0.25, kis: 0.75, tlocrt: 150, gbp: 400}
+""", encoding="utf-8")
+    line, _ = Plans(tmp_path / "u.yaml").check(land(800), "Baška", "Baška")
+    assert line == ("📏 UPU 1 Baška: min. čest. 500 m² · kig 0,25 (tlocrt ≤ 150 m²) · kis 0,75 (GBP ≤ 400 m²)"
+                    " · u kulturno-povijesnoj cjelini nove kuće nisu dopuštene")
 
 
 def test_runner_adds_rules_line_with_part_of_settlement_from_ispu(tmp_path):
@@ -100,7 +118,7 @@ def test_runner_adds_rules_line_with_part_of_settlement_from_ispu(tmp_path):
                 area=600, settlement="Punat", extra={"lat": 45.02, "lon": 14.63, "priblizna_lokacija": False})
     d = Decision(PASS, jls="Punat")
     runner._check_land(x, d)
-    assert x.extra["uvjeti"].startswith("📏 PPUO Punat (2010), neizgrađeni dio: min. čest. 450 m² · kig 0,25")
+    assert x.extra["uvjeti"].startswith("📏 PPUO Punat (2018), neizgrađeni dio: min. čest. 450 m² · kig 0,25")
     assert d.status == PASS and "📏 PPUO Punat" in format_listing(x, d)
     # Bez ISPU-a (istek vremena): redak bez dijela naselja; premala čestica → ⚠.
     y = Listing(source="t", source_id="2", url="u", title="Zemljište Njivice", kind=LAND, price=90_000, area=350,

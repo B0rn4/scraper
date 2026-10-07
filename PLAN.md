@@ -490,13 +490,17 @@ bez stotina poruka.
         konzervatora (oblik, visina, materijali)”.
       - (gotovo) Uvjeti gradnje (📏) iz UPU-a naselja, inače PPU-a: najmanja građevna
         čestica, kig, kis za samostojeću kuću, prema površini čestice i zoni, s najvećim
-        tlocrtom i GBP-om; `data/uvjeti_gradnje.yaml` (14 gradova/općina; UPU-i: Njivice,
-        Krk, Vrbnik, Opatija, Lovran, Kostrena N-1, GUP Rijeka po urbanim pravilima). Planovi
+        tlocrtom i GBP-om; `data/uvjeti_gradnje.yaml` (14 gradova/općina, oko 60 planova:
+        UPU-i naselja Omišlja, Krka, Malinske, Punta, Baške, Vrbnika, Opatije, Lovrana,
+        Matulja, Kostrene, Kraljevice, Crikvenice, Rijeke uz GUP po urbanim pravilima). Planovi
         preuzeti na GitHubu (`tools/planovi.py`, tijek rada „Planovi – preuzimanje”, grana
         debug). Zone UPU-a (S1, M12…) ISPU ne daje, pa se za njih piše raspon; izgrađeni /
-        neizgrađeni dio dolazi s ISPU-a. Ograničenja: dio tekstova je stariji (Matulji i
-        Dobrinj 2008., Omišalj 2011., Punat 2010., Baška 2018.); UPU-i Malinske, Punta,
-        Crikvenice i Baške nisu pročitani (vrijedi PPU). Za natječaje redak još ne postoji.
+        neizgrađeni dio dolazi s ISPU-a. Gdje UPU pokriva samo dio naselja (Crikvenica,
+        Dramalj, Jadranovo, Selce, Mihotići), „zona” kaže koji dio. Kratka napomena na kraju
+        retka gdje je važna (Baška: u staroj jezgri nove kuće nisu dopuštene; Krk: kuća s
+        2 stana GBP do 400 m²). Ograničenja: Matulji i Dobrinj PPU 2008., Omišalj PPU 2011.
+        (tablica izmjena 2017. u PDF-u); tablice UPU-a Poljane, Pehlin i UPU 3 Punat nisu u
+        tekstu odluka. Za natječaje redak još ne postoji.
       - (na redu) PPV naselja iz svih cjenovnih blokova građevinskog zemljišta stambene i
         mješovite namjene (medijan uz raspon), umjesto pet točaka oko središta.
       - (na redu) Zona zaštite kulturno-povijesne cjeline (A, B, C) u upozorenju, ako je

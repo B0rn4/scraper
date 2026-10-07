@@ -29,12 +29,21 @@
 
 # --- Punat ---
 - jls: Punat
-  plan: PPUO Punat (2010)
-  izvor: "PPUO Punat, pročišćeni tekst Odluke, SN PGŽ 30/10, čl. 28 (izmjene 2018. ga ne mijenjaju)"
-  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=20500
+  plan: UPU 9 Stara Baška (2016)
+  naselja: [Stara Baška]
+  izvor: "UPU 9 – građevinsko područje naselja N2 Stara Baška, SN PGŽ 21/16, čl. 46 (zone S-P, M-P, M-1)"
+  url: https://punat.hr/sites/default/files/2024-08/upu-stara-baska.pdf
   pravila:
-    - {zona: izgrađeni dio, cestica: 450, kig: 0.25, kis: 0.75}
-    - {zona: neizgrađeni dio, cestica: 450, kig: 0.25, kis: 0.6}
+    - {cestica: 450, kig: 0.25, kis: 0.75, tlocrt: 150}
+- jls: Punat
+  plan: PPUO Punat (2018)
+  izvor: "PPUO Punat, ciljane izmjene SN PGŽ 14/15, čl. 23c (III. izmjene 30/18 dodaju samo bazen); u naselju Punat UPU 3 (II. izmjene SN PGŽ 3/20, čl. 46): tlocrt do 150 m², na čestici većoj od 1.000 m² do 200 m² – najmanju česticu iz UPU-a 3 nisam pročitao (tablica)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=32234
+  pravila:
+    - {zona: izgrađeni dio, do: 1000, cestica: 450, kig: 0.25, kis: 1.0, tlocrt: 150}
+    - {zona: izgrađeni dio, od: 1000, cestica: 450, kig: 0.25, kis: 1.0, tlocrt: 200}
+    - {zona: neizgrađeni dio, do: 1000, cestica: 450, kig: 0.25, kis: 0.85, tlocrt: 150}
+    - {zona: neizgrađeni dio, od: 1000, cestica: 450, kig: 0.25, kis: 0.85, tlocrt: 200}
 
 # --- Krk (u Gradu Krku "obiteljska kuća" ima 1 stan i najviše 200 m² GBP; kuća s 2 stana je "višeobiteljska") ---
 - jls: Krk
@@ -118,6 +127,13 @@
   pravila:
     - {cestica: 400, kig: 0.3, kis: 0.6, tlocrt: 200}
 - jls: Vrbnik
+  plan: UPU-i Risike (2009)
+  naselja: [Risika]
+  izvor: "UPU naselja Risika (NA 2-3), SN PGŽ 16/09; UPU Risika (NA 2-11) i UPU 7 Risika – Glavica (NA 2-5), SN PGŽ 33/09 – isti uvjeti; kis nadzemno, čestica najviše 1.000 m²"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=16714
+  pravila:
+    - {cestica: 400, kig: 0.3, kis: 0.6, tlocrt: 150}
+- jls: Vrbnik
   plan: PPUO Vrbnik (2024)
   izvor: "PPUO Vrbnik, pročišćeni tekst, SN PGŽ 46/2024, čl. 23a"
   url: https://www.opcina-vrbnik.hr/wp-content/uploads/2025/02/Procisceni-tekst-Prostorni-plan.pdf
@@ -191,6 +207,21 @@
   pravila:
     - {cestica: 600, kig: 0.3, kis: 0.9, tlocrt: 200}
 - jls: Opatija
+  plan: UPU 13 Travičići (2012)
+  naselja: [Travičići]
+  izvor: "UPU naselja Travičići (UPU 13), SN PGŽ 15/12 – GBP stambene građevine do 500 m²"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=24558
+  pravila:
+    - {zona: S1, cestica: 750, kig: 0.3, kis: 0.9, gbp: 500}
+    - {zona: S2, cestica: 600, kig: 0.3, kis: 0.9, gbp: 500}
+- jls: Opatija
+  plan: UPU 14 Okoli (2011)
+  naselja: [Okoli, Dujmići, Falalelići, Katinići]
+  izvor: "UPU naselja Okoli Dujmić – Falalelići – Katinići (UPU 14), SN PGŽ 37/11, čl. 28 (S1, individualne stambene građevine)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=23188
+  pravila:
+    - {cestica: 600, kig: 0.3, kis: 0.9, tlocrt: 200}
+- jls: Opatija
   plan: PPUG Opatija (2021)
   izvor: "III. ID PPUG Opatije, pročišćeni tekst odredbi (travanj 2021.), čl. 24"
   url: https://opatija.hr/wp-content/uploads/2021/03/III-ID-PPUGO-Procisceni-tekst-Odredbi.pdf
@@ -206,6 +237,20 @@
   pravila:
     - {cestica: 600, kig: 0.3, kis: 0.6, tlocrt: 180}
 - jls: Lovran
+  plan: UPU 7 Liganj (2010)
+  naselja: [Liganj]
+  izvor: "UPU izdvojenog dijela naselja Liganj (NA 2-2 i NA 2-3) – UPU 7, SN PGŽ 22/10 – tlocrt s pomoćnim građevinama"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=20139
+  pravila:
+    - {cestica: 600, kig: 0.3, kis: 0.6, tlocrt: 180}
+- jls: Lovran
+  plan: UPU Medveja (2011)
+  naselja: [Medveja]
+  izvor: "UPU naselja Medveja, SN PGŽ 31/11 (izmjene 54/12 ne mijenjaju), obiteljska kuća do 3 stana – tlocrt s pomoćnim građevinama"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=22975
+  pravila:
+    - {cestica: 600, kig: 0.3, kis: 0.6, tlocrt: 180}
+- jls: Lovran
   plan: PPUO Lovran (2019)
   izvor: "II. ID PPUO Lovran, odredbe (prijedlog za javnu raspravu, listopad 2019.), čl. 22"
   url: https://lovran.hr/wp-content/uploads/2019/10/TEKSTUALNI-DIO-ODREDBE.pdf
@@ -214,15 +259,15 @@
 
 # --- Matulji ---
 - jls: Matulji
-  plan: UPU Matulji (2019)
+  plan: UPU Matulji (2023)
   naselja: [Matulji]
-  izvor: "UPU Matulja, II. izmjene i dopune s pročišćenim odredbama (2019.), čl. 34 – zone S, M1, jezgra"
-  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=40039
+  izvor: "UPU Matulja, III. izmjene i dopune, SN PGŽ 46/2023, čl. 33–34 (obiteljske građevine po zonama S i M1)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=33236
   pravila:
-    - {zona: S-1, cestica: 400, kig: 0.3, kis: 0.6, tlocrt: 300, gbp: 600}
-    - {zona: "S-2", cestica: 600, kig: 0.3, kis: 0.6, tlocrt: 300, gbp: 600}
+    - {zona: "S-1 interpolacije", cestica: 400, kig: 0.3, kis: 0.6, gbp: 600}
+    - {zona: "S-2/S-7", cestica: 600, kig: 0.3, kis: 0.6, gbp: 600}
     - {zona: M1-1, cestica: 400, kig: 0.35, kis: 0.65, tlocrt: 300, gbp: 600}
-    - {zona: "S-5/S-6/M1-2", cestica: 250, kig: 0.5, kis: 1.0, tlocrt: 200, gbp: 400}
+    - {zona: "S-5/S-6/M1-2 jezgra i uži centar", cestica: 250, kig: 0.5, kis: 1.0}
 - jls: Matulji
   plan: UPU Rupa (2011)
   naselja: [Rupa]
@@ -233,15 +278,31 @@
     - {zona: S2, cestica: 400, kig: 0.3, kis: 0.6, tlocrt: 250}
     - {zona: S3, cestica: 250, kig: 0.5, kis: 1.0, tlocrt: 200}
 - jls: Matulji
-  plan: UPU Rukavac (2012)
+  plan: UPU Rukavac (2022)
   naselja: [Rukavac]
-  izvor: "UPU 5 Rukavac (NA 15-1), SN PGŽ 15/12, čl. 50 (M1)"
-  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=24582
+  izvor: "UPU 5 Rukavac (NA 15-1), SN PGŽ 15/12, čl. 52 (S); izmjene SN PGŽ 21/22, čl. 50 (M1: čestica 600 m²)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=32456
   pravila:
-    - {cestica: 400, kig: 0.35, kis: 0.7, tlocrt: 200, gbp: 400}
+    - {zona: M1, cestica: 600, kig: 0.35, kis: 0.7, tlocrt: 200, gbp: 400}
+    - {zona: S, cestica: 250, kig: 0.5, kis: 1.0, tlocrt: 200, gbp: 400}
+- jls: Matulji
+  plan: UPU 2 Mihotići-Diraki (2014) / PPUO (2008)
+  naselja: [Mihotići]
+  izvor: "UPU 2 Mihotići – dio Diraki (NA 1-13), SN PGŽ 17/14, čl. 12–13 i 28 (kis s podrumom/tavanom 0,75); ostatak naselja PPUO 2008."
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=26745
+  pravila:
+    - {zona: "UPU Diraki", cestica: 800, kig: 0.25, kis: 0.5, tlocrt: 250, gbp: 600}
+    - {zona: "izvan UPU-a", cestica: 800, kig: 0.25, kis: 0.5, tlocrt: 300, gbp: 600}
+- jls: Matulji
+  plan: UPU 8 Biškupi (2023)
+  naselja: [Biškupi]
+  izvor: "UPU 8 naselje Biškupi sjever (NA 6-7) i dio naselja Biškupi (NA 6-3), SN PGŽ 28/2023 (S-1, S-2) – kis s podrumom/tavanom 0,75"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=46759
+  pravila:
+    - {cestica: 800, kig: 0.25, kis: 0.5, tlocrt: 300, gbp: 600}
 - jls: Matulji
   plan: PPUO Matulji (2008)
-  naselja: [Bregi, Kučeli, Mihotići, Jušići, Jurdani, Mučići, Permani, Ružići, Brešca,
+  naselja: [Bregi, Kučeli, Jušići, Jurdani, Mučići, Permani, Ružići, Brešca,
             Veli Brgud, Mali Brgud, Šapjane, Brgud]
   izvor: "PPUO Matulji (2008.), čl. 38, 48, 49, 51 – stambena i stambeno-poslovna naselja (izmjene do 2021. ne mijenjaju te članke)"
   url: https://www.matulji.hr/downloads/prostorni_planovi/ppuo-matulji.pdf
@@ -254,7 +315,23 @@
   pravila:
     - {cestica: 600, kig: 0.3, kis: 0.6, tlocrt: 300, gbp: 600}
 
-# --- Rijeka (GUP: urbana pravila po kvartovima) ---
+# --- Rijeka (UPU-i dijelova grada, inače GUP: urbana pravila po kvartovima) ---
+- jls: Rijeka
+  plan: UPU Gornja Drenova (2010)
+  naselja: [Gornja Drenova]
+  izvor: "UPU gradskog područja Gornja Drenova, SN PGŽ 21/10, čl. 29 – kis nadzemno; nova gradnja do 5 % manja čestica, interpolacija od 350 m² (kartografski prikaz 4.B)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=20071
+  pravila:
+    - {zona: nova gradnja, cestica: 800, iznimno: 760, kig: 0.2, kis: 0.4, gbp: 400}
+    - {zona: interpolacija, cestica: 350, kig: 0.2, kis: 0.4, gbp: 400}
+- jls: Rijeka
+  plan: UPU Lukovići-Brašćine-Pulac (2007)
+  naselja: [Lukovići, Brašćine, Pulac]
+  izvor: "UPU gradskog područja Lukovići – Brašćine – Pulac, SN PGŽ 22/07, čl. 27 – kis nadzemno; interpolacija u izgrađenom dijelu od 600 m²"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=12609
+  pravila:
+    - {zona: neizgrađeni dio, cestica: 900, kig: 0.2, kis: 0.4}
+    - {zona: izgrađeni dio, cestica: 600, kig: 0.2, kis: 0.4}
 - jls: Rijeka
   plan: GUP Rijeka (2023)
   naselja: [Pašac, Svilno, Orehovica, Draga, Sveti Kuzam]
@@ -333,9 +410,29 @@
 
 # --- Kraljevica ---
 - jls: Kraljevica
-  plan: PPUG Kraljevica (2024)
-  izvor: "VI. ID PPUG Kraljevice, odredbe (prijedlog, studeni 2024.), čl. 20–21; kis nadzemno (ukupno 1,0)"
-  url: https://www.kraljevica.hr/slike/2024/12/01_ODREDBE-ZA-PROVEDBU_VI.-ID-PPUG-KRALJEVICA.pdf
+  plan: UPU 23 Šmrika (2024)
+  naselja: [Šmrika]
+  izvor: "UPU 23 Šmrika, SN Grada Kraljevice 13/2024, poglavlje h. (stambena građevina do 3 stana), tablica tipova gradnje po kartografskom prikazu 4; Barbina draga: UPU dijela naselja Šmrika (NA9), SN Grada Kraljevice 8/2021"
+  url: https://zavod.pgz.hr/sn_jls/Kraljevica/2024_13_1589_donosenje.pdf
+  pravila:
+    - {zona: "S-1 povijesna jezgra", cestica: 300, kig: 0.4, kis: 0.8, tlocrt: 100}
+    - {zona: "S-2/S-P niža zona", cestica: 400, kig: 0.3, kis: 0.6, tlocrt: 150}
+    - {zona: "S/RG reducirana gradnja", cestica: 600, kig: 0.25, kis: 0.5, tlocrt: 150}
+    - {zona: "S-VZ viša zona", cestica: 600, kig: 0.25, kis: 0.5, tlocrt: 150}
+    - {zona: "S-VS viši standard", cestica: 900, kig: 0.2, kis: 0.4, tlocrt: 200}
+    - {zona: "Barbina draga", cestica: 900, kig: 0.25, kis: 0.7}
+- jls: Kraljevica
+  plan: UPU 2-1 i 2-2 Kraljevica – Podbanj (2020)
+  naselja: [Podbanj]
+  izvor: "UPU 2-1 i UPU 2-2 Kraljevica – Podbanj, SN Grada Kraljevice 5/2020 (novo naselje, do 3 stana)"
+  url: https://zavod.pgz.hr/sn_jls/Kraljevica/2020_05_1359_donosenje.pdf
+  pravila:
+    - {zona: "UPU 2-1", cestica: 500, kig: 0.3, kis: 0.8}
+    - {zona: "UPU 2-2", cestica: 700, kig: 0.4, kis: 0.8}
+- jls: Kraljevica
+  plan: PPUG Kraljevica (2025)
+  izvor: "PPUG Kraljevice, pročišćeni tekst, SN Grada Kraljevice 7/2025, čl. 20–21; kis nadzemno (ukupno 1,0)"
+  url: https://zavod.pgz.hr/sn_jls/Kraljevica/2025_07_1837_donosenje.pdf
   pravila:
     - {cestica: 300, kig: 0.4, kis: 0.8}
 
