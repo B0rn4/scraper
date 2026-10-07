@@ -478,7 +478,26 @@ bez stotina poruka.
       (sva izvan našeg popisa mjesta). Ograničenje: oglasi već zabilježeni prije ove izmjene
       (i početno čitanje nakon reseta) nemaju opis, pa se parcelacija iz opisa vidi samo
       kod novih oglasa.
-   5. **Testovi:** automatski (sad 200) dopuniti cijelim pokretanjem na spremljenim
+      **Dodaci 7. 10. (navečer, zahtjevi korisnika):**
+      - (gotovo) Usporedba cijene s oglasima po kriterijima: od koliko posto tih oglasa je
+        oglas skuplji po m² (točno prebrojano), na cijelom području (razred površine) i u
+        naselju (premalo: grad/općina), uz prosjek područja i medijan naselja. Kuće za
+        obnovu, starine i nedovršene zasebno (stupac `category` u bazi). Ideje za druge
+        kategorije: novogradnja (unutar granice cijene gotovo je nema), kuća u nizu /
+        dvojna, velika okućnica – odluka korisnika.
+      - (gotovo) Duga poruka: ostatak u drugoj poruci (odgovor na prvu, bez zvuka).
+      - (gotovo) Zemljište u kulturno-povijesnoj cjelini: „nova gradnja uz uvjete
+        konzervatora (oblik, visina, materijali)”.
+      - (u tijeku) Uvjeti gradnje iz UPU-a naselja (inače PPU-a): najmanja građevna
+        čestica, kig, kis za samostojeću kuću, prema površini čestice i zoni; tablica u
+        `data/`, izvor uz svaki podatak. Planovi se preuzimaju na GitHubu
+        (`tools/planovi.py`, tijek rada „Planovi – preuzimanje”, grana debug).
+      - (na redu) PPV naselja iz svih cjenovnih blokova građevinskog zemljišta stambene i
+        mješovite namjene (medijan uz raspon), umjesto pet točaka oko središta.
+      - (na redu) Zona zaštite kulturno-povijesne cjeline (A, B, C) u upozorenju, ako je
+        negdje dostupna u digitalnom obliku (registar u ISPU-u je nema; zone su u
+        konzervatorskim podlogama i kartama UPU-a).
+   5. **Testovi:** automatski (sad 207) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj
