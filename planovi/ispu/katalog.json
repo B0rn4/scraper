@@ -1,0 +1,2222 @@
+[
+ {
+  "id": "229",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "293",
+  "hash": "lwnz950vo",
+  "label": {
+   "hr": "1.6. Zaštićena područja prirode državnog značaja",
+   "en": "1.6. Protected natural areas of state importance"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Strategija prostornog razvoja RH (2017.) > 1.6. Zaštićena područja prirode državnog značaja"
+ },
+ {
+  "id": "230",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "294",
+  "hash": "CPdmbzB1H0",
+  "label": {
+   "hr": "1.7. Natura 2000 i europske bioregije",
+   "en": "1.7. Natura 2000 i European bioregions"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Strategija prostornog razvoja RH (2017.) > 1.7. Natura 2000 i europske bioregije"
+ },
+ {
+  "id": "231",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "292",
+  "hash": "GQ2nTTZmFKw",
+  "label": {
+   "hr": "1.10. Krajobrazna regionalizacija",
+   "en": "1.10. Landscape regionalization"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Strategija prostornog razvoja RH (2017.) > 1.10. Krajobrazna regionalizacija"
+ },
+ {
+  "id": "232",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "295",
+  "hash": "0r6i0baIn8",
+  "label": {
+   "hr": "2.8. Područja razvojnih specifičnosti",
+   "en": "2.8. Areas with development specifities"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Strategija prostornog razvoja RH (2017.) > 2.8. Područja razvojnih specifičnosti"
+ },
+ {
+  "id": "233",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "297",
+  "hash": "sSZbhyRR8gY",
+  "label": {
+   "hr": "4.5. Cestovni promet",
+   "en": "4.5. Road transport"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Strategija prostornog razvoja RH (2017.) > 4.5. Cestovni promet"
+ },
+ {
+  "id": "234",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "298",
+  "hash": "4wD0THuc2S0",
+  "label": {
+   "hr": "4.7. Pomorski i riječni promet",
+   "en": "4.7. Maritime and river transport"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Strategija prostornog razvoja RH (2017.) > 4.7. Pomorski i riječni promet"
+ },
+ {
+  "id": "235",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "299",
+  "hash": "13uMVFcN3zQ",
+  "label": {
+   "hr": "4.8. Zračni promet",
+   "en": "4.8. Air transport"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Strategija prostornog razvoja RH (2017.) > 4.8. Zračni promet"
+ },
+ {
+  "id": "236",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "300",
+  "hash": "EMMSYmtWcKQ",
+  "label": {
+   "hr": "4.9. Osnovni elementi elektroenergetskog sustava",
+   "en": "4.9. Basic elements of the electrical energy system"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Strategija prostornog razvoja RH (2017.) > 4.9. Osnovni elementi elektroenergetskog sustava"
+ },
+ {
+  "id": "237",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "296",
+  "hash": "P7u3iyx7ZWM",
+  "label": {
+   "hr": "4.10. Transport ugljikovodika",
+   "en": "4.10. Transport of hydrocarbons"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Strategija prostornog razvoja RH (2017.) > 4.10. Transport ugljikovodika"
+ },
+ {
+  "id": "239",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "287",
+  "hash": "Hy5xmVktgHA",
+  "label": {
+   "hr": "08 Pomorski i riječni promet",
+   "en": "08 Maritime and river transport"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Izmjene i dopune Programa prostornog uređenja RH (2013.) > 08 Pomorski i riječni promet"
+ },
+ {
+  "id": "240",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "288",
+  "hash": "JhQ2bGvcbI",
+  "label": {
+   "hr": "11 Cijevni promet: plinovodi i naftovodi/produktovodi",
+   "en": "11 Gas and oil/product pipeline transport"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Izmjene i dopune Programa prostornog uređenja RH (2013.) > 11 Cijevni promet: plinovodi i naftovodi/produktovodi"
+ },
+ {
+  "id": "241",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "289",
+  "hash": "WEewRjUYCxo",
+  "label": {
+   "hr": "13 Termoenergetski objekti i hidroelektrane",
+   "en": "13 Thermal power and hydropower plants"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Izmjene i dopune Programa prostornog uređenja RH (2013.) > 13 Termoenergetski objekti i hidroelektrane"
+ },
+ {
+  "id": "243",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "290",
+  "hash": "woIzF6yRZis",
+  "label": {
+   "hr": "12 Telekomunikacijski promet",
+   "en": "12 Electronic communication system"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Program prostornog uređenja RH (1999.) > 12 Telekomunikacijski promet"
+ },
+ {
+  "id": "244",
+  "hashIdentify": null,
+  "serviceId": "23",
+  "layers": "291",
+  "hash": "Vwca7SP0UXY",
+  "label": {
+   "hr": "14 Elektro-energetski sustav",
+   "en": "14 Electrical energy system"
+  },
+  "_path": "Registar dokumentacije o prostoru > Odabrani kartogrami iz dokumenata prostornog uređenja > Program prostornog uređenja RH (1999.) > 14 Elektro-energetski sustav"
+ },
+ {
+  "id": "35",
+  "hashIdentify": "Jj3RwcNNmzM",
+  "serviceId": "7",
+  "layers": "39,40,41",
+  "hash": "sy947WtnJXs",
+  "label": {
+   "hr": "Lokacijska dozvola",
+   "en": "Location permit"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema vrsti akta > Lokacijska dozvola"
+ },
+ {
+  "id": "37",
+  "hashIdentify": "czxiPYHQ5cs",
+  "serviceId": "7",
+  "layers": "42,43,44",
+  "hash": "42mGASGF7Lk",
+  "label": {
+   "hr": "Akt za građenje građevine",
+   "en": "Building permit"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema vrsti akta > Akt za građenje građevine"
+ },
+ {
+  "id": "38",
+  "hashIdentify": "aB2EEu1hJs",
+  "serviceId": "7",
+  "layers": "45,46,47",
+  "hash": "rmScr7CgpOY",
+  "label": {
+   "hr": "Akt za uporabu građevine",
+   "en": "Use permit"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema vrsti akta > Akt za uporabu građevine"
+ },
+ {
+  "id": "33",
+  "hashIdentify": "7plAOTgxxY8",
+  "serviceId": "7",
+  "layers": "38",
+  "hash": "RQ2xKsDQQE",
+  "label": {
+   "hr": "Građevna čestica",
+   "en": "Building plot"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema vrsti akta > Građevna čestica"
+ },
+ {
+  "id": "39",
+  "hashIdentify": "8gUgBM5bNRY",
+  "serviceId": "7",
+  "layers": "48,49,50",
+  "hash": "l9juB1RAoYE",
+  "label": {
+   "hr": "Prijava početka građenja, uklanjanja ili pokusnog rada",
+   "en": "Notification of the commencement, removal or trial operation of construction"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema vrsti akta > Prijava početka građenja, uklanjanja ili pokusnog rada"
+ },
+ {
+  "id": "110",
+  "hashIdentify": "LGWKYVbnv2c",
+  "serviceId": "7",
+  "layers": "60,61,62",
+  "hash": "JZ3e0LqnuI",
+  "label": {
+   "hr": "Mješovita",
+   "en": "Combined"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Mješovita namjena > Mješovita"
+ },
+ {
+  "id": "107",
+  "hashIdentify": "4vXqrOBh9GE",
+  "serviceId": "7",
+  "layers": "51,52,53",
+  "hash": "VWJbvJQNCL4",
+  "label": {
+   "hr": "Stambeno poslovna",
+   "en": "Residential/commercial"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Mješovita namjena > Stambeno poslovna"
+ },
+ {
+  "id": "108",
+  "hashIdentify": "Opu0a3xZno",
+  "serviceId": "7",
+  "layers": "54,55,56",
+  "hash": "fmOjpg9eWFs",
+  "label": {
+   "hr": "Pomoćna",
+   "en": "Auxiliary"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Mješovita namjena > Pomoćna"
+ },
+ {
+  "id": "109",
+  "hashIdentify": "StViCoojckU",
+  "serviceId": "7",
+  "layers": "57,58,59",
+  "hash": "E38CmXAFU4I",
+  "label": {
+   "hr": "Stambeno gospodarska",
+   "en": "Residential/production"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Mješovita namjena > Stambeno gospodarska"
+ },
+ {
+  "id": "106",
+  "hashIdentify": "EvQFsTGGSJ4",
+  "serviceId": "7",
+  "layers": "69,70,71",
+  "hash": "QF8TjI8P1kA",
+  "label": {
+   "hr": "Stambena",
+   "en": "Residential"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Stambena namjena > Stambena"
+ },
+ {
+  "id": "103",
+  "hashIdentify": "wwgeTyt8XiQ",
+  "serviceId": "7",
+  "layers": "63,64,65",
+  "hash": "Rp0JxVsPVM",
+  "label": {
+   "hr": "Povremeno stanovanje",
+   "en": "Residential (temporary)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Stambena namjena > Povremeno stanovanje"
+ },
+ {
+  "id": "104",
+  "hashIdentify": "qJFXGUmaNAg",
+  "serviceId": "7",
+  "layers": "66,67,68",
+  "hash": "6F9B46vNkDY",
+  "label": {
+   "hr": "Pomoćna",
+   "en": "Auxiliary"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Stambena namjena > Pomoćna"
+ },
+ {
+  "id": "102",
+  "hashIdentify": "Jccl1suowPA",
+  "serviceId": "7",
+  "layers": "99,100,101",
+  "hash": "tw1r6qvicaE",
+  "label": {
+   "hr": "Mješovita javna i društvena namjena",
+   "en": "Combined public and communal"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Mješovita javna i društvena namjena"
+ },
+ {
+  "id": "93",
+  "hashIdentify": "Liwn7lb56Y",
+  "serviceId": "7",
+  "layers": "72,73,74",
+  "hash": "815WOl7YHw",
+  "label": {
+   "hr": "Zdravstvena ustanova",
+   "en": "Health institution"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Zdravstvena ustanova"
+ },
+ {
+  "id": "94",
+  "hashIdentify": "Yv8hKcgO9ms",
+  "serviceId": "7",
+  "layers": "75,76,77",
+  "hash": "ZlIEeVVfOg",
+  "label": {
+   "hr": "Upravna ustanova",
+   "en": "Administrative institution"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Upravna ustanova"
+ },
+ {
+  "id": "95",
+  "hashIdentify": "vlEWUk0Sfho",
+  "serviceId": "7",
+  "layers": "78,79,80",
+  "hash": "Brhmt6ZguRg",
+  "label": {
+   "hr": "Socijalna ustanova",
+   "en": "Welfare institution"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Socijalna ustanova"
+ },
+ {
+  "id": "96",
+  "hashIdentify": "KXkWPs7vb8",
+  "serviceId": "7",
+  "layers": "81,82,83",
+  "hash": "MGR0GFAtNKw",
+  "label": {
+   "hr": "Predškolska ustanova",
+   "en": "Pre-school"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Predškolska ustanova"
+ },
+ {
+  "id": "97",
+  "hashIdentify": "ZovFbKkKXjM",
+  "serviceId": "7",
+  "layers": "84,85,86",
+  "hash": "bWNEAk84M74",
+  "label": {
+   "hr": "Osnovnoškolska ustanova",
+   "en": "Primary education"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Osnovnoškolska ustanova"
+ },
+ {
+  "id": "98",
+  "hashIdentify": "hQXuQagSS88",
+  "serviceId": "7",
+  "layers": "87,88,89",
+  "hash": "1kCKZlNREUY",
+  "label": {
+   "hr": "Srednjoškolska ustanova",
+   "en": "Secondary education"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Srednjoškolska ustanova"
+ },
+ {
+  "id": "99",
+  "hashIdentify": "uC15mV3lY9Y",
+  "serviceId": "7",
+  "layers": "90,91,92",
+  "hash": "0XhL08WYkN4",
+  "label": {
+   "hr": "Visoko učilište",
+   "en": "Tertiary education"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Visoko učilište"
+ },
+ {
+  "id": "100",
+  "hashIdentify": "qQ4jg7fy5j0",
+  "serviceId": "7",
+  "layers": "93,94,95",
+  "hash": "XN0q8Dk1gtA",
+  "label": {
+   "hr": "Kulturna ustanova",
+   "en": "Cultural institution"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Kulturna ustanova"
+ },
+ {
+  "id": "101",
+  "hashIdentify": "F6T5Xldie8g",
+  "serviceId": "7",
+  "layers": "96,97,98",
+  "hash": "TUDm6S1guTA",
+  "label": {
+   "hr": "Vjerska ustanova",
+   "en": "Religious institution"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Javna i društvena namjena > Vjerska ustanova"
+ },
+ {
+  "id": "77",
+  "hashIdentify": "hpGxR9nn84",
+  "serviceId": "7",
+  "layers": "102,103,104",
+  "hash": "ccSLL6tvs5c",
+  "label": {
+   "hr": "Proizvodno poslovna",
+   "en": "Production/commercial mix"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Proizvodno poslovna"
+ },
+ {
+  "id": "78",
+  "hashIdentify": "haRSpkeSHOU",
+  "serviceId": "7",
+  "layers": "105,106,107",
+  "hash": "2JX8cyMwR1g",
+  "label": {
+   "hr": "Proizvodna",
+   "en": "Production"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Proizvodna"
+ },
+ {
+  "id": "79",
+  "hashIdentify": "b9q26hFefX0",
+  "serviceId": "7",
+  "layers": "108,109,110",
+  "hash": "wv1lTmWJKGI",
+  "label": {
+   "hr": "Proizvodna (industrija)",
+   "en": "Production (industrial)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Proizvodna (industrija)"
+ },
+ {
+  "id": "80",
+  "hashIdentify": "2PVszwGMPI",
+  "serviceId": "7",
+  "layers": "111,112,113",
+  "hash": "at8mJwmtQE",
+  "label": {
+   "hr": "Proizvodna (prehrambeno-prerađivačka)",
+   "en": "Production (food processing)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Proizvodna (prehrambeno-prerađivačka)"
+ },
+ {
+  "id": "81",
+  "hashIdentify": "33OKiSRFOT0",
+  "serviceId": "7",
+  "layers": "114,115,116",
+  "hash": "3Nm4kZlEMc",
+  "label": {
+   "hr": "Poslovna",
+   "en": "Commercial"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Poslovna"
+ },
+ {
+  "id": "82",
+  "hashIdentify": "EcgaH0pFagI",
+  "serviceId": "7",
+  "layers": "117,118,119",
+  "hash": "rVMxQMVQVoo",
+  "label": {
+   "hr": "Poslovna (uslužna)",
+   "en": "Commercial (services)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Poslovna (uslužna)"
+ },
+ {
+  "id": "83",
+  "hashIdentify": "H6lsYv758fE",
+  "serviceId": "7",
+  "layers": "120,121,122",
+  "hash": "Zi27Yl4hYks",
+  "label": {
+   "hr": "Poslovna (trgovački i logistički centar)",
+   "en": "Commercial (trade & logistic centers)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Poslovna (trgovački i logistički centar)"
+ },
+ {
+  "id": "84",
+  "hashIdentify": "xpp2PQUDI2s",
+  "serviceId": "7",
+  "layers": "123,124,125",
+  "hash": "Q08TnJAQg84",
+  "label": {
+   "hr": "Komunalno-servisna",
+   "en": "Utilities & services"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Komunalno-servisna"
+ },
+ {
+  "id": "85",
+  "hashIdentify": "mUVl61Aapc",
+  "serviceId": "7",
+  "layers": "126,127,128",
+  "hash": "0uhpLXU4Ao",
+  "label": {
+   "hr": "Eksploatacija mineralnih sirovina",
+   "en": "Exploatation of mineral resources"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Eksploatacija mineralnih sirovina"
+ },
+ {
+  "id": "86",
+  "hashIdentify": "ncNTR8yHNnk",
+  "serviceId": "7",
+  "layers": "129,130,131",
+  "hash": "9ItzrRnazf8",
+  "label": {
+   "hr": "Akvakultura, marikultura i uzgajalište",
+   "en": "Aqvaculture/mariculture/breeding site"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Akvakultura, marikultura i uzgajalište"
+ },
+ {
+  "id": "87",
+  "hashIdentify": "fXPoYOKV1U",
+  "serviceId": "7",
+  "layers": "132,133,134",
+  "hash": "gwGkS3Tf76g",
+  "label": {
+   "hr": "Ugostiteljsko-turistička",
+   "en": "Hospitability & tourism"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Ugostiteljsko-turistička"
+ },
+ {
+  "id": "88",
+  "hashIdentify": "I22yH9LZBzU",
+  "serviceId": "7",
+  "layers": "135,136,137",
+  "hash": "8vsqMip0tBk",
+  "label": {
+   "hr": "Nautički turizam",
+   "en": "Nautical tourism"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Nautički turizam"
+ },
+ {
+  "id": "89",
+  "hashIdentify": "0itUCwVH0Nk",
+  "serviceId": "7",
+  "layers": "138,139,140",
+  "hash": "rjdYHnsUeeM",
+  "label": {
+   "hr": "Sportsko-rekreacijska",
+   "en": "Sports & recreation"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Sportsko-rekreacijska"
+ },
+ {
+  "id": "90",
+  "hashIdentify": "aourhPLMqPY",
+  "serviceId": "7",
+  "layers": "141,142,143",
+  "hash": "WDfzdEn9X1c",
+  "label": {
+   "hr": "Poljoprivredna",
+   "en": "Agriculture"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Poljoprivredna"
+ },
+ {
+  "id": "91",
+  "hashIdentify": "6Hajp0o0UFI",
+  "serviceId": "7",
+  "layers": "144,145,146",
+  "hash": "5Am6DgIJhEg",
+  "label": {
+   "hr": "Gospodarenje šumom",
+   "en": "Forest management"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Gospodarenje šumom"
+ },
+ {
+  "id": "92",
+  "hashIdentify": "eYMx3m3GFUU",
+  "serviceId": "7",
+  "layers": "147,148,149",
+  "hash": "ljKRD66ILSA",
+  "label": {
+   "hr": "Gospodarenje otpadom",
+   "en": "Waste management"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Gospodarska namjena > Gospodarenje otpadom"
+ },
+ {
+  "id": "51",
+  "hashIdentify": "OxDh5W3Ve4s",
+  "serviceId": "7",
+  "layers": "150,151,152",
+  "hash": "HKLfdxEBH0s",
+  "label": {
+   "hr": "Infrastrukturna (kombinacija)",
+   "en": "Infrastructure (misc.)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Infrastrukturna (kombinacija)"
+ },
+ {
+  "id": "52",
+  "hashIdentify": "O3cjDxtzCl8",
+  "serviceId": "7",
+  "layers": "153,154,155",
+  "hash": "mu1gUpTocFY",
+  "label": {
+   "hr": "Promet (kombinacija)",
+   "en": "Transport (misc.)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Promet (kombinacija)"
+ },
+ {
+  "id": "54",
+  "hashIdentify": "tDYFNrvakwY",
+  "serviceId": "7",
+  "layers": "156,157,158",
+  "hash": "9UvJXuexHGI",
+  "label": {
+   "hr": "Promet (cestovni)",
+   "en": "Transport (road)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Promet (cestovni)"
+ },
+ {
+  "id": "55",
+  "hashIdentify": "jiPhkFqw",
+  "serviceId": "7",
+  "layers": "159,160,161",
+  "hash": "feoZU7dhax0",
+  "label": {
+   "hr": "Promet (željeznički)",
+   "en": "Transport (railroad)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Promet (željeznički)"
+ },
+ {
+  "id": "57",
+  "hashIdentify": "677OEtyljok",
+  "serviceId": "7",
+  "layers": "162,163,164",
+  "hash": "sCzdEmFX2As",
+  "label": {
+   "hr": "Promet (pomorski)",
+   "en": "Transport (maritime)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Promet (pomorski)"
+ },
+ {
+  "id": "59",
+  "hashIdentify": "n9ogvNU2nYo",
+  "serviceId": "7",
+  "layers": "165,166,167",
+  "hash": "L24je8DJiNo",
+  "label": {
+   "hr": "Promet (riječni)",
+   "en": "Transport (inland waters)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Promet (riječni)"
+ },
+ {
+  "id": "61",
+  "hashIdentify": "vCK8megDmA",
+  "serviceId": "7",
+  "layers": "168,169,170",
+  "hash": "KNAfW2Z71Fw",
+  "label": {
+   "hr": "Promet (zračni)",
+   "en": "Transport (air)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Promet (zračni)"
+ },
+ {
+  "id": "62",
+  "hashIdentify": "UcudWLDGNw",
+  "serviceId": "7",
+  "layers": "171,172,173",
+  "hash": "yeYYMoHNVI8",
+  "label": {
+   "hr": "Telekomunikacijski sustav",
+   "en": "Electronic communication"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Telekomunikacijski sustav"
+ },
+ {
+  "id": "63",
+  "hashIdentify": "nyFt5L3TTDo",
+  "serviceId": "7",
+  "layers": "174,175,176",
+  "hash": "Su52fn8cCeU",
+  "label": {
+   "hr": "Energetski sustav (kombinacija)",
+   "en": "Energy production (misc.)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Energetski sustav (kombinacija)"
+ },
+ {
+  "id": "64",
+  "hashIdentify": "7Clz2NJWOcg",
+  "serviceId": "7",
+  "layers": "177,178,179",
+  "hash": "ujdW5HGvnxI",
+  "label": {
+   "hr": "Proizvodnja plina",
+   "en": "Gas production"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Proizvodnja plina"
+ },
+ {
+  "id": "65",
+  "hashIdentify": "qe8SGN9Bv0w",
+  "serviceId": "7",
+  "layers": "180,181,182",
+  "hash": "Bb4UX85hfc",
+  "label": {
+   "hr": "Cijevni transport plina",
+   "en": "Gas pipelines"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Cijevni transport plina"
+ },
+ {
+  "id": "66",
+  "hashIdentify": "kDgNMbD8BjQ",
+  "serviceId": "7",
+  "layers": "183,184,185",
+  "hash": "6om6HI1MtVk",
+  "label": {
+   "hr": "Proizvodnja električne energije",
+   "en": "Electric production"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Proizvodnja električne energije"
+ },
+ {
+  "id": "67",
+  "hashIdentify": "dh1yExGX8jY",
+  "serviceId": "7",
+  "layers": "186,187,188",
+  "hash": "0RMVZWWFCp8",
+  "label": {
+   "hr": "Prijenos električne energije",
+   "en": "Electric energy transport"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Prijenos električne energije"
+ },
+ {
+  "id": "68",
+  "hashIdentify": "ahuIz9kCsv4",
+  "serviceId": "7",
+  "layers": "189,190,191",
+  "hash": "9Uzrc0sZIqY",
+  "label": {
+   "hr": "Distribucija električne energije",
+   "en": "Electric energy distribution"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Distribucija električne energije"
+ },
+ {
+  "id": "69",
+  "hashIdentify": "sL1ClT0xa1s",
+  "serviceId": "7",
+  "layers": "192,193,194",
+  "hash": "hbhhc5QlHw",
+  "label": {
+   "hr": "Proizvodnja nafte",
+   "en": "Oil production"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Proizvodnja nafte"
+ },
+ {
+  "id": "70",
+  "hashIdentify": "ClQzrQ0ik2c",
+  "serviceId": "7",
+  "layers": "195,196,197",
+  "hash": "QBgwMW452j0",
+  "label": {
+   "hr": "Cijevni transport nafte",
+   "en": "Oil pipelines"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Cijevni transport nafte"
+ },
+ {
+  "id": "71",
+  "hashIdentify": "WpubrzOu2g",
+  "serviceId": "7",
+  "layers": "198,199,200",
+  "hash": "JIj5DMMhAzQ",
+  "label": {
+   "hr": "Vodnogospodarski sustav (kombinacija)",
+   "en": "Water management (misc.)"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Vodnogospodarski sustav (kombinacija)"
+ },
+ {
+  "id": "72",
+  "hashIdentify": "tvTJf5P0ep4",
+  "serviceId": "7",
+  "layers": "201,202,203",
+  "hash": "SKgn2uFiiw",
+  "label": {
+   "hr": "Korištenje voda",
+   "en": "Water use"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Korištenje voda"
+ },
+ {
+  "id": "73",
+  "hashIdentify": "t1MbNs7JOIE",
+  "serviceId": "7",
+  "layers": "204,205,206",
+  "hash": "jYb6UusFlYk",
+  "label": {
+   "hr": "Odvodnja otpadnih voda",
+   "en": "Wastewater drainage"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Odvodnja otpadnih voda"
+ },
+ {
+  "id": "74",
+  "hashIdentify": "MeWw1iCPXrU",
+  "serviceId": "7",
+  "layers": "207,208,209",
+  "hash": "lyNzbq4jZPo",
+  "label": {
+   "hr": "Uređenje voda i vodotoka",
+   "en": "Waters & watercourses regulation"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Uređenje voda i vodotoka"
+ },
+ {
+  "id": "75",
+  "hashIdentify": "cg5H6i39ow8",
+  "serviceId": "7",
+  "layers": "210,211,212",
+  "hash": "BhiYc5SjqzM",
+  "label": {
+   "hr": "Melioracijski sustav",
+   "en": "Amelioration"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Melioracijski sustav"
+ },
+ {
+  "id": "76",
+  "hashIdentify": "dYoRUr1W0n0",
+  "serviceId": "7",
+  "layers": "213,214,215",
+  "hash": "j9c26N9FbAo",
+  "label": {
+   "hr": "Gospodarenje otpadom",
+   "en": "Waste management"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Infrastrukturna namjena > Gospodarenje otpadom"
+ },
+ {
+  "id": "49",
+  "hashIdentify": "0zYQIMwq2BM",
+  "serviceId": "7",
+  "layers": "216,217,218",
+  "hash": "44WotsMmcC0",
+  "label": {
+   "hr": "Posebna namjena",
+   "en": "Special Designation"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Posebna namjena"
+ },
+ {
+  "id": "43",
+  "hashIdentify": null,
+  "serviceId": "7",
+  "layers": "219,220,221",
+  "hash": "HiYGgbwiAc",
+  "label": {
+   "hr": "Namjena nije određena",
+   "en": "Designation not defined"
+  },
+  "_path": "Registar dozvola/akata > Registar akata > Prema namjeni > Namjena nije određena"
+ },
+ {
+  "id": "125",
+  "hashIdentify": "RzQwlPOasBk",
+  "serviceId": "11",
+  "layers": "226",
+  "hash": "8ePgcQdyzmM",
+  "label": {
+   "hr": "Brownfield područja",
+   "en": "Brownfield Registry"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Brownfield područja"
+ },
+ {
+  "id": "130",
+  "hashIdentify": "zgbURFuM4",
+  "serviceId": "9",
+  "layers": "222",
+  "hash": "C4wheP5ELdY",
+  "label": {
+   "hr": "Cjenovni blokovi",
+   "en": "Price Brackets"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Cjenovni blokovi"
+ },
+ {
+  "id": "255",
+  "hashIdentify": "7yletaYtys",
+  "serviceId": "22",
+  "layers": "286",
+  "hash": "hzZ6EdGI2R8",
+  "label": {
+   "hr": "Energetski certifikati",
+   "en": "Energy Certificates"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Energetski certifikati"
+ },
+ {
+  "id": "161",
+  "hashIdentify": "e4VKqqRtXI8",
+  "serviceId": "17",
+  "layers": "252",
+  "hash": "oT2M4IotK8Q",
+  "label": {
+   "hr": "Inventar likvefakcije aktivirane petrinjskim potresom M 6,2",
+   "en": "Liquefaction - inventory"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Geohazardi > Likvefakcija > Inventar likvefakcije aktivirane petrinjskim potresom M 6,2"
+ },
+ {
+  "id": "162",
+  "hashIdentify": "ntbNxRarSY",
+  "serviceId": "17",
+  "layers": "253",
+  "hash": "F80HE5NAOq4",
+  "label": {
+   "hr": "Podložnost na likvefakciju",
+   "en": "Liquefaction - susceptibility"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Geohazardi > Likvefakcija > Podložnost na likvefakciju"
+ },
+ {
+  "id": "164",
+  "hashIdentify": "Qe35dFNf9gQ",
+  "serviceId": "17",
+  "layers": "254",
+  "hash": "oRB0PLZB8w",
+  "label": {
+   "hr": "Inventar vrtača",
+   "en": "Sinkholes - inventory"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Geohazardi > Vrtače > Inventar vrtača"
+ },
+ {
+  "id": "165",
+  "hashIdentify": "rXf3GWeTk0",
+  "serviceId": "17",
+  "layers": "255",
+  "hash": "InCffNT5YaQ",
+  "label": {
+   "hr": "Podložnost na vrtače",
+   "en": "Sinkholes - susceptibility"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Geohazardi > Vrtače > Podložnost na vrtače"
+ },
+ {
+  "id": "167",
+  "hashIdentify": "fTcnmjUefFY",
+  "serviceId": "17",
+  "layers": "256",
+  "hash": "54mu1GEMMI",
+  "label": {
+   "hr": "Inventar klizišta",
+   "en": "Landslides - inventory"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Geohazardi > Klizišta > Inventar klizišta"
+ },
+ {
+  "id": "168",
+  "hashIdentify": "GmEuOsEEYuo",
+  "serviceId": "17",
+  "layers": "257",
+  "hash": "K0NhdPDXNVk",
+  "label": {
+   "hr": "Podložnost na klizanje",
+   "en": "Landslides - susceptibility"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Geohazardi > Klizišta > Podložnost na klizanje"
+ },
+ {
+  "id": "169",
+  "hashIdentify": "0wMN27iZno",
+  "serviceId": "17",
+  "layers": "258",
+  "hash": "KKGAIPOIbUw",
+  "label": {
+   "hr": "Podzemne vode",
+   "en": "Groundwater"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Geohazardi > Podzemne vode"
+ },
+ {
+  "id": "170",
+  "hashIdentify": null,
+  "serviceId": "17",
+  "layers": "259",
+  "hash": "CRyqOB2rMpA",
+  "label": {
+   "hr": "Područja nepovoljna za gradnju do sanacije",
+   "en": "Areas unfavorable for construction until rehabilitation"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Geohazardi > Područja nepovoljna za gradnju do sanacije"
+ },
+ {
+  "id": "132",
+  "hashIdentify": "0tqiNSCHfTQ",
+  "serviceId": "10",
+  "layers": "225",
+  "hash": "gTKm5TnVd0",
+  "label": {
+   "hr": "Građevinsko područje naselja",
+   "en": "Settlement building area"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Građevinska područja (rujan 2024.) > Građevinsko područje naselja"
+ },
+ {
+  "id": "134",
+  "hashIdentify": "jUwiucjvJY",
+  "serviceId": "10",
+  "layers": "224",
+  "hash": "flmc7VetMc",
+  "label": {
+   "hr": "Građevinsko područje izvan naselja",
+   "en": "Detached part of the building area outside a settlement"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Građevinska područja (rujan 2024.) > Građevinsko područje izvan naselja"
+ },
+ {
+  "id": "294",
+  "hashIdentify": "ikXk1EGF10s",
+  "serviceId": "30",
+  "layers": "335,350",
+  "hash": "vWWAvhsVTvY",
+  "label": {
+   "hr": "Zemljišta",
+   "en": "Land plots"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema vrsti  > Zemljišta"
+ },
+ {
+  "id": "295",
+  "hashIdentify": "oz5oyoSOKM",
+  "serviceId": "30",
+  "layers": "336,351",
+  "hash": "nlKnAC6hOwU",
+  "label": {
+   "hr": "Građevine",
+   "en": "Built structures"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema vrsti  > Građevine"
+ },
+ {
+  "id": "297",
+  "hashIdentify": "4Xnmi5kDSMc",
+  "serviceId": "30",
+  "layers": "337,352",
+  "hash": "cOXNpTrQDE",
+  "label": {
+   "hr": "Neizgrađeno građevinsko zemljište",
+   "en": "Undeveloped building land"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Neizgrađeno građevinsko zemljište"
+ },
+ {
+  "id": "298",
+  "hashIdentify": "lVarXiHbKzs",
+  "serviceId": "30",
+  "layers": "338,353",
+  "hash": "7Nl9xFrGhw4",
+  "label": {
+   "hr": "Zemljište na kojem se nalazi kamp",
+   "en": "Land where a camp is located"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Zemljište na kojem se nalazi kamp"
+ },
+ {
+  "id": "299",
+  "hashIdentify": "pVERkD2YeXo",
+  "serviceId": "30",
+  "layers": "339,354",
+  "hash": "lqEZl5LK97Y",
+  "label": {
+   "hr": "Građevina i pripadajuće zemljište za redovnu uporabu te građevine",
+   "en": "Building and associated land for regular use of the building"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Građevina i pripadajuće zemljište za redovnu uporabu te građevine"
+ },
+ {
+  "id": "300",
+  "hashIdentify": "JofmK56dmA",
+  "serviceId": "30",
+  "layers": "340,355",
+  "hash": "N46iFAculQ",
+  "label": {
+   "hr": "Stan",
+   "en": "Apartment"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Stan"
+ },
+ {
+  "id": "301",
+  "hashIdentify": "jNYb6p1eWc",
+  "serviceId": "30",
+  "layers": "341,356",
+  "hash": "iJLLbqLjoI",
+  "label": {
+   "hr": "Stambena jedinica zajedno sa zemljištem nužnim za redovnu uporabu zgrade",
+   "en": "Residential unit with land necessary for regular use of the building"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Stambena jedinica zajedno sa zemljištem nužnim za redovnu uporabu zgrade"
+ },
+ {
+  "id": "302",
+  "hashIdentify": "Jq7pEG5RimI",
+  "serviceId": "30",
+  "layers": "342,357",
+  "hash": "2kEQFrYNCM",
+  "label": {
+   "hr": "Poslovni prostor - poslovna zgrada",
+   "en": "Office space - office building"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Poslovni prostor - poslovna zgrada"
+ },
+ {
+  "id": "303",
+  "hashIdentify": "abEpghRpWs",
+  "serviceId": "30",
+  "layers": "343,358",
+  "hash": "OCRQFuEXg4",
+  "label": {
+   "hr": "Poslovni prostor - poslovna prostorija",
+   "en": "Office space - business premises"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Poslovni prostor - poslovna prostorija"
+ },
+ {
+  "id": "304",
+  "hashIdentify": "C1YRCLnsEJs",
+  "serviceId": "30",
+  "layers": "344,359",
+  "hash": "4njMt5bZu0",
+  "label": {
+   "hr": "Poslovni prostor - garaža",
+   "en": "Office space - garage"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Poslovni prostor - garaža"
+ },
+ {
+  "id": "305",
+  "hashIdentify": "SugTr1dN0c",
+  "serviceId": "30",
+  "layers": "345,360",
+  "hash": "4b8vgcQD1k",
+  "label": {
+   "hr": "Poslovni prostor - garažno mjesto",
+   "en": "Office space - parking space"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Poslovni prostor - garažno mjesto"
+ },
+ {
+  "id": "306",
+  "hashIdentify": "r4gTUQAjI2Q",
+  "serviceId": "30",
+  "layers": "346,361",
+  "hash": "lf9ih1z1NCM",
+  "label": {
+   "hr": "Rezidencijalni objekti",
+   "en": "Residential buildings"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Rezidencijalni objekti"
+ },
+ {
+  "id": "307",
+  "hashIdentify": "SpQdZPSmvI",
+  "serviceId": "30",
+  "layers": "347,362",
+  "hash": "U1y622ZqeKI",
+  "label": {
+   "hr": "Planinarski dom s pripadajućim zemljištem koje služi redovitoj uporabi nekretnine",
+   "en": "Mountain lodge with adjoining land which serves the regular use of the property"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Planinarski dom s pripadajućim zemljištem koje služi redovitoj uporabi nekretnine"
+ },
+ {
+  "id": "308",
+  "hashIdentify": "tx87R0jprSU",
+  "serviceId": "30",
+  "layers": "348,363",
+  "hash": "srz6ZWjddc",
+  "label": {
+   "hr": "Planinarska kuća s pripadajućim zemljištem koje služi redovitoj uporabi nekretnine",
+   "en": "Mountain house with adjoining land which serves the regular use of the property"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Planinarska kuća s pripadajućim zemljištem koje služi redovitoj uporabi nekretnine"
+ },
+ {
+  "id": "309",
+  "hashIdentify": "H5UAgRP84Es",
+  "serviceId": "30",
+  "layers": "349,364",
+  "hash": "wnForevzBU",
+  "label": {
+   "hr": "Planinarsko sklonište s pripadajućim zemljištem koje služi redovitoj uporabi nekretnine",
+   "en": "Mountain shelter with adjoining land which serves the regular use of the property"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Nekretnine u vlasništvu Republike Hrvatske > Prema pojavnom obliku > Planinarsko sklonište s pripadajućim zemljištem koje služi redovitoj uporabi nekretnine"
+ },
+ {
+  "id": "382",
+  "hashIdentify": "mDTOMEBYawA",
+  "serviceId": "9",
+  "layers": "404",
+  "hash": "xM5m5ElZUrM",
+  "label": {
+   "hr": "PPV 1.1.2026. – zemljišta",
+   "en": "AVM 1/1/2026 – land"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Zemljišta > PPV 1.1.2026. – zemljišta"
+ },
+ {
+  "id": "321",
+  "hashIdentify": "sjxwJw45zTQ",
+  "serviceId": "9",
+  "layers": "365",
+  "hash": "n7fwxXBLts",
+  "label": {
+   "hr": "PPV 1.1.2025. – zemljišta",
+   "en": "AVM 1/1/2025 – land"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Zemljišta > PPV 1.1.2025. – zemljišta"
+ },
+ {
+  "id": "290",
+  "hashIdentify": "OYPCzoyH678",
+  "serviceId": "9",
+  "layers": "333",
+  "hash": "HMIOEZZcdw",
+  "label": {
+   "hr": "PPV 1.1.2024. – zemljišta",
+   "en": "AVM 1/1/2024 – land"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Zemljišta > PPV 1.1.2024. – zemljišta"
+ },
+ {
+  "id": "252",
+  "hashIdentify": "1FxlFaVe4d0",
+  "serviceId": "9",
+  "layers": "304",
+  "hash": "DjaAZ6mww",
+  "label": {
+   "hr": "PPV 1.1.2023. – zemljišta",
+   "en": "AVM 1/1/2023 – land"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Zemljišta > PPV 1.1.2023. – zemljišta"
+ },
+ {
+  "id": "251",
+  "hashIdentify": "6JhumPqZadA",
+  "serviceId": "9",
+  "layers": "303",
+  "hash": "mQMw0N4qnM0",
+  "label": {
+   "hr": "PPV 1.1.2022. – zemljišta",
+   "en": "AVM 1/1/2022 – land"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Zemljišta > PPV 1.1.2022. – zemljišta"
+ },
+ {
+  "id": "205",
+  "hashIdentify": "0gxGD3e4uE",
+  "serviceId": "9",
+  "layers": "269",
+  "hash": "WzLeKpNcVRA",
+  "label": {
+   "hr": "PPV 1.1.2021. – zemljišta",
+   "en": "AVM 1/1/2021 – land"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Zemljišta > PPV 1.1.2021. – zemljišta"
+ },
+ {
+  "id": "204",
+  "hashIdentify": "fQrzkn29EJQ",
+  "serviceId": "9",
+  "layers": "268",
+  "hash": "Ksy6ok4v130",
+  "label": {
+   "hr": "PPV 1.1.2020. – zemljišta",
+   "en": "AVM 1/1/2020 – land"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Zemljišta > PPV 1.1.2020. – zemljišta"
+ },
+ {
+  "id": "128",
+  "hashIdentify": "e9swoH8Msig",
+  "serviceId": "9",
+  "layers": "223",
+  "hash": "pRrFqMbqP5c",
+  "label": {
+   "hr": "PPV 1.1.2019. – zemljišta",
+   "en": "AVM 1/1/2019 – land"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Zemljišta > PPV 1.1.2019. – zemljišta"
+ },
+ {
+  "id": "383",
+  "hashIdentify": "MD5R4JU0Ew",
+  "serviceId": "9",
+  "layers": "405",
+  "hash": "2WjyykEE2c",
+  "label": {
+   "hr": "PPV 1.1.2026. – stanovi/apartmani",
+   "en": "AVM 1/1/2026 – flats/apartments"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Stanovi/apartmani > PPV 1.1.2026. – stanovi/apartmani"
+ },
+ {
+  "id": "322",
+  "hashIdentify": "FvyDFQ32KPE",
+  "serviceId": "9",
+  "layers": "366",
+  "hash": "O1fQmtIn0Pk",
+  "label": {
+   "hr": "PPV 1.1.2025. – stanovi/apartmani",
+   "en": "AVM 1/1/2025 – flats/apartments"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Stanovi/apartmani > PPV 1.1.2025. – stanovi/apartmani"
+ },
+ {
+  "id": "291",
+  "hashIdentify": "r28QEoPwf7Y",
+  "serviceId": "9",
+  "layers": "334",
+  "hash": "gYrfVxxySZI",
+  "label": {
+   "hr": "PPV 1.1.2024. – stanovi/apartmani",
+   "en": "AVM 1/1/2024 – flats/apartments"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Stanovi/apartmani > PPV 1.1.2024. – stanovi/apartmani"
+ },
+ {
+  "id": "248",
+  "hashIdentify": "rtlQYQIy2OQ",
+  "serviceId": "9",
+  "layers": "302",
+  "hash": "gY9RCxDU95w",
+  "label": {
+   "hr": "PPV 1.1.2021. – stanovi/apartmani",
+   "en": "AVM 1/1/2021 – flats/apartments"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Stanovi/apartmani > PPV 1.1.2021. – stanovi/apartmani"
+ },
+ {
+  "id": "247",
+  "hashIdentify": "dtVbUg8",
+  "serviceId": "9",
+  "layers": "301",
+  "hash": "36g3LvlFEEs",
+  "label": {
+   "hr": "PPV 1.1.2020. – stanovi/apartmani",
+   "en": "AVM 1/1/2020 – flats/apartments"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Stanovi/apartmani > PPV 1.1.2020. – stanovi/apartmani"
+ },
+ {
+  "id": "384",
+  "hashIdentify": "W3ejwTOYC4",
+  "serviceId": "9",
+  "layers": "406",
+  "hash": "oGs2Gt5QbGc",
+  "label": {
+   "hr": "PPV 1.1.2026. - stanovi/apartmani najam",
+   "en": "AVM 1/1/2026 - flats apartments rent"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Stanovi/apartmani najam > PPV 1.1.2026. - stanovi/apartmani najam"
+ },
+ {
+  "id": "327",
+  "hashIdentify": "UTYu3APuUR4",
+  "serviceId": "9",
+  "layers": "368",
+  "hash": "38MnjNe2v8",
+  "label": {
+   "hr": "PPV 1.1.2025. - stanovi/apartmani najam",
+   "en": "AVM 1/1/2025 - flats apartments rent"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Stanovi/apartmani najam > PPV 1.1.2025. - stanovi/apartmani najam"
+ },
+ {
+  "id": "387",
+  "hashIdentify": "73USHIXW4YM",
+  "serviceId": "9",
+  "layers": "414",
+  "hash": "uCKf5irxuc",
+  "label": {
+   "hr": "PPV 1.1.2026. - poslovni prostor kupoprodaja",
+   "en": "AVM 1/1/2026 - business premises purchase"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Poslovni prostor kupoprodaja > PPV 1.1.2026. - poslovni prostor kupoprodaja"
+ },
+ {
+  "id": "388",
+  "hashIdentify": "iu5Uq7nb8cM",
+  "serviceId": "9",
+  "layers": "415",
+  "hash": "f9Dc3zsuKok",
+  "label": {
+   "hr": "PPV 1.1.2026. - poslovni prostor zakup",
+   "en": "AVM 1/1/2026 - business lease"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Plan približnih vrijednosti > Poslovni prostor zakup > PPV 1.1.2026. - poslovni prostor zakup"
+ },
+ {
+  "id": "259",
+  "hashIdentify": "nHmSfPJKyqY",
+  "serviceId": "25",
+  "layers": "309",
+  "hash": "w9M4IDv4gXU",
+  "label": {
+   "hr": "Strategija zelene urbane obnove",
+   "en": "Green urban renewal strategy"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Prostorni obuhvat > Strategija zelene urbane obnove"
+ },
+ {
+  "id": "260",
+  "hashIdentify": "fWmVQM5dfs",
+  "serviceId": "25",
+  "layers": "308",
+  "hash": "6iUCJNPNt0",
+  "label": {
+   "hr": "Projekt zelene infrastrukture",
+   "en": "Green infrastructure project"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Prostorni obuhvat > Projekt zelene infrastrukture"
+ },
+ {
+  "id": "261",
+  "hashIdentify": "ItXLsXNSjGE",
+  "serviceId": "25",
+  "layers": "307",
+  "hash": "di4Z5WQRnM",
+  "label": {
+   "hr": "Urbana mreža",
+   "en": "Urban green network"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Prostorni obuhvat > Urbana mreža"
+ },
+ {
+  "id": "264",
+  "hashIdentify": "HgPxppLXVEQ",
+  "serviceId": "26",
+  "layers": "316",
+  "hash": "i3MQf0MBeeY",
+  "label": {
+   "hr": "Arheološki park",
+   "en": "Archaelogical park"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Arheološki park"
+ },
+ {
+  "id": "265",
+  "hashIdentify": "0dlhJQpCjE",
+  "serviceId": "26",
+  "layers": "317",
+  "hash": "eRpjGW1kmiU",
+  "label": {
+   "hr": "Botanički vrt / arboretum / zoološki vrt",
+   "en": "Botanical garden, arboretum and zoo"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Botanički vrt / arboretum / zoološki vrt"
+ },
+ {
+  "id": "266",
+  "hashIdentify": "4siJc1wE88U",
+  "serviceId": "26",
+  "layers": "318",
+  "hash": "2ZXnHWqXFKQ",
+  "label": {
+   "hr": "Gradska / urbana šuma",
+   "en": "City/urban forest"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Gradska / urbana šuma"
+ },
+ {
+  "id": "267",
+  "hashIdentify": "TCIg0U0kh64",
+  "serviceId": "26",
+  "layers": "319",
+  "hash": "rchWMttnJAI",
+  "label": {
+   "hr": "Krajobrazno uređeno groblje",
+   "en": "Park cemetery"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Krajobrazno uređeno groblje"
+ },
+ {
+  "id": "268",
+  "hashIdentify": "1ZD63BaFSQ8",
+  "serviceId": "26",
+  "layers": "320",
+  "hash": "eejt8KDZa6U",
+  "label": {
+   "hr": "Park",
+   "en": "Park"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Park"
+ },
+ {
+  "id": "269",
+  "hashIdentify": "9uB0GwqT1L8",
+  "serviceId": "26",
+  "layers": "321",
+  "hash": "n4FnGNIdPgI",
+  "label": {
+   "hr": "Perivoj",
+   "en": "Historical garden"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Perivoj"
+ },
+ {
+  "id": "270",
+  "hashIdentify": "90PKTKenrHo",
+  "serviceId": "26",
+  "layers": "322",
+  "hash": "6XMXj1u0sR8",
+  "label": {
+   "hr": "Površine za sport i rekreaciju",
+   "en": "Sports and recreational area"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Površine za sport i rekreaciju"
+ },
+ {
+  "id": "271",
+  "hashIdentify": "uWGS4fHxu0c",
+  "serviceId": "26",
+  "layers": "323",
+  "hash": "mTvQakKKwKc",
+  "label": {
+   "hr": "Produktivna infrastruktura – urbani vrtovi, urbane farme, rasadnici i javni voćnjaci",
+   "en": "Productive green infrastructure - urban gardens, urban farms, greenhouses, public orchards"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Produktivna infrastruktura – urbani vrtovi, urbane farme, rasadnici i javni voćnjaci"
+ },
+ {
+  "id": "272",
+  "hashIdentify": "VNwzcIXQi78",
+  "serviceId": "26",
+  "layers": "324",
+  "hash": "ti1JFIaYxs",
+  "label": {
+   "hr": "Tematski park",
+   "en": "Theme park"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Tematski park"
+ },
+ {
+  "id": "273",
+  "hashIdentify": "ixDWHYDjgHM",
+  "serviceId": "26",
+  "layers": "325",
+  "hash": "hDeSnrUjx4",
+  "label": {
+   "hr": "Travnjak",
+   "en": "Lawn"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Travnjak"
+ },
+ {
+  "id": "274",
+  "hashIdentify": "I2312k5oDXI",
+  "serviceId": "26",
+  "layers": "326",
+  "hash": "uTTwkXdduQs",
+  "label": {
+   "hr": "Trg",
+   "en": "Square"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Trg"
+ },
+ {
+  "id": "275",
+  "hashIdentify": "whRAp0ZcDBQ",
+  "serviceId": "26",
+  "layers": "327",
+  "hash": "PcmOV7bmxkQ",
+  "label": {
+   "hr": "Zelene površine uz prometnice",
+   "en": "Green traffic corridors"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Zelene površine uz prometnice"
+ },
+ {
+  "id": "276",
+  "hashIdentify": "qj1TJk9nYEk",
+  "serviceId": "26",
+  "layers": "328",
+  "hash": "Igr9UTzkhA",
+  "label": {
+   "hr": "Zelene površine uz stambene zgrade",
+   "en": "Green areas next to residential buildings"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Zelene površine uz stambene zgrade"
+ },
+ {
+  "id": "277",
+  "hashIdentify": "ldKlSeE4jLk",
+  "serviceId": "26",
+  "layers": "329",
+  "hash": "BRhbdF9LuE",
+  "label": {
+   "hr": "Zelene površine uz zgrade javne, društvene i gospodarske namjene",
+   "en": "Green areas next to public, social and economic buildings"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Zelene površine uz zgrade javne, društvene i gospodarske namjene"
+ },
+ {
+  "id": "278",
+  "hashIdentify": "6qaPoXmg9WE",
+  "serviceId": "26",
+  "layers": "330",
+  "hash": "pg5H8mfDgHU",
+  "label": {
+   "hr": "Zeleni konstruktivni elementi na zgradama",
+   "en": "Green constructive elements on buildings"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Zelene površine > Zeleni konstruktivni elementi na zgradama"
+ },
+ {
+  "id": "280",
+  "hashIdentify": "mP0sDkUv7ZQ",
+  "serviceId": "27",
+  "layers": "312",
+  "hash": "6wrnOwm1cU",
+  "label": {
+   "hr": "Integrirani sustavi urbane odvodnje",
+   "en": "Integrated urban drainage systems"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Vodne površine > Integrirani sustavi urbane odvodnje"
+ },
+ {
+  "id": "281",
+  "hashIdentify": "t2P0Nsv24c",
+  "serviceId": "27",
+  "layers": "313",
+  "hash": "3UugcHFgY4M",
+  "label": {
+   "hr": "Morska obala",
+   "en": "Sea coast"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Vodne površine > Morska obala"
+ },
+ {
+  "id": "282",
+  "hashIdentify": "C4EtzQEDS90",
+  "serviceId": "27",
+  "layers": "314",
+  "hash": "gNakO2Kex2Y",
+  "label": {
+   "hr": "Urbana močvara",
+   "en": "Urban wetland"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Vodne površine > Urbana močvara"
+ },
+ {
+  "id": "283",
+  "hashIdentify": "pkyHWkeIVA",
+  "serviceId": "27",
+  "layers": "315",
+  "hash": "3bN5WGdYro",
+  "label": {
+   "hr": "Vodotoci, poplavna područja, riparijske zone i kopnene vodene površine",
+   "en": "Watercourse, wetland, riparan zone and surface inland waters"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Vodne površine > Vodotoci, poplavna područja, riparijske zone i kopnene vodene površine"
+ },
+ {
+  "id": "285",
+  "hashIdentify": "ZdFt9wMXbPM",
+  "serviceId": "28",
+  "layers": "310",
+  "hash": "nOXIANGHqw4",
+  "label": {
+   "hr": "Brownfield površine",
+   "en": "Brownfield area"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Ostale površine > Brownfield površine"
+ },
+ {
+  "id": "286",
+  "hashIdentify": "FlGCxrXoXfQ",
+  "serviceId": "28",
+  "layers": "311",
+  "hash": "eXJwKVTgr7k",
+  "label": {
+   "hr": "Zone za turizam",
+   "en": "Touristic zone"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – poligoni\t > Ostale površine > Zone za turizam"
+ },
+ {
+  "id": "288",
+  "hashIdentify": "POWkRdb7pFw",
+  "serviceId": "29",
+  "layers": "331",
+  "hash": "WqGMZ6nzvU",
+  "label": {
+   "hr": "Stabla posađena izvan redovne sadnje",
+   "en": "Individualy planted trees - outside regular planting"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – točke > Stabla posađena izvan redovne sadnje"
+ },
+ {
+  "id": "289",
+  "hashIdentify": "KDXjcmrwC4",
+  "serviceId": "29",
+  "layers": "332",
+  "hash": "3O17UzuOQfQ",
+  "label": {
+   "hr": "Stabla posađena unutar redovne sadnje",
+   "en": "Individualy planted trees - inside regular planting"
+  },
+  "_path": "Slojevi iz nadležnosti Ministarstva (MPGI) > Registar zelene infrastrukture > Zelena infrastruktura – točke > Stabla posađena unutar redovne sadnje"
+ },
+ {
+  "id": "326",
+  "hashIdentify": "OdeMGtisWA",
+  "serviceId": "31",
+  "layers": "367",
+  "hash": "oln6XyxyLT4",
+  "label": {
+   "hr": "Zaštićena kulturna dobra",
+   "en": "Protected cultural property"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po statusu zaštite > Zaštićena kulturna dobra (Z-lista) > Zaštićena kulturna dobra"
+ },
+ {
+  "id": "329",
+  "hashIdentify": "CUtSGUWUxdU",
+  "serviceId": "31",
+  "layers": "369",
+  "hash": "I9ZfpsB4fDs",
+  "label": {
+   "hr": "Preventivno zaštićena kulturna dobra ",
+   "en": "Property under preventive protection"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po statusu zaštite > Preventivno zaštićena kulturna dobra (P-lista) > Preventivno zaštićena kulturna dobra "
+ },
+ {
+  "id": "331",
+  "hashIdentify": "W7Y9MUCZWRg",
+  "serviceId": "31",
+  "layers": "370",
+  "hash": "XeCEcWAh6p0",
+  "label": {
+   "hr": "Javne građevine",
+   "en": "Public structures"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Pojedinačna kulturna dobra > Javne građevine"
+ },
+ {
+  "id": "332",
+  "hashIdentify": "go1FisX34BU",
+  "serviceId": "31",
+  "layers": "371",
+  "hash": "yFCyfXi5un8",
+  "label": {
+   "hr": "Stambene građevine",
+   "en": "Residential buildings"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Pojedinačna kulturna dobra > Stambene građevine"
+ },
+ {
+  "id": "333",
+  "hashIdentify": "uhwuEbPEbEY",
+  "serviceId": "31",
+  "layers": "372",
+  "hash": "zL9UEtvdA",
+  "label": {
+   "hr": "Sakralne građevine",
+   "en": "Sacral buildings"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Pojedinačna kulturna dobra > Sakralne građevine"
+ },
+ {
+  "id": "334",
+  "hashIdentify": "Rut5Fv42WaI",
+  "serviceId": "31",
+  "layers": "373",
+  "hash": "ha49ohxNyac",
+  "label": {
+   "hr": "Gospodarske i industrijske građevine",
+   "en": "Commercial and industrial buildings"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Pojedinačna kulturna dobra > Gospodarske i industrijske građevine"
+ },
+ {
+  "id": "335",
+  "hashIdentify": "31u4cZnYWTQ",
+  "serviceId": "31",
+  "layers": "374",
+  "hash": "ty19kSFOYpw",
+  "label": {
+   "hr": "Vojne i obrambene građevine",
+   "en": "Military and defence structures"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Pojedinačna kulturna dobra > Vojne i obrambene građevine"
+ },
+ {
+  "id": "336",
+  "hashIdentify": "WouRM4EatUU",
+  "serviceId": "31",
+  "layers": "375",
+  "hash": "kNaQCjMfLdo",
+  "label": {
+   "hr": "Memorijalne građevine",
+   "en": "Mamorial structures"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Pojedinačna kulturna dobra > Memorijalne građevine"
+ },
+ {
+  "id": "337",
+  "hashIdentify": "KbpteDUIiUg",
+  "serviceId": "31",
+  "layers": "376",
+  "hash": "XPlYANvb4U",
+  "label": {
+   "hr": "Građevine prometne i komunalne infrastrukture",
+   "en": "Traffic and utility infrastructure buildings"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Pojedinačna kulturna dobra > Građevine prometne i komunalne infrastrukture"
+ },
+ {
+  "id": "352",
+  "hashIdentify": "D3LRi7VDA4",
+  "serviceId": "31",
+  "layers": "387",
+  "hash": "M8z10wWxwk",
+  "label": {
+   "hr": "Javne skulpture i urbana oprema",
+   "en": "Public sculptures and urban equipment"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Pojedinačna kulturna dobra > Javne skulpture i urbana oprema"
+ },
+ {
+  "id": "339",
+  "hashIdentify": "CrVKqRcn2A",
+  "serviceId": "31",
+  "layers": "377",
+  "hash": "PyBGeowsT7A",
+  "label": {
+   "hr": "Memorijalne cjeline",
+   "en": "Memorial complexes"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Kulturno povijesne cjeline > Memorijalne cjeline"
+ },
+ {
+  "id": "340",
+  "hashIdentify": "IkYgIx0ZbDY",
+  "serviceId": "31",
+  "layers": "378",
+  "hash": "N2u5AfYDt5E",
+  "label": {
+   "hr": "Ruralne cjeline",
+   "en": "Rural complexes"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Kulturno povijesne cjeline > Ruralne cjeline"
+ },
+ {
+  "id": "341",
+  "hashIdentify": "Ts562q6GOWc",
+  "serviceId": "31",
+  "layers": "379",
+  "hash": "sM56xhCdncw",
+  "label": {
+   "hr": "Urbane cjeline",
+   "en": "Urban complexes"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Kulturno povijesne cjeline > Urbane cjeline"
+ },
+ {
+  "id": "342",
+  "hashIdentify": "xyzRhzANnNM",
+  "serviceId": "31",
+  "layers": "380",
+  "hash": "5GwukTBrLY",
+  "label": {
+   "hr": "Gospodarske i industrijske cjeline",
+   "en": "Commercial and industrial complexes"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Kulturno povijesne cjeline > Gospodarske i industrijske cjeline"
+ },
+ {
+  "id": "343",
+  "hashIdentify": "gGpGKjgryMs",
+  "serviceId": "31",
+  "layers": "381",
+  "hash": "pOHmnmBBNis",
+  "label": {
+   "hr": "Uređene zelene površine",
+   "en": "Landscaped green areas"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Kulturno povijesne cjeline > Uređene zelene površine"
+ },
+ {
+  "id": "344",
+  "hashIdentify": "VOUz7hLEUxQ",
+  "serviceId": "31",
+  "layers": "382",
+  "hash": "ZFULOAUMsLA",
+  "label": {
+   "hr": "Vojne i obrambene cjeline",
+   "en": "Military and defence complexes"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Kulturno povijesne cjeline > Vojne i obrambene cjeline"
+ },
+ {
+  "id": "346",
+  "hashIdentify": "YDpcTv1thBo",
+  "serviceId": "31",
+  "layers": "383",
+  "hash": "vcmYWuAvi0",
+  "label": {
+   "hr": "Kulturni krajolici",
+   "en": "Cultural landscapes"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Kulturni krajolici > Kulturni krajolici"
+ },
+ {
+  "id": "348",
+  "hashIdentify": "2CkNElO1Qbo",
+  "serviceId": "31",
+  "layers": "384",
+  "hash": "f90TkW5I9Bs",
+  "label": {
+   "hr": "Kopnena arheološka nalazišta/zone",
+   "en": "Land archaeological sites/zones"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Arheološka kulturna dobra > Kopnena arheološka nalazišta/zone"
+ },
+ {
+  "id": "349",
+  "hashIdentify": "FAeIFtQeU",
+  "serviceId": "31",
+  "layers": "385",
+  "hash": "CG4IXYfYWo",
+  "label": {
+   "hr": "Podvodna arheološka nalazišta/zone",
+   "en": "Underwater archaeological sites/zones"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Arheološka kulturna dobra > Podvodna arheološka nalazišta/zone"
+ },
+ {
+  "id": "350",
+  "hashIdentify": "0Fz78I3Lk",
+  "serviceId": "31",
+  "layers": "386",
+  "hash": "ovIvCr627rg",
+  "label": {
+   "hr": "Kopnena i podvodna arheološka nalazišta/zone",
+   "en": "Land and underwater archaeological sites/zones"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo kulture i medija > Nepokretna kulturna dobra po vrsti > Arheološka kulturna dobra > Kopnena i podvodna arheološka nalazišta/zone"
+ },
+ {
+  "id": "119",
+  "hashIdentify": "6Bc1aw9MxYA",
+  "serviceId": "13",
+  "layers": "231",
+  "hash": "1dMdkDCHwU",
+  "label": {
+   "hr": "Snimke područja stradalih u potresu 2020.",
+   "en": "Images of the Area Affected by the 2020 Earthquake"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo obrane > Snimke područja stradalih u potresu 2020."
+ },
+ {
+  "id": "138",
+  "hashIdentify": null,
+  "serviceId": "12",
+  "layers": "228",
+  "hash": "zSebKuf2KKs",
+  "label": {
+   "hr": "Područja prema Direktivi o staništima",
+   "en": "Protected areas (pSCI) – Habitats Directive"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo zaštite okoliša i zelene tranzicije > Ekološka mreža Natura 2000 RH > Područja prema Direktivi o staništima"
+ },
+ {
+  "id": "139",
+  "hashIdentify": null,
+  "serviceId": "12",
+  "layers": "227",
+  "hash": "ndgzTibWKyk",
+  "label": {
+   "hr": "Područja prema Direktivi o pticama",
+   "en": "Protected areas (SPA) – Birds Directive"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo zaštite okoliša i zelene tranzicije > Ekološka mreža Natura 2000 RH > Područja prema Direktivi o pticama"
+ },
+ {
+  "id": "140",
+  "hashIdentify": null,
+  "serviceId": "12",
+  "layers": "230",
+  "hash": "SgwoiUfRV3I",
+  "label": {
+   "hr": "Zaštićena područja - točke",
+   "en": "Nature protection (points)"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo zaštite okoliša i zelene tranzicije > Zaštićena područja prirode > Zaštićena područja - točke"
+ },
+ {
+  "id": "141",
+  "hashIdentify": null,
+  "serviceId": "12",
+  "layers": "229",
+  "hash": "LcRcqQ5lM0k",
+  "label": {
+   "hr": "Zaštićena područja - poligoni",
+   "en": "Nature protection (polygons)"
+  },
+  "_path": "Slojevi iz nadležnosti drugih institucija > Ministarstvo zaštite okoliša i zelene tranzicije > Zaštićena područja prirode > Zaštićena područja - poligoni"
+ },
+ {
+  "id": "16",
+  "hashIdentify": null,
+  "serviceId": "5",
+  "layers": "11",
+  "hash": "WuXPDmREnJs",
+  "label": {
+   "hr": "Granice županija",
+   "en": "Counties"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Državna geodetska uprava > Registar prostornih jedinica > Granice županija"
+ },
+ {
+  "id": "17",
+  "hashIdentify": null,
+  "serviceId": "5",
+  "layers": "12",
+  "hash": "84lxFGJ8tYo",
+  "label": {
+   "hr": "Granice gradova i općina",
+   "en": "Cities/municipalities"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Državna geodetska uprava > Registar prostornih jedinica > Granice gradova i općina"
+ },
+ {
+  "id": "18",
+  "hashIdentify": null,
+  "serviceId": "5",
+  "layers": "13",
+  "hash": "4NJXeavDu9M",
+  "label": {
+   "hr": "Granice naselja",
+   "en": "Settlements"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Državna geodetska uprava > Registar prostornih jedinica > Granice naselja"
+ },
+ {
+  "id": "19",
+  "hashIdentify": null,
+  "serviceId": "5",
+  "layers": "14,15",
+  "hash": "vpdEYyZm6Ig",
+  "label": {
+   "hr": "Ulice",
+   "en": "Streets"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Državna geodetska uprava > Registar prostornih jedinica > Ulice"
+ },
+ {
+  "id": "20",
+  "hashIdentify": null,
+  "serviceId": "5",
+  "layers": "16",
+  "hash": "6eAAmMEBJEA",
+  "label": {
+   "hr": "Kućni brojevi",
+   "en": "Street numbers"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Državna geodetska uprava > Registar prostornih jedinica > Kućni brojevi"
+ },
+ {
+  "id": "13",
+  "hashIdentify": null,
+  "serviceId": "4",
+  "layers": "8",
+  "hash": "NlYP7B58XMk",
+  "label": {
+   "hr": "Katastarske općine",
+   "en": "Cadastral districts"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Državna geodetska uprava > Digitalni katastarski plan > Katastarske općine"
+ },
+ {
+  "id": "14",
+  "hashIdentify": null,
+  "serviceId": "4",
+  "layers": "9",
+  "hash": "7LSauYOSWJY",
+  "label": {
+   "hr": "Katastarske čestice",
+   "en": "Cadastral plots"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Državna geodetska uprava > Digitalni katastarski plan > Katastarske čestice"
+ },
+ {
+  "id": "15",
+  "hashIdentify": null,
+  "serviceId": "4",
+  "layers": "10",
+  "hash": "vHkNSHpEgDg",
+  "label": {
+   "hr": "Evidentirane zgrade u katastarskom operatu",
+   "en": "Buildings from the Cadastral Registry"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Državna geodetska uprava > Digitalni katastarski plan > Evidentirane zgrade u katastarskom operatu"
+ },
+ {
+  "id": "175",
+  "hashIdentify": null,
+  "serviceId": "5",
+  "layers": "260",
+  "hash": "H9lHf656154",
+  "label": {
+   "hr": "Granice na moru",
+   "en": "Maritime borders"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Hrvatski hidrografski institut > Granice na moru"
+ },
+ {
+  "id": "222",
+  "hashIdentify": null,
+  "serviceId": "21",
+  "layers": "283",
+  "hash": "hhYWt3f7RFw",
+  "label": {
+   "hr": "Unutarnje morske vode",
+   "en": "Internal waters"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Hrvatski hidrografski institut > Unutarnje morske vode"
+ },
+ {
+  "id": "223",
+  "hashIdentify": null,
+  "serviceId": "21",
+  "layers": "284",
+  "hash": "YSSKz5nrvTY",
+  "label": {
+   "hr": "Teritorijalno more",
+   "en": "Territorial sea"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Hrvatski hidrografski institut > Teritorijalno more"
+ },
+ {
+  "id": "224",
+  "hashIdentify": null,
+  "serviceId": "21",
+  "layers": "285",
+  "hash": "SJHe0cVerQ",
+  "label": {
+   "hr": "Isključivi gospodarski pojas",
+   "en": "Exclusive economic zone"
+  },
+  "_path": "Podloge > Službene podloge i slojevi > Hrvatski hidrografski institut > Isključivi gospodarski pojas"
+ },
+ {
+  "id": "180",
+  "hashIdentify": null,
+  "serviceId": null,
+  "layers": null,
+  "hash": null,
+  "label": {
+   "hr": "Bing karte",
+   "en": "Bing Maps"
+  },
+  "_path": "Podloge > Ostale podloge > Bing karte"
+ }
+]
