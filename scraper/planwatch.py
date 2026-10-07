@@ -24,7 +24,7 @@ SN = "https://www.sn.pgz.hr/"
 SN_PLACES = {"Omišalj": "51513", "Krk": "51500", "Punat": "51521", "Baška": "10007", "Malinska-Dubašnica": "51511",
              "Vrbnik": "51516", "Dobrinj": "51514", "Opatija": "10006", "Matulji": "51211", "Lovran": "51415",
              "Rijeka": "51000", "Kostrena": "51221", "Kraljevica": "10001", "Crikvenica": "10003"}
-REGISTRY = "https://zavod.pgz.hr/Home.aspx?pagename=Registarprostornihplanova"
+REGISTRY = "https://zavod.pgz.hr/planovi_i_izvjesca/registar-prostornih-planova"
 PLAN = re.compile(r"plan\w* uređenja|prostorn\w* plan\w*|urbanističk\w* plan|generaln\w* urbanistič|\b(UPU|PPUO?G?|GUP)\b", re.I)
 # Odluke o odborima, financiranju i sl. spominju plan, ali ga ne mijenjaju.
 NOT_PLAN = re.compile(r"odbor|povjerenstv|ugovor|financiran|sufinancir|program\w* (mjera|rada)|proračun", re.I)

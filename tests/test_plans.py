@@ -118,8 +118,8 @@ def test_runner_adds_rules_line_with_part_of_settlement_from_ispu(tmp_path):
                 area=600, settlement="Punat", extra={"lat": 45.02, "lon": 14.63, "priblizna_lokacija": False})
     d = Decision(PASS, jls="Punat")
     runner._check_land(x, d)
-    assert x.extra["uvjeti"].startswith("📏 PPUO Punat (2018), neizgrađeni dio: min. čest. 450 m² · kig 0,25")
-    assert d.status == PASS and "📏 PPUO Punat" in format_listing(x, d)
+    assert x.extra["uvjeti"].startswith("📏 UPU 3 Punat (2020), neizgrađeni dio: min. čest. 450 m² · kig 0,25")
+    assert d.status == PASS and "📏 UPU 3 Punat" in format_listing(x, d)
     # Bez ISPU-a (istek vremena): redak bez dijela naselja; premala čestica → ⚠.
     y = Listing(source="t", source_id="2", url="u", title="Zemljište Njivice", kind=LAND, price=90_000, area=350,
                 settlement="Njivice")

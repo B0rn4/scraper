@@ -21,11 +21,11 @@
     - {cestica: 400, kig: 0.35, kis: 0.8, gbp: 400}
 
 - jls: Omišalj
-  plan: PPUO Omišalj (2011)
-  izvor: "PPUO Omišalj, pročišćeni tekst Odluke (prosinac 2011.), SN PGŽ 15/2012, čl. 45, tablica 3 – za Omišalj je UPU 1 u izradi (2024.)"
-  url: http://www.sn.pgz.hr/default.asp?Link=odluke&id=31717
+  plan: PPUO Omišalj (2017)
+  izvor: "PPUO Omišalj, izmjene i dopune SN PGŽ 9/2017, čl. 45 – samostojeća kuća na čestici 250–2.000 m², tlocrt do 250 m² (za Omišalj je UPU 1 u izradi)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=35378
   pravila:
-    - {cestica: 250, kig: 0.35, kis: 0.6}
+    - {cestica: 250, kig: 0.35, kis: 0.6, tlocrt: 250}
 
 # --- Punat ---
 - jls: Punat
@@ -36,14 +36,22 @@
   pravila:
     - {cestica: 450, kig: 0.25, kis: 0.75, tlocrt: 150}
 - jls: Punat
-  plan: PPUO Punat (2018)
-  izvor: "PPUO Punat, ciljane izmjene SN PGŽ 14/15, čl. 23c (III. izmjene 30/18 dodaju samo bazen); u naselju Punat UPU 3 (II. izmjene SN PGŽ 3/20, čl. 46): tlocrt do 150 m², na čestici većoj od 1.000 m² do 200 m² – najmanju česticu iz UPU-a 3 nisam pročitao (tablica)"
-  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=32234
+  plan: UPU 3 Punat (2020)
+  naselja: [Punat]
+  izvor: "UPU 3 – građevinsko područje naselja N1 Punat, II. izmjene SN PGŽ 3/20, čl. 46 i 46a – interpolacija u izgrađenom dijelu na čestici do 10 % manjoj; tlocrt 150 m², na čestici većoj od 1.000 m² 200 m²"
+  url: https://arhiva.punat.hr/sites/default/files/2020-02-Odredbe.pdf
   pravila:
-    - {zona: izgrađeni dio, do: 1000, cestica: 450, kig: 0.25, kis: 1.0, tlocrt: 150}
-    - {zona: izgrađeni dio, od: 1000, cestica: 450, kig: 0.25, kis: 1.0, tlocrt: 200}
+    - {zona: izgrađeni dio, do: 1000, cestica: 450, iznimno: 405, kig: 0.25, kis: 1.0, tlocrt: 150}
+    - {zona: izgrađeni dio, od: 1000, cestica: 450, iznimno: 405, kig: 0.25, kis: 1.0, tlocrt: 200}
     - {zona: neizgrađeni dio, do: 1000, cestica: 450, kig: 0.25, kis: 0.85, tlocrt: 150}
     - {zona: neizgrađeni dio, od: 1000, cestica: 450, kig: 0.25, kis: 0.85, tlocrt: 200}
+- jls: Punat
+  plan: PPUO Punat (2018)
+  izvor: "PPUO Punat, ciljane izmjene SN PGŽ 14/15, čl. 23c (III. izmjene 30/18 dodaju samo bazen)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=32234
+  pravila:
+    - {zona: izgrađeni dio, cestica: 450, kig: 0.25, kis: 1.0}
+    - {zona: neizgrađeni dio, cestica: 450, kig: 0.25, kis: 0.85}
 
 # --- Krk (u Gradu Krku "obiteljska kuća" ima 1 stan i najviše 200 m² GBP; kuća s 2 stana je "višeobiteljska") ---
 - jls: Krk
@@ -207,6 +215,15 @@
   pravila:
     - {cestica: 600, kig: 0.3, kis: 0.9, tlocrt: 200}
 - jls: Opatija
+  plan: UPU Poljane (2012)
+  naselja: [Poljane, Menderi, Strmice]
+  izvor: "UPU naselja Poljane – Menderi – Strmice (UPU 20), SN PGŽ 28/12, čl. 33 (individualne stambene zgrade do 3 jedinice; tekst prema prijedlogu za Gradsko vijeće) – čestica najviše 3.000 m², kig i kis manji na većoj čestici"
+  url: https://arhiva.opatija.hr/files/file/sjednice/31/1-Prijedlog-UPU-a-naselja-Poljane-menderi-Strmice-(UPU20).pdf
+  pravila:
+    - {do: 1000.5, cestica: 600, kig: 0.3, kis: 0.9, tlocrt: 200}
+    - {od: 1000.5, do: 2000.5, cestica: 600, kig: 0.25, kis: 0.75, tlocrt: 200}
+    - {od: 2000.5, cestica: 600, kig: 0.2, kis: 0.65, tlocrt: 200}
+- jls: Opatija
   plan: UPU 13 Travičići (2012)
   naselja: [Travičići]
   izvor: "UPU naselja Travičići (UPU 13), SN PGŽ 15/12 – GBP stambene građevine do 500 m²"
@@ -325,6 +342,14 @@
     - {zona: nova gradnja, cestica: 800, iznimno: 760, kig: 0.2, kis: 0.4, gbp: 400}
     - {zona: interpolacija, cestica: 350, kig: 0.2, kis: 0.4, gbp: 400}
 - jls: Rijeka
+  plan: UPU Pehlin (2012)
+  naselja: [Pehlin]
+  izvor: "UPU područja Pehlin, izmjene i dopune SN PGŽ 21/12, čl. 35 i tablice 3–5 (pravila gradnje A, B, C; u zoni D samo interpolacija) – kis nadzemno"
+  url: https://www.sn.pgz.hr/download.asp?id=16251
+  pravila:
+    - {zona: "pravilo A/B", cestica: 600, kig: 0.3, kis: 0.66, tlocrt: 180, gbp: 400}
+    - {zona: "pravilo C", cestica: 540, kig: 0.3, kis: 0.66, tlocrt: 180, gbp: 400}
+- jls: Rijeka
   plan: UPU Lukovići-Brašćine-Pulac (2007)
   naselja: [Lukovići, Brašćine, Pulac]
   izvor: "UPU gradskog područja Lukovići – Brašćine – Pulac, SN PGŽ 22/07, čl. 27 – kis nadzemno; interpolacija u izgrađenom dijelu od 600 m²"
@@ -341,7 +366,7 @@
     - {cestica: 400, kig: 0.4, kis: 0.8, tlocrt: 240, gbp: 400}
 - jls: Rijeka
   plan: GUP Rijeka (2023)
-  naselja: [Drenova, Srdoči, Zamet, Pehlin, Škurinje, Škurinj]
+  naselja: [Drenova, Srdoči, Zamet, Škurinje, Škurinj]
   izvor: "GUP grada Rijeke, neslužbeni pročišćeni tekst (2023.), čl. 102 (urbano pravilo 6)"
   url: https://www.rijeka.hr/wp-content/uploads/2023/05/Odluka-o-donošenju-Generalnog-urbanističkog-plana-Grada-Rijeke-neslužbeni-pročišćeni-tekst.pdf
   pravila:
