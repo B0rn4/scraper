@@ -188,13 +188,43 @@
   pravila:
     - {cestica: 800, kig: 0.25, kis: 0.6, gbp: 500}
 
-# --- Kostrena ---
+# --- Kostrena (dijelovi naselja N-1 … N-9; UPU-i i PPU, svi pročišćeni tekstovi SN Općine Kostrena 3/2025) ---
 - jls: Kostrena
   plan: UPU N-1 Kostrena (2025)
-  izvor: "UPU građevinskog područja naselja N-1 u Kostreni, pročišćeni tekst, SN Općine Kostrena 3/2025, čl. 25"
+  naselja: [Žurkovo, Šodići, Žuknica, Rožići]
+  izvor: "UPU građevinskog područja naselja N-1, pročišćeni tekst, SN Općine Kostrena 3/2025, čl. 25 (zone S1)"
   url: https://zavod.pgz.hr/sn_jls/Kostrena/2025_03_1826_donosenje.pdf
   pravila:
     - {cestica: 600, iznimno: 500, kig: 0.3, kis: 0.9, gbp: 300}
+- jls: Kostrena
+  plan: UPU N-2 Kostrena (2025)
+  naselja: [Vrh Martinšćice, Glavani]
+  izvor: "UPU građevinskog područja naselja N-2, pročišćeni tekst, SN Općine Kostrena 3/2025, čl. 41 (S1-s)"
+  url: https://zavod.pgz.hr/sn_jls/Kostrena/2025_03_1827_donosenje.pdf
+  pravila:
+    - {cestica: 800, iznimno: 600, kig: 0.25, kis: 0.75}
+- jls: Kostrena
+  plan: UPU N-3 Kostrena (2025)
+  naselja: [Doričići, Paveki, Perovići]
+  izvor: "UPU građevinskog područja naselja N-3, pročišćeni tekst, SN Općine Kostrena 3/2025 (zone S2, tip B)"
+  url: https://zavod.pgz.hr/sn_jls/Kostrena/2025_03_1828_donosenje.pdf
+  pravila:
+    - {cestica: 600, kig: 0.3, kis: 0.9}
+- jls: Kostrena
+  plan: UPU N-4 Kostrena (2025)
+  naselja: [Kostrena Sveta Lucija, Kostrena Lucija, Plešići, Rožmanići, Dujmići, Maračići]
+  izvor: "UPU građevinskog područja naselja N-4, pročišćeni tekst, SN Općine Kostrena 3/2025 (M1-1s)"
+  url: https://zavod.pgz.hr/sn_jls/Kostrena/2025_03_1829_donosenje.pdf
+  pravila:
+    - {cestica: 800, iznimno: 600, kig: 0.25, kis: 0.75}
+- jls: Kostrena
+  plan: PPUO Kostrena (2025)
+  izvor: "PPUO Kostrena, pročišćeni tekst, SN Općine Kostrena 3/2025, čl. 19e i dalje (tipovi A, B, C po kartografskom prikazu 4c/4d)"
+  url: https://zavod.pgz.hr/sn_jls/Kostrena/2025_03_1825_donosenje.pdf
+  pravila:
+    - {zona: tip A, cestica: 800, iznimno: 600, kig: 0.25, kis: 0.75}
+    - {zona: tip B, cestica: 1000, iznimno: 800, kig: 0.25, kis: 0.75}
+    - {zona: tip C, cestica: 600, iznimno: 500, kig: 0.3, kis: 0.9}
 
 # --- Kraljevica ---
 - jls: Kraljevica
