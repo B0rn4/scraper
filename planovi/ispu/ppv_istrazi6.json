@@ -1,0 +1,285 @@
+{
+ "pokusaji": [
+  {
+   "kvadrat_m": 4000,
+   "piksela": 1,
+   "buffer": 0,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 61,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK - OSTALO POLJOPRIVREDNO TLO I ŠUME",
+    "KRK - TURISTIČKO NASELJE 1",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO"
+   ],
+   "nazivi": [
+    "BARUŠIĆI - POSLOVNO",
+    "BRUSIĆI, BAJČIĆI, POLJICA - ŠUMA",
+    "CRES - MORE I OTOCI",
+    "CRES - TURISTIČKO 2",
+    "DOBRINJ - MORE I OTOCI",
+    "DRAGA BAŠČANSKA - OSTALA TLA",
+    "GABONJIN - GRAĐEVINSKO",
+    "GARICA - POLJOPRIVREDNO",
+    "KANAJT - TURIZAM",
+    "KLANICE - GRAĐEVINSKO",
+    "KLIMNO - HOTEL",
+    "KONOBE - UGOSTITELJSTVO",
+    "KRAS - GRAĐEVINSKO",
+    "KRAS - ŠUMA",
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK - OSTALO POLJOPRIVREDNO TLO I ŠUME",
+    "KRK - TURISTIČKO NASELJE 1",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO",
+    "LAKMARTIN - VODNO",
+    "LAKMARTIN, MURAJ, KORNIĆ - ŠUMA",
+    "MALINSKA - GRAĐEVINSKO",
+    "MALINSKA - MORE I OTOCI",
+    "MARINA PUNAT - MARINA",
+    "MERAG - ŠUMSKO",
+    "OŠTROBRADIĆ - ŠUMA ",
+    "PINEZIĆI - MORSKA LUKA",
+    "PINEZIĆI, LINARDIĆI, BRZAC - OSTALO POLJOPRIVREDNO TLO I ŠUME",
+    "POLJE - GRAĐEVINSKO",
+    "POLJE - SPORTSKO",
+    "POLJE - TURISTIČKO",
+    "POLJE - ŠUMSKO",
+    "PUNAT - BRODOGRADILIŠTE",
+    "PUNAT - GRAĐEVINSKO",
+    "PUNAT - MORE I OTOCI",
+    "PUNAT - OSTALA TLA",
+    "RISIKA - POLJOPRIVREDNO ",
+    "RISIKA - TURISTIČKO 2",
+    "SRŠIĆI - OSTALO TLO",
+    "STARA BAŠKA - GRAĐEVINSKO",
+    "STARA BAŠKA - OSTALA TLA",
+    "STARA BAŠKA - TURIZAM",
+    "STRILČIĆI - OSTALO TLO",
+    "SVETI VID - MIHOLJICE - OSTALO TLO",
+    "SVETI VID - MIHOLJICE - POSLOVNO 1",
+    "SVETI VID DOBRINJSKIC - GRAĐEVINSKO",
+    "TURČIĆ - VRIJEDNO OBRADIVO TLO",
+    "VELIKA BRESTOVICA - OSTALA TLA",
+    "VRBNIK - GRAĐEVINSKO",
+    "VRBNIK - MORE I OTOCI",
+    "VRBNIK - OSOBITO VRIJEDNO OBRADIVO TLO",
+    "VRBNIK - POLJOPRIVREDNO 1",
+    "VRBNIK - POLJOPRIVREDNO 2",
+    "VRBNIK - POLJOPRIVREDNO 3",
+    "VRH - ŠUMA",
+    "ČIŽIĆI - ŠUMA",
+    "ŠILO - GRAĐEVINSKO",
+    "ŽGALJIĆI, BRUSIĆI - POSLOVNO",
+    "ŽUPANJE - ŠUMA"
+   ]
+  },
+  {
+   "kvadrat_m": 4000,
+   "piksela": 101,
+   "buffer": 50,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 9,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK - REKREACIJSKO ",
+    "KRK - TURISTIČKO NASELJE 1",
+    "KRK - TURISTIČKO NASELJE 2 ",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO"
+   ],
+   "nazivi": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK - REKREACIJSKO ",
+    "KRK - TURISTIČKO NASELJE 1",
+    "KRK - TURISTIČKO NASELJE 2 ",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO",
+    "VRH - ŠUMA"
+   ]
+  },
+  {
+   "kvadrat_m": 4000,
+   "piksela": 255,
+   "buffer": 127,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 4,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA"
+   ],
+   "nazivi": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA"
+   ]
+  },
+  {
+   "kvadrat_m": 4000,
+   "piksela": 512,
+   "buffer": 256,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 3,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORSKA LUKA"
+   ],
+   "nazivi": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORSKA LUKA"
+   ]
+  },
+  {
+   "kvadrat_m": 4000,
+   "piksela": 512,
+   "buffer": 50,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 3,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORSKA LUKA"
+   ],
+   "nazivi": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORSKA LUKA"
+   ]
+  },
+  {
+   "kvadrat_m": 2000,
+   "piksela": 1,
+   "buffer": 0,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 29,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK - OSTALO POLJOPRIVREDNO TLO I ŠUME",
+    "KRK - TURISTIČKO NASELJE 1",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO"
+   ],
+   "nazivi": [
+    "BARUŠIĆI - ŠUMA",
+    "BRUSIĆI, BAJČIĆI, POLJICA - ŠUMA",
+    "GARICA - POLJOPRIVREDNO",
+    "KANAJT - TURIZAM",
+    "KONOBE - UGOSTITELJSTVO",
+    "KORNIĆ - GRAĐEVINSKO",
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK - OSTALO POLJOPRIVREDNO TLO I ŠUME",
+    "KRK - TURISTIČKO NASELJE 1",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO",
+    "LAKMARTIN - REKREACIJSKO ",
+    "LAKMARTIN - VODNO",
+    "LAKMARTIN, MURAJ, KORNIĆ - ŠUMA",
+    "MARINA PUNAT - MARINA",
+    "PINEZIĆI - GRAĐEVINSKO",
+    "PINEZIĆI - MORSKA LUKA",
+    "PINEZIĆI, LINARDIĆI, BRZAC - OSTALO POLJOPRIVREDNO TLO I ŠUME",
+    "PUNAT - BRODOGRADILIŠTE",
+    "PUNAT - GRAĐEVINSKO",
+    "PUNAT - MORE I OTOCI",
+    "PUNAT - OSTALA TLA",
+    "STRILČIĆI - OSTALO TLO",
+    "VRBNIK - POLJOPRIVREDNO 3",
+    "VRH - GRAĐEVINSKO",
+    "VRH - ŠUMA",
+    "ŽGALJIĆI, BRUSIĆI - POSLOVNO"
+   ]
+  },
+  {
+   "kvadrat_m": 2000,
+   "piksela": 101,
+   "buffer": 50,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 5,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO"
+   ],
+   "nazivi": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO"
+   ]
+  },
+  {
+   "kvadrat_m": 2000,
+   "piksela": 255,
+   "buffer": 127,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 3,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORSKA LUKA"
+   ],
+   "nazivi": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORSKA LUKA"
+   ]
+  },
+  {
+   "kvadrat_m": 2000,
+   "piksela": 512,
+   "buffer": 256,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 1,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1"
+   ],
+   "nazivi": [
+    "KRK - GRAĐEVINSKO 1"
+   ]
+  },
+  {
+   "kvadrat_m": 2000,
+   "piksela": 512,
+   "buffer": 50,
+   "status": 200,
+   "vrsta": "application/json",
+   "znacajki": 1,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1"
+   ],
+   "nazivi": [
+    "KRK - GRAĐEVINSKO 1"
+   ]
+  }
+ ]
+}
