@@ -7,9 +7,9 @@ on:
   workflow_dispatch:
     inputs:
       naredba:
-        description: "popis (obiđi stranice; bez adresa zavod.pgz.hr), preuzmi (PDF-ovi u tekst) ili ispu (slojevi)"
+        description: "popis (obiđi stranice; bez adresa zavod.pgz.hr), preuzmi (PDF-ovi u tekst), sn (odluke o planovima) ili ispu (slojevi)"
         type: choice
-        options: [popis, preuzmi, ispu]
+        options: [popis, preuzmi, sn, ispu]
         default: popis
       adrese:
         description: "Adrese odvojene razmakom: početne stranice (popis) ili PDF-ovi (preuzmi)"

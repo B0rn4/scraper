@@ -6,6 +6,7 @@ Okruženje u kojem se razvija ne dolazi do stranica planova, pa ovo radi GitHub
 
     python tools/planovi.py popis IZLAZ [URL…]   obiđe stranice (zadano zavod.pgz.hr): PDF-ovi s nazivima
     python tools/planovi.py preuzmi IZLAZ URL…   preuzme PDF-ove i pretvori ih u tekst
+    python tools/planovi.py sn IZLAZ             popis odluka o planovima na sn.pgz.hr za naše gradove/općine
 
 Uz zadane adrese popis prati samo poveznice koje spominju planove (FOCUS), najviše
 MAX_PER_HOST stranica po stranici – stranice gradova imaju i tisuće vijesti.
@@ -84,6 +85,47 @@ def popis(out: Path, start: list[str] | None = None) -> None:
     print(f"{len(pages)} stranica, {len(docs)} dokumenata, {len(queue)} neobiđeno")
 
 
+SN = "https://www.sn.pgz.hr/"
+# Šifre gradova i općina na sn.pgz.hr (Službene novine PGŽ-a).
+SN_PLACES = {"Omišalj": "51513", "Krk": "51500", "Punat": "51521", "Baška": "10007", "Malinska-Dubašnica": "51511",
+             "Vrbnik": "51516", "Dobrinj": "51514", "Opatija": "10006", "Matulji": "51211", "Lovran": "51415",
+             "Rijeka": "51000", "Kostrena": "51221", "Kraljevica": "10001", "Crikvenica": "10003"}
+SN_PLAN = re.compile(r"plan\w* uređenja|prostorn\w* plan|urbanističk|pročišćen", re.I)
+
+
+def sn(out: Path) -> None:
+    """Sve odluke s popisa svakog grada/općine (sve stranice popisa), s naslovom; zapisuje
+    one koje spominju planove (sn_odluke.json)."""
+    session = requests.Session()
+    session.headers.update(UA)
+    found = []
+    for name, code in SN_PLACES.items():
+        start = f"{SN}default.asp?Link=popis&sifra={code}"
+        queue, seen, pages = deque([start]), {start}, 0
+        while queue and pages < 80:
+            url = queue.popleft()
+            pages += 1
+            try:
+                resp = session.get(url, timeout=60)
+                resp.encoding = resp.apparent_encoding or "windows-1250"
+                body = resp.text
+            except requests.RequestException as exc:
+                found.append({"jls": name, "greska": f"{url}: {type(exc).__name__}"})
+                continue
+            for href, label in LINK.findall(body):
+                link = urljoin(url, unescape(href.strip()))
+                text = _text(label)
+                if "Link=popis" in link and f"sifra={code}" in link and link not in seen:
+                    seen.add(link)
+                    queue.append(link)
+                elif "Link=odluke" in link and SN_PLAN.search(text):
+                    found.append({"jls": name, "naslov": text[:300], "url": link, "popis": url})
+            time.sleep(0.3)
+        print(name, pages, "stranica", sum(1 for f in found if f.get("jls") == name), "odluka")
+    out.mkdir(parents=True, exist_ok=True)
+    (out / "sn_odluke.json").write_text(json.dumps(found, ensure_ascii=False, indent=1), encoding="utf-8")
+
+
 def preuzmi(out: Path, urls: list[str]) -> None:
     (out / "pdf").mkdir(parents=True, exist_ok=True)
     (out / "tekst").mkdir(parents=True, exist_ok=True)
@@ -120,7 +162,9 @@ def preuzmi(out: Path, urls: list[str]) -> None:
 
 if __name__ == "__main__":
     command, target = sys.argv[1], Path(sys.argv[2])
-    if command == "popis":
+    if command == "sn":
+        sn(target)
+    elif command == "popis":
         popis(target, [u for arg in sys.argv[3:] for u in arg.split()])
     else:
         preuzmi(target, [u for arg in sys.argv[3:] for u in arg.split()])
