@@ -16,8 +16,7 @@ pa se otvaraju novi oglasi koji bi mogli proći (najviše MAX_DETAILS po pokreta
 import html
 import re
 
-from ..filters import evaluate
-from ..models import HOUSE, LAND, REJECT, Listing
+from ..models import HOUSE, LAND, Listing
 from ..text import fmt_eur, parse_number
 from .base import DETAIL_RETRIES, FULL, Source, details_deadline, past
 
@@ -115,7 +114,7 @@ class RealEstateCroatia(Source):
         self.add_pending(found, known_ids)
         out, details, deadline = [], 0, details_deadline()
         for x in sorted(found.values(), key=lambda x: (not x.extra.get("odgodjen"), -int(x.source_id))):
-            if x.source_id in known_ids or evaluate(x, self.criteria, self.locator).status == REJECT:
+            if x.source_id in known_ids or not self.worth_detail(x):
                 out.append(x)
                 continue
             if details >= MAX_DETAILS or past(deadline):

@@ -18,8 +18,7 @@ import statistics
 from datetime import datetime
 
 from ..browser import Browser
-from ..filters import evaluate
-from ..models import HOUSE, LAND, REJECT, Listing
+from ..models import HOUSE, LAND, Listing
 from ..text import areas_in_text, fmt_eur, fmt_m2, parse_number
 from .base import FULL, Source, details_deadline, past
 
@@ -205,7 +204,7 @@ class Njuskalo(Source):
                     continue
                 if threshold is not None and int(x.source_id) <= threshold:
                     x.extra["stari_oglas"] = True
-                elif mode != FULL and self._worth_detail(x):
+                elif mode != FULL and self.worth_detail(x):
                     # Sljedeći put (bez stranice oglasa stigao bi bez površine); nakon captche
                     # se u ovom pokretanju više ne otvara nijedan oglas.
                     if details >= MAX_DETAILS or blocked or past(deadline):
@@ -229,10 +228,6 @@ class Njuskalo(Source):
         # Odgođeni oglasi se pamte (runner) i otvaraju sljedeći put, i kad su pali s pročitanih stranica.
         return [x for x in found.values() if x.source_id not in later]
 
-    def _worth_detail(self, x: Listing) -> bool:
-        """Stranicu oglasa otvaramo samo kad bi oglas mogao proći (područje, cijena, vrsta)."""
-        d = evaluate(x, self.criteria, self.locator)
-        return d.status != REJECT or d.near_miss
 
     def search_links(self):
         out = []

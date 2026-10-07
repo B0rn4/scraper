@@ -248,8 +248,9 @@ def test_index_opens_new_matching_ads():
     src = index_oglasi.IndexOglasi(http, Locator(), cfg)
     found = {x.source_id: x for x in src.fetch(INCREMENTAL, {"5"})}
     opened = [u for u in http.calls if "single-ad" in u]
-    # Otvaraju se samo novi oglasi koji bi mogli proći: ne preskup, ne izvan područja, ne već poznat.
-    assert sorted(u.split("code=")[1][0] for u in opened) == ["1", "2"]
+    # Otvaraju se samo novi oglasi koji bi mogli proći: ne preskupa kuća, ne izvan područja, ne već
+    # poznat. Zemljište na našem području otvara se i kad je preskupo (opis može spominjati parcelaciju).
+    assert sorted(u.split("code=")[1].split("&")[0] for u in opened) == ["1", "2", "9999"]
     x1, x2 = found["1"], found["2"]
     assert x1.subtype == "Samostojeća kuća" and x1.plot_area == 400 and x1.extra["parking"] == "vanjsko parkirno mjesto"
     assert x1.extra["godina_izgradnje"] == 1978 and x1.extra["vlasnicki_list"] and "samo_popis" not in x1.extra

@@ -1207,3 +1207,21 @@ def test_send_listing_returns_message_id(monkeypatch):
     monkeypatch.setattr(notify.requests, "post", lambda *a, **k: Resp())
     monkeypatch.setattr(notify.time, "sleep", lambda s: None)
     assert Telegram("t", "1").send_listing(listing(), Decision(PASS, jls="Punat")) == 321
+
+
+def test_parcelation_listing_keeps_arriving_with_list_only_data(tmp_path, monkeypatch):
+    """Zemljište izvan cijene i površine stiglo je jer opis spominje parcelaciju. Sljedeći put
+    portal daje samo popis (bez opisa): sniženje i dalje stiže."""
+    from scraper.models import LAND
+
+    def plot(price, partial=False):
+        x = Listing(source="t", source_id="5", url="https://x", title="Zemljište Punat", kind=LAND,
+                    subtype="Građevinsko zemljište", price=price, area=5_000, county="Primorsko-goranska",
+                    municipality="Punat", description="" if partial else "Moguća parcelacija na tri čestice.")
+        if partial:
+            x.extra["samo_popis"] = True
+        return x
+
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [plot(900_000)], [plot(820_000, partial=True)]])
+    assert [k for k, _ in sent[1]] == ["t:5"]
+    assert [k for k, _ in sent[2]] == ["t:5"] and sent[2][0][1].startswith("📉")

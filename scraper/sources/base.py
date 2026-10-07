@@ -5,7 +5,8 @@ from datetime import datetime, timedelta
 
 from ..http import Http
 from ..locations import Locator
-from ..models import HOUSE, Listing
+from ..filters import evaluate
+from ..models import HOUSE, LAND, REJECT, Listing
 
 INCREMENTAL = "incremental"   # redovno pokretanje: samo najnoviji oglasi
 FULL = "full"                 # pregled i početni popis: sve na području
@@ -76,6 +77,15 @@ class Source:
 
     def fetch(self, mode: str, known_ids: set[str]) -> list[Listing]:
         raise NotImplementedError
+
+    def worth_detail(self, x: Listing) -> bool:
+        """Stranica oglasa otvara se kad bi oglas mogao proći – i za zemljište na prihvatljivom
+        mjestu kojem ne odgovaraju samo cijena ili površina: opis može spominjati parcelaciju,
+        a tada stiže neovisno o njima."""
+        d = evaluate(x, self.criteria, self.locator)
+        if d.status != REJECT or d.near_miss:
+            return True
+        return x.kind == LAND and evaluate(x, self.criteria, self.locator, ignore_limits=True).status != REJECT
 
     def search_links(self) -> list[tuple[str, str]]:
         """Poveznice na iste pretrage na portalu, za usporedbu u izvještaju i ručni pregled

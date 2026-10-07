@@ -1,6 +1,7 @@
 """Odluka za svaki oglas: prolazi, upozorenje (⚠) ili odbijen, uvijek s razlogom."""
 
 import re
+import unicodedata
 
 from . import parking, risks
 from .locations import LocationResult, Locator
@@ -58,6 +59,45 @@ _AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|m
                            r"|\bne ?gradevinsk|\b(izvan|van) gradevinsk")
 
 
+# Parcelacija (dioba zemljišta na više građevinskih čestica): oglas koji je spominje stiže
+# neovisno o cijeni i površini (odluka korisnika 7. 10.). Pravilno "parcelacija", često i
+# "parcelizacija", glagoli (parcelirati, isparcelirano), pogreške (percelacija) i engleski.
+# Ne "parcela" (= čestica). Tekst je bez dijakritika, s interpunkcijom (granice rečenica).
+_PARCEL = re.compile(
+    r"p[ae]rcel(?:ac|i?zac|iz|ir|is|l?ing)\w*|\bsubdivi\w*|\bdivided\s+into\s+(?:\w+\s+){0,2}plots"
+    r"|\b(?:podjel|podijel|dijeljenj|dijeli|razdijel|razdvoj|diob)\w*\s+(?:\w+\s+){0,3}?na\s+(?:\w+\s+){0,2}?"
+    r"(?:parcel|cestic|placev|gradilist)\w*")
+# Samo kod zemljišta: "može se podijeliti na dva dijela" (kod kuće bi to bili stanovi).
+_PARCEL_LAND = re.compile(r"\b(?:podjel|podijel|dijeljenj|dijeli|razdijel|diob)\w*\s+(?:\w+\s+){0,3}?na\s+"
+                          r"(?:\d+|dva|dvije|tri|cetiri|vise|nekoliko)\s+(?:\w+\s+)?dijel\w*")
+_PARCEL_NOT_BEFORE = re.compile(r"(?:\bne|\bnije|\bnisu|\bnema|\bbez|\bnemoguc\w*|\bzabranjen\w*|\bonemogucen\w*)"
+                                r"\s+(?:\w+\s+){0,3}$")
+_PARCEL_NOT_AFTER = re.compile(r"^[\s:–-]*(?:\w+\s+){0,2}?(?:nije|nisu|ne\b|nemoguc|zabranjen)")
+_PARCEL_STILL_OK = re.compile(r"problem|prepreka|zapreka|upitn|iskljucen")   # "nema prepreka za parcelaciju"
+
+
+def _plain(text: str) -> str:
+    text = unicodedata.normalize("NFKD", (text or "").lower().replace("đ", "d"))
+    return "".join(c for c in text if not unicodedata.combining(c))
+
+
+def parcelation(listing: Listing) -> str:
+    """Rečenica (naslov ili opis) koja spominje parcelaciju, osim nijekanja ("parcelacija nije
+    moguća", "bez mogućnosti parcelacije"); prazno ako je nema."""
+    patterns = [_PARCEL, _PARCEL_LAND] if listing.kind == LAND else [_PARCEL]
+    for sentence in re.split(r"(?<=[.!?])\s+|\n+", f"{listing.title}. {listing.description}"):
+        plain = _plain(sentence)
+        for pattern in patterns:
+            for m in pattern.finditer(plain):
+                before, after = plain[:m.start()], plain[m.end():m.end() + 40]
+                denied = _PARCEL_NOT_BEFORE.search(before) or _PARCEL_NOT_AFTER.search(after)
+                if denied and not _PARCEL_STILL_OK.search(before[-40:] + after):
+                    continue
+                text = " ".join(sentence.split()).strip(" .")
+                return text if len(text) <= 160 else text[:157] + "…"
+    return ""
+
+
 def effective_price(price: float | None, area: float | None, total: bool = False, kind: str = "") -> float | None:
     """Ukupna cijena kakvu treba usporediti s granicom. Do 1.000 € (kuća i do 10.000 € uz
     manje od 50 €/m²) je obično cijena po m²
@@ -78,8 +118,10 @@ def effective_price(price: float | None, area: float | None, total: bool = False
     return price * area if per_m2 and area else None
 
 
-def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) -> Decision:
-    """prices (medijani traženih, scraper/prices.py): za procjenu kod "cijene na upit"."""
+def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ignore_limits: bool = False) -> Decision:
+    """prices (medijani traženih, scraper/prices.py): za procjenu kod "cijene na upit".
+    ignore_limits: cijena i površina ne odbijaju (izvori: vrijedi li otvoriti stranicu oglasa
+    zemljišta – opis može spominjati parcelaciju)."""
     reasons: list[str] = []
     warnings: list[str] = list(listing.extra.get("warnings", []))
     reasons.extend(listing.extra.get("reject", []))
@@ -185,6 +227,14 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) ->
         if warning:
             warnings.append(warning)
 
+    # --- cijena i površina: kod parcelacije ne odbijaju (oglas stiže), nego se navode ---
+    parcel = parcelation(listing) or ("opis oglasa spominje parcelaciju" if listing.extra.get("parcelacija_ranije") else "")
+    if parcel:
+        listing.extra["parcelacija"] = parcel
+    else:
+        listing.extra.pop("parcelacija", None)
+    limit_reasons: list[str] = []
+
     # --- cijena ---
     price = effective_price(listing.price, listing.area, bool(listing.extra.get("ukupna_cijena")), listing.kind)
     if price is not None and price != listing.price:
@@ -200,14 +250,14 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) ->
             unfinished = bool(_RENOVATION.search(text) or _UNFINISHED.search(text))
             if not unfinished and ((luxury and value * LUXURY_FACTOR > limit)
                                    or (listing.kind == HOUSE and value * HUGE_HOUSE_FACTOR > limit)):
-                reasons.append(f"cijena na upit – {'luksuzna, ' if luxury else ''}{basis}")
+                limit_reasons.append(f"cijena na upit – {'luksuzna, ' if luxury else ''}{basis}")
                 near_miss_only = False
             else:
                 warnings.append(f"cijena na upit – {basis}")
         else:
             warnings.append("cijena nije navedena")
     elif price > limits["max_cijena"]:
-        reasons.append(f"cijena {fmt_eur(price)} > {fmt_eur(limits['max_cijena'])}")
+        limit_reasons.append(f"cijena {fmt_eur(price)} > {fmt_eur(limits['max_cijena'])}")
         if price > limits["max_cijena"] * (1 + pct):
             near_miss_only = False
 
@@ -215,9 +265,14 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) ->
     if not listing.area:  # 0 je na nekim portalima prazno polje, ne stvarna površina
         warnings.append("površina nije navedena")
     elif listing.area < limits["min_povrsina"]:
-        reasons.append(f"površina {fmt_m2(listing.area)} < {fmt_m2(limits['min_povrsina'])}")
+        limit_reasons.append(f"površina {fmt_m2(listing.area)} < {fmt_m2(limits['min_povrsina'])}")
         if listing.area < limits["min_povrsina"] * (1 - pct):
             near_miss_only = False
+
+    if parcel or ignore_limits:
+        warnings.extend(f"{r} – stiže jer spominje parcelaciju" if parcel else r for r in limit_reasons)
+    else:
+        reasons.extend(limit_reasons)
 
     if listing.kind == HOUSE and _RENOVATION.search(text):
         listing.extra["za_obnovu"] = True

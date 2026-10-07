@@ -198,8 +198,10 @@ class Runner:
                             if not x.settlement and prev.get("settlement"):
                                 x.settlement = prev["settlement"]
                                 x.location_text = x.location_text or x.settlement
-                        d = evaluate(x, self.criteria, self.locator, prices)
                         partial = x.extra.get("opis_skracen") or x.extra.get("samo_popis")
+                        if prev and partial and "spominje parcelaciju" in (prev.get("reasons") or ""):
+                            x.extra["parcelacija_ranije"] = True     # opis je bio na stranici oglasa
+                        d = evaluate(x, self.criteria, self.locator, prices)
                         if prev and d.notify and partial and prev.get("status") == REJECT:
                             d = self._keep_text_reject(d, prev, effective_price(
                                 x.price, x.area, bool(x.extra.get("ukupna_cijena")), x.kind) is None)

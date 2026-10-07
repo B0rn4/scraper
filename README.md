@@ -14,6 +14,12 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   okruglih brojeva i isto naselje ili slične riječi u naslovu). Ako je negdje jeftiniji,
   stiže s napomenom „📉 Već viđen na … – sad jeftiniji”. Preskočeni su popisani u
   tjednom izvještaju. Kad pravilo nije sigurno, oglas stiže.
+- **Parcelacija (✂️):** oglas koji u naslovu ili opisu spominje mogućnost parcelacije
+  (i „parcelizacija”, „parcelirati”, „podijeliti na dvije čestice”, engleski…) stiže
+  neovisno o cijeni i površini – one se navode kao ⚠. Mjesto (popis naselja) i ostala
+  pravila i dalje vrijede; „parcelacija nije moguća” i sama riječ „parcela” ne broje se.
+  Stranica oglasa zemljišta na našem području otvara se i kad cijena ili površina ne
+  odgovaraju, jer je spomen obično tek u opisu.
 - **Opasni izrazi u opisu** (suvlasništvo, ostavina, legalizacija, teret…): ⚠ s
   citiranom rečenicom; odbija se samo nedvosmisleno (prodaje se suvlasnički dio).
 - **Ostvarene cijene (🏛 PPV, samo zemljišta):** Plan približnih vrijednosti

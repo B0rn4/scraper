@@ -9,8 +9,7 @@ Popis daje samo početak opisa; novi oglasi koji bi mogli proći otvaraju se
 import json
 import re
 
-from ..filters import evaluate
-from ..models import HOUSE, LAND, REJECT, Listing
+from ..models import HOUSE, LAND, Listing
 from ..text import fmt_eur, fmt_m2, fold, parse_number
 from .base import DETAIL_RETRIES, FULL, Source, details_deadline, past
 
@@ -124,7 +123,7 @@ class NekretnineHr(Source):
             for x in found.values():
                 if details >= MAX_DETAILS or past(deadline):
                     break
-                if x.source_id in known_ids or not self._worth_detail(x):
+                if x.source_id in known_ids or not self.worth_detail(x):
                     continue
                 details += 1
                 try:
@@ -133,10 +132,6 @@ class NekretnineHr(Source):
                     x.extra["detalji_greska"] = str(exc)[:200]
         return list(found.values())
 
-    def _worth_detail(self, x: Listing) -> bool:
-        """Oglas otvaramo samo kad bi mogao proći (područje, cijena, površina)."""
-        d = evaluate(x, self.criteria, self.locator)
-        return d.status != REJECT or d.near_miss
 
     def _crawl(self, url, kind, found, known_ids, max_pages, stop_on_known, sort="data"):
         page = 1

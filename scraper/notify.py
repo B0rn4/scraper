@@ -104,6 +104,8 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
         facts.append("vlasnički list ✔")
     if facts:
         lines.append(("cinjenice", ("" if facts[0].startswith("🔨") else "🏗 ") + e(" · ".join(facts))))
+    if listing.extra.get("parcelacija"):            # stiže neovisno o cijeni i površini
+        lines.append(("parcelacija", f"✂️ {e(listing.extra['parcelacija'])}"))
     for key in ("parking_redak", "gp", "ppv", "usporedba"):
         if listing.extra.get(key):
             # Kuća bez točne lokacije: "nije provjereno" je najmanje važan redak.

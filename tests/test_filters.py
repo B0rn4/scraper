@@ -292,3 +292,60 @@ def test_pool_and_luxury_from_description(ctx):
     prices = AskingPrices(ctx[1], {"kuca|Omišalj|": {"n": 50, "med": 3900}})
     kostrena = house(price=1, area=300, title="Obiteljska kuća Kostrena", description="Prodaje se luksuzna vila. Parking.")
     assert evaluate(kostrena, *ctx, prices).status == REJECT                   # 300 × 3.900 × 0,4 > 400.000
+
+
+# --- parcelacija (odluka korisnika 7. 10.) ---
+
+@pytest.mark.parametrize("text", [
+    "Građevinsko zemljište 2.400 m2, moguća parcelacija", "Mogućnost parcelizacije na 3 građevinske čestice.",
+    "Zemljište se može parcelirati.", "Teren je isparceliran na četiri parcele.", "Parcelacijski elaborat je izrađen.",
+    "Moguće podijeliti na 3 parcele.", "Mogućnost podjele na dvije građevinske čestice.",
+    "Nema prepreka za parcelaciju.", "Parcelacija nije problem.", "Percelacija moguća.", "PARCELIZACIJA MOGUĆA!",
+    "U postupku parcelacije.", "Possibility of subdivision into plots.", "Land can be divided into two plots.",
+    "Zemljište je moguće podijeliti na dva dijela."])
+def test_parcelation_recognised(text):
+    from scraper.filters import parcelation
+    assert parcelation(land(title="Zemljište", description=text))
+
+
+@pytest.mark.parametrize("text", [
+    "Prodaje se građevinska parcela od 800 m2.", "Na parceli od 600 m2 nalazi se kuća.", "Parcelacija nije moguća.",
+    "Nije moguća parcelacija.", "Bez mogućnosti parcelacije.", "Ne može se parcelirati.", "Parcelacija: ne.",
+    "Kuća je podijeljena na dvije stambene jedinice."])
+def test_parcelation_not_recognised(text):
+    from scraper.filters import parcelation
+    assert not parcelation(land(description=text)) and not parcelation(house(description=text))
+    assert not parcelation(house(description="Kuću je moguće podijeliti na dva dijela."))   # stanovi, ne parcelacija
+
+
+def test_parcelation_ignores_price_and_area_but_not_place(ctx):
+    crit, loc = ctx
+    big = dict(price=900_000, area=5_000, description="Lijepo zemljište. Moguća je parcelacija na tri građevinske čestice.")
+    d = evaluate(land(**big), crit, loc)
+    assert d.status == WARN and any("stiže jer spominje parcelaciju" in w for w in d.warnings)
+    small = land(price=40_000, area=200, description="Mogućnost parcelizacije.")
+    assert evaluate(small, crit, loc).status == WARN and small.extra["parcelacija"] == "Mogućnost parcelizacije"
+    assert evaluate(land(municipality="Klana", **big), crit, loc).status == REJECT            # mjesto i dalje vrijedi
+    farm = dict(big, description="Moguća parcelacija na tri čestice.")
+    assert evaluate(land(subtype="Poljoprivredno zemljište", **farm), crit, loc).status == REJECT  # vrsta također
+    no = land(price=900_000, area=5_000, description="Parcelacija nije moguća.")
+    assert evaluate(no, crit, loc).status == REJECT and "parcelacija" not in no.extra
+    # Kuća: cijena i površina također ne odbijaju.
+    assert evaluate(house(price=700_000, area=60, description="Okućnica 2.000 m2, moguća parcelacija."),
+                    crit, loc).status == WARN
+
+
+def test_land_page_opened_even_when_too_expensive(ctx):
+    """Opis (a s njim i parcelacija) je tek na stranici oglasa: zemljište na našem području
+    otvara se i kad su cijena ili površina izvan kriterija; preskupa kuća ne."""
+    from scraper.notify import format_listing
+    from scraper.sources.base import Source
+
+    crit, loc = ctx
+    src = Source(None, loc, crit)
+    assert src.worth_detail(land(price=900_000))
+    assert not src.worth_detail(land(price=900_000, municipality="Klana"))
+    assert not src.worth_detail(house(price=900_000))
+    x = land(price=900_000, area=5_000, description="Moguća parcelacija na tri građevinske čestice.")
+    text = format_listing(x, evaluate(x, crit, loc))
+    assert "✂️ Moguća parcelacija na tri građevinske čestice" in text

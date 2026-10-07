@@ -466,7 +466,14 @@ bez stotina poruka.
       - druga kuća iste površine utišana kao „već viđena” kad je prva u međuvremenu poskupjela;
       - poništenje „Ne zanima me” nije stizalo do kopije kopije;
       - kopija s već postojećim redom (nakon poništenja) nije se bilježila kao viđena.
-   5. **Testovi:** automatski (sad 174) dopuniti cijelim pokretanjem na spremljenim
+      **Parcelacija (7. 10., odluka korisnika):** oglas koji spominje mogućnost parcelacije
+      stiže neovisno o cijeni i površini (zemljišta i kuće); mjesto i ostala pravila vrijede.
+      Prepoznaje se i „parcelizacija”, glagoli, pogreške, engleski i opisni izrazi; nijekanja
+      i sama „parcela” ne. Na stvarnim naslovima: od 141 s „parcel” 4 spominju parcelaciju
+      (sva izvan našeg popisa mjesta). Ograničenje: oglasi već zabilježeni prije ove izmjene
+      (i početno čitanje nakon reseta) nemaju opis, pa se parcelacija iz opisa vidi samo
+      kod novih oglasa.
+   5. **Testovi:** automatski (sad 200) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj
