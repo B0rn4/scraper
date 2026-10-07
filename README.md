@@ -30,6 +30,15 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   kuće: dogradnja i zamjenska gradnja ograničene, provjeriti legalnost); bez točne
   lokacije piše „nije provjereno” (kod kuća se taj redak prvi izostavlja kad je poruka
   preduga). Za zemljišta uz to PPV na samoj lokaciji.
+- **Uvjeti gradnje (📏, zemljišta):** najmanja građevna čestica, kig i kis za
+  samostojeću obiteljsku kuću iz UPU-a naselja (ako postoji), inače iz PPU-a grada/općine,
+  s izračunom za površinu iz oglasa: „📏 UPU Njivice (2025): min. čest. 400 m² · kig 0,35
+  (tlocrt ≤ 210 m²) · kis 0,8 (GBP ≤ 400 m²)”. Kad plan propisuje različito po zonama, a
+  zona se ne zna, piše raspon i „zona nepoznata”; izgrađeni / neizgrađeni dio naselja
+  (gdje ga plan razlikuje, npr. Punat) dolazi s ISPU-a. Čestica manja od najmanje → ⚠.
+  Podaci su prepisani iz planova u `data/uvjeti_gradnje.yaml` (izvor i članak uz svaki,
+  godina teksta u nazivu plana – plan se od tada mogao mijenjati). Planovi su preuzeti
+  tijekom rada „Planovi – preuzimanje” (`tools/planovi.py`).
 - **Kulturna baština (⚠, kuće i zemljišta):** u istom upitu ISPU-u i zaštićena kulturna
   dobra Ministarstva kulture (Z- i P-lista): pojedinačno dobro, kulturno-povijesna
   cjelina (npr. Krk, Vrbnik, Opatija, Bakar, Omišalj, Baška, šire središte Rijeke),

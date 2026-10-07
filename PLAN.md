@@ -488,15 +488,24 @@ bez stotina poruka.
       - (gotovo) Duga poruka: ostatak u drugoj poruci (odgovor na prvu, bez zvuka).
       - (gotovo) Zemljište u kulturno-povijesnoj cjelini: „nova gradnja uz uvjete
         konzervatora (oblik, visina, materijali)”.
-      - (u tijeku) Uvjeti gradnje iz UPU-a naselja (inače PPU-a): najmanja građevna
-        čestica, kig, kis za samostojeću kuću, prema površini čestice i zoni; tablica u
-        `data/`, izvor uz svaki podatak. Planovi se preuzimaju na GitHubu
-        (`tools/planovi.py`, tijek rada „Planovi – preuzimanje”, grana debug).
+      - (gotovo) Uvjeti gradnje (📏) iz UPU-a naselja, inače PPU-a: najmanja građevna
+        čestica, kig, kis za samostojeću kuću, prema površini čestice i zoni, s najvećim
+        tlocrtom i GBP-om; `data/uvjeti_gradnje.yaml` (14 gradova/općina; UPU-i: Njivice,
+        Krk, Vrbnik, Opatija, Lovran, Kostrena N-1, GUP Rijeka po urbanim pravilima). Planovi
+        preuzeti na GitHubu (`tools/planovi.py`, tijek rada „Planovi – preuzimanje”, grana
+        debug). Zone UPU-a (S1, M12…) ISPU ne daje, pa se za njih piše raspon; izgrađeni /
+        neizgrađeni dio dolazi s ISPU-a. Ograničenja: dio tekstova je stariji (Matulji i
+        Dobrinj 2008., Omišalj 2011., Punat 2010., Baška 2018.); UPU-i Malinske, Punta,
+        Crikvenice i Baške nisu pročitani (vrijedi PPU). Za natječaje redak još ne postoji.
       - (na redu) PPV naselja iz svih cjenovnih blokova građevinskog zemljišta stambene i
         mješovite namjene (medijan uz raspon), umjesto pet točaka oko središta.
       - (na redu) Zona zaštite kulturno-povijesne cjeline (A, B, C) u upozorenju, ako je
-        negdje dostupna u digitalnom obliku (registar u ISPU-u je nema; zone su u
-        konzervatorskim podlogama i kartama UPU-a).
+        negdje dostupna u digitalnom obliku. Provjereno 7. 10. (`tools/ispu_istrazi.py`):
+        slojevi kulturnih dobara u ISPU-u imaju samo naziv, vrstu i broj, bez zone; ni
+        zone prostornih planova nisu javni slojevi. Zone su u konzervatorskim podlogama i
+        kartama UPU-a (PDF). ISPU ima sloj „Cjenovni blokovi”, a blokovi nose ime naselja
+        („KRK - GRAĐEVINSKO 1”) – za PPV naselja iz svih blokova dovoljno je gušće
+        uzorkovanje točaka oko naselja.
    5. **Testovi:** automatski (sad 207) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo

@@ -14,7 +14,8 @@ import yaml
 
 from . import dedupe, report, risks, tenders, watch
 from .ispu import Ispu, check_land, gp_text, heritage_warning
-from .prices import PPV_YEAR, AskingPrices, Ppv, land_note, land_short
+from .plans import Plans
+from .prices import PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
 from .db import State
 from .filters import effective_price, evaluate
 from .http import Http, blocked
@@ -54,6 +55,7 @@ class Runner:
         self.prices_file = prices_file  # na Redmiju: medijani traženih cijena s GitHuba
         self.locator = Locator()
         self.ppv = Ppv(self.locator)
+        self.plans = Plans()
         self._ispu = None               # ISPU (građevinsko područje), otvara se kad zatreba
         self._place_names = {fold(n): n for j in self.locator.jls.values() for n in [j.name, *j.settlements]}
         self.criteria = self.cfg["kriteriji"]
@@ -498,8 +500,34 @@ class Runner:
 
     def _check_land(self, x: Listing, d: Decision, deadline: float | None = None) -> None:
         """Zemljište i kuća: građevinsko područje na točnoj lokaciji (ISPU), za zemljište i
-        PPV. Izvan građevinskog područja naselja → ⚠ (oglas i dalje stiže). Kuća bez točne
-        lokacije: redak "nije provjereno" se prvi izostavlja kad je poruka preduga."""
+        PPV i uvjeti gradnje iz prostornog plana."""
+        self._check_ispu(x, d, deadline)
+        if x.kind == LAND:
+            self._building_rules(x, d)
+
+    def _building_rules(self, x: Listing, d: Decision) -> None:
+        """📏 najmanja čestica, kig i kis iz UPU-a naselja (inače PPU-a); dio naselja (izgrađeni /
+        neizgrađeni) s ISPU-a kad ga plan razlikuje. Čestica manja od najmanje → ⚠."""
+        jls = d.jls or x.municipality
+        if not jls:
+            return
+        try:
+            place = place_of(self.locator, jls, x.title, x.settlement) or x.settlement
+            found = self.plans.check(x, jls, place, x.extra.get("gp_dio", ""))
+        except Exception as exc:  # noqa: BLE001 – uvjeti gradnje nisu nužni za obavijest
+            self.log(f"Uvjeti gradnje ({x.key}): {type(exc).__name__}: {exc}")
+            return
+        if found:
+            x.extra["uvjeti"], warning = found
+            if warning:
+                d.warnings.append(warning)
+                if d.status == PASS:
+                    d.status = WARN
+
+    def _check_ispu(self, x: Listing, d: Decision, deadline: float | None = None) -> None:
+        """Građevinsko područje na točnoj lokaciji (ISPU), za zemljište i PPV. Izvan
+        građevinskog područja naselja → ⚠ (oglas i dalje stiže). Kuća bez točne lokacije:
+        redak "nije provjereno" se prvi izostavlja kad je poruka preduga."""
         if x.kind not in (LAND, HOUSE):
             return
         house = x.kind == HOUSE
@@ -525,6 +553,9 @@ class Runner:
                 if d.status == PASS:
                     d.status = WARN
         info = result.info
+        if info and info.gp == "naselja" and info.use:
+            use = info.use.upper()
+            x.extra["gp_dio"] = "neizgrađeni dio" if "NEIZGRAĐENI" in use else "izgrađeni dio" if "IZGRAĐENI" in use else ""
         if info and info.land_values and x.price and x.area and x.price > 1000 and not house:
             low, high, ppm = min(info.land_values), max(info.land_values), x.price / x.area
             x.extra["ppv"] = land_note(ppm, low, high, f"na lokaciji, blok {info.block.title()}")

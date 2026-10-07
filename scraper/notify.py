@@ -61,7 +61,8 @@ def summary_text(m: dict, price_parts: list[str], warnings: int) -> str:
 CAPTION = 1000          # opis fotografije (Telegram: 1024 znaka)
 TEXT = 4000             # obična poruka (Telegram: 4096)
 # Kad je opis fotografije predug, ovi retci (redom) prelaze u drugu poruku.
-OVERFLOW = ("gp_neprovjereno", "naslov_oglasa", "usporedba", "cinjenice", "ppv", "prosjek", "parking_redak", "mjesto")
+OVERFLOW = ("gp_neprovjereno", "naslov_oglasa", "usporedba", "cinjenice", "ppv", "prosjek", "uvjeti", "parking_redak",
+            "mjesto")
 MINOR = {"gp_neprovjereno", "naslov_oglasa"}      # sami ne otvaraju drugu poruku
 
 
@@ -135,7 +136,7 @@ def _lines(listing: Listing, decision: Decision, headline: str) -> list[tuple[st
         lines.append(("cinjenice", ("" if facts[0].startswith("🔨") else "🏗 ") + e(" · ".join(facts))))
     if listing.extra.get("parcelacija"):            # stiže neovisno o cijeni i površini
         lines.append(("parcelacija", f"✂️ {e(listing.extra['parcelacija'])}"))
-    for key in ("parking_redak", "gp", "ppv", "prosjek", "usporedba"):
+    for key in ("parking_redak", "gp", "uvjeti", "ppv", "prosjek", "usporedba"):
         if listing.extra.get(key):
             # Kuća bez točne lokacije: "nije provjereno" je najmanje važan redak.
             kind = "gp_neprovjereno" if key == "gp" and listing.extra.get("gp_neprovjereno") else key

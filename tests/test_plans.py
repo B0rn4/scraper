@@ -5,7 +5,7 @@ DATA = """
 - jls: Omišalj
   plan: PPUO Omišalj
   pravila:
-    - {cestica: 500, kig: 0.3, kis: 0.6}
+    - {cestica: 500, iznimno: 400, kig: 0.3, kis: 0.6, tlocrt: 200, gbp: 400}
 - jls: Omišalj
   plan: UPU Njivice
   naselja: [Njivice]
@@ -24,7 +24,7 @@ def test_settlement_plan_by_zone_and_plot_size(tmp_path):
     (tmp_path / "u.yaml").write_text(DATA, encoding="utf-8")
     plans = Plans(tmp_path / "u.yaml")
     line, warning = plans.check(land(650), "Omišalj", "Njivice", zone="M1")
-    assert line == "📏 UPU Njivice, zona M1: min. čest. 400 m² · kig 0,25 (tlocrt ≤ 162 m²) · kis 0,8 (GBP ≤ 520 m²)"
+    assert line == "📏 UPU Njivice, M1: min. čest. 400 m² · kig 0,25 (tlocrt ≤ 162 m²) · kis 0,8 (GBP ≤ 520 m²)"
     assert not warning
     line, _ = plans.check(land(650), "Omišalj", "Njivice")          # zona nepoznata: raspon
     assert line.startswith("📏 UPU Njivice, zona nepoznata: min. čest. 400–600 m² · kig 0,2–0,25")
@@ -41,3 +41,71 @@ def test_no_plan_or_not_land(tmp_path):
     house = Listing(source="t", source_id="2", url="u", title="Kuća", kind=HOUSE, price=1, area=100)
     assert plans.check(house, "Omišalj", "") is None
     assert Plans(tmp_path / "nema.yaml").check(land(650), "Omišalj", "") is None
+
+
+def test_caps_and_exceptions(tmp_path):
+    (tmp_path / "u.yaml").write_text(DATA, encoding="utf-8")
+    plans = Plans(tmp_path / "u.yaml")
+    line, warning = plans.check(land(1000), "Omišalj", "")
+    assert line == "📏 PPUO Omišalj: min. čest. 500 m² · kig 0,3 (tlocrt ≤ 200 m²) · kis 0,6 (GBP ≤ 400 m²)"
+    _, warning = plans.check(land(420), "Omišalj", "")
+    assert warning.endswith("iznimno je dopušteno od 400 m² – provjeri")
+    _, warning = plans.check(land(350), "Omišalj", "")
+    assert warning.endswith("(500 m², PPUO Omišalj) – provjeri")
+
+
+def test_zone_from_ispu_only_where_plan_uses_it(tmp_path):
+    (tmp_path / "u.yaml").write_text(DATA + """
+- jls: Punat
+  plan: PPUO Punat
+  pravila:
+    - {zona: izgrađeni dio, cestica: 450, kig: 0.25, kis: 0.75}
+    - {zona: neizgrađeni dio, cestica: 450, kig: 0.25, kis: 0.6}
+""", encoding="utf-8")
+    plans = Plans(tmp_path / "u.yaml")
+    assert plans.check(land(600), "Punat", "Punat", "neizgrađeni dio")[0] == (
+        "📏 PPUO Punat, neizgrađeni dio: min. čest. 450 m² · kig 0,25 (tlocrt ≤ 150 m²) · kis 0,6 (GBP ≤ 360 m²)")
+    assert "zona nepoznata" in plans.check(land(600), "Punat", "Punat")[0]
+    # PPU Omišlja ne razlikuje dijelove naselja: redak bez zone.
+    assert plans.check(land(600), "Omišalj", "Omišalj", "izgrađeni dio")[0].startswith("📏 PPUO Omišalj: ")
+
+
+def test_real_table_loads_and_covers_all_municipalities():
+    from scraper.locations import Locator
+
+    plans = Plans()
+    covered = {p.jls for p in plans.plans}
+    names = {j.name for j in Locator().jls.values()}
+    assert covered <= names
+    assert {"Omišalj", "Krk", "Punat", "Baška", "Malinska-Dubašnica", "Vrbnik", "Dobrinj", "Opatija", "Lovran",
+            "Matulji", "Rijeka", "Kostrena", "Kraljevica", "Crikvenica"} <= covered
+    for p in plans.plans:
+        assert p.izvor and p.url and p.pravila
+        for r in p.pravila:
+            assert 0 < r.kig <= 1 and (r.kis is None or 0 < r.kis <= 3)
+    assert plans.find("Omišalj", "Njivice").plan.startswith("UPU Njivice")
+    assert plans.find("Omišalj", "Omišalj").plan.startswith("PPUO Omišalj")
+
+
+def test_runner_adds_rules_line_with_part_of_settlement_from_ispu(tmp_path):
+    from scraper.ispu import PointInfo
+    from scraper.models import PASS, WARN, Decision
+    from scraper.notify import format_listing
+    from scraper.runner import Runner
+    from tests.test_ispu import FakeIspu
+
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner._ispu = FakeIspu(PointInfo(gp="naselja", use="(GP) NEIZGRAĐENI DIO GRAĐEVINSKOG PODRUČJA NASELJA"))
+    x = Listing(source="t", source_id="1", url="u", title="Građevinsko zemljište Punat", kind=LAND, price=150_000,
+                area=600, settlement="Punat", extra={"lat": 45.02, "lon": 14.63, "priblizna_lokacija": False})
+    d = Decision(PASS, jls="Punat")
+    runner._check_land(x, d)
+    assert x.extra["uvjeti"].startswith("📏 PPUO Punat (2010), neizgrađeni dio: min. čest. 450 m² · kig 0,25")
+    assert d.status == PASS and "📏 PPUO Punat" in format_listing(x, d)
+    # Bez ISPU-a (istek vremena): redak bez dijela naselja; premala čestica → ⚠.
+    y = Listing(source="t", source_id="2", url="u", title="Zemljište Njivice", kind=LAND, price=90_000, area=350,
+                settlement="Njivice")
+    d = Decision(PASS, jls="Omišalj")
+    runner._check_land(y, d, deadline=0)
+    assert y.extra["uvjeti"].startswith("📏 UPU Njivice (2025): min. čest. 400 m²")
+    assert d.status == WARN and d.warnings[-1].startswith("čestica 350 m² manja je od najmanje za samostojeću kuću")
