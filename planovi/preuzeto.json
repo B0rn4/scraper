@@ -983,5 +983,89 @@
   "vrsta": "application/octet-stream; Charset=UTF-8",
   "velicina": 12467817,
   "znakova": 23
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Kraljevica/2020_05_1359_donosenje.pdf",
+  "datoteka": "2913043c_2020_05_1359_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 746500,
+  "znakova": 70672
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Kraljevica/2020_05_1360_donosenje.pdf",
+  "datoteka": "b526e844_2020_05_1360_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 763949,
+  "znakova": 69092
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Kraljevica/2021_08_1540_donosenje.pdf",
+  "datoteka": "a0c03675_2021_08_1540_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1320118,
+  "znakova": 65663
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Kraljevica/2024_13_1663_donosenje.pdf",
+  "datoteka": "fccd9dda_2024_13_1663_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1065941,
+  "znakova": 37115
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Kraljevica/2024_13_1589_donosenje.pdf",
+  "datoteka": "7846e4f1_2024_13_1589_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1639082,
+  "znakova": 175940
+ },
+ {
+  "url": "https://punat.hr/sites/default/files/2024-08/upu-stara-baska.pdf",
+  "datoteka": "b29848f1_upu-stara-baska",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 498083,
+  "znakova": 219305
+ },
+ {
+  "url": "https://lovran.hr/wp-content/uploads/2024/01/UPU_TULISEVICA_Tekst_PP.pdf",
+  "datoteka": "cfda6ddd_UPU_TULISEVICA_Tekst_PP",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1711977,
+  "znakova": 224097
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=16708",
+  "datoteka": "933571cd_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 273730
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=25974",
+  "datoteka": "704a03ab_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 25634
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=36814",
+  "datoteka": "964c6639_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 45578
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=36815",
+  "datoteka": "3c820ac4_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 30041
  }
 ]
