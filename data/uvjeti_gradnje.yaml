@@ -36,24 +36,65 @@
     - {zona: izgrađeni dio, cestica: 450, kig: 0.25, kis: 0.75}
     - {zona: neizgrađeni dio, cestica: 450, kig: 0.25, kis: 0.6}
 
-# --- Krk ---
+# --- Krk (u Gradu Krku "obiteljska kuća" ima 1 stan i najviše 200 m² GBP; kuća s 2 stana je "višeobiteljska") ---
 - jls: Krk
-  plan: UPU 1 Krk (2017)
+  plan: UPU 1 Krk (2020)
   naselja: [Krk]
-  izvor: "Odluka o donošenju UPU 1 – Krk, pročišćeni tekst, SN PGŽ 12/2017, čl. 85–87"
-  url: https://sn.pgz.hr/download.asp?id=28555
+  izvor: "UPU 1 – Krk, pročišćeni tekst odredbi, SN PGŽ 29/2020, čl. 85–87 (obiteljska kuća) i 4.2 (višeobiteljska: GBP do 400 m², kis 0,75 / M12 0,65 / M25 1,5)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=42442
+  napomena: "kuća s 2 stana: GBP do 400 m²"
   pravila:
-    - {zona: "M11/M15/M21", cestica: 500, iznimno: 400, kig: 0.25, kis: 0.5, tlocrt: 200}
-    - {zona: M12, cestica: 550, kig: 0.23, kis: 0.4, tlocrt: 200}
-    - {zona: M25, cestica: 500, iznimno: 400, kig: 0.5, kis: 1.0, tlocrt: 200}
+    - {zona: "M11/M15/M21", cestica: 500, iznimno: 400, kig: 0.25, kis: 0.5, tlocrt: 200, gbp: 200}
+    - {zona: M12, cestica: 550, kig: 0.23, kis: 0.4, tlocrt: 200, gbp: 200}
+    - {zona: M25, cestica: 500, iznimno: 400, kig: 0.5, kis: 1.0, tlocrt: 200, gbp: 200}
 - jls: Krk
-  plan: PPUG Krk (2019)
-  izvor: "IV. izmjene i dopune PPUG Krka (SN PGŽ 18/19), odredbe s označenim korekcijama, čl. 22"
-  url: https://www.grad-krk.hr/sites/default/files/files/05_odredbe_iv_iid_ppug_krk_sa_oznacenim_korekcijama.pdf
+  plan: UPU 2 Kornić (2016)
+  naselja: [Kornić]
+  izvor: "UPU 2 – Kornić, SN PGŽ 19/16, čl. 38 – obiteljska kuća GBP do 200 m², višeobiteljska (2 stana) do 400 m²"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=34138
+  napomena: "kuća s 2 stana: GBP do 400 m²"
   pravila:
-    - {cestica: 500, iznimno: 400, kig: 0.25, kis: 0.5, tlocrt: 200}
+    - {cestica: 500, iznimno: 400, kig: 0.25, kis: 0.75, tlocrt: 200, gbp: 200}
+- jls: Krk
+  plan: UPU 5 Vrh (2014)
+  naselja: [Vrh]
+  izvor: "UPU 5 – Vrh (NA 5.1), SN PGŽ 2/14, poglavlje 4.1.1 – kis nadzemno (s podrumom 0,75)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=29660
+  napomena: "kuća s 2 stana: GBP do 400 m²"
+  pravila:
+    - {cestica: 500, iznimno: 400, kig: 0.25, kis: 0.5, tlocrt: 200, gbp: 200}
+- jls: Krk
+  plan: PPUG Krk (2020)
+  izvor: "PPUG Krka, pročišćeni tekst odredbi, SN PGŽ 29/2020, čl. 22–23 – kis nadzemno (s podrumom 0,75); višeobiteljska kuća (2 stana) iste vrijednosti, GBP do 400 m²"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=42441
+  napomena: "kuća s 2 stana: GBP do 400 m²"
+  pravila:
+    - {cestica: 500, iznimno: 400, kig: 0.25, kis: 0.5, tlocrt: 200, gbp: 200}
 
 # --- Malinska-Dubašnica ---
+- jls: Malinska-Dubašnica
+  plan: UPU 1 Malinska, Radići (2013)
+  naselja: [Malinska, Radići]
+  izvor: "UPU 1 Malinska, Radići (GP-1), SN PGŽ 14/13, čl. 68–69 (izmjene 3/14 i 2015. ne mijenjaju te članke)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=27287
+  pravila:
+    - {cestica: 500, kig: 0.25, kis: 0.75, tlocrt: 200, gbp: 400}
+- jls: Malinska-Dubašnica
+  plan: UPU 3 Dobrinčevo (2012)
+  naselja: [Dobrinčevo]
+  izvor: "UPU 3 Dobrinčevo (dio GP-1), SN PGŽ 7/12, čl. 24 i dalje – kuće tipa A, B, C po kazetama"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=24254
+  pravila:
+    - {zona: "S1/S2 (tip A)", cestica: 800, kig: 0.2, kis: 0.6, gbp: 400}
+    - {zona: "S3 (tip B)", cestica: 500, kig: 0.25, kis: 0.75, gbp: 400}
+    - {zona: "M1 (tip C)", cestica: 600, kig: 0.2, kis: 0.6, gbp: 400}
+- jls: Malinska-Dubašnica
+  plan: UPU 4 Rova (2012)
+  naselja: [Rova]
+  izvor: "UPU 4 Rova (GP-3), SN PGŽ 12/12, poglavlje 4.1 (zone S1 i S2)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=24473
+  pravila:
+    - {cestica: 800, kig: 0.25, kis: 0.75, tlocrt: 300, gbp: 600}
 - jls: Malinska-Dubašnica
   plan: PPUO Malinska-Dubašnica (2023)
   naselja: [Malinska, Radići, Bogovići, Zidarići, Milčetići]
@@ -85,9 +126,17 @@
 
 # --- Baška ---
 - jls: Baška
-  plan: PPUO Baška (2018)
-  izvor: "PPUO Baška, pročišćeni tekst odredbi (lipanj 2018.), čl. 30 – čestica najviše 1.350 m²"
-  url: http://www.baska.hr/wp-content/uploads/2018/06/Zaključak-Pročišćeni-tekst-Odredbi-za-provedbu-PPUO-Baška.pdf
+  plan: UPU 1 Baška i UPU 2 Zarok (2018)
+  naselja: [Baška, Zarok]
+  izvor: "UPU 1 Baška (N1-1) i UPU 2 Baška-Zarok (N1-2), SN PGŽ 24/12, usklađeni s PPUO-om u SN PGŽ 2/18 (UPU 1 čl. 114 i 121, UPU 2 čl. 42) – čestica najviše 1.350 m²"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=36814
+  napomena: "u kulturno-povijesnoj cjelini i do 100 m od obale u Zaroku nove kuće nisu dopuštene"
+  pravila:
+    - {cestica: 500, kig: 0.25, kis: 0.75, tlocrt: 150, gbp: 400}
+- jls: Baška
+  plan: PPUO Baška (2020)
+  izvor: "PPUO Baška, pročišćeni tekst odredbi, SN PGŽ 13/2020, čl. 30 (VI. izmjene 24/2020 ga ne mijenjaju) – čestica najviše 1.350 m²"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=41290
   pravila:
     - {cestica: 500, kig: 0.25, kis: 0.75, tlocrt: 150, gbp: 400}
 
@@ -112,6 +161,36 @@
     - {zona: "S3/M12/S10", cestica: 800, kig: 0.3, kis: 0.9, tlocrt: 250}
     - {zona: S4, cestica: 1200, kig: 0.25, kis: 0.75, tlocrt: 300}
 - jls: Opatija
+  plan: UPU Ičići (2013)
+  naselja: [Ičići]
+  izvor: "UPU naselja Ičići (UPU 2), SN PGŽ 16/08, izmjene SN PGŽ 13/17 (čl. 41 i 41.a)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=27483
+  pravila:
+    - {zona: "S1/M1-1/M2-1", cestica: 600, kig: 0.3, kis: 1.2, tlocrt: 250}
+    - {zona: ostale, cestica: 600, kig: 0.3, kis: 0.95, tlocrt: 200}
+- jls: Opatija
+  plan: UPU Ika-Oprić (2012)
+  naselja: [Ika, Oprić]
+  izvor: "UPU naselja Ika-Oprić (UPU 3), SN PGŽ 11/12, čl. 58 i 4.6.1 (izmjene 18/17 ne mijenjaju)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=22142
+  pravila:
+    - {zona: "S2/S4", cestica: 600, kig: 0.3, kis: 0.6, tlocrt: 200, gbp: 400}
+    - {zona: M3, cestica: 600, kig: 0.3, kis: 0.6, tlocrt: 250, gbp: 450}
+- jls: Opatija
+  plan: UPU Pobri (2012)
+  naselja: [Pobri]
+  izvor: "UPU 6 – naselja Pobri, SN PGŽ 15/12, čl. 31"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=24557
+  pravila:
+    - {cestica: 600, kig: 0.3, kis: 0.9}
+- jls: Opatija
+  plan: UPU Dobreć (2013)
+  naselja: [Dobreć]
+  izvor: "UPU 5 – naselja Dobreć, Krasa, Gržanići, Kružići, Antići, Kokići, Konjarići i Dražica (M1-1)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=26234
+  pravila:
+    - {cestica: 600, kig: 0.3, kis: 0.9, tlocrt: 200}
+- jls: Opatija
   plan: PPUG Opatija (2021)
   izvor: "III. ID PPUG Opatije, pročišćeni tekst odredbi (travanj 2021.), čl. 24"
   url: https://opatija.hr/wp-content/uploads/2021/03/III-ID-PPUGO-Procisceni-tekst-Odredbi.pdf
@@ -135,16 +214,42 @@
 
 # --- Matulji ---
 - jls: Matulji
+  plan: UPU Matulji (2019)
+  naselja: [Matulji]
+  izvor: "UPU Matulja, II. izmjene i dopune s pročišćenim odredbama (2019.), čl. 34 – zone S, M1, jezgra"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=40039
+  pravila:
+    - {zona: S-1, cestica: 400, kig: 0.3, kis: 0.6, tlocrt: 300, gbp: 600}
+    - {zona: "S-2", cestica: 600, kig: 0.3, kis: 0.6, tlocrt: 300, gbp: 600}
+    - {zona: M1-1, cestica: 400, kig: 0.35, kis: 0.65, tlocrt: 300, gbp: 600}
+    - {zona: "S-5/S-6/M1-2", cestica: 250, kig: 0.5, kis: 1.0, tlocrt: 200, gbp: 400}
+- jls: Matulji
+  plan: UPU Rupa (2011)
+  naselja: [Rupa]
+  izvor: "UPU 3 Rupa (NA 16, NA 7-2), SN PGŽ 32/11, čl. 72, 75, 76 – kis s podrumom/tavanom veći"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=23009
+  pravila:
+    - {zona: "S1/M1", cestica: 800, kig: 0.25, kis: 0.5, tlocrt: 300}
+    - {zona: S2, cestica: 400, kig: 0.3, kis: 0.6, tlocrt: 250}
+    - {zona: S3, cestica: 250, kig: 0.5, kis: 1.0, tlocrt: 200}
+- jls: Matulji
+  plan: UPU Rukavac (2012)
+  naselja: [Rukavac]
+  izvor: "UPU 5 Rukavac (NA 15-1), SN PGŽ 15/12, čl. 50 (M1)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=24582
+  pravila:
+    - {cestica: 400, kig: 0.35, kis: 0.7, tlocrt: 200, gbp: 400}
+- jls: Matulji
   plan: PPUO Matulji (2008)
-  naselja: [Bregi, Rukavac, Kučeli, Matulji, Mihotići, Jušići, Jurdani, Mučići, Permani, Ružići, Brešca,
-            Veli Brgud, Mali Brgud, Rupa, Šapjane, Brgud]
-  izvor: "PPUO Matulji (listopad 2008.), čl. 38, 48, 49, 51 – stambena i stambeno-poslovna naselja"
+  naselja: [Bregi, Kučeli, Mihotići, Jušići, Jurdani, Mučići, Permani, Ružići, Brešca,
+            Veli Brgud, Mali Brgud, Šapjane, Brgud]
+  izvor: "PPUO Matulji (2008.), čl. 38, 48, 49, 51 – stambena i stambeno-poslovna naselja (izmjene do 2021. ne mijenjaju te članke)"
   url: https://www.matulji.hr/downloads/prostorni_planovi/ppuo-matulji.pdf
   pravila:
     - {cestica: 800, kig: 0.25, kis: 0.5, tlocrt: 300, gbp: 600}
 - jls: Matulji
   plan: PPUO Matulji (2008)
-  izvor: "PPUO Matulji (listopad 2008.), čl. 38, 48, 49, 51 – mješovito-ruralna naselja"
+  izvor: "PPUO Matulji (2008.), čl. 38, 48, 49, 51 – mješovito-ruralna naselja"
   url: https://www.matulji.hr/downloads/prostorni_planovi/ppuo-matulji.pdf
   pravila:
     - {cestica: 600, kig: 0.3, kis: 0.6, tlocrt: 300, gbp: 600}
@@ -234,7 +339,48 @@
   pravila:
     - {cestica: 300, kig: 0.4, kis: 0.8}
 
-# --- Crikvenica ---
+# --- Crikvenica (UPU-i pokrivaju samo dijelove naselja; ostatak po PPUG-u, pa "zona" kaže koji dio) ---
+- jls: Crikvenica
+  plan: UPU-i Crikvenice (2009–2022) / PPUG (2023)
+  naselja: [Crikvenica]
+  izvor: "UPU Crikvenica centar, pročišćeni tekst, SN Grada Crikvenice 153/2022; UPU Crikvenica sjever – Hrusta, SN PGŽ 44/07 i 16/09, čl. 28; UPU Duga, SN PGŽ 49/11, čl. 18; ostalo PPUG 2023, čl. 29 – sve obiteljska kuća GBP do 400 m²"
+  url: https://zavod.pgz.hr/sn_jls/Crikvenica/2022_153_1657_donosenje.pdf
+  pravila:
+    - {zona: "centar / Hrusta", cestica: 400, iznimno: 360, kig: 0.3, kis: 0.9, tlocrt: 200, gbp: 400}
+    - {zona: "Duga / ostali dijelovi", cestica: 400, iznimno: 360, kig: 0.3, kis: 1.2}
+- jls: Crikvenica
+  plan: UPU Dramalj centar (2008) / PPUG (2023)
+  naselja: [Dramalj]
+  izvor: "UPU Dramalj centar, SN PGŽ 18/08, poglavlje 4.1 (nova gradnja 600 m², dovršeni dijelovi 400 m² – kartografski prikaz 4a); izvan UPU-a PPUG 2023, čl. 29"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=14577
+  pravila:
+    - {zona: "centar – nova gradnja", cestica: 600, kig: 0.3, kis: 0.9, tlocrt: 200, gbp: 400}
+    - {zona: "centar – dovršeni dio", cestica: 400, kig: 0.3, kis: 0.9, tlocrt: 200, gbp: 400}
+    - {zona: "izvan centra", cestica: 400, iznimno: 360, kig: 0.3, kis: 1.2}
+- jls: Crikvenica
+  plan: UPU Jadranovo centar (2008) / PPUG (2023)
+  naselja: [Jadranovo]
+  izvor: "UPU 9 Jadranovo centar (NA 21), SN PGŽ 18/08 (nova gradnja 600 m², dovršeni dijelovi 400 m²); izvan UPU-a PPUG 2023, čl. 29"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=14578
+  pravila:
+    - {zona: "centar – nova gradnja", cestica: 600, kig: 0.3, kis: 0.9, tlocrt: 200, gbp: 400}
+    - {zona: "centar – dovršeni dio", cestica: 400, kig: 0.3, kis: 0.9, tlocrt: 200, gbp: 400}
+    - {zona: "izvan centra", cestica: 400, iznimno: 360, kig: 0.3, kis: 1.2}
+- jls: Crikvenica
+  plan: UPU 5 Tončićevo (2008)
+  naselja: [Tončićevo]
+  izvor: "UPU 5 Tončićevo, SN PGŽ 26/08 (samostojeće: čestica 750–1.200 m²)"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=14895
+  pravila:
+    - {cestica: 750, kig: 0.25, kis: 0.75, tlocrt: 200, gbp: 400}
+- jls: Crikvenica
+  plan: UPU Selce (2009) / PPUG (2023)
+  naselja: [Selce]
+  izvor: "UPU 16 Selce (dio NA 4), SN PGŽ 55/09, čl. 39–40; izvan UPU-a PPUG 2023, čl. 29"
+  url: https://www.sn.pgz.hr/default.asp?Link=odluke&id=18816
+  pravila:
+    - {zona: "UPU Selce", cestica: 500, kig: 0.3, kis: 0.6}
+    - {zona: "izvan UPU-a", cestica: 400, iznimno: 360, kig: 0.3, kis: 1.2}
 - jls: Crikvenica
   plan: PPUG Crikvenica (2023)
   izvor: "PPUG Crikvenice, pročišćeni tekst, SN Grada Crikvenice 186/2023, čl. 29"

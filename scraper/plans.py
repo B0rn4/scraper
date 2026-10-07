@@ -47,6 +47,7 @@ class Plan:
     url: str = ""
     naselja: list[str] = field(default_factory=list)   # prazno: cijeli grad/općina (PPU)
     pravila: list[Rule] = field(default_factory=list)
+    napomena: str = ""                                  # kratko, ide na kraj retka (npr. gdje se ne smije graditi)
 
 
 def _num(value: float) -> str:
@@ -109,6 +110,8 @@ class Plans:
             parts.append(f"kig {_span(kig)}")
             if kis:
                 parts.append(f"kis {_span(kis)}")
+        if plan.napomena:
+            parts.append(plan.napomena)
         line = f"📏 {where}: " + " · ".join(parts)
         warning = ""
         if area and mins and area < min(mins):
