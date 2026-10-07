@@ -1067,5 +1067,69 @@
   "status": 200,
   "vrsta": "text/html",
   "velicina": 30041
+ },
+ {
+  "url": "https://www.sn.pgz.hr/download.asp?id=26745",
+  "datoteka": "7042fb94_download",
+  "status": 200,
+  "vrsta": "application/octet-stream; Charset=UTF-8",
+  "velicina": 128102,
+  "znakova": 104734
+ },
+ {
+  "url": "https://www.sn.pgz.hr/download.asp?id=31684",
+  "datoteka": "508d43b1_download",
+  "status": 200,
+  "vrsta": "application/octet-stream; Charset=UTF-8",
+  "velicina": 328470,
+  "znakova": 60235
+ },
+ {
+  "url": "https://www.sn.pgz.hr/download.asp?id=32313",
+  "datoteka": "c260fe2c_download",
+  "status": 200,
+  "vrsta": "application/octet-stream; Charset=UTF-8",
+  "velicina": 341751,
+  "znakova": 76233
+ },
+ {
+  "url": "https://www.sn.pgz.hr/download.asp?id=32456",
+  "datoteka": "7399f764_download",
+  "status": 200,
+  "vrsta": "application/octet-stream; Charset=UTF-8",
+  "velicina": 568371,
+  "znakova": 63838
+ },
+ {
+  "url": "https://www.sn.pgz.hr/download.asp?id=33236",
+  "datoteka": "576e3077_download",
+  "status": 200,
+  "vrsta": "application/octet-stream; Charset=UTF-8",
+  "velicina": 4304815,
+  "znakova": 216439
+ },
+ {
+  "url": "https://www.sn.pgz.hr/download.asp?id=31072",
+  "datoteka": "8e3fb2f2_download",
+  "status": 200,
+  "vrsta": "application/octet-stream; Charset=UTF-8",
+  "velicina": 441965,
+  "znakova": 364155
+ },
+ {
+  "url": "https://www.sn.pgz.hr/download.asp?id=29213",
+  "datoteka": "1b53f057_download",
+  "status": 200,
+  "vrsta": "application/octet-stream; Charset=UTF-8",
+  "velicina": 161567,
+  "znakova": 127080
+ },
+ {
+  "url": "https://www.sn.pgz.hr/download.asp?id=31026",
+  "datoteka": "bc9c3e0b_download",
+  "status": 200,
+  "vrsta": "application/octet-stream; Charset=UTF-8",
+  "velicina": 138459,
+  "znakova": 88072
  }
 ]
