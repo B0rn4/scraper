@@ -346,7 +346,7 @@ def test_mute_button(tmp_path, monkeypatch):
         chat_id = "42"
 
         def __init__(self):
-            self.edited, self.sent = [], []
+            self.edited, self.sent, self.confirmed = [], [], set()
             self.updates = [
                 {"update_id": 10, "callback_query": {"id": "q1", "data": "nz:t:7",
                  "message": {"message_id": 5, "chat": {"id": 42},
@@ -354,9 +354,11 @@ def test_mute_button(tmp_path, monkeypatch):
                 {"update_id": 11, "callback_query": {"id": "q2", "data": "nz:t:8", "message": {"message_id": 6, "chat": {"id": 99}}}},
             ]
 
-        def get_updates(self, offset):
-            out = [u for u in self.updates if not offset or u["update_id"] >= offset]
-            return out
+        def get_updates(self, offset):            # kao Telegram: pomak potvrđuje sve manje brojeve
+            if offset:
+                self.confirmed |= {u["update_id"] for u in self.updates if u["update_id"] < offset}
+                return [u for u in self.updates if u["update_id"] >= offset]
+            return [u for u in self.updates if u["update_id"] not in self.confirmed]
 
         def edit_markup(self, chat, mid, markup):
             self.edited.append((mid, json.loads(markup)))
@@ -403,6 +405,15 @@ def test_mute_button(tmp_path, monkeypatch):
     state.close()
     assert tg.edited[-1][1]["inline_keyboard"][0][-1]["callback_data"] == "nz:t:7"
     assert sorted(sent) == ["t:7", "u:9"]                 # sniženja opet stižu
+    # Pritisak s manjim brojem od zapamćenog (novi bot; nakon tjedan dana bez pritisaka broj je
+    # nasumičan) ne smije se izgubiti.
+    tg.updates = [{"update_id": 3, "callback_query": {"id": "q4", "data": "nz:t:7",
+                   "message": {"message_id": 5, "chat": {"id": 42}, "reply_markup": json.loads(listing_markup(x))}}}]
+    FakeSource.batches = [[listing(260_000, "7", title=kamena)]]
+    run_once()
+    state = State(tmp_path / "s.db")
+    assert state.muted() == {"t:7"} and tg.confirmed >= {3}
+    state.close()
 
 
 def test_redmi_watches_github(tmp_path):

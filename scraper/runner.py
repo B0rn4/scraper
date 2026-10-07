@@ -292,11 +292,14 @@ class Runner:
         if self.device != "github" or not self.telegram or not hasattr(self.telegram, "get_updates"):
             return
         try:
-            offset = int(state.meta_get("telegram:offset") or 0)
-            updates = self.telegram.get_updates(offset or None)
+            # Bez pomaka (offset): Telegram vraća sve nepotvrđene pritiske. Zapamćeni pomak bi
+            # odbacio pritisak s manjim brojem – a broj je nasumičan nakon tjedan dana bez
+            # ijednog pritiska, i drugačiji kad se bot zamijeni novim. Potvrda je na kraju.
+            updates = self.telegram.get_updates(None)
         except Exception as exc:  # noqa: BLE001 – gumb nije nužan za rad
             self.log(f"Telegram (gumbi): {type(exc).__name__}: {exc}")
             return
+        offset = 0
         if updates:
             self.log(f"Telegram (gumbi): {len(updates)} novih pritisaka")
         elif hasattr(self.telegram, "webhook_info"):
@@ -332,8 +335,14 @@ class Runner:
                     call()
                 except Exception as exc:  # noqa: BLE001 – stari upit ili poruka: nije bitno
                     self.log(f"Telegram (gumbi): {type(exc).__name__}: {exc}")
+        if not updates:
+            return
         state.meta_set("telegram:offset", str(offset))
-        state.conn.commit()
+        state.conn.commit()                  # zapisano, pa tek onda potvrđeno Telegramu
+        try:
+            self.telegram.get_updates(offset)
+        except Exception as exc:  # noqa: BLE001 – nepotvrđeni se ponove (isti ishod)
+            self.log(f"Telegram (gumbi, potvrda): {type(exc).__name__}: {exc}")
 
     def _load_pending(self, state: State, name: str) -> list[Listing]:
         """Oglasi koje izvor prošli put nije stigao otvoriti (izvor ih otvara ovaj put)."""

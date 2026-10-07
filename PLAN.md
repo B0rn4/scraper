@@ -446,6 +446,9 @@ bez stotina poruka.
       - Redmi: skraćen seen.json.gz i vrijeme bez zone u github.json rušili su pokretanje;
         sažetak i github.json pišu se preko privremene datoteke;
       - tjedni izvještaj: neuspio mail bilježio se kao „poslan” – sad se ponavlja (do 2 dana).
+      Uz to (stvaran kvar 7. 10.): pritisci „Ne zanima me” nisu stizali – zapamćeni pomak
+      (offset) odbacuje pritisak s manjim brojem (novi bot; nakon tjedan dana bez pritisaka
+      Telegram broj bira nasumično). Pritisci se čitaju bez pomaka i potvrđuju nakon zapisa.
    5. **Testovi:** automatski (sad 166) dopuniti cijelim pokretanjem na spremljenim
       stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
       radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
