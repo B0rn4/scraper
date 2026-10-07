@@ -1,0 +1,268 @@
+{
+ "skripte": [
+  "./runtime.194157a16dc812f93697.js",
+  "./polyfills.e9249e2268273499663b.js",
+  "./main.00be0338c829db4222f2.js"
+ ],
+ "kontekst": [
+  "r revision number in the eKatalog ISPU ID, the map published here might not be valid.\"},\"search\":{\"inputPlaceholder\":\"Search...\",\"searchFor\":\"Search string:\"},\"identify\":{\"windowTitle\":\"Layer info\",\"notifyTitle\":\"Layer info\",\"notifyNoLayerVisible\":\"No active layers on which this action is enabled.\",\"notifyLayerHidden\":\"Zoom in",
+  "vom prozoru, objavljene karte mo\\u017eda nisu vi\\u0161e va\\u017ee\\u0107e.\"},\"search\":{\"inputPlaceholder\":\"Pretra\\u017ei...\",\"searchFor\":\"Tra\\u017eeni pojam:\"},\"identify\":{\"windowTitle\":\"Info o slojevima\",\"notifyTitle\":\"Info o slojevima\",\"notifyNoLayerVisible\":\"Nije uklju\\u010den niti jedan sloj na kojem je omogu\\u0107ena ova a",
+  "enje izvora.\",\"poveznica\":\"poveznici.\"},\"brownfield\":{\"naslov\":\"Brownfields in the Republic of Croatia\",\"opis\":\"The brownfields dataset accessible through this WFS originates from the Brownfields Register. Data entry is performed by spatial planning institutes of counties and the City of Zagreb. The Register is a web-GIS "
+ ],
+ "adrese": [],
+ "cvorovi": [
+  {
+   "id": "130",
+   "label": {
+    "hr": "Cjenovni blokovi",
+    "en": "Price Brackets"
+   },
+   "tooltip": {
+    "hr": "Cjenovni blokovi",
+    "en": "Price Brackets"
+   },
+   "type": "sloj",
+   "checked": false,
+   "info": {
+    "hash": "yFEhKbLYGTw",
+    "hashIdentify": "zgbURFuM4",
+    "hasLegende": false,
+    "hasMetapodaci": true,
+    "hasSastavnice": false
+   },
+   "extensionData": {
+    "type": "wms",
+    "isBase": false,
+    "isExternal": false,
+    "isSingleTile": true,
+    "isSwipe": true,
+    "isForPrint": true,
+    "layerHash": "C4wheP5ELdY",
+    "serviceId": "9",
+    "url": "wms",
+    "params": {
+     "layers": "222",
+     "format": "image/png",
+     "version": null
+    },
+    "opacity": 1.0,
+    "scales": [
+     500,
+     50000
+    ],
+    "identifyScales": [
+     null,
+     null
+    ],
+    "timelineAttributes": null,
+    "zIndex": null,
+    "extensionData": null
+   },
+   "items": null
+  },
+  {
+   "id": "382",
+   "label": {
+    "hr": "PPV 1.1.2026. – zemljišta",
+    "en": "AVM 1/1/2026 – land"
+   },
+   "tooltip": {
+    "hr": "PPV 1.1.2026. – zemljišta",
+    "en": "AVM 1/1/2026 – land"
+   },
+   "type": "sloj",
+   "checked": false,
+   "info": {
+    "hash": null,
+    "hashIdentify": "mDTOMEBYawA",
+    "hasLegende": false,
+    "hasMetapodaci": false,
+    "hasSastavnice": false
+   },
+   "extensionData": {
+    "type": "wms",
+    "isBase": false,
+    "isExternal": false,
+    "isSingleTile": true,
+    "isSwipe": true,
+    "isForPrint": true,
+    "layerHash": "xM5m5ElZUrM",
+    "serviceId": "9",
+    "url": "wms",
+    "params": {
+     "layers": "404",
+     "format": "image/png",
+     "version": null
+    },
+    "opacity": 0.7,
+    "scales": [
+     null,
+     null
+    ],
+    "identifyScales": [
+     null,
+     null
+    ],
+    "timelineAttributes": null,
+    "zIndex": null,
+    "extensionData": null
+   },
+   "items": null
+  }
+ ],
+ "identify": [
+  {
+   "mjerilo": 2000,
+   "dodatno": {},
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA "
+   ]
+  },
+  {
+   "mjerilo": 2000,
+   "dodatno": {
+    "tolerance": 200
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA "
+   ]
+  },
+  {
+   "mjerilo": 2000,
+   "dodatno": {
+    "buffer": 500
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA "
+   ]
+  },
+  {
+   "mjerilo": 10000,
+   "dodatno": {},
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 10000,
+   "dodatno": {
+    "tolerance": 200
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 10000,
+   "dodatno": {
+    "buffer": 500
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 50000,
+   "dodatno": {},
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 50000,
+   "dodatno": {
+    "tolerance": 200
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 50000,
+   "dodatno": {
+    "buffer": 500
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 250000,
+   "dodatno": {},
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 250000,
+   "dodatno": {
+    "tolerance": 200
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 250000,
+   "dodatno": {
+    "buffer": 500
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 1000000,
+   "dodatno": {},
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 1000000,
+   "dodatno": {
+    "tolerance": 200
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  },
+  {
+   "mjerilo": 1000000,
+   "dodatno": {
+    "buffer": 500
+   },
+   "status": 200,
+   "blokovi": [
+    "382: SRŠIĆI - ŠUMA ",
+    "382: NJIVICE - OBRADIVO TLO I ŠUME"
+   ]
+  }
+ ],
+ "wms": []
+}
