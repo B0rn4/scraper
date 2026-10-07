@@ -53,95 +53,73 @@ def blocks(data) -> list[str]:
     return names
 
 
+def wfs_nodes(node, out: list):
+    if isinstance(node, dict):
+        ext = node.get("extensionData") if node.get("type") == "sloj" else None
+        if isinstance(ext, dict) and ext.get("type") not in (None, "wms"):
+            out.append({"id": node.get("id"), "label": (node.get("label") or {}).get("hr"), "ext": ext})
+        for v in node.values():
+            wfs_nodes(v, out)
+    elif isinstance(node, list):
+        for v in node:
+            wfs_nodes(v, out)
+
+
+def probe(s, url, params=None, note="") -> dict:
+    try:
+        r = s.get(url, params=params, timeout=90)
+        return {"url": url, "napomena": note, "parametri": params, "status": r.status_code,
+                "vrsta": r.headers.get("content-type"), "duljina": len(r.content), "odgovor": r.text[:4000]}
+    except Exception as exc:  # noqa: BLE001
+        return {"url": url, "napomena": note, "parametri": params, "greska": f"{type(exc).__name__}: {str(exc)[:300]}"}
+
+
 def main(out: Path) -> None:
+    """Treći krug: javni WFS Ministarstva, WMS/WFS posrednik ISPU-a za PPV slojeve."""
     out.mkdir(parents=True, exist_ok=True)
-    result: dict = {}
+    result: dict = {"pokusaji": []}
     ispu = Ispu()
     s = ispu.session
-    try:
-        html = s.get(SITE, timeout=60).text
-        scripts = re.findall(r'<script[^>]+src="([^"]+)"', html)
-        runtime = next((x for x in scripts if "runtime" in x), "")
-        if runtime:                       # Angular: dijelovi aplikacije učitavaju se naknadno
-            rt = s.get(urljoin(SITE, runtime), timeout=60).text
-            result["runtime"] = rt[:8000]
-            pairs = re.findall(r'(\d+|"[\w\-]+"):"([0-9a-f]{16,20})"', rt)
-            scripts += [f"./{k.strip(chr(34))}.{v}.js" for k, v in pairs]
-            scripts += [f"./{k.strip(chr(34))}-es2015.{v}.js" for k, v in pairs]
-        result["skripte"] = scripts
-        found: dict[str, int] = {}
-        hosts: dict[str, int] = {}
-        for src in scripts[:120]:
-            try:
-                js = s.get(urljoin(SITE, src), timeout=60).text
-            except Exception as exc:  # noqa: BLE001
-                result.setdefault("greske", []).append(f"{src}: {exc}")
-                continue
-            if js.lstrip().startswith("<"):
-                continue                  # nepostojeći dio: stranica aplikacije umjesto skripte
-            for m in URLS.finditer(js):
-                found[m.group(1)] = found.get(m.group(1), 0) + 1
-            for m in ANY_URL.finditer(js):
-                hosts[m.group(0)[:150]] = hosts.get(m.group(0)[:150], 0) + 1
-            for word in ("gis/", "getFeatureInfo", "GetFeatureInfo", "wfs", "WFS", "geoserver", "featureCount",
-                         "feature_count", "FEATURE_COUNT"):
-                for m in list(re.finditer(re.escape(word), js))[:12]:
-                    result.setdefault("kontekst", []).append(js[max(0, m.start() - 160):m.end() + 160])
-        result["adrese"] = sorted(found)
-        result["url_ovi"] = sorted(hosts)
-    except Exception as exc:  # noqa: BLE001
-        result["greska_js"] = f"{type(exc).__name__}: {exc}"
-
+    s.get(SITE, timeout=60)
     catalog = s.get(API + "gis/catalog-izbornik", timeout=60).json()
-    flat: list[dict] = []
-    ispu._walk(catalog, [], flat)
-    want = {la["id"] for la in flat if la["label"].get("hr", "") in ("Cjenovni blokovi", "PPV 1.1.2026. – zemljišta")}
     nodes: list = []
-    raw_nodes(catalog, want, nodes)
-    result["cvorovi"] = nodes
-    layers = [{k: v for k, v in la.items() if not k.startswith("_")} for la in flat if la["id"] in want]
-
+    wfs_nodes(catalog, nodes)
+    result["ne_wms_slojevi"] = nodes[:80]
     x, y = to_htrs(*POINT)
-    result["identify"] = []
-    for scale in SCALES:
-        for extra in ({}, {"featureCount": 100}, {"feature_count": 100}, {"maxFeatures": 100}, {"limit": 100}):
-            body = {"x": x, "y": y, "scale": scale, "layers": layers, **extra}
-            try:
-                r = s.post(API + "gis/identify", json=body, headers=HEADERS, timeout=60)
-                data = r.json() if r.status_code == 200 else r.text[:300]
-                result["identify"].append({"mjerilo": scale, "dodatno": extra, "status": r.status_code,
-                                           "blokovi": blocks(data) if r.status_code == 200 else data})
-            except Exception as exc:  # noqa: BLE001
-                result["identify"].append({"mjerilo": scale, "dodatno": extra, "greska": str(exc)[:300]})
-            time.sleep(1.2)
-
-    result["pogadjanja"] = []
-    for g in GUESSES:
-        try:
-            r = s.get(SITE + g, timeout=60)
-            result["pogadjanja"].append({"url": g, "status": r.status_code, "vrsta": r.headers.get("content-type"),
-                                         "odgovor": r.text[:1500]})
-        except Exception as exc:  # noqa: BLE001
-            result["pogadjanja"].append({"url": g, "greska": str(exc)[:200]})
-        time.sleep(0.5)
-
-    # WMS GetFeatureInfo nad pravokutnikom ~2 x 2 km oko točke, slika 1 x 1 piksel.
-    result["wms"] = []
-    for url in [a for a in result.get("adrese", []) if re.search(r"wms|ows|geoserver", a, re.I)][:6]:
-        full = urljoin(SITE, url)
-        for layer in {str(la.get("layers")) for la in layers}:
-            params = {"SERVICE": "WMS", "VERSION": "1.1.1", "REQUEST": "GetFeatureInfo", "LAYERS": layer,
-                      "QUERY_LAYERS": layer, "SRS": "EPSG:3765", "BBOX": f"{x - 1000},{y - 1000},{x + 1000},{y + 1000}",
-                      "WIDTH": 1, "HEIGHT": 1, "X": 0, "Y": 0, "INFO_FORMAT": "application/json", "FEATURE_COUNT": 500}
-            try:
-                r = s.get(full, params=params, timeout=60)
-                result["wms"].append({"url": full, "sloj": layer, "status": r.status_code, "odgovor": r.text[:3000]})
-            except Exception as exc:  # noqa: BLE001
-                result["wms"].append({"url": full, "sloj": layer, "greska": str(exc)[:300]})
-            time.sleep(1)
-    (out / "ppv_istrazi.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(json.dumps({k: (len(v) if isinstance(v, list) else v) for k, v in result.items()
-                      if k != "kontekst"}, ensure_ascii=False)[:2000])
+    box = f"{x - 1500:.0f},{y - 1500:.0f},{x + 1500:.0f},{y + 1500:.0f}"
+    add = result["pokusaji"].append
+    for host in ("gis1", "gis2"):
+        add(probe(s, f"https://{host}.mgipu.hr/srv1/RGN_MGIPU_Public/wfs",
+                  {"service": "WFS", "request": "GetCapabilities"}, "javni WFS Ministarstva"))
+    layers = {"404": "xM5m5ElZUrM", "222": "C4wheP5ELdY"}      # PPV 2026 zemljišta, cjenovni blokovi
+    for lay, lhash in layers.items():
+        base = {"layerHash": lhash, "serviceId": "9"}
+        add(probe(s, API + "gis/wms", {**base, "SERVICE": "WMS", "VERSION": "1.3.0", "REQUEST": "GetMap", "LAYERS": lay,
+                                       "STYLES": "", "CRS": "EPSG:3765", "BBOX": box, "WIDTH": 64, "HEIGHT": 64,
+                                       "FORMAT": "image/png"}, f"GetMap {lay}"))
+        for size, ij in ((1, 0), (101, 50)):
+            add(probe(s, API + "gis/wms", {**base, "SERVICE": "WMS", "VERSION": "1.3.0", "REQUEST": "GetFeatureInfo",
+                                           "LAYERS": lay, "QUERY_LAYERS": lay, "STYLES": "", "CRS": "EPSG:3765",
+                                           "BBOX": box, "WIDTH": size, "HEIGHT": size, "I": ij, "J": ij,
+                                           "INFO_FORMAT": "application/json", "FEATURE_COUNT": 300},
+                      f"GetFeatureInfo {lay} {size}x{size}"))
+            add(probe(s, API + "gis/wms", {**base, "SERVICE": "WMS", "VERSION": "1.1.1", "REQUEST": "GetFeatureInfo",
+                                           "LAYERS": lay, "QUERY_LAYERS": lay, "STYLES": "", "SRS": "EPSG:3765",
+                                           "BBOX": box, "WIDTH": size, "HEIGHT": size, "X": ij, "Y": ij,
+                                           "INFO_FORMAT": "application/json", "FEATURE_COUNT": 300},
+                      f"GetFeatureInfo 1.1.1 {lay} {size}x{size}"))
+        for path in ("gis/wms/wfs", "gis/wfs"):
+            add(probe(s, API + path, {**base, "service": "WFS", "version": "1.1.0", "request": "GetFeature",
+                                      "typename": lay, "outputFormat": "application/json", "srsname": "EPSG:3765",
+                                      "bbox": box + ",EPSG:3765"}, f"WFS {path} {lay}"))
+        add(probe(s, API + "gis/wms", {**base, "SERVICE": "WMS", "VERSION": "1.3.0", "REQUEST": "GetCapabilities"},
+                  f"GetCapabilities {lay}"))
+        time.sleep(1)
+    add(probe(s, API + "gis/get-capabilities-servis", {"servisId": "9", "layers": "404", "layerHash": "xM5m5ElZUrM"},
+              "get-capabilities-servis"))
+    for p in result["pokusaji"]:
+        print(p.get("napomena"), p.get("status"), p.get("vrsta"), p.get("duljina"), str(p.get("odgovor") or p.get("greska"))[:160].replace("\n", " "))
+    (out / "ppv_istrazi3.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 if __name__ == "__main__":
