@@ -23,8 +23,11 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 - **Opasni izrazi u opisu** (suvlasništvo, ostavina, legalizacija, teret…): ⚠ s
   citiranom rečenicom; odbija se samo nedvosmisleno (prodaje se suvlasnički dio).
 - **Ostvarene cijene (🏛 PPV, samo zemljišta):** Plan približnih vrijednosti
-  Ministarstva (ISPU) za naselje: građevinsko zemljište €/m². Za kuće PPV ne postoji
-  (vrijednost stanova slične veličine je zavaravala pa je maknuta 6. 10.).
+  Ministarstva (ISPU) za naselje: medijan i raspon građevinskog zemljišta stambene i
+  mješovite namjene (€/m²) iz svih cjenovnih blokova naselja, uz broj blokova, npr.
+  „🏛 PPV (Njivice, 3 bloka): građevinsko medijan 188 €/m² (raspon 158–219) – oglas 15 %
+  iznad medijana”. Oglas se uspoređuje s medijanom. Za kuće PPV ne postoji (vrijednost
+  stanova slične veličine je zavaravala pa je maknuta 6. 10.).
 - **Građevinsko područje (🗺, zemljišta i kuće):** prema katastarskoj čestici iz opisa
   ili točnoj oznaci na karti oglasa (ISPU, DGU). Izvan građevinskog područja → ⚠ (kod
   kuće: dogradnja i zamjenska gradnja ograničene, provjeriti legalnost); bez točne
@@ -190,8 +193,10 @@ klikni **Kopiraj označene**. Zalijepi popis Claudeu u razgovor.
 Plan približnih vrijednosti (ISPU) objavljuje se za stanje 1.1. Prvog dana nove godine
 stiže podsjetnik (Telegram i mail), a kad ISPU objavi novi PPV još jedan. Tada na
 GitHubu pokreni tijek rada **PPV – godišnje osvježavanje** (Actions → Run workflow):
-preuzme vrijednosti po naseljima, sažme ih u `data/ppv_naselja.json` i spremi. Poruke
-same preuzmu novu godinu; PPV na točnoj lokaciji (ISPU) uvijek je najnoviji.
+preuzme sve cjenovne blokove oko naših naselja (upit po kvadratu od 4 km preko ISPU-ova
+WMS posrednika), sažme ih po naseljima u `data/ppv_naselja.json` (medijan, raspon, broj
+blokova) i spremi. Poruke same preuzmu novu godinu; PPV na točnoj lokaciji (ISPU) uvijek
+je najnoviji.
 
 ## Automatsko pokretanje (cron-job.org)
 

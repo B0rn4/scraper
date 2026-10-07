@@ -504,8 +504,11 @@ bez stotina poruka.
       - (gotovo) Tjedni izvještaj: nove odluke o prostornim planovima (Službene novine PGŽ-a,
         tekuća i prošla godina; Zavodov registar prostornih planova) – umjesto obnove
         uvjeta gradnje jednom godišnje (`scraper/planwatch.py`).
-      - (na redu) PPV naselja iz svih cjenovnih blokova građevinskog zemljišta stambene i
-        mješovite namjene (medijan uz raspon), umjesto pet točaka oko središta.
+      - (gotovo) PPV naselja iz svih cjenovnih blokova građevinskog zemljišta stambene i
+        mješovite namjene (medijan uz raspon i broj blokova), umjesto pet točaka oko
+        središta. ISPU-ov WMS posrednik propušta GetFeatureInfo na GeoServer (LAYERS = sloj
+        iz kataloga s layerHash, QUERY_LAYERS = Cjenovni_blok_PPV_GGGG); kvadrat od 4 km
+        slikom od jednog piksela vrati sve blokove. Dio godišnjeg osvježavanja.
       - (na redu) Zona zaštite kulturno-povijesne cjeline (A, B, C) u upozorenju, ako je
         negdje dostupna u digitalnom obliku. Provjereno 7. 10. (`tools/ispu_istrazi.py`):
         slojevi kulturnih dobara u ISPU-u imaju samo naziv, vrstu i broj, bez zone; ni
