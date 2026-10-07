@@ -225,9 +225,14 @@ bez stotina poruka.
    - **Završni pregled (dogovor 5. 10., dopuna 6. 10.):** kad sve faze budu gotove,
      korisnik još jednom dobiva sve aktivne oglase koji odgovaraju (kao početni popis),
      uključujući Njuškalo, te sve aktivne natječaje, FINA dražbe i ponude banaka s našeg
-     područja – sve što se pratilo. Nakon toga s Njuškala stižu samo stvarno novi oglasi; stari oglasi koje
-     agencije osvježe i dalje se samo bilježe. Njuškalo za taj pregled čitati s
-     filtrima u adresi (područje, cijena, površina) i raspoređeno kroz više pokretanja.
+     područja – sve što se pratilo. Njuškalo za taj pregled čitati s filtrima u adresi
+     (područje, cijena, površina) i raspoređeno kroz više pokretanja.
+     **Odluka 7. 10.:** s tim pregledom prestaje pravilo „stari oglas” (Njuškalo oglas s
+     brojem daleko ispod najnovijih bilježi se tiho). Nakon pregleda nepoznat oglas koji
+     odgovara stiže i kad mu je broj star: ponovno aktiviran, ispravljena kategorija ili
+     lokacija, pripremljen davno a objavljen sad, ili ga je pregled propustio. Do pregleda
+     pravilo ostaje (Redmi zna samo dio Njuškala – inače desetci starih oglasa dnevno).
+     Parcelaciju u postojećim oglasima korisnik provjerava sam (pretraga na portalima).
 4. **(gotovo 5. 10.)** Natječaji za prodaju nekretnina (`scraper/tenders.py`, popis
    stranica u `data/natjecaji.yaml`), jednom dnevno (prvo pokretanje od 7 h):
    - 13 gradova/općina + Matulji: WordPress tražilica (wp-json) ili RSS tražilica
@@ -484,7 +489,8 @@ bez stotina poruka.
       napraviti kad stigne upozorenje o kvaru.
    7. **Završni pregled** (dogovor 5. 10., dopuna 6. 10.): svi aktivni oglasi koji
       odgovaraju, uključujući cijelo Njuškalo preko Redmija, te natječaji, FINA dražbe,
-      banke – sve što se prati; nakon toga redovni rad.
+      banke – sve što se prati; nakon toga redovni rad. Uz pregled ukinuti pravilo „stari
+      oglas” (odluka 7. 10., vidi gore).
    8. **Nakon 1–2 tjedna rada:** s korisnikom proći što je stiglo, a bilo je
       nepotrebno, i što je propušteno; podesiti pravila.
 
