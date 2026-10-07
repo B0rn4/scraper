@@ -1,0 +1,151 @@
+<?xml version="1.0" encoding="UTF-8"?><kml><Document><Placemark id="Cjenovni_blok_PPV_2025.9810">
+                <name>KRK - MORE I OTOCI</name>
+                <description>&lt;h4&gt;Cjenovni_blok_PPV_2025&lt;/h4&gt;
+&lt;ul class="textattributes"&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;cb_rbr&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;9810&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;cb_naziv&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;KRK - MORE I OTOCI&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;cb_oznaka_namjene&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;MO&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;cb_opis_namjene&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;MORE I OTOCI&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_apis_it_admin_podr_rbr&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;38&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_apis_it_admin_podr_naziv&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;Primorsko-goranska županija&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_apis_it_stavka&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;0&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_apis_it_simbol&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;  &lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_datum&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;20260101&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_vn_1&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;Ne utvrđuje se PPV&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_kz_1&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;0&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_ki_1&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;0.00&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_nz_1&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;MO&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <LookAt>
+                    <longitude>14.512154123986875</longitude>
+                    <latitude>45.00031424868565</latitude>
+                    <altitude>39044.27189149346</altitude>
+                    <heading>0.0</heading>
+                    <tilt>0.0</tilt>
+                    <range>31549.819625603603</range>
+                    <altitudeMode>clampToGround</altitudeMode>
+                </LookAt>
+                <Style>
+                    <IconStyle>
+                        <color>00ffffff</color>
+                        <scale>0.4</scale>
+                        <heading>0.0</heading>
+                        <Icon>
+                            <href>http://icons.opengeo.org/markers/icon-poly.1.png</href>
+                        </Icon>
+                    </IconStyle>
+                    <LabelStyle>
+                        <color>ff000000</color>
+                        <scale>0.9</scale>
+                    </LabelStyle>
+                    <LineStyle>
+                        <color>ffec11c8</color>
+                        <width>1.0</width>
+                    </LineStyle>
+                    <PolyStyle>
+                        <color>00aaaaaa</color>
+                        <outline>1</outline>
+                    </PolyStyle>
+                </Style>
+                <MultiGeometry>
+                    <Point>
+                        <coordinates>0,0</coordinates>
+                    </Point>
+                    <Polygon>
+                        <outerBoundaryIs>
+                            <LinearRing>
+                                <tessellate>1</tessellate>
+                                <coordinates>0,0</coordinates>
+                            </LinearRing>
+                        </outerBoundaryIs>
+                        <innerBoundaryIs>
+                            <LinearRing>
+                                <tessellate>1</tessellate>
+                                <coordinates>0,0</coordinates>
+                            </LinearRing>
+                        </innerBoundaryIs>
+                    </Polygon>
+                </MultiGeometry>
+            </Placemark>
+<Placemark id="Cjenovni_blok_PPV_2025.5436">
+                <name>M2 / 2.00 / 2. / 197.81
+ M1 / 0.88 / 1. / 289.93
+ M1 / 0.88 / 2. / 190.57
+ -------------------------------------
+ KRK - GRAĐEVINSKO 1</name>
+                <description>&lt;h4&gt;Cjenovni_blok_PPV_2025&lt;/h4&gt;
+&lt;ul class="textattributes"&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;cb_rbr&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;5436&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;cb_naziv&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;KRK - GRAĐEVINSKO 1&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;cb_oznaka_namjene&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;GP&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;cb_opis_namjene&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;IZGRAĐENI DIO GRAĐEVINSKOG PODRUČJA NASELJA&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_cb_admin_podr&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;Primorsko-goranska županija&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_cb_grop&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;KRK&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_apis_it_admin_podr_rbr&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;38&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_apis_it_admin_podr_naziv&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;Primorsko-goranska županija&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_apis_it_stavka&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;3&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_apis_it_simbol&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;GZ&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_datum&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;20260101&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_vn_1&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;Građevinsko zemljište (GZ)&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_kz_1&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;2.&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_ki_1&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;2.00&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_nz_1&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;M2&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_pv_eu_1&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;197.81&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_vn_2&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;Građevinsko zemljište (GZ)&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_kz_2&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;1.&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_ki_2&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;0.88&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_nz_2&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;M1&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_pv_eu_2&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;289.93&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_vn_3&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;Građevinsko zemljište (GZ)&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_kz_3&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;2.&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_ki_3&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;0.88&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_nz_3&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;M1&lt;/span&gt;&lt;/li&gt;
+  &lt;li&gt;&lt;strong&gt;&lt;span class="atr-name"&gt;ppv_pv_eu_3&lt;/span&gt;:&lt;/strong&gt; &lt;span class="atr-value"&gt;190.57&lt;/span&gt;&lt;/li&gt;
+&lt;/ul&gt;
+</description>
+                <LookAt>
+                    <longitude>14.579536211725625</longitude>
+                    <latitude>45.02857942809051</latitude>
+                    <altitude>2344.171413063406</altitude>
+                    <heading>0.0</heading>
+                    <tilt>0.0</tilt>
+                    <range>1894.2134574613485</range>
+                    <altitudeMode>clampToGround</altitudeMode>
+                </LookAt>
+                <Style>
+                    <IconStyle>
+                        <color>00ffffff</color>
+                        <scale>0.4</scale>
+                        <heading>0.0</heading>
+                        <Icon>
+                            <href>http://icons.opengeo.org/markers/icon-poly.1.png</href>
+                        </Icon>
+                    </IconStyle>
+                    <LabelStyle>
+                        <color>ffec74d8</color>
+                        <scale>1.1</scale>
+                    </LabelStyle>
+                    <LineStyle>
+                        <color>ffec11c8</color>
+                        <width>1.0</width>
+                    </LineStyle>
+                    <PolyStyle>
+                        <color>ff00ffff</color>
+                        <outline>1</outline>
+                    </PolyStyle>
+                </Style>
+                <MultiGeometry>
+                    <Point>
+                        <coordinates>0,0</coordinates>
+                    </Point>
+                    <Polygon>
+                        <outerBoundaryIs>
+                            <LinearRing>
+                                <tessellate>1</tessellate>
+                                <coordinates>0,0</coordinates>
+                            </LinearRing>
+                        </outerBoundaryIs>
+                    </Polygon>
+                </MultiGeometry>
+            </Placemark></Document></kml>

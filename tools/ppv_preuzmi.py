@@ -4,16 +4,18 @@ nakon što Ministarstvo objavi novi PPV (stanje 1.1.). Pokreće se na GitHubu (t
 data/ppv_naselja.json.
 
 Svi cjenovni blokovi PPV-a zemljišta oko naših naselja, ne samo blok na jednoj točki:
-ISPU-ov WMS posrednik (api/v1/gis/wms) propušta GetFeatureInfo na GeoServer Ministarstva
-kad je u LAYERS sloj iz kataloga (s njegovim layerHash), a u QUERY_LAYERS pravi naziv sloja
-na GeoServeru (npr. Cjenovni_blok_PPV_2025 za PPV 1.1.2026.). Upit nad kvadratom od 4 km
-slikom od jednog piksela (BUFFER=0) vrati sve blokove koji ga sijeku, s nazivom bloka,
-gradom/općinom i vrijednostima zemljišta. Kvadrati su oni oko naselja (GeoNames, kojih
-nema: OSM Nominatim) – more i šume između njih se ne traže.
+ISPU-ov WMS posrednik (api/v1/gis/wms) propušta zahtjev na GeoServer Ministarstva kad je u
+LAYERS sloj iz kataloga (s njegovim layerHash). GetMap u obliku KML (kmscore:100,
+kmattr:true) za kvadrat od 4 km vrati sve blokove koji ga sijeku, s nazivom bloka,
+gradom/općinom i vrijednostima zemljišta. (GetFeatureInfo nije dobar: oko točke vraća samo
+dio blokova.) Pravi naziv sloja na GeoServeru (npr. Cjenovni_blok_PPV_2025 za PPV
+1.1.2026.) zapisuje se radi provjere; godina se provjerava poljem ppv_datum. Kvadrati su oni
+oko naselja (GeoNames, kojih nema: OSM Nominatim) – more i šume između njih se ne traže.
 
   python tools/ppv_preuzmi.py izlaz/naselja_ppv.json.gz"""
 
 import gzip
+import html
 import io
 import json
 import math
@@ -39,7 +41,8 @@ NOMINATIM = "https://nominatim.openstreetmap.org/search"
 BBOX = (44.85, 14.15, 45.50, 15.10)          # Kvarner: obala i otoci (jug, zapad, sjever, istok)
 TILE = 4000                                  # stranica kvadrata (m)
 AROUND = 2500                                # kvadrati na ovoj udaljenosti od središta naselja
-FEATURE_COUNT = 1000
+PLACEMARK = re.compile(r'<Placemark id="([^"]*)">(.*?)</Placemark>', re.S)
+ATTR = re.compile(r'atr-name">(.*?)</span>:</strong>\s*<span class="atr-value">(.*?)</span>', re.S)
 DEADLINE = time.monotonic() + 40 * 60
 
 
@@ -140,44 +143,42 @@ def tiles(rows: list[dict]) -> list[tuple[int, int]]:
     return sorted(out)
 
 
-def blocks_in(session, layer: dict, box: tuple[float, float, float, float]) -> list[dict]:
-    """Svi blokovi koji sijeku pravokutnik (svojstva, bez geometrije; uz to središte)."""
-    params = {"layerHash": layer["hash"], "serviceId": layer["servis"], "SERVICE": "WMS", "VERSION": "1.1.1",
-              "REQUEST": "GetFeatureInfo", "LAYERS": layer["layers"], "QUERY_LAYERS": layer["geoserver"],
-              "STYLES": "", "SRS": "EPSG:3765", "BBOX": ",".join(f"{v:.0f}" for v in box), "WIDTH": 1, "HEIGHT": 1,
-              "X": 0, "Y": 0, "BUFFER": 0, "INFO_FORMAT": "application/json", "FEATURE_COUNT": FEATURE_COUNT}
-    for attempt in range(3):              # ISPU zna vratiti prolaznu grešku kod brzih upita
-        r = session.get(API + "gis/wms", params=params, headers=ISPU_HEADERS, timeout=120)
-        if r.status_code == 200 and "json" in (r.headers.get("content-type") or ""):
-            break
-        time.sleep(2 * (attempt + 1))
-    else:
-        raise RuntimeError(f"GetFeatureInfo {box}: HTTP {r.status_code} {r.text[:200]}")
+def parse_kml(text: str) -> list[dict]:
+    """Blokovi iz KML-a GeoServera: atributi iz opisa (kmattr), središte iz LookAt."""
     out = []
-    for f in r.json().get("features") or []:
-        props = dict(f.get("properties") or {})
-        props["_id"] = f.get("id")
-        ring = ((f.get("geometry") or {}).get("coordinates") or [[]])[0]
-        if ring and isinstance(ring[0], list) and isinstance(ring[0][0], (int, float)):
-            props["_x"] = round(sum(p[0] for p in ring) / len(ring))
-            props["_y"] = round(sum(p[1] for p in ring) / len(ring))
+    for pid, body in PLACEMARK.findall(text):
+        desc = re.search(r"<description>(.*?)</description>", body, re.S)
+        props = {k: html.unescape(v).strip() for k, v in ATTR.findall(html.unescape(desc.group(1)))} if desc else {}
+        props["_id"] = pid
+        lon = re.search(r"<longitude>([-\d.]+)</longitude>", body)
+        lat = re.search(r"<latitude>([-\d.]+)</latitude>", body)
+        if lon and lat:
+            props["_x"], props["_y"] = (round(v) for v in to_htrs(float(lat.group(1)), float(lon.group(1))))
         out.append(props)
     return out
 
 
-def collect(session, layer: dict, box: tuple[float, float, float, float], found: dict, depth: int = 0) -> int:
-    """Blokovi pravokutnika u found (po id-u); kad odgovor dosegne FEATURE_COUNT, pravokutnik
-    se dijeli na četiri. Vraća broj upita."""
+def blocks_in(session, layer: dict, box: tuple[float, float, float, float]) -> list[dict]:
+    """Svi blokovi koji sijeku pravokutnik (atributi i središte, bez geometrije)."""
+    params = {"layerHash": layer["hash"], "serviceId": layer["servis"], "SERVICE": "WMS", "VERSION": "1.1.1",
+              "REQUEST": "GetMap", "LAYERS": layer["layers"], "STYLES": "", "SRS": "EPSG:3765",
+              "BBOX": ",".join(f"{v:.0f}" for v in box), "WIDTH": 1024, "HEIGHT": 1024,
+              "FORMAT": "application/vnd.google-earth.kml+xml", "FORMAT_OPTIONS": "kmscore:100;kmattr:true"}
+    for attempt in range(3):              # ISPU zna vratiti prolaznu grešku kod brzih upita
+        r = session.get(API + "gis/wms", params=params, headers=ISPU_HEADERS, timeout=180)
+        if r.status_code == 200 and "kml" in (r.headers.get("content-type") or ""):
+            return parse_kml(r.text)
+        time.sleep(2 * (attempt + 1))
+    raise RuntimeError(f"GetMap KML {box}: HTTP {r.status_code} {r.text[:200]}")
+
+
+def collect(session, layer: dict, box: tuple[float, float, float, float], found: dict) -> int:
+    """Blokovi pravokutnika u found (po id-u). Vraća broj blokova u pravokutniku."""
     items = blocks_in(session, layer, box)
     time.sleep(0.5)
-    if len(items) >= FEATURE_COUNT and depth < 3:
-        x0, y0, x1, y1 = box
-        mx, my = (x0 + x1) / 2, (y0 + y1) / 2
-        return 1 + sum(collect(session, layer, b, found, depth + 1)
-                       for b in ((x0, y0, mx, my), (mx, y0, x1, my), (x0, my, mx, y1), (mx, my, x1, y1)))
     for item in items:
         found[item["_id"]] = item
-    return 1
+    return len(items)
 
 
 def main():
@@ -201,17 +202,16 @@ def main():
         squares = tiles(rows)
         print(f"PPV 1.1.{layer['godina']}.: {layer['geoserver']}; {len(rows)} naselja, {len(squares)} kvadrata", flush=True)
         found: dict[str, dict] = {}
-        requests_ = 0
         for i, (ix, iy) in enumerate(squares):
             if time.monotonic() > DEADLINE:
                 result["sazetak"]["zaustavljeno"] = f"vrijeme, {i} od {len(squares)} kvadrata"
                 break
-            requests_ += collect(session, layer, (ix * TILE, iy * TILE, (ix + 1) * TILE, (iy + 1) * TILE), found)
+            collect(session, layer, (ix * TILE, iy * TILE, (ix + 1) * TILE, (iy + 1) * TILE), found)
             if i % 25 == 0:
                 print(f"{i}/{len(squares)} kvadrata, {len(found)} blokova", flush=True)
         result["blokovi"] = list(found.values())
         dates = {b.get("ppv_datum") for b in found.values()}
-        result["sazetak"].update(kvadrata=len(squares), upita=requests_, blokova=len(found), datumi=sorted(map(str, dates)))
+        result["sazetak"].update(kvadrata=len(squares), blokova=len(found), datumi=sorted(map(str, dates)))
         if f"{layer['godina']}0101" not in dates:
             result["sazetak"]["greska"] = f"sloj {layer['geoserver']} nema PPV 1.1.{layer['godina']}. (datumi: {sorted(map(str, dates))})"
     except Exception:  # noqa: BLE001
