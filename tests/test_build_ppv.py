@@ -54,3 +54,19 @@ def test_same_name_in_two_municipalities_goes_to_nearest_settlement():
     out = build_ppv.build([near_b, near_a], loc, "2026", rows)
     assert out["naselja"]["Općina B"]["draga"]["medijan"] == 100
     assert out["naselja"]["Grad A"]["draga"]["medijan"] == 300
+
+
+def test_hamlet_without_own_block_gets_block_around_its_centre():
+    from types import SimpleNamespace as NS
+
+    loc = NS(jls={"k": NS(name="Kostrena", included=True, settlements=["Kostrena", "Paveki", "Glavani"], extra=[])})
+    x, y = to_htrs(45.30, 14.50)
+    square = [[x - 500, y - 500], [x + 500, y - 500], [x + 500, y + 500], [x - 500, y + 500]]
+    main = block("KOSTRENA - GRAĐEVINSKO 1", "KOSTRENA", (GZ, "S", 150), (GZ, "M1", 170))
+    main["_obris"] = [square]
+    rows = [{"naselje": "Paveki", "jls": "Kostrena", "lat": 45.30, "lon": 14.50},
+            {"naselje": "Glavani", "jls": "Kostrena", "lat": 45.40, "lon": 14.60}]       # izvan bloka
+    out = build_ppv.build([main], loc, "2026", rows)
+    assert out["naselja"]["Kostrena"] == {"kostrena": {"zemljiste": [150, 170], "medijan": 160, "blokova": 1},
+                                         "paveki": {"zemljiste": [150, 170], "medijan": 160, "blokova": 1}}
+    assert out["gradovi_opcine"]["Kostrena"]["blokova"] == 1                     # isti blok jednom

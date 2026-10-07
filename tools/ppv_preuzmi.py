@@ -154,7 +154,19 @@ def parse_kml(text: str) -> list[dict]:
         lat = re.search(r"<latitude>([-\d.]+)</latitude>", body)
         if lon and lat:
             props["_x"], props["_y"] = (round(v) for v in to_htrs(float(lat.group(1)), float(lon.group(1))))
+        if any(str(props.get(f"ppv_vn_{i}", "")).startswith("Građevinsko") for i in range(1, 5)):
+            props["_obris"] = rings(body)          # za naselja bez bloka sa svojim imenom
         out.append(props)
+    return out
+
+
+def rings(body: str, max_points: int = 300) -> list[list[list[int]]]:
+    """Vanjski obrisi poligona bloka u HTRS96/TM (m), prorijeđeni na najviše max_points točaka."""
+    out = []
+    for coords in re.findall(r"<outerBoundaryIs>.*?<coordinates>(.*?)</coordinates>", body, re.S):
+        pts = [tuple(map(float, c.split(",")[:2])) for c in coords.split()]
+        step = max(1, len(pts) // max_points)
+        out.append([[round(v) for v in to_htrs(lat, lon)] for lon, lat in pts[::step]])
     return out
 
 
