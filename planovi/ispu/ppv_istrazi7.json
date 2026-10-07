@@ -1,0 +1,122 @@
+{
+ "pokusaji": [
+  {
+   "format": "application/vnd.google-earth.kml+xml",
+   "status": 200,
+   "vrsta": "application/vnd.google-earth.kml+xml",
+   "duljina": 1122556,
+   "krk_gradjevinsko": 4,
+   "placemark": 15,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:ns2=\"http://www.google.com/kml/ext/2.2\" xmlns:ns3=\"http://www.w3.org/2005/Atom\" xmlns:ns4=\"urn:oasis:names:tc:ciq:xsdschema:xAL:2.0\">\n    <Document>\n        <LookAt>\n            <longitude>14.596240990926347</longitude>\n            <latitude>45.03411308899233</latitude>\n            <altitude>7154.010997815295</altitude>\n            <heading>0.0</heading>\n            <tilt>0.0</tilt>\n            <range>5780.816126061036</range>\n            <altitudeMode>clampToGround</altitudeMode>\n        </LookAt>\n        <Folder>\n            <name>Cjenovni_blok_PPV_2025</name>\n            <LookAt>\n                <longitude>-112.25295491345071</longitude>\n                <latitude>-39.43759170164412</latitude>\n                <altitude>1.2748286851308856E7</altitude>\n                <heading>0.0</heading>\n                <tilt>0.0</tilt>\n                <range>1.0301284444796544E7</range>\n                <altitudeMode>clampToGround</altitudeMode>\n            </LookAt>\n            <Placemark id=\"Cjenovni_blok_PPV_2025.9810\">\n                <name>KRK - MORE I OTOCI</name>\n                <description>&lt;h4&gt;Cjenovni_blok_PPV_2025&lt;/h4&gt;\n\n&lt;ul class=\"textattributes\"&gt;\n  &lt;li&gt;&lt;strong&gt;&lt;span class=\"atr-name\"&gt;cb_rbr&lt;/span&gt;:&lt;/strong&gt; &lt;span class=\"atr-value\"&gt;9810&lt;/span&gt;&lt;/li&gt;\n  &lt;li&gt;&lt;strong&gt;&lt;span class=\"atr-name\"&gt;cb_naziv"
+  },
+  {
+   "format": "application/vnd.google-earth.kml xml",
+   "status": 200,
+   "vrsta": "application/vnd.google-earth.kml+xml",
+   "duljina": 1122556,
+   "krk_gradjevinsko": 4,
+   "placemark": 15,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:ns2=\"http://www.google.com/kml/ext/2.2\" xmlns:ns3=\"http://www.w3.org/2005/Atom\" xmlns:ns4=\"urn:oasis:names:tc:ciq:xsdschema:xAL:2.0\">\n    <Document>\n        <LookAt>\n            <longitude>14.596240990926347</longitude>\n            <latitude>45.03411308899233</latitude>\n            <altitude>7154.010997815295</altitude>\n            <heading>0.0</heading>\n            <tilt>0.0</tilt>\n            <range>5780.816126061036</range>\n            <altitudeMode>clampToGround</altitudeMode>\n        </LookAt>\n        <Folder>\n            <name>Cjenovni_blok_PPV_2025</name>\n            <LookAt>\n                <longitude>-112.25295491345071</longitude>\n                <latitude>-39.43759170164412</latitude>\n                <altitude>1.2748286851308856E7</altitude>\n                <heading>0.0</heading>\n                <tilt>0.0</tilt>\n                <range>1.0301284444796544E7</range>\n                <altitudeMode>clampToGround</altitudeMode>\n            </LookAt>\n            <Placemark id=\"Cjenovni_blok_PPV_2025.9810\">\n                <name>KRK - MORE I OTOCI</name>\n                <description>&lt;h4&gt;Cjenovni_blok_PPV_2025&lt;/h4&gt;\n\n&lt;ul class=\"textattributes\"&gt;\n  &lt;li&gt;&lt;strong&gt;&lt;span class=\"atr-name\"&gt;cb_rbr&lt;/span&gt;:&lt;/strong&gt; &lt;span class=\"atr-value\"&gt;9810&lt;/span&gt;&lt;/li&gt;\n  &lt;li&gt;&lt;strong&gt;&lt;span class=\"atr-name\"&gt;cb_naziv"
+  },
+  {
+   "format": "kml",
+   "status": 200,
+   "vrsta": "application/vnd.google-earth.kml+xml",
+   "duljina": 1122556,
+   "krk_gradjevinsko": 4,
+   "placemark": 15,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:ns2=\"http://www.google.com/kml/ext/2.2\" xmlns:ns3=\"http://www.w3.org/2005/Atom\" xmlns:ns4=\"urn:oasis:names:tc:ciq:xsdschema:xAL:2.0\">\n    <Document>\n        <LookAt>\n            <longitude>14.596240990926347</longitude>\n            <latitude>45.03411308899233</latitude>\n            <altitude>7154.010997815295</altitude>\n            <heading>0.0</heading>\n            <tilt>0.0</tilt>\n            <range>5780.816126061036</range>\n            <altitudeMode>clampToGround</altitudeMode>\n        </LookAt>\n        <Folder>\n            <name>Cjenovni_blok_PPV_2025</name>\n            <LookAt>\n                <longitude>-112.25295491345071</longitude>\n                <latitude>-39.43759170164412</latitude>\n                <altitude>1.2748286851308856E7</altitude>\n                <heading>0.0</heading>\n                <tilt>0.0</tilt>\n                <range>1.0301284444796544E7</range>\n                <altitudeMode>clampToGround</altitudeMode>\n            </LookAt>\n            <Placemark id=\"Cjenovni_blok_PPV_2025.9810\">\n                <name>KRK - MORE I OTOCI</name>\n                <description>&lt;h4&gt;Cjenovni_blok_PPV_2025&lt;/h4&gt;\n\n&lt;ul class=\"textattributes\"&gt;\n  &lt;li&gt;&lt;strong&gt;&lt;span class=\"atr-name\"&gt;cb_rbr&lt;/span&gt;:&lt;/strong&gt; &lt;span class=\"atr-value\"&gt;9810&lt;/span&gt;&lt;/li&gt;\n  &lt;li&gt;&lt;strong&gt;&lt;span class=\"atr-name\"&gt;cb_naziv"
+  },
+  {
+   "format": "application/json",
+   "status": 200,
+   "vrsta": "application/vnd.ogc.se_xml",
+   "duljina": 384,
+   "krk_gradjevinsko": 0,
+   "placemark": 0,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"http://geosrvc02dl.prod.gzaop.local/geoserver/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1.1.1\" >   <ServiceException code=\"InvalidFormat\">\n      There is no support for creating maps in application/json format\n</ServiceException></ServiceExceptionReport>"
+  },
+  {
+   "format": "application/vnd.mapbox-vector-tile",
+   "status": 200,
+   "vrsta": "application/vnd.ogc.se_xml",
+   "duljina": 402,
+   "krk_gradjevinsko": 0,
+   "placemark": 0,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"http://geosrvc02dl.prod.gzaop.local/geoserver/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1.1.1\" >   <ServiceException code=\"InvalidFormat\">\n      There is no support for creating maps in application/vnd.mapbox-vector-tile format\n</ServiceException></ServiceExceptionReport>"
+  },
+  {
+   "format": "image/svg+xml",
+   "status": 200,
+   "vrsta": "image/svg+xml",
+   "duljina": 373010,
+   "krk_gradjevinsko": 0,
+   "placemark": 0,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN'\n          'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>\n<svg color-interpolation=\"auto\" color-rendering=\"auto\" fill=\"black\" fill-opacity=\"1\" font-family=\"'Dialog'\" font-size=\"12px\" font-style=\"normal\" font-weight=\"normal\" height=\"1024\" image-rendering=\"auto\" shape-rendering=\"auto\" stroke=\"black\" stroke-dasharray=\"none\" stroke-dashoffset=\"0\" stroke-linecap=\"square\" stroke-linejoin=\"miter\" stroke-miterlimit=\"10\" stroke-opacity=\"1\" stroke-width=\"1\" text-rendering=\"auto\" width=\"1024\" xmlns=\"http://www.w3.org/2000/svg\" xmlns:xlink=\"http://www.w3.org/1999/xlink\"\n><!--Generated by the Batik Graphics2D SVG Generator--><defs id=\"genericDefs\"\n  /><g\n  ><defs id=\"defs1\"\n    ><clipPath clipPathUnits=\"userSpaceOnUse\" id=\"clipPath1\"\n      ><path d=\"M0 0 L1024 0 L1024 1024 L0 1024 L0 0 Z\"\n      /></clipPath\n      ><clipPath clipPathUnits=\"userSpaceOnUse\" id=\"clipPath2\"\n      ><path d=\"M-981.7685 -654.7607 L42.2315 -654.7607 L42.2315 369.2392 L-981.7685 369.2392 L-981.7685 -654.7607 Z\"\n      /></clipPath\n      ><clipPath clipPathUnits=\"userSpaceOnUse\" id=\"clipPath3\"\n      ><path d=\"M-984.0405 -663.6958 L39.9595 -663.6958 L39.9595 360.3042 L-984.0405 360.3042 L-984.0405 -663.6958 Z\"\n      /></clipPath\n      ><clipPath clipPathUnits=\"userSpaceOnUse\" id=\"clipPath4\"\n      ><path d=\"M-986.4267 -672.6309 L37.5733 -672.6309 L37.5733 351.3691 L-986.4267 351.3691 L-986.4267 -672.6309 Z\"\n      /></clipP"
+  },
+  {
+   "format": "application/rss+xml",
+   "status": 200,
+   "vrsta": "application/rss+xml",
+   "duljina": 932040,
+   "krk_gradjevinsko": 2,
+   "placemark": 0,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><rss xmlns:georss=\"http://www.georss.org/georss\" xmlns:atom=\"http://www.w3.org/2005/Atom\" version=\"2.0\"><channel><title>Cjenovni_blok_PPV_2025</title><description>null</description><link><![CDATA[http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/wms?service=wms&request=GetMap&version=1.1.1&format=application%2Frss%2Bxml&layers=Cjenovni_blok_PPV_2025&styles=enek_mgipu_cjenovni_blok_ppv&height=1024&width=1024&transparent=false&bbox=348000.0%2C4988000.0%2C352000.0%2C4992000.0&srs=EPSG%3A3765]]></link><atom:link href=\"http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/wms?service=wms&amp;request=GetMap&amp;version=1.1.1&amp;format=application%2Frss%2Bxml&amp;layers=Cjenovni_blok_PPV_2025&amp;styles=enek_mgipu_cjenovni_blok_ppv&amp;height=1024&amp;width=1024&amp;transparent=false&amp;bbox=348000.0%2C4988000.0%2C352000.0%2C4992000.0&amp;srs=EPSG%3A3765\" rel=\"self\"/><item><title>Cjenovni_blok_PPV_2025.9810</title><link><![CDATA[http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/wms/reflect?format=application%2Fatom%2Bxml&layers=eNekretnine_MGIPU_Public%3ACjenovni_blok_PPV_2025&featureid=Cjenovni_blok_PPV_2025.9810]]></link><guid><![CDATA[http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/wms/reflect?format=application%2Fatom%2Bxml&layers=eNekretnine_MGIPU_Public%3ACjenovni_blok_PPV_2025&featureid=Cjenovni_blok_PPV_2025.9810]]></guid><description><![CDATA[<h4>Cjenovn"
+  },
+  {
+   "format": "application/atom+xml",
+   "status": 200,
+   "vrsta": "application/atom+xml",
+   "duljina": 944047,
+   "krk_gradjevinsko": 2,
+   "placemark": 0,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?><feed xmlns=\"http://www.w3.org/2005/Atom\" xmlns:georss=\"http://www.georss.org/georss\"><title>Cjenovni_blok_PPV_2025</title><id>http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/wms?service=wms&amp;request=GetMap&amp;version=1.1.1&amp;format=application%2Fatom%2Bxml&amp;layers=Cjenovni_blok_PPV_2025&amp;styles=enek_mgipu_cjenovni_blok_ppv&amp;height=1024&amp;width=1024&amp;transparent=false&amp;bbox=348000.0%2C4988000.0%2C352000.0%2C4992000.0&amp;srs=EPSG%3A3765</id><link href=\"http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/wms?service=wms&amp;request=GetMap&amp;version=1.1.1&amp;format=application%2Fatom%2Bxml&amp;layers=Cjenovni_blok_PPV_2025&amp;styles=enek_mgipu_cjenovni_blok_ppv&amp;height=1024&amp;width=1024&amp;transparent=false&amp;bbox=348000.0%2C4988000.0%2C352000.0%2C4992000.0&amp;srs=EPSG%3A3765\" rel=\"self\"/><updated>2026-10-07T22:07:31+02:00</updated><entry><title>Cjenovni_blok_PPV_2025.9810</title><author><name>Claudius Ptolomaeus</name></author><id>http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/wms/reflect?format=application%2Fatom%2Bxml&amp;layers=eNekretnine_MGIPU_Public%3ACjenovni_blok_PPV_2025&amp;featureid=Cjenovni_blok_PPV_2025.9810</id><link href=\"http://geosrvc02dl.prod.gzaop.local/geoserver/eNekretnine_MGIPU_Public/wms/reflect?format=application%2Fatom%2Bxml&amp;layers=eNekretnine_MGIPU_Public%3ACjenovni_blok_PPV_2025&amp;featureid=Cjenovni_blok_PP"
+  },
+  {
+   "format": "text/html; subtype=openlayers",
+   "status": 200,
+   "vrsta": "text/html",
+   "duljina": 22682,
+   "krk_gradjevinsko": 0,
+   "placemark": 0,
+   "odgovor": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE HTML PUBLIC \"-//W3C//DTD XHTML 1.0 Strict//EN\" \"DTD/xhtml1-strict.dtd\">\n<html xmlns=\"http://www.w3.org/1999/xhtml\">\n    <head>\n        <title>OpenLayers map preview</title>\n        <!-- Import OL CSS, auto import does not work with our minified OL.js build -->\n        <link rel=\"stylesheet\" type=\"text/css\" href=\"//geosrvc02dl.prod.gzaop.local/geoserver/openlayers/theme/default/style.css\"/>\n        <!-- Basic CSS definitions -->\n        <style type=\"text/css\">\n            /* General settings */\n            body {\n                font-family: Verdana, Geneva, Arial, Helvetica, sans-serif;\n                font-size: small;\n            }\n            /* Toolbar styles */\n            #toolbar {\n                position: relative;\n                padding-bottom: 0.5em;\n                display: none;\n            }\n            \n            #toolbar ul {\n                list-style: none;\n                padding: 0;\n                margin: 0;\n            }\n            \n            #toolbar ul li {\n                float: left;\n                padding-right: 1em;\n                padding-bottom: 0.5em;\n            }\n            \n            #toolbar ul li a {\n                font-weight: bold;\n                font-size: smaller;\n                vertical-align: middle;\n                color: black;\n                text-decoration: none;\n            }\n\n            #toolbar ul li a:hover {\n                text-decoration: underline;\n           "
+  },
+  {
+   "gfi_korak": 4000,
+   "blokova": 56,
+   "krk": [
+    "KRK - MORE I OTOCI",
+    "KRK - OSTALO POLJOPRIVREDNO TLO I ŠUME",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO"
+   ]
+  },
+  {
+   "gfi_korak": 2000,
+   "blokova": 42,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK - OSTALO POLJOPRIVREDNO TLO I ŠUME",
+    "KRK - TURISTIČKO NASELJE 1",
+    "KRK - ŠUMA",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO"
+   ]
+  },
+  {
+   "gfi_korak": 1000,
+   "blokova": 26,
+   "krk": [
+    "KRK - GRAĐEVINSKO 1",
+    "KRK - GRAĐEVINSKO 2",
+    "KRK - MORE I OTOCI",
+    "KRK - MORSKA LUKA",
+    "KRK - REKREACIJSKO ",
+    "KRK - TURISTIČKO NASELJE 1",
+    "KRK - ŠUMA",
+    "KRK, KORNIĆ - OSTALO OBRADIVO TLO"
+   ]
+  }
+ ]
+}
