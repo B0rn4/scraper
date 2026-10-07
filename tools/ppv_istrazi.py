@@ -86,42 +86,38 @@ def layer_names(xml: str, tag: str) -> list[tuple[str, str]]:
 
 
 def main(out: Path) -> None:
-    """Peti krug: posrednik provjerava LAYERS prema layerHash; QUERY_LAYERS s pravim nazivom."""
+    """Šesti krug: koliko blokova vrati GetFeatureInfo za isti kvadrat (Krk) ovisno o
+    veličini slike i BUFFER-u – slika od 1 piksela preskače male blokove."""
     out.mkdir(parents=True, exist_ok=True)
     result: dict = {"pokusaji": []}
     ispu = Ispu()
     s = ispu.session
     s.get(SITE, timeout=60)
-    x, y = to_htrs(*POINT)
-    box = f"{x - 1500:.0f},{y - 1500:.0f},{x + 1500:.0f},{y + 1500:.0f}"
-    combos = []
-    for lay, lhash in (("404", "xM5m5ElZUrM"), ("222", "C4wheP5ELdY")):
-        for q in ("Cjenovni_blok_PPV_2025", "eNekretnine_MGIPU_Public:Cjenovni_blok_PPV_2025", "Cjenovni_blok",
-                  "Cjenovni_blok_2025", lay):
-            combos.append((lay, lhash, q))
-    for lay, lhash, q in combos:
-        for size, xy in ((1, 0), (101, 50)):
-            params = {"layerHash": lhash, "serviceId": "9", "SERVICE": "WMS", "VERSION": "1.1.1",
-                      "REQUEST": "GetFeatureInfo", "LAYERS": lay, "QUERY_LAYERS": q, "STYLES": "",
-                      "SRS": "EPSG:3765", "BBOX": box, "WIDTH": size, "HEIGHT": size, "X": xy, "Y": xy,
-                      "INFO_FORMAT": "application/json", "FEATURE_COUNT": 500}
-            p = {"layers": lay, "query": q, "piksela": size}
+    x, y = to_htrs(45.0270, 14.5752)             # Krk, stara jezgra
+    for half in (2000, 1000):
+        box = f"{x - half:.0f},{y - half:.0f},{x + half:.0f},{y + half:.0f}"
+        for size, buf in ((1, 0), (101, 50), (255, 127), (512, 256), (512, 50)):
+            c = size // 2
+            params = {"layerHash": "xM5m5ElZUrM", "serviceId": "9", "SERVICE": "WMS", "VERSION": "1.1.1",
+                      "REQUEST": "GetFeatureInfo", "LAYERS": "404", "QUERY_LAYERS": "Cjenovni_blok_PPV_2025",
+                      "STYLES": "", "SRS": "EPSG:3765", "BBOX": box, "WIDTH": size, "HEIGHT": size, "X": c, "Y": c,
+                      "BUFFER": buf, "INFO_FORMAT": "application/json", "FEATURE_COUNT": 1000}
+            p = {"kvadrat_m": 2 * half, "piksela": size, "buffer": buf}
             try:
                 r = s.get(API + "gis/wms", params=params, timeout=120)
-                p.update(status=r.status_code, vrsta=r.headers.get("content-type"), duljina=len(r.content),
-                         odgovor=r.text[:600])
-                if "json" in (r.headers.get("content-type") or "") and r.status_code == 200:
-                    data = r.json()
-                    feats = data.get("features") or []
-                    p["znacajki"] = len(feats)
-                    p["primjer"] = feats[:2]
-                    p["svojstva"] = [f.get("properties") for f in feats[:60]]
+                p.update(status=r.status_code, vrsta=r.headers.get("content-type"))
+                if r.status_code == 200 and "json" in (r.headers.get("content-type") or ""):
+                    feats = r.json().get("features") or []
+                    names = sorted({(f.get("properties") or {}).get("cb_naziv", "") for f in feats})
+                    p.update(znacajki=len(feats), krk=[n for n in names if n.startswith("KRK")], nazivi=names)
+                else:
+                    p["odgovor"] = r.text[:300]
             except Exception as exc:  # noqa: BLE001
                 p["greska"] = f"{type(exc).__name__}: {str(exc)[:200]}"
             result["pokusaji"].append(p)
-            print(lay, q, size, p.get("status"), p.get("znacajki"), str(p.get("odgovor"))[:150].replace("\n", " "))
-            time.sleep(0.8)
-    (out / "ppv_istrazi5.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
+            print(2 * half, size, buf, p.get("status"), p.get("znacajki"), len(p.get("krk") or []), str(p.get("odgovor") or "")[:100])
+            time.sleep(1)
+    (out / "ppv_istrazi6.json").write_text(json.dumps(result, ensure_ascii=False, indent=1), encoding="utf-8")
 
 
 if __name__ == "__main__":
