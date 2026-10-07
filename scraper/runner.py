@@ -906,9 +906,9 @@ class Runner:
         sent, failed, error = 0, [], ""
         for x, d, headline in to_notify:
             try:
-                message_id = self.telegram.send_listing(x, d, headline)
+                message_ids = self.telegram.send_listing(x, d, headline)
                 state.mark_notified(x.key, x.price, self.stamp)
-                if isinstance(message_id, int):          # za reakciju 👎 (nosi samo broj poruke)
+                for message_id in message_ids or []:     # za reakciju 👎 (nosi samo broj poruke)
                     state.remember_message(message_id, x.key, self.stamp)
                 state.conn.commit()          # poslano je poslano, i ako pokretanje odmah stane
                 sent += 1

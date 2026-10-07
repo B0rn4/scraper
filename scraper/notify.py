@@ -58,9 +58,38 @@ def summary_text(m: dict, price_parts: list[str], warnings: int) -> str:
     return "📊 " + " · ".join(parts) if parts else ""
 
 
-def format_listing(listing: Listing, decision: Decision, headline: str = "") -> str:
-    """Tekst obavijesti (Telegram HTML, najviše ~1000 znakova jer ide kao opis fotografije).
-    Kad je predugo, izostavljaju se cijeli manje važni retci (nikad usred HTML oznake)."""
+CAPTION = 1000          # opis fotografije (Telegram: 1024 znaka)
+TEXT = 4000             # obična poruka (Telegram: 4096)
+# Kad je opis fotografije predug, ovi retci (redom) prelaze u drugu poruku.
+OVERFLOW = ("gp_neprovjereno", "naslov_oglasa", "usporedba", "cinjenice", "ppv", "prosjek", "parking_redak", "mjesto")
+MINOR = {"gp_neprovjereno", "naslov_oglasa"}      # sami ne otvaraju drugu poruku
+
+
+def format_listing(listing: Listing, decision: Decision, headline: str = "", limit: int = CAPTION) -> str:
+    """Tekst obavijesti (Telegram HTML) do `limit` znakova: kad je predugo, izostavljaju se
+    cijeli manje važni retci (nikad usred HTML oznake)."""
+    return format_parts(listing, decision, headline, limit)[0]
+
+
+def format_parts(listing: Listing, decision: Decision, headline: str = "", limit: int = CAPTION) -> tuple[str, str]:
+    """(prva poruka do `limit` znakova, ostatak za drugu poruku ili "")."""
+    lines = _lines(listing, decision, headline)
+    kept = list(lines)
+    size = lambda rows: len("\n".join(t for _, t in rows))  # noqa: E731
+    for kind in OVERFLOW:
+        if size(kept) <= limit:
+            break
+        kept = [(k, t) for k, t in kept if k != kind]
+    while size(kept) > limit and any(k == "upozorenje" for k, _ in kept):
+        last = max(i for i, (k, _) in enumerate(kept) if k == "upozorenje")
+        kept.pop(last)
+    rest = [line for line in lines if line not in kept]
+    if all(k in MINOR for k, _ in rest):
+        rest = []                     # samo naslov oglasa ili "nije provjereno": ne vrijedi druge poruke
+    return "\n".join(t for _, t in kept), "\n".join(t for _, t in rest)
+
+
+def _lines(listing: Listing, decision: Decision, headline: str) -> list[tuple[str, str]]:
     e = html.escape
     kind = "🏠 <b>Kuća</b>" if listing.kind == HOUSE else "🌳 <b>Građevinsko zemljište</b>" if listing.kind == LAND else "<b>Nekretnina</b>"
     total = effective_price(listing.price, listing.area, bool(listing.extra.get("ukupna_cijena")), listing.kind)
@@ -120,16 +149,7 @@ def format_listing(listing: Listing, decision: Decision, headline: str = "") -> 
         sud, spis = listing.extra.get("sud"), listing.extra.get("spis")
         lines.append(("fina", f"⚖ {e(sud or '')} {e(spis or '')}".strip()))
     lines.append(("naslov_oglasa", f"<i>{e(listing.title[:150])}</i>"))
-    # Predugo: redom izostavi manje važne retke.
-    for drop in ("gp_neprovjereno", "naslov_oglasa", "usporedba", "cinjenice", "ppv", "prosjek", "parking_redak",
-                 "mjesto"):
-        if len("\n".join(t for _, t in lines)) <= 1000:
-            break
-        lines = [(k, t) for k, t in lines if k != drop]
-    while len("\n".join(t for _, t in lines)) > 1000 and any(k == "upozorenje" for k, _ in lines):
-        last = max(i for i, (k, _) in enumerate(lines) if k == "upozorenje")
-        lines.pop(last)
-    return "\n".join(t for _, t in lines)
+    return lines
 
 class Telegram:
     def __init__(self, token: str, chat_id: str):
@@ -181,23 +201,47 @@ class Telegram:
             plain += f"\n{url}"
         return self._call("sendMessage", {"chat_id": self.chat_id, "text": plain[:4000], "disable_web_page_preview": "true"})
 
-    def send_listing(self, listing: Listing, decision: Decision, headline: str = "") -> int | None:
-        """Šalje oglas; vraća broj poruke (za reakciju 👎, koja nosi samo broj poruke)."""
-        text = format_listing(listing, decision, headline)
+    def send_listing(self, listing: Listing, decision: Decision, headline: str = "") -> list[int]:
+        """Šalje oglas; vraća brojeve poruka (za reakciju 👎, koja nosi samo broj poruke). Opis
+        fotografije je kratak: što ne stane ide u drugu poruku, kao odgovor na prvu i bez zvuka."""
         markup = listing_markup(listing)
         if listing.image_url:
+            first, rest = format_parts(listing, decision, headline)
             try:
-                return _message_id(self._call("sendPhoto", {"chat_id": self.chat_id, "photo": listing.image_url,
-                                                            "caption": text, "parse_mode": "HTML", "reply_markup": markup}))
+                photo = _message_id(self._call("sendPhoto", {"chat_id": self.chat_id, "photo": listing.image_url,
+                                                             "caption": first, "parse_mode": "HTML", "reply_markup": markup}))
+                sent = True
             except (RuntimeError, requests.RequestException):
-                pass  # slika se nije dala dohvatiti (ili Telegram nije odgovorio na vrijeme) – pošalji bez nje
+                sent = False  # slika se nije dala dohvatiti (ili Telegram nije odgovorio na vrijeme) – pošalji bez nje
+            if sent:
+                ids = [photo]
+                if rest and isinstance(photo, int):
+                    try:
+                        ids.append(self._send_more(rest, photo))
+                    except (RuntimeError, requests.RequestException):
+                        pass          # prva poruka je stigla; ostatak nije nužan
+                return [i for i in ids if isinstance(i, int)]
+        text = format_listing(listing, decision, headline, TEXT)
         try:
-            return _message_id(self._call("sendMessage", {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML",
-                                                          "disable_web_page_preview": "true", "reply_markup": markup}))
+            ids = [_message_id(self._call("sendMessage", {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML",
+                                                          "disable_web_page_preview": "true", "reply_markup": markup}))]
         except RuntimeError as exc:
             if not _rejected(exc):
                 raise
-            return _message_id(self._send_plain(text, listing.url))
+            ids = [_message_id(self._send_plain(text, listing.url))]
+        return [i for i in ids if isinstance(i, int)]
+
+    def _send_more(self, text: str, reply_to: int) -> int | None:
+        data = {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML", "disable_web_page_preview": "true",
+                "disable_notification": "true",
+                "reply_parameters": json.dumps({"message_id": reply_to, "allow_sending_without_reply": True})}
+        try:
+            return _message_id(self._call("sendMessage", data))
+        except RuntimeError as exc:
+            if not _rejected(exc):
+                raise
+            plain = html.unescape(re.sub(r"<[^>]+>", "", text))
+            return _message_id(self._call("sendMessage", {k: v for k, v in data.items() if k != "parse_mode"} | {"text": plain}))
 
     # --- gumb "Ne zanima me": pritisci se čitaju pri pokretanju (nema stalnog poslužitelja) ---
 

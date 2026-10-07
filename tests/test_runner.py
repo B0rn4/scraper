@@ -4,7 +4,7 @@ import json
 
 from scraper import report
 from scraper.db import State
-from scraper.models import HOUSE, PASS, REJECT, Decision, Listing
+from scraper.models import HOUSE, PASS, REJECT, WARN, Decision, Listing
 from scraper.runner import Runner
 
 
@@ -1206,7 +1206,54 @@ def test_send_listing_returns_message_id(monkeypatch):
 
     monkeypatch.setattr(notify.requests, "post", lambda *a, **k: Resp())
     monkeypatch.setattr(notify.time, "sleep", lambda s: None)
-    assert Telegram("t", "1").send_listing(listing(), Decision(PASS, jls="Punat")) == 321
+    assert Telegram("t", "1").send_listing(listing(), Decision(PASS, jls="Punat")) == [321]
+
+
+def test_long_caption_continues_in_second_message(monkeypatch):
+    """Opis fotografije je ograničen: što ne stane ide u drugu poruku (odgovor na prvu, bez
+    zvuka), a obje se pamte za 👎. Bez fotografije sve ide u jednu poruku."""
+    from scraper.notify import CAPTION, Telegram
+
+    x = listing()
+    x.image_url = "https://x.hr/slika.jpg"
+    x.extra.update(ppv="🏛 " + "PPV redak " * 40, prosjek="📐 " + "prosjek područja " * 20,
+                   usporedba="💰 " + "medijan mjesta " * 20)
+    d = Decision(WARN, warnings=["⚠ prvo upozorenje", "drugo upozorenje " * 8], jls="Punat")
+    posts = []
+    tg = Telegram("t", "1")
+
+    def call(method, data, files=None):
+        posts.append((method, data))
+        return {"ok": True, "result": {"message_id": 700 + len(posts)}}
+    monkeypatch.setattr(tg, "_call", call)
+    assert tg.send_listing(x, d) == [701, 702]
+    (m1, first), (m2, second) = posts
+    assert m1 == "sendPhoto" and len(first["caption"]) <= CAPTION and "📐" in first["caption"]
+    assert m2 == "sendMessage" and "💰" in second["text"] and "Kuća Punat" in second["text"]
+    assert "PPV redak" in first["caption"] and "💰" not in first["caption"]
+    assert json.loads(second["reply_parameters"])["message_id"] == 701 and second["disable_notification"] == "true"
+    assert "drugo upozorenje" in first["caption"] + second["text"]
+
+    posts.clear()
+    x.image_url = ""
+    assert tg.send_listing(x, d) == [701]
+    assert "💰" in posts[0][1]["text"] and "PPV redak" in posts[0][1]["text"]
+
+    # Samo naslov oglasa ne stane: bez druge poruke.
+    posts.clear()
+    y = listing()
+    y.image_url = "https://x.hr/slika.jpg"
+    y.extra["ppv"] = "🏛 " + "p" * (CAPTION - 90)
+    assert tg.send_listing(y, Decision(PASS, jls="Punat")) == [701] and len(posts) == 1
+
+
+def test_reaction_on_second_message_mutes_listing(tmp_path):
+    from scraper.db import State
+
+    state = State(tmp_path / "s.db")
+    for mid in (701, 702):
+        state.remember_message(mid, "t:7", "t1")
+    assert state.message_key(702) == "t:7"
 
 
 def test_parcelation_listing_keeps_arriving_with_list_only_data(tmp_path, monkeypatch):
