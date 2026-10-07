@@ -1,503 +1,196 @@
 {
+ "bez_naselja": [
+  "Lovran: MOŠĆENICE - ŠUMSKO",
+  "Lovran: OPATIJA - GOSPODARSKA ŠUMA 1",
+  "Opatija: OPATIJA - GOSPODARSKA ŠUMA - PARK PRIRODE UČKA"
+ ],
+ "godina": 2026,
  "gradovi_opcine": {
   "Baška": {
-   "naselja": 4,
-   "stanovi": {
-    "100+": 3200,
-    "55-75": 2850,
-    "75-100": 2700
-   },
+   "blokova": 1,
+   "medijan": 241,
+   "naselja": 1,
    "zemljiste": [
-    85,
+    214,
     315
    ]
   },
   "Crikvenica": {
-   "naselja": 4,
-   "stanovi": {
-    "100+": 1650,
-    "55-75": 2850,
-    "75-100": 2250
-   },
+   "blokova": 2,
+   "medijan": 110,
+   "naselja": 2,
    "zemljiste": [
     102,
-    316
+    187
    ]
   },
   "Dobrinj": {
-   "naselja": 19,
-   "stanovi": {
-    "100+": 1900,
-    "55-75": 2900,
-    "75-100": 2800
-   },
+   "blokova": 4,
+   "medijan": 105,
+   "naselja": 4,
    "zemljiste": [
     86,
-    234
+    216
    ]
   },
   "Kostrena": {
-   "naselja": 18,
-   "stanovi": {
-    "100+": 2500,
-    "55-75": 2900,
-    "75-100": 2800
-   },
+   "blokova": 3,
+   "medijan": 129,
+   "naselja": 2,
    "zemljiste": [
     90,
-    245
+    155
    ]
   },
   "Kraljevica": {
-   "naselja": 6,
-   "stanovi": {
-    "100+": 930,
-    "55-75": 2300,
-    "75-100": 1000
-   },
+   "blokova": 5,
+   "medijan": 71,
+   "naselja": 3,
    "zemljiste": [
-    27,
-    112
+    33,
+    81
    ]
   },
   "Krk": {
-   "naselja": 15,
-   "stanovi": {
-    "100+": 3200,
-    "55-75": 3200,
-    "75-100": 3550
-   },
+   "blokova": 10,
+   "medijan": 88,
+   "naselja": 10,
    "zemljiste": [
     75,
-    290
+    173
    ]
   },
   "Lovran": {
-   "naselja": 4,
-   "stanovi": {
-    "100+": 3100,
-    "55-75": 3450,
-    "75-100": 3050
-   },
+   "blokova": 2,
+   "medijan": 139,
+   "naselja": 2,
    "zemljiste": [
-    74,
-    235
+    103,
+    175
    ]
   },
   "Malinska-Dubašnica": {
-   "naselja": 18,
-   "stanovi": {
-    "100+": 3500,
-    "55-75": 4000,
-    "75-100": 3500
-   },
+   "blokova": 4,
+   "medijan": 163,
+   "naselja": 3,
    "zemljiste": [
-    98,
+    120,
     320
    ]
   },
-  "Mošćenička Draga": {
-   "naselja": 14,
-   "stanovi": {
-    "55-75": 2500,
-    "75-100": 2500
-   },
+  "Matulji": {
+   "blokova": 9,
+   "medijan": 69,
+   "naselja": 9,
    "zemljiste": [
-    93,
-    256
-   ]
-  },
-  "Novi Vinodolski": {
-   "naselja": 18,
-   "stanovi": {
-    "100+": 2600,
-    "55-75": 2400,
-    "75-100": 2800
-   },
-   "zemljiste": [
-    44,
-    117
+    34,
+    115
    ]
   },
   "Omišalj": {
+   "blokova": 3,
+   "medijan": 113,
    "naselja": 2,
-   "stanovi": {
-    "100+": 3200,
-    "55-75": 3000,
-    "75-100": 4200
-   },
    "zemljiste": [
     70,
     219
    ]
   },
   "Opatija": {
-   "naselja": 18,
-   "stanovi": {
-    "100+": 3300,
-    "55-75": 3800,
-    "75-100": 3600
-   },
+   "blokova": 5,
+   "medijan": 186,
+   "naselja": 5,
    "zemljiste": [
-    28,
-    641
-   ]
-  },
-  "Punat": {
-   "naselja": 2,
-   "stanovi": {
-    "100+": 3300,
-    "55-75": 2550,
-    "75-100": 3500
-   },
-   "zemljiste": [
-    131,
-    173
-   ]
-  },
-  "Rijeka": {
-   "naselja": 45,
-   "stanovi": {
-    "100+": 2200,
-    "55-75": 2800,
-    "75-100": 2550
-   },
-   "zemljiste": [
-    64,
+    49,
     399
    ]
   },
+  "Punat": {
+   "blokova": 1,
+   "medijan": 195,
+   "naselja": 1,
+   "zemljiste": [
+    195,
+    195
+   ]
+  },
+  "Rijeka": {
+   "blokova": 18,
+   "medijan": 184,
+   "naselja": 14,
+   "zemljiste": [
+    96,
+    690
+   ]
+  },
   "Vrbnik": {
-   "naselja": 4,
-   "stanovi": {
-    "55-75": 2200,
-    "75-100": 1500
-   },
+   "blokova": 3,
+   "medijan": 75,
+   "naselja": 3,
    "zemljiste": [
     58,
     243
    ]
   }
  },
- "izvor": "ISPU, Plan približnih vrijednosti 1.1.2026.",
+ "izvor": "ISPU, Plan približnih vrijednosti 1.1.2026. – svi cjenovni blokovi naselja",
  "naselja": {
   "Baška": {
    "baska": {
-    "blokovi": [
-     "BAŠKA - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 3200,
-     "55-75": 3500,
-     "75-100": 2700
-    },
+    "blokova": 1,
+    "medijan": 241,
     "zemljiste": [
      214,
      315
-    ]
-   },
-   "batomalj": {
-    "blokovi": [
-     "BATOMALJ - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     85,
-     85
-    ]
-   },
-   "draga bascanska": {
-    "blokovi": [
-     "DRAGA BAŠĆANSKA - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     96,
-     96
-    ]
-   },
-   "jurandvor": {
-    "blokovi": [
-     "JURANDVOR - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 2200
-    },
-    "zemljiste": [
-     85,
-     85
     ]
    }
   },
   "Crikvenica": {
    "crikvenica": {
-    "blokovi": [
-     "CRIKVENICA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 1400,
-     "55-75": 3100,
-     "75-100": 2300
-    },
+    "blokova": 1,
+    "medijan": 144,
     "zemljiste": [
      102,
      187
     ]
    },
-   "dramalj": {
-    "blokovi": [
-     "DRAMALJ - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 1800,
-     "55-75": 2900,
-     "75-100": 2700
-    },
-    "zemljiste": [
-     132,
-     132
-    ]
-   },
    "jadranovo": {
-    "blokovi": [
-     "JADRANOVO - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 1500,
-     "55-75": 2800,
-     "75-100": 2100
-    },
+    "blokova": 1,
+    "medijan": 110,
     "zemljiste": [
-     252,
-     252
-    ]
-   },
-   "selce": {
-    "blokovi": [
-     "SELCE - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 2100,
-     "55-75": 2500,
-     "75-100": 2200
-    },
-    "zemljiste": [
-     316,
-     316
+     110,
+     110
     ]
    }
   },
   "Dobrinj": {
    "cizici": {
-    "blokovi": [
-     "ČIZIĆI - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 2900,
-     "75-100": 2500
-    },
+    "blokova": 1,
+    "medijan": 216,
     "zemljiste": [
      216,
      216
     ]
    },
-   "dobrinj": {
-    "blokovi": [
-     "DOBRINJ - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     86,
-     86
-    ]
-   },
-   "dolovo": {
-    "blokovi": [
-     "KRAS - ŠUMA"
-    ],
-    "zemljiste": [
-     86,
-     86
-    ]
-   },
-   "gabonjin": {
-    "blokovi": [
-     "GABONJIN - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     88,
-     88
-    ]
-   },
-   "gostinjac": {
-    "blokovi": [
-     "GOSTINJAC - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     92,
-     92
-    ]
-   },
    "hlapa": {
-    "blokovi": [
-     "ŽUPANJE - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 1900,
-     "55-75": 3300
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
-   "klanice": {
-    "blokovi": [
-     "KRAS - ŠUMA",
-     "ČIŽIĆI - ŠUMA"
-    ],
-    "stanovi": {
-     "55-75": 2500,
-     "75-100": 2800
-    },
+    "blokova": 1,
+    "medijan": 86,
     "zemljiste": [
      86,
-     107
-    ]
-   },
-   "klimno": {
-    "blokovi": [
-     "KLIMNO - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 2800,
-     "75-100": 3200
-    },
-    "zemljiste": [
-     234,
-     234
+     86
     ]
    },
    "kras": {
-    "blokovi": [
-     "KRAS - GRAĐEVINSKO"
-    ],
+    "blokova": 1,
+    "medijan": 94,
     "zemljiste": [
      94,
      94
     ]
    },
-   "polje": {
-    "blokovi": [
-     "ŽUPANJE - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 1900,
-     "55-75": 3300
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
-   "rasopasno": {
-    "blokovi": [
-     "RASOPASNO - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     107,
-     107
-    ]
-   },
-   "silo": {
-    "blokovi": [
-     "ŠILO - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 2300,
-     "55-75": 3300,
-     "75-100": 3400
-    },
-    "zemljiste": [
-     128,
-     180
-    ]
-   },
-   "soline": {
-    "blokovi": [
-     "SOLINE - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 2700
-    },
-    "zemljiste": [
-     164,
-     164
-    ]
-   },
-   "suzan": {
-    "blokovi": [
-     "ČIŽIĆI - ŠUMA"
-    ],
-    "stanovi": {
-     "55-75": 2500,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     107,
-     107
-    ]
-   },
-   "sv ivan dobrinjski": {
-    "blokovi": [
-     "KRAS - ŠUMA"
-    ],
-    "zemljiste": [
-     86,
-     86
-    ]
-   },
-   "sv vid dobrinjski": {
-    "blokovi": [
-     "KRAS - ŠUMA"
-    ],
-    "zemljiste": [
-     86,
-     86
-    ]
-   },
-   "tribulje": {
-    "blokovi": [
-     "KLANICE - GRAĐEVINSKO",
-     "ČIŽIĆI - ŠUMA"
-    ],
-    "stanovi": {
-     "55-75": 2500,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     106,
-     106
-    ]
-   },
-   "zestilac": {
-    "blokovi": [
-     "ŽUPANJE - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 1900,
-     "55-75": 3300
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
    "zupanje": {
-    "blokovi": [
-     "ŽUPANJE - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 1900,
-     "55-75": 3300
-    },
+    "blokova": 1,
+    "medijan": 117,
     "zemljiste": [
      117,
      117
@@ -505,308 +198,43 @@
    }
   },
   "Kostrena": {
-   "doricici": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     145,
-     180
-    ]
-   },
-   "dujmici": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     145,
-     180
-    ]
-   },
-   "glavani": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 3200,
-     "55-75": 3500,
-     "75-100": 3400
-    },
+   "kostrena": {
+    "blokova": 2,
+    "medijan": 154,
     "zemljiste": [
      90,
-     154
+     155
     ]
    },
-   "kostrena": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     145,
-     180
-    ]
-   },
-   "kostrena sv barbara": {
-    "blokovi": [
-     "RANDIĆI - GRAĐEVINSKO"
-    ],
+   "randici": {
+    "blokova": 1,
+    "medijan": 105,
     "zemljiste": [
      105,
      105
     ]
-   },
-   "kostrena sv lucija": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     145,
-     180
-    ]
-   },
-   "maracici": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     145,
-     180
-    ]
-   },
-   "martinscica": {
-    "blokovi": [
-     "PODVEŽICA - STAMBENO",
-     "VEŽICA - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2150,
-     "55-75": 2800,
-     "75-100": 2700
-    },
-    "zemljiste": [
-     200,
-     206
-    ]
-   },
-   "paveki": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     145,
-     180
-    ]
-   },
-   "perovici": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     145,
-     180
-    ]
-   },
-   "plesici": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     145,
-     180
-    ]
-   },
-   "randici": {
-    "blokovi": [
-     "VALENTINI - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     155,
-     155
-    ]
-   },
-   "rozici": {
-    "blokovi": [
-     "HUM - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3700,
-     "55-75": 1700,
-     "75-100": 2300
-    },
-    "zemljiste": [
-     245,
-     245
-    ]
-   },
-   "rozmanici": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     145,
-     180
-    ]
-   },
-   "sodici": {
-    "blokovi": [
-     "HUM - GRAĐEVINSKO",
-     "KOSTRENA - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 3450,
-     "55-75": 2600,
-     "75-100": 2850
-    },
-    "zemljiste": [
-     90,
-     245
-    ]
-   },
-   "vrh martinscice": {
-    "blokovi": [
-     "KOSTRENA - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 3200,
-     "55-75": 3500,
-     "75-100": 3400
-    },
-    "zemljiste": [
-     90,
-     154
-    ]
-   },
-   "zuknica": {
-    "blokovi": [
-     "HUM - GRAĐEVINSKO",
-     "KOSTRENA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 3100,
-     "55-75": 2300,
-     "75-100": 2550
-    },
-    "zemljiste": [
-     145,
-     245
-    ]
-   },
-   "zurkovo": {
-    "blokovi": [
-     "HUM - GRAĐEVINSKO",
-     "KOSTRENA - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 3450,
-     "55-75": 2600,
-     "75-100": 2850
-    },
-    "zemljiste": [
-     90,
-     245
-    ]
    }
   },
   "Kraljevica": {
-   "bakarac": {
-    "blokovi": [
-     "KRALJEVICA - ŠUMA 2"
-    ],
+   "kraljevica": {
+    "blokova": 2,
+    "medijan": 81,
     "zemljiste": [
      81,
      81
     ]
    },
-   "kraljevica": {
-    "blokovi": [
-     "KRALJEVICA - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 930,
-     "55-75": 2300,
-     "75-100": 1000
-    },
-    "zemljiste": [
-     53,
-     112
-    ]
-   },
-   "krizisce": {
-    "blokovi": [
-     "MALI DOL - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     27,
-     27
-    ]
-   },
-   "mali dol": {
-    "blokovi": [
-     "MALI DOL - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     27,
-     27
-    ]
-   },
    "smrika": {
-    "blokovi": [
-     "ŠMRIKA - GRAĐEVINSKO 3"
-    ],
+    "blokova": 2,
+    "medijan": 69,
     "zemljiste": [
      67,
-     67
+     71
     ]
    },
    "veli dol": {
-    "blokovi": [
-     "VELI DOL - VRIJEDNO OBRADIVO TLO"
-    ],
+    "blokova": 1,
+    "medijan": 33,
     "zemljiste": [
      33,
      33
@@ -815,799 +243,216 @@
   },
   "Krk": {
    "bajcici": {
-    "blokovi": [
-     "BAJČIĆI, NENADIĆI - GRAĐEVINSKO"
-    ],
+    "blokova": 1,
+    "medijan": 75,
     "zemljiste": [
      75,
      75
     ]
    },
    "brusici": {
-    "blokovi": [
-     "BRUSIĆI, BAJČIĆI, POLJICA - ŠUMA"
-    ],
+    "blokova": 1,
+    "medijan": 75,
     "zemljiste": [
      75,
      75
     ]
    },
    "brzac": {
-    "blokovi": [
-     "BRZAC - GRAĐEVINSKO"
-    ],
+    "blokova": 1,
+    "medijan": 173,
     "zemljiste": [
-     130,
-     130
+     173,
+     173
     ]
    },
    "kornic": {
-    "blokovi": [
-     "KORNIĆ - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3200,
-     "55-75": 3200
-    },
+    "blokova": 1,
+    "medijan": 88,
     "zemljiste": [
-     160,
-     160
-    ]
-   },
-   "krk": {
-    "blokovi": [
-     "KRK - GRAĐEVINSKO 1",
-     "KRK - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 3200,
-     "55-75": 4150,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     191,
-     290
+     88,
+     88
     ]
    },
    "lakmartin": {
-    "blokovi": [
-     "LAKMARTIN, MURAJ, KORNIĆ - ŠUMA"
-    ],
+    "blokova": 1,
+    "medijan": 88,
     "zemljiste": [
      88,
      88
     ]
    },
    "linardici": {
-    "blokovi": [
-     "LINARDIĆI - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     126,
-     126
-    ]
-   },
-   "milohnici": {
-    "blokovi": [
-     "PINEZIĆI, LINARDIĆI, BRZAC - OSTALO POLJOPRIVREDNO TLO I ŠUME"
-    ],
+    "blokova": 1,
+    "medijan": 173,
     "zemljiste": [
      173,
      173
     ]
    },
    "muraj": {
-    "blokovi": [
-     "LAKMARTIN, MURAJ, KORNIĆ - ŠUMA"
-    ],
+    "blokova": 1,
+    "medijan": 88,
     "zemljiste": [
      88,
      88
     ]
    },
-   "nenadici": {
-    "blokovi": [
-     "BAJČIĆI, NENADIĆI - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     75,
-     75
-    ]
-   },
    "pinezici": {
-    "blokovi": [
-     "PINEZIĆI - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 3100,
-     "75-100": 3600
-    },
-    "zemljiste": [
-     198,
-     198
-    ]
-   },
-   "poljica": {
-    "blokovi": [
-     "BRUSIĆI, BAJČIĆI, POLJICA - ŠUMA"
-    ],
-    "zemljiste": [
-     75,
-     75
-    ]
-   },
-   "skrbcici": {
-    "blokovi": [
-     "PINEZIĆI, LINARDIĆI, BRZAC - OSTALO POLJOPRIVREDNO TLO I ŠUME"
-    ],
+    "blokova": 1,
+    "medijan": 173,
     "zemljiste": [
      173,
      173
     ]
    },
-   "vrh": {
-    "blokovi": [
-     "VRH - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     94,
-     94
-    ]
-   },
-   "zgaljici": {
-    "blokovi": [
-     "BRUSIĆI, BAJČIĆI, POLJICA - ŠUMA"
-    ],
+   "poljica": {
+    "blokova": 1,
+    "medijan": 75,
     "zemljiste": [
      75,
      75
+    ]
+   },
+   "vrh": {
+    "blokova": 1,
+    "medijan": 77,
+    "zemljiste": [
+     77,
+     77
     ]
    }
   },
   "Lovran": {
    "liganj": {
-    "blokovi": [
-     "LIGANJ - GRAĐEVINSKO 1",
-     "LIGANJ - GRAĐEVINSKO 2"
-    ],
+    "blokova": 1,
+    "medijan": 175,
     "zemljiste": [
-     74,
-     126
+     175,
+     175
     ]
    },
-   "lovran": {
-    "blokovi": [
-     "LOVRAN - GRAĐEVINSKO 2 ",
-     "LOVRAN, TULIŠEVICA - GRAĐEVINSKO "
-    ],
-    "stanovi": {
-     "100+": 3100,
-     "55-75": 3450,
-     "75-100": 3050
-    },
+   "tulisevica": {
+    "blokova": 1,
+    "medijan": 103,
     "zemljiste": [
-     121,
-     235
+     103,
+     103
+    ]
+   }
+  },
+  "Malinska-Dubašnica": {
+   "malinska": {
+    "blokova": 1,
+    "medijan": 236,
+    "zemljiste": [
+     169,
+     320
     ]
    },
-   "medveja": {
-    "blokovi": [
-     "MEDVEJA - OSTALO POLJOPRIVREDNO TLO I ŠUME"
-    ],
+   "sv anton": {
+    "blokova": 2,
+    "medijan": 138,
+    "zemljiste": [
+     120,
+     156
+    ]
+   },
+   "sv vid miholjice": {
+    "blokova": 1,
+    "medijan": 131,
+    "zemljiste": [
+     131,
+     131
+    ]
+   }
+  },
+  "Matulji": {
+   "bregi": {
+    "blokova": 1,
+    "medijan": 114,
     "zemljiste": [
      114,
      114
     ]
    },
-   "tulisevica": {
-    "blokovi": [
-     "TULIŠEVICA, LIGANJ - OSTALO POLJOPRIVREDNO TLO I ŠUME"
-    ],
+   "jurdani": {
+    "blokova": 1,
+    "medijan": 97,
     "zemljiste": [
-     175,
-     175
-    ]
-   }
-  },
-  "Malinska-Dubašnica": {
-   "barusici": {
-    "blokovi": [
-     "SVETI ANTON - GRAĐEVINSKO 2"
-    ],
-    "zemljiste": [
-     156,
-     156
+     97,
+     97
     ]
    },
-   "bogovici": {
-    "blokovi": [
-     "MALINSKA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3500,
-     "55-75": 4000,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     169,
-     320
-    ]
-   },
-   "kremenici": {
-    "blokovi": [
-     "KREMENIĆI - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 1900
-    },
-    "zemljiste": [
-     130,
-     130
-    ]
-   },
-   "ljutici": {
-    "blokovi": [
-     "SVETI ANTON - GRAĐEVINSKO 2"
-    ],
-    "zemljiste": [
-     156,
-     156
-    ]
-   },
-   "malinska": {
-    "blokovi": [
-     "MALINSKA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3500,
-     "55-75": 4000,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     169,
-     320
-    ]
-   },
-   "marsici": {
-    "blokovi": [
-     "SVETI VID - MIHOLJICE - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 2900,
-     "75-100": 3200
-    },
-    "zemljiste": [
-     131,
-     131
-    ]
-   },
-   "milcetici": {
-    "blokovi": [
-     "MALINSKA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3500,
-     "55-75": 4000,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     169,
-     320
-    ]
-   },
-   "milovcici": {
-    "blokovi": [
-     "MILOVČIĆI - GRAĐEVINSKO",
-     "OŠTROBRADIĆ - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     98,
-     139
-    ]
-   },
-   "ostrobradic": {
-    "blokovi": [
-     "OŠTROBRADIĆ - GRAĐEVINSKO",
-     "SVETI ANTON - GRAĐEVINSKO 2"
-    ],
-    "zemljiste": [
-     98,
-     156
-    ]
-   },
-   "porat": {
-    "blokovi": [
-     "MALINSKA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3500,
-     "55-75": 4000,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     169,
-     320
-    ]
-   },
-   "radici": {
-    "blokovi": [
-     "MALINSKA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3500,
-     "55-75": 4000,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     169,
-     320
-    ]
-   },
-   "srsici": {
-    "blokovi": [
-     "SVETI VID - MIHOLJICE - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 2900,
-     "75-100": 3200
-    },
-    "zemljiste": [
-     131,
-     131
-    ]
-   },
-   "sv anton": {
-    "blokovi": [
-     "SVETI ANTON - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 3500
-    },
-    "zemljiste": [
-     120,
-     120
-    ]
-   },
-   "sv ivan": {
-    "blokovi": [
-     "SVETI ANTON - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 3500
-    },
-    "zemljiste": [
-     120,
-     120
-    ]
-   },
-   "sv vid miholjice": {
-    "blokovi": [
-     "SVETI VID - MIHOLJICE - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 2900,
-     "75-100": 3200
-    },
-    "zemljiste": [
-     131,
-     131
-    ]
-   },
-   "vantacici": {
-    "blokovi": [
-     "MALINSKA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3500,
-     "55-75": 4000,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     169,
-     320
-    ]
-   },
-   "zgombici": {
-    "blokovi": [
-     "KREMENIĆI - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 1900
-    },
-    "zemljiste": [
-     130,
-     130
-    ]
-   },
-   "zidarici": {
-    "blokovi": [
-     "MALINSKA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3500,
-     "55-75": 4000,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     169,
-     320
-    ]
-   }
-  },
-  "Mošćenička Draga": {
-   "brsec": {
-    "blokovi": [
-     "BRSEČ - ŠUMSKO"
-    ],
-    "zemljiste": [
-     94,
-     94
-    ]
-   },
-   "donji kraj": {
-    "blokovi": [
-     "MOŠĆENIČKA DRAGA - ŠUMSKO"
-    ],
-    "zemljiste": [
-     103,
-     103
-    ]
-   },
-   "golovik": {
-    "blokovi": [
-     "GOLOVIK - ŠUMSKO"
-    ],
-    "zemljiste": [
-     95,
-     95
-    ]
-   },
-   "grabrova": {
-    "blokovi": [
-     "MOŠĆENICE - ŠUMSKO",
-     "MOŠĆENIČKA DRAGA - ŠUMSKO",
-     "MOŠĆENIČKA DRAGA - ŠUMSKO - PARK PRIRODE 2"
-    ],
-    "zemljiste": [
-     103,
-     142
-    ]
-   },
-   "kalac": {
-    "blokovi": [
-     "MOŠĆENIČKA DRAGA - ŠUMSKO - PARK PRIRODE 2"
-    ],
-    "zemljiste": [
-     142,
-     142
-    ]
-   },
-   "martina": {
-    "blokovi": [
-     "GOLOVIK - ŠUMSKO"
-    ],
-    "zemljiste": [
-     95,
-     95
-    ]
-   },
-   "moscenice": {
-    "blokovi": [
-     "MOŠĆENICE - ŠUMSKO"
-    ],
+   "matulji": {
+    "blokova": 1,
+    "medijan": 115,
     "zemljiste": [
      115,
      115
     ]
    },
-   "moscenicka draga": {
-    "blokovi": [
-     "MOŠĆENIČKA DRAGA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "55-75": 2500,
-     "75-100": 2500
-    },
+   "mihotici": {
+    "blokova": 1,
+    "medijan": 69,
     "zemljiste": [
-     256,
-     256
+     69,
+     69
     ]
    },
-   "obrs": {
-    "blokovi": [
-     "MOŠĆENIČKA DRAGA - ŠUMSKO"
-    ],
+   "mucici": {
+    "blokova": 1,
+    "medijan": 97,
     "zemljiste": [
-     103,
-     103
+     97,
+     97
     ]
    },
-   "sucici": {
-    "blokovi": [
-     "MOŠĆENIČKA DRAGA - ŠUMSKO",
-     "MOŠĆENIČKA DRAGA - ŠUMSKO - PARK PRIRODE 2"
-    ],
+   "pasjak": {
+    "blokova": 1,
+    "medijan": 34,
     "zemljiste": [
-     103,
-     142
+     34,
+     34
     ]
    },
-   "sv anton": {
-    "blokovi": [
-     "MEDVEJA - OSTALO POLJOPRIVREDNO TLO I ŠUME",
-     "MOŠĆENIČKA DRAGA - ŠUMSKO"
-    ],
+   "permani": {
+    "blokova": 1,
+    "medijan": 54,
     "zemljiste": [
-     103,
-     114
+     54,
+     54
     ]
    },
-   "sv jelena": {
-    "blokovi": [
-     "GOLOVIK - ŠUMSKO"
-    ],
+   "rupa": {
+    "blokova": 1,
+    "medijan": 34,
     "zemljiste": [
-     95,
-     95
+     34,
+     34
     ]
    },
-   "sv petar": {
-    "blokovi": [
-     "SVETI PETAR - ŠUMSKO"
-    ],
+   "zvoneca": {
+    "blokova": 1,
+    "medijan": 53,
     "zemljiste": [
-     93,
-     93
-    ]
-   },
-   "zagore": {
-    "blokovi": [
-     "BRSEČ - ŠUMSKO"
-    ],
-    "zemljiste": [
-     94,
-     94
-    ]
-   }
-  },
-  "Novi Vinodolski": {
-   "bater": {
-    "blokovi": [
-     "NOVI VINODOLSKI - POLJOPRIVREDNO",
-     "NOVI VINODOLSKI - ŠUMA 2"
-    ],
-    "zemljiste": [
-     44,
-     44
-    ]
-   },
-   "bile": {
-    "blokovi": [
-     "SIBINJ KRMPOTSKI - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 2400
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
-   "breze": {
-    "blokovi": [
-     "NOVI VINODOLSKI - POLJOPRIVREDNO"
-    ],
-    "zemljiste": [
-     44,
-     44
-    ]
-   },
-   "crno": {
-    "blokovi": [
-     "NOVI VINODOLSKI - POLJOPRIVREDNO",
-     "NOVI VINODOLSKI - ŠUMA 2"
-    ],
-    "zemljiste": [
-     44,
-     44
-    ]
-   },
-   "donji zagon": {
-    "blokovi": [
-     "NOVI VINODOLSKI - ŠUMA 2"
-    ],
-    "zemljiste": [
-     44,
-     44
-    ]
-   },
-   "drinak": {
-    "blokovi": [
-     "SIBINJ KRMPOTSKI - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 2400
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
-   "gornji zagon": {
-    "blokovi": [
-     "NOVI VINODOLSKI - ŠUMA 2"
-    ],
-    "zemljiste": [
-     44,
-     44
-    ]
-   },
-   "jakov polje": {
-    "blokovi": [
-     "SIBINJ KRMPOTSKI - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 2400
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
-   "javorje": {
-    "blokovi": [
-     "SIBINJ KRMPOTSKI - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 2400
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
-   "klenovica": {
-    "blokovi": [
-     "KLENOVICA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 1600,
-     "55-75": 2200,
-     "75-100": 2800
-    }
-   },
-   "ledenice": {
-    "blokovi": [
-     "NOVI VINODOLSKI - ŠUMA 2"
-    ],
-    "zemljiste": [
-     44,
-     44
-    ]
-   },
-   "luka krmpotska": {
-    "blokovi": [
-     "SIBINJ KRMPOTSKI - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 2400
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
-   "novi vinodolski": {
-    "blokovi": [
-     "NOVI VINODOLSKI - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 1600,
-     "55-75": 2700,
-     "75-100": 2900
-    },
-    "zemljiste": [
-     104,
-     104
-    ]
-   },
-   "podmelnik": {
-    "blokovi": [
-     "NOVI VINODOLSKI - POLJOPRIVREDNO",
-     "SIBINJ KRMPOTSKI - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 2400
-    },
-    "zemljiste": [
-     44,
-     117
-    ]
-   },
-   "povile": {
-    "blokovi": [
-     "POVILE - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 2900,
-     "55-75": 2300,
-     "75-100": 2200
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
-   "rusevo krmpotsko": {
-    "blokovi": [
-     "SIBINJ KRMPOTSKI - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 2400
-    },
-    "zemljiste": [
-     117,
-     117
-    ]
-   },
-   "sibinj krmpotski": {
-    "blokovi": [
-     "SIBINJ KRMPOTSKI - ŠUMA",
-     "VELJUN PRIMORSKI - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 2400
-    },
-    "zemljiste": [
-     45,
-     117
-    ]
-   },
-   "smokvica krmpotska": {
-    "blokovi": [
-     "SIBINJ KRMPOTSKI - ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 2400
-    },
-    "zemljiste": [
-     117,
-     117
+     53,
+     53
     ]
    }
   },
   "Omišalj": {
    "njivice": {
-    "blokovi": [
-     "NJIVICE - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3200,
-     "55-75": 3700,
-     "75-100": 4200
-    },
+    "blokova": 1,
+    "medijan": 188,
     "zemljiste": [
      158,
      219
     ]
    },
    "omisalj": {
-    "blokovi": [
-     "OMIŠALJ - GRAĐEVINSKO 1",
-     "OMIŠALJ - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "55-75": 2300
-    },
+    "blokova": 2,
+    "medijan": 74,
     "zemljiste": [
      70,
      113
@@ -1615,950 +460,191 @@
    }
   },
   "Opatija": {
-   "dobrec": {
-    "blokovi": [
-     "DOBREĆ - GRAĐEVINSKO",
-     "OPATIJA - GOSPODARSKA ŠUMA 1",
-     "OPATIJA - ZAŠTITNA ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 1900,
-     "55-75": 3100,
-     "75-100": 2500
-    },
-    "zemljiste": [
-     131,
-     131
-    ]
-   },
    "icici": {
-    "blokovi": [
-     "IČIĆI - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3300,
-     "55-75": 3800,
-     "75-100": 3600
-    },
+    "blokova": 1,
+    "medijan": 216,
     "zemljiste": [
      216,
      216
-    ]
-   },
-   "ika": {
-    "blokovi": [
-     "IČIĆI - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3300,
-     "55-75": 3800,
-     "75-100": 3600
-    },
-    "zemljiste": [
-     216,
-     216
-    ]
-   },
-   "kosicevo": {
-    "blokovi": [
-     "OPATIJA - GRAĐEVINSKO 1",
-     "VOLOSKO - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3900,
-     "55-75": 3600,
-     "75-100": 4600
-    },
-    "zemljiste": [
-     168,
-     399
-    ]
-   },
-   "lipovica": {
-    "blokovi": [
-     "OPATIJA - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 4600,
-     "75-100": 5900
-    },
-    "zemljiste": [
-     220,
-     378
-    ]
-   },
-   "mala ucka": {
-    "blokovi": [
-     "KRŠAN - ŠUMA - PARK PRIRODE UČKA",
-     "MOŠĆENIČKA DRAGA - ŠUMSKO - PARK PRIRODE 2"
-    ],
-    "zemljiste": [
-     29,
-     142
     ]
    },
    "opatija": {
-    "blokovi": [
-     "OPATIJA - GRAĐEVINSKO 1"
-    ],
-    "stanovi": {
-     "100+": 4600,
-     "75-100": 5900
-    },
-    "zemljiste": [
-     220,
-     378
-    ]
-   },
-   "opric": {
-    "blokovi": [
-     "IČIĆI - GRAĐEVINSKO",
-     "OPRIĆ - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 2800,
-     "55-75": 3800,
-     "75-100": 2650
-    },
-    "zemljiste": [
-     131,
-     216
-    ]
-   },
-   "plahuti": {
-    "blokovi": [
-     "OPATIJA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 4900,
-     "55-75": 5200,
-     "75-100": 4200
-    },
-    "zemljiste": [
-     641,
-     641
-    ]
-   },
-   "pobri": {
-    "blokovi": [
-     "MIHOTIĆI - GRAĐEVINSKO PODRUČJE",
-     "VOLOSKO - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 2600,
-     "55-75": 3250,
-     "75-100": 2850
-    },
-    "zemljiste": [
-     69,
-     399
-    ]
-   },
-   "poljane": {
-    "blokovi": [
-     "OPATIJA - ZAŠTITNA ŠUMA"
-    ],
-    "stanovi": {
-     "100+": 1900,
-     "55-75": 3100,
-     "75-100": 2700
-    },
+    "blokova": 1,
+    "medijan": 205,
     "zemljiste": [
      205,
      205
     ]
    },
-   "punta kolova": {
-    "blokovi": [
-     "OPATIJA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 4900,
-     "55-75": 5200,
-     "75-100": 4200
-    },
+   "poljane": {
+    "blokova": 1,
+    "medijan": 131,
     "zemljiste": [
-     641,
-     641
-    ]
-   },
-   "tosina": {
-    "blokovi": [
-     "VOLOSKO - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3200,
-     "55-75": 3600,
-     "75-100": 3300
-    },
-    "zemljiste": [
-     168,
-     399
-    ]
-   },
-   "vela ucka": {
-    "blokovi": [
-     "OPATIJA - GOSPODARSKA ŠUMA - PARK PRIRODE UČKA"
-    ],
-    "zemljiste": [
-     28,
-     28
+     131,
+     131
     ]
    },
    "veprinac": {
-    "blokovi": [
-     "OPATIJA - GOSPODARSKA ŠUMA 2"
-    ],
-    "stanovi": {
-     "55-75": 3800
-    }
+    "blokova": 1,
+    "medijan": 49,
+    "zemljiste": [
+     49,
+     49
+    ]
    },
    "volosko": {
-    "blokovi": [
-     "VOLOSKO - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3200,
-     "55-75": 3600,
-     "75-100": 3300
-    },
+    "blokova": 1,
+    "medijan": 283,
     "zemljiste": [
      168,
      399
-    ]
-   },
-   "vrutki": {
-    "blokovi": [
-     "OPATIJA - GRAĐEVINSKO 1",
-     "OPATIJA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 4750,
-     "55-75": 5200,
-     "75-100": 5050
-    },
-    "zemljiste": [
-     220,
-     641
-    ]
-   },
-   "zora": {
-    "blokovi": [
-     "OPATIJA - GRAĐEVINSKO 1",
-     "OPATIJA - GRAĐEVINSKO 2"
-    ],
-    "stanovi": {
-     "100+": 4750,
-     "55-75": 5200,
-     "75-100": 5050
-    },
-    "zemljiste": [
-     220,
-     641
     ]
    }
   },
   "Punat": {
-   "punat": {
-    "blokovi": [
-     "PUNAT - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3300,
-     "55-75": 2700,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     154,
-     159
-    ]
-   },
    "stara baska": {
-    "blokovi": [
-     "STARA BAŠKA - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 2400
-    },
+    "blokova": 1,
+    "medijan": 195,
     "zemljiste": [
-     131,
-     173
+     195,
+     195
     ]
    }
   },
   "Rijeka": {
-   "banderovo": {
-    "blokovi": [
-     "KRNJEVO - STAMBENO 2",
-     "RASTOČINE - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2300,
-     "55-75": 2450,
-     "75-100": 2400
-    },
-    "zemljiste": [
-     128,
-     162
-    ]
-   },
-   "belveder": {
-    "blokovi": [
-     "CENTAR - MJEŠOVITO STAMBENO",
-     "RASTOČINE - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2250,
-     "55-75": 2550,
-     "75-100": 2400
-    },
-    "zemljiste": [
-     128,
-     183
-    ]
-   },
-   "bivio": {
-    "blokovi": [
-     "TURAN - STAMBENO"
-    ],
-    "stanovi": {
-     "55-75": 2900,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     312,
-     312
-    ]
-   },
-   "brajda": {
-    "blokovi": [
-     "RASTOČINE - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2300,
-     "55-75": 2300,
-     "75-100": 2300
-    },
-    "zemljiste": [
-     128,
-     128
-    ]
-   },
-   "brascine": {
-    "blokovi": [
-     "BRAŠĆINE - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 1800,
-     "55-75": 2800
-    },
-    "zemljiste": [
-     132,
-     132
-    ]
-   },
-   "bulevard": {
-    "blokovi": [
-     "PEĆINE - STAMBENO 2",
-     "SUŠAK - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2400,
-     "55-75": 3350,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     292,
-     305
-    ]
-   },
    "centar": {
-    "blokovi": [
-     "CENTAR - MJEŠOVITO STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2200,
-     "55-75": 2800,
-     "75-100": 2500
-    },
+    "blokova": 2,
+    "medijan": 436,
     "zemljiste": [
      183,
-     183
-    ]
-   },
-   "costabella": {
-    "blokovi": [
-     "TURAN - STAMBENO"
-    ],
-    "stanovi": {
-     "55-75": 2900,
-     "75-100": 3500
-    },
-    "zemljiste": [
-     312,
-     312
-    ]
-   },
-   "donja vezica": {
-    "blokovi": [
-     "PODVEŽICA - STAMBENO",
-     "VEŽICA - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2150,
-     "55-75": 2800,
-     "75-100": 2700
-    },
-    "zemljiste": [
-     200,
-     206
+     690
     ]
    },
    "draga": {
-    "blokovi": [
-     "RIJEKA - OSTALO TLO"
-    ],
-    "stanovi": {
-     "55-75": 2500
-    }
+    "blokova": 1,
+    "medijan": 125,
+    "zemljiste": [
+     125,
+     125
+    ]
    },
    "drenova": {
-    "blokovi": [
-     "ŠKURINJE - STAMBENO"
-    ],
-    "stanovi": {
-     "55-75": 2700,
-     "75-100": 2700
-    },
+    "blokova": 1,
+    "medijan": 120,
     "zemljiste": [
-     145,
-     145
-    ]
-   },
-   "gornja vezica": {
-    "blokovi": [
-     "VEŽICA - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2100,
-     "55-75": 2700,
-     "75-100": 2600
-    },
-    "zemljiste": [
-     200,
-     200
-    ]
-   },
-   "grbci": {
-    "blokovi": [
-     "SRDOČI - STAMBENO",
-     "ZAMET - STAMBENO 1",
-     "ZAMET - STAMBENO 4"
-    ],
-    "stanovi": {
-     "100+": 2100,
-     "55-75": 2800,
-     "75-100": 2600
-    },
-    "zemljiste": [
-     137,
-     186
-    ]
-   },
-   "hosti": {
-    "blokovi": [
-     "MARINIĆI - GRAĐEVINSKO 1",
-     "MARINIĆI - GRAĐEVINSKO 2",
-     "PEHLIN - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 1900,
-     "55-75": 2850,
-     "75-100": 2400
-    },
-    "zemljiste": [
-     64,
-     123
+     120,
+     120
     ]
    },
    "kantrida": {
-    "blokovi": [
-     "KANTRIDA - STAMBENO 2",
-     "ZAMET - STAMBENO 3",
-     "ZAMET - STAMBENO 4"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2700,
-     "75-100": 2700
-    },
+    "blokova": 1,
+    "medijan": 305,
     "zemljiste": [
-     182,
+     305,
      305
-    ]
-   },
-   "kozala": {
-    "blokovi": [
-     "KOZALA - STAMBENO",
-     "RASTOČINE - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2300,
-     "55-75": 2450,
-     "75-100": 2300
-    },
-    "zemljiste": [
-     128,
-     155
-    ]
-   },
-   "krimeja": {
-    "blokovi": [
-     "PEĆINE - STAMBENO 2",
-     "PODVEŽICA - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2250,
-     "55-75": 3300,
-     "75-100": 2750
-    },
-    "zemljiste": [
-     206,
-     305
-    ]
-   },
-   "krnjevo": {
-    "blokovi": [
-     "KRNJEVO - STAMBENO 1",
-     "KRNJEVO - STAMBENO 2"
-    ],
-    "stanovi": {
-     "55-75": 2650,
-     "75-100": 2500
-    },
-    "zemljiste": [
-     162,
-     166
-    ]
-   },
-   "marceljeva draga": {
-    "blokovi": [
-     "DRAGA - STAMBENO 2",
-     "MARTINKOVAC - STAMBENO",
-     "ZAMET - STAMBENO 4"
-    ],
-    "stanovi": {
-     "100+": 3000,
-     "55-75": 3200,
-     "75-100": 3400
-    },
-    "zemljiste": [
-     182,
-     328
     ]
    },
    "martinkovac": {
-    "blokovi": [
-     "MARTINKOVAC - STAMBENO",
-     "SRDOČI - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2000,
-     "55-75": 3050,
-     "75-100": 3000
-    },
+    "blokova": 1,
+    "medijan": 313,
     "zemljiste": [
-     186,
+     313,
      313
     ]
    },
-   "mlaka": {
-    "blokovi": [
-     "KRNJEVO - STAMBENO 2"
-    ],
-    "stanovi": {
-     "55-75": 2600,
-     "75-100": 2500
-    },
-    "zemljiste": [
-     162,
-     162
-    ]
-   },
-   "orehovica": {
-    "blokovi": [
-     "OREHOVICA - STAMBENO",
-     "RIJEKA - OSTALO TLO"
-    ],
-    "stanovi": {
-     "55-75": 2500
-    },
-    "zemljiste": [
-     96,
-     96
-    ]
-   },
    "pasac": {
-    "blokovi": [
-     "PAŠAC - STAMBENO"
-    ],
+    "blokova": 1,
+    "medijan": 96,
     "zemljiste": [
      96,
      96
     ]
    },
    "pecine": {
-    "blokovi": [
-     "PEĆINE - STAMBENO 1",
-     "PEĆINE - STAMBENO 2"
-    ],
-    "stanovi": {
-     "100+": 2300,
-     "55-75": 3350,
-     "75-100": 2650
-    },
+    "blokova": 2,
+    "medijan": 305,
     "zemljiste": [
      305,
      305
     ]
    },
    "pehlin": {
-    "blokovi": [
-     "PEHLIN - STAMBENO",
-     "RUJEVICA - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 1900,
-     "55-75": 2650,
-     "75-100": 2400
-    },
+    "blokova": 1,
+    "medijan": 123,
     "zemljiste": [
-     121,
+     123,
      123
-    ]
-   },
-   "podmurvice": {
-    "blokovi": [
-     "KRNJEVO - STAMBENO 2",
-     "RUJEVICA - STAMBENO"
-    ],
-    "stanovi": {
-     "55-75": 2550,
-     "75-100": 2500
-    },
-    "zemljiste": [
-     121,
-     162
     ]
    },
    "podvezica": {
-    "blokovi": [
-     "PODVEŽICA - STAMBENO",
-     "VEŽICA - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2150,
-     "55-75": 2800,
-     "75-100": 2700
-    },
+    "blokova": 1,
+    "medijan": 206,
     "zemljiste": [
-     200,
+     206,
      206
     ]
    },
-   "potok": {
-    "blokovi": [
-     "RASTOČINE - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2300,
-     "55-75": 2300,
-     "75-100": 2300
-    },
-    "zemljiste": [
-     128,
-     128
-    ]
-   },
-   "preluk": {
-    "blokovi": [
-     "VOLOSKO - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "100+": 3200,
-     "55-75": 3600,
-     "75-100": 3300
-    },
-    "zemljiste": [
-     168,
-     399
-    ]
-   },
-   "pulac": {
-    "blokovi": [
-     "BRAŠĆINE - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 1800,
-     "55-75": 2800
-    },
-    "zemljiste": [
-     132,
-     132
-    ]
-   },
-   "rastocine": {
-    "blokovi": [
-     "BRAŠĆINE - STAMBENO",
-     "RASTOČINE - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2050,
-     "55-75": 2550,
-     "75-100": 2300
-    },
-    "zemljiste": [
-     128,
-     132
-    ]
-   },
-   "rijeka": {
-    "blokovi": [
-     "CENTAR - MJEŠOVITO STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2200,
-     "55-75": 2800,
-     "75-100": 2500
-    },
-    "zemljiste": [
-     183,
-     183
-    ]
-   },
-   "rujevica": {
-    "blokovi": [
-     "PEHLIN - STAMBENO",
-     "RUJEVICA - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 1900,
-     "55-75": 2650,
-     "75-100": 2400
-    },
-    "zemljiste": [
-     121,
-     123
-    ]
-   },
-   "skoljic": {
-    "blokovi": [
-     "KOZALA - STAMBENO",
-     "SUŠAK - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2500,
-     "55-75": 2800,
-     "75-100": 2600
-    },
-    "zemljiste": [
-     155,
-     292
-    ]
-   },
    "skurinje": {
-    "blokovi": [
-     "ŠKURINJE - STAMBENO",
-     "ŠKURINJSKA DRAGA - STAMBENO 1"
-    ],
-    "stanovi": {
-     "55-75": 2600,
-     "75-100": 2450
-    },
+    "blokova": 1,
+    "medijan": 145,
     "zemljiste": [
-     118,
+     145,
      145
     ]
    },
    "skurinjska draga": {
-    "blokovi": [
-     "RASTOČINE - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2300,
-     "55-75": 2300,
-     "75-100": 2300
-    },
+    "blokova": 1,
+    "medijan": 118,
     "zemljiste": [
-     128,
-     128
+     118,
+     118
     ]
    },
    "srdoci": {
-    "blokovi": [
-     "MARTINKOVAC - STAMBENO",
-     "SRDOČI - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2000,
-     "55-75": 3050,
-     "75-100": 3000
-    },
+    "blokova": 1,
+    "medijan": 186,
     "zemljiste": [
      186,
-     313
+     186
     ]
    },
-   "stari grad": {
-    "blokovi": [
-     "KOZALA - STAMBENO"
-    ],
-    "stanovi": {
-     "55-75": 2600,
-     "75-100": 2300
-    },
+   "vezica": {
+    "blokova": 1,
+    "medijan": 200,
     "zemljiste": [
-     155,
-     155
-    ]
-   },
-   "susak": {
-    "blokovi": [
-     "CENTAR - MJEŠOVITO STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2200,
-     "55-75": 2800,
-     "75-100": 2500
-    },
-    "zemljiste": [
-     183,
-     183
-    ]
-   },
-   "sv kuzam": {
-    "blokovi": [
-     "DRAGA - STAMBENO 1"
-    ],
-    "stanovi": {
-     "55-75": 2000,
-     "75-100": 2300
-    },
-    "zemljiste": [
-     125,
-     125
-    ]
-   },
-   "svilno": {
-    "blokovi": [
-     "SVILNO - STAMBENO"
-    ],
-    "stanovi": {
-     "75-100": 2600
-    },
-    "zemljiste": [
-     96,
-     96
-    ]
-   },
-   "trsat": {
-    "blokovi": [
-     "SUŠAK - STAMBENO",
-     "TRSAT - STAMBENO 2"
-    ],
-    "stanovi": {
-     "100+": 2700,
-     "55-75": 2950,
-     "75-100": 3150
-    },
-    "zemljiste": [
-     292,
-     305
-    ]
-   },
-   "turnic": {
-    "blokovi": [
-     "KRNJEVO - STAMBENO 1",
-     "KRNJEVO - STAMBENO 2"
-    ],
-    "stanovi": {
-     "55-75": 2650,
-     "75-100": 2500
-    },
-    "zemljiste": [
-     162,
-     166
-    ]
-   },
-   "vojak": {
-    "blokovi": [
-     "PEĆINE - STAMBENO 1",
-     "PODVEŽICA - STAMBENO",
-     "TRSAT - STAMBENO 2"
-    ],
-    "stanovi": {
-     "100+": 2550,
-     "55-75": 2900,
-     "75-100": 2800
-    },
-    "zemljiste": [
-     206,
-     305
+     200,
+     200
     ]
    },
    "zamet": {
-    "blokovi": [
-     "MARTINKOVAC - STAMBENO",
-     "SRDOČI - STAMBENO"
-    ],
-    "stanovi": {
-     "100+": 2000,
-     "55-75": 3050,
-     "75-100": 3000
-    },
+    "blokova": 3,
+    "medijan": 182,
     "zemljiste": [
-     186,
-     313
+     137,
+     303
     ]
    }
   },
   "Vrbnik": {
    "garica": {
-    "blokovi": [
-     "GARICA - GRAĐEVINSKO"
-    ],
-    "zemljiste": [
-     83,
-     83
-    ]
-   },
-   "kampelje": {
-    "blokovi": [
-     "GARICA - POLJOPRIVREDNO",
-     "LAKMARTIN, MURAJ, KORNIĆ - ŠUMA"
-    ],
+    "blokova": 1,
+    "medijan": 72,
     "zemljiste": [
      58,
-     88
+     85
     ]
    },
    "risika": {
-    "blokovi": [
-     "RISIKA - GRAĐEVINSKO"
-    ],
+    "blokova": 1,
+    "medijan": 65,
     "zemljiste": [
      65,
      65
     ]
    },
    "vrbnik": {
-    "blokovi": [
-     "VRBNIK - GRAĐEVINSKO"
-    ],
-    "stanovi": {
-     "55-75": 2200,
-     "75-100": 1500
-    },
+    "blokova": 1,
+    "medijan": 243,
     "zemljiste": [
      243,
      243
