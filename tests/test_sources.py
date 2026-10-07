@@ -551,3 +551,27 @@ def test_fina_unreadable_csv_is_an_error(fina):
         with pytest.raises(RuntimeError):
             fina.fetch("incremental", set())
     fina.http = None
+
+
+def test_njuskalo_real_pages_price_on_request_and_per_m2():
+    """Stvarni oglasi s Njuškala (spremio Redmi 7. 10., bez osobnih podataka): "cijena na upit"
+    luksuzna kuća (riječi u opisu) i kuća s cijenom 3.400 € koja je zapravo cijena po m²."""
+    from scraper.filters import evaluate
+    from scraper.models import Listing
+    from scraper.prices import AskingPrices
+    from scraper.sources.njuskalo import parse_detail
+
+    loc, crit = Locator(), load_config()["kriteriji"]
+    prices = AskingPrices(loc, {"kuca|Rijeka|": {"n": 50, "med": 2700}})
+    upit = Listing("njuskalo", "40387035", "u", "Rijeka, Martinkovac, samostojeća kuća sa prekrasnim pogledom", HOUSE,
+                   subtype="Samostojeća kuća", county="Primorsko-goranska")
+    parse_detail(read("njuskalo_oglas_na_upit.html.gz"), upit)
+    assert (upit.area, upit.plot_area, upit.settlement, upit.price) == (400, 1000, "Martinkovac", None)
+    d = evaluate(upit, crit, loc, prices)
+    assert d.status == "odbijen" and d.reasons[0].startswith("cijena na upit – luksuzna")
+    po_m2 = Listing("njuskalo", "49269565", "u", "Kuća sa tri stana", HOUSE, subtype="Samostojeća kuća", price=3400,
+                    county="Primorsko-goranska")
+    parse_detail(read("njuskalo_oglas_cijena_po_m2.html.gz"), po_m2)
+    assert (po_m2.area, po_m2.plot_area, po_m2.settlement) == (334, 490, "Krasica")
+    d = evaluate(po_m2, crit, loc)
+    assert "cijena 1.135.600 € > 400.000 €" in d.reasons
