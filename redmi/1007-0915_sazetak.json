@@ -1,0 +1,26 @@
+{
+ "vrijeme": "2026-10-07 09:15:26",
+ "python": "3.14.4",
+ "sustav": "Linux-6.17.0-PRoot-Distro-aarch64-with-glibc2.43",
+ "argumenti": [
+  "--spremi",
+  "https://www.njuskalo.hr/nekretnine/kuca-tri-stana-bazenom-oglas-49269565",
+  "https://www.njuskalo.hr/nekretnine/rijeka-martinkovac-samostojeca-kuca-prekrasnim-pogledom-more-oglas-40387035"
+ ],
+ "njuskalo_oglas_40387035 [playwright]": {
+  "status": 200,
+  "kB": 113,
+  "s": 3.3,
+  "title": "Rijeka, Martinkovac, samostojeća kuća sa prekrasnim pogledom na more (prodaja)",
+  "oglasa": 0,
+  "captcha": false
+ },
+ "njuskalo_oglas_49269565 [playwright]": {
+  "status": 200,
+  "kB": 126,
+  "s": 2.8,
+  "title": "Kuća sa tri stana i bazenom (prodaja)",
+  "oglasa": 0,
+  "captcha": false
+ }
+}
