@@ -357,5 +357,88 @@
   "vrsta": "application/pdf",
   "velicina": 1491930,
   "znakova": 195758
+ },
+ {
+  "url": "http://www.sn.pgz.hr/default.asp?Link=odluke&id=31717",
+  "datoteka": "a781f0e0_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 86960
+ },
+ {
+  "url": "http://www.sn.pgz.hr/default.asp?Link=odluke&id=37834",
+  "datoteka": "f5e3c369_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 148814
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=20500",
+  "datoteka": "5b6864a5_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 259056
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=35378",
+  "datoteka": "66504d02_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 183411
+ },
+ {
+  "url": "https://www.sn.pgz.hr/default.asp?Link=odluke&id=24583",
+  "datoteka": "c13e368f_default",
+  "status": 200,
+  "vrsta": "text/html",
+  "velicina": 329147
+ },
+ {
+  "url": "https://zavod.pgz.hr/SN_JLS/Izvjesca_o_stanju_u_prostoru/Opcina_Omisalj_IZ_12_12_2025.pdf",
+  "datoteka": "d3bcc28c_Opcina_Omisalj_IZ_12_12_2025",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 7796370,
+  "znakova": 410925
+ },
+ {
+  "url": "https://sjednice.punat.hr/viewdocpdf/1803/latest/document.pdf?document_id=1792&download=1&signature=a260b59441f581c712bbf938c84d0bbcf28d4125caf806914708bd52e90a44af",
+  "datoteka": "4f15e85e_document",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 165737,
+  "znakova": 69948
+ },
+ {
+  "url": "https://katalog.mgipu.hr/service/api/public/metadata/prilog/37c3dc0f-6622-4ba2-bb83-b4501d3997dd/23197",
+  "datoteka": "63ab9288_23197",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 274676,
+  "znakova": 94920
+ },
+ {
+  "url": "https://www.grad-krk.hr/sites/default/files/files/odluka_u_pdf_formatu_-_ppu_krk.pdf",
+  "datoteka": "6e9e76cf_odluka_u_pdf_formatu_-_ppu_krk",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 321732,
+  "znakova": 24758
+ },
+ {
+  "url": "https://www.grad-krk.hr/sites/default/files/files/06_odredbe_za_provodenje-normativne.pdf",
+  "datoteka": "3e81244b_06_odredbe_za_provodenje-normativne",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 612555,
+  "znakova": 4226
+ },
+ {
+  "url": "https://zavod.pgz.hr/sn_jls/Dobrinj/2022_05_1623_donosenje.pdf",
+  "datoteka": "c94f6e98_2022_05_1623_donosenje",
+  "status": 200,
+  "vrsta": "application/pdf",
+  "velicina": 1801239,
+  "znakova": 9861
  }
 ]
