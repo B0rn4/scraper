@@ -193,7 +193,7 @@ def test_price_on_request_luxury(ctx):
     def d(price=1, **kw):
         return evaluate(house(price=price, description="Kuća s parkingom.", **kw), *ctx, prices)
 
-    vila = d(title="Luksuzna vila s bazenom", area=300)              # 300 × 3.500 × 0,4 = 420.000 > 400.000
+    vila = d(title="Luksuzna vila s pogledom", area=300)              # 300 × 3.500 × 0,4 = 420.000 > 400.000
     assert vila.status == REJECT and vila.reasons[0].startswith("cijena na upit – luksuzna, procjena ≈ 1.050.000 €")
     assert d(title="Obiteljska kuća", area=700).status == REJECT      # 700 × 3.500 × 0,2 = 490.000
     obicna = d(title="Obiteljska vila", area=110)                      # riječ "vila", ali procjena 385.000
@@ -210,7 +210,7 @@ def test_price_on_request_unfinished_kept(ctx):
     from scraper.prices import AskingPrices
 
     prices = AskingPrices(ctx[1], {"kuca|Omišalj|": {"n": 50, "med": 3500}})
-    for title in ("OTOK KRK - Rohbau s bazenom i pogledom na more", "Starina u blizini grada Krka",
+    for title in ("OTOK KRK - Rohbau s pogledom na more", "Starina u blizini grada Krka",
                   "Kuća, započeta gradnja 450m2 s panoramskim pogledom"):
         d = evaluate(house(price=1, area=660, title=title, description="Parking."), *ctx, prices)
         assert d.status == WARN, title
@@ -277,3 +277,18 @@ def test_burza_place_must_be_whole_name():
         assert not loc.knows(place), place
     for place in ("Rijeka, Donja Drenova", "Kostrena Sveta Lucija", "Grižane-Belgrad", "Opatija - Volosko", "Malinska"):
         assert loc.knows(place), place
+
+
+def test_pool_and_luxury_from_description(ctx):
+    """Bazen: u naslovu → odbijeno, u opisu → ⚠ ("mogućnost izgradnje bazena" ne). "Cijena na
+    upit": luksuz se prepoznaje i iz opisa (nekretnine.hr: "Obiteljska kuća Kostrena", opis "luksuzna vila")."""
+    from scraper.prices import AskingPrices
+
+    d = evaluate(house(title="Kuća s bazenom i pogledom"), *ctx)
+    assert d.status == REJECT and "s bazenom (naslov)" in d.reasons
+    assert "opis spominje bazen" in evaluate(house(description="Kuća ima bazen 8x4 m i parking."), *ctx).warnings
+    for text in ("Mogućnost izgradnje bazena, parking.", "Gradski bazen u blizini, parking."):
+        assert "opis spominje bazen" not in evaluate(house(description=text), *ctx).warnings, text
+    prices = AskingPrices(ctx[1], {"kuca|Omišalj|": {"n": 50, "med": 3900}})
+    kostrena = house(price=1, area=300, title="Obiteljska kuća Kostrena", description="Prodaje se luksuzna vila. Parking.")
+    assert evaluate(kostrena, *ctx, prices).status == REJECT                   # 300 × 3.900 × 0,4 > 400.000

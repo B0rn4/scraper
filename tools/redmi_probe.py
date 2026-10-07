@@ -8,6 +8,7 @@ Pokreće se u Ubuntuu unutar Termuxa, u mapi scraper (upute u REDMI.md):
     python tools/redmi_probe.py --playwright      # Njuškalo pravim preglednikom (Chromium)
     python tools/redmi_probe.py --njuskalo-oglas  # po jedan oglas kuće i zemljišta s Njuškala (Chromium)
     python tools/redmi_probe.py --posalji         # samo ponovno pošalji spremljene rezultate
+    python tools/redmi_probe.py --spremi URL [URL …]  # spremi navedene stranice Njuškala (Chromium)
 
 Ispisuje kratak sažetak, sprema uzorke stranica u redmi-out/ (naziv počinje vremenom
 probe, pa se ništa ne prepisuje) i šalje ih na granu debug (mapa redmi/) preko GitHub
@@ -169,6 +170,19 @@ def run_njuskalo_ads(results: dict) -> None:
         browser.close()
 
 
+def run_saved_pages(results: dict, urls: list[str]) -> None:
+    """Sprema navedene stranice (npr. neobične oglase za testove), s razmakom između njih."""
+    print("Njuškalo, zadane stranice:")
+    browser = Browser()
+    try:
+        for i, url in enumerate(urls, 1):
+            m = re.search(r"oglas-(\d+)", url)
+            name = f"njuskalo_oglas_{m.group(1)}" if m else f"njuskalo_stranica_{i}"
+            probe(name, url, lambda u: browser.fetch(u, "h1"), "playwright", results, 15)
+    finally:
+        browser.close()
+
+
 def run_realitica(results: dict) -> None:
     print("Realitica:")
     first = None
@@ -213,6 +227,16 @@ def upload(token: str, files: dict[str, bytes]) -> int:
     return failed
 
 
+def _env_token() -> str:
+    """Token iz ~/.scraper.env (isti koji koristi redmi_sync), da ga ne treba lijepiti."""
+    env = Path.home() / ".scraper.env"
+    if env.exists():
+        for line in env.read_text().splitlines():
+            if line.strip().startswith("GITHUB_TOKEN="):
+                return line.split("=", 1)[1].strip().strip("\"'")
+    return ""
+
+
 def send() -> None:
     sent_log = OUT / ".poslano"
     sent = set(sent_log.read_text().split()) if sent_log.exists() else set()
@@ -221,7 +245,7 @@ def send() -> None:
     if not files:
         print("Nema novih rezultata za slanje.")
         return
-    token = os.environ.get("GITHUB_TOKEN") or getpass.getpass(
+    token = os.environ.get("GITHUB_TOKEN") or _env_token() or getpass.getpass(
         "Zalijepi GitHub token za slanje rezultata (ne prikazuje se; Enter = ne šalji): ").strip()
     if not token:
         print("Ništa nije poslano. Kasnije pošalji s: python tools/redmi_probe.py --posalji")
@@ -244,9 +268,15 @@ def main() -> None:
     if "--posalji" in args:
         send()
         return
+    urls = [a for a in sys.argv[1:] if a.startswith("http")]
     results = {"vrijeme": time.strftime("%Y-%m-%d %H:%M:%S"), "python": sys.version.split()[0],
                "sustav": platform.platform(), "argumenti": sorted(args)}
-    if "--njuskalo-oglas" in args:
+    if "--spremi" in args:
+        if not urls:
+            print("Iza --spremi navedi adrese stranica.")
+            return
+        run_saved_pages(results, urls)
+    elif "--njuskalo-oglas" in args:
         run_njuskalo_ads(results)
     elif "--provjeri-preglednik" in args:
         print("Chromium:")
@@ -257,7 +287,7 @@ def main() -> None:
             browser.close()
     elif "--samo-realitica" not in args:
         run_njuskalo(results, "--playwright" in args)
-    if not args & {"--playwright", "--provjeri-preglednik", "--njuskalo-oglas"}:
+    if not args & {"--playwright", "--provjeri-preglednik", "--njuskalo-oglas", "--spremi"}:
         run_realitica(results)
     OUT.mkdir(exist_ok=True)
     (OUT / f"{STAMP}_sazetak.json").write_text(json.dumps(results, ensure_ascii=False, indent=1), encoding="utf-8")

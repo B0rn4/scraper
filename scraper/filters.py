@@ -27,6 +27,11 @@ _TITLE_REJECT = [
     (re.compile(r"\b(etaz\w*|kat|prizemlje|visoko prizemlje|potkrovlje) (obiteljske )?kuc"), "etaža kuće"),
     (re.compile(r"\bstan u (obiteljskoj )?kuc"), "stan u kući"),
 ]
+# Bazen (korisnik 7. 10.: kuću s bazenom ne želi). Naslov ili vrsta → odbija se; opis → ⚠
+# (opis zna spominjati i "mogućnost izgradnje bazena", "gradski bazen u blizini").
+_POOL = re.compile(r"\bbazen\w*|\bpool\b")
+_NO_POOL = re.compile(r"\bbez bazen|mogucnost\w* (izgradnje |gradnje |izvedbe )?(i )?bazen|(prostor|mjest|predviden)\w* "
+                      r"(\w+ )?(za )?bazen|blizin\w* (\w+ )?bazen|gradsk\w* bazen|javn\w* bazen|bazen\w* u (naselju|blizini)")
 _TEXT_WARN = [
     (re.compile(r"\bdvojn\w* (kuc|objekt)|\bkuc\w* u nizu\b"), "opis spominje dvojnu kuću ili kuću u nizu"),
     (re.compile(r"\b(polovic\w*|polovin\w*|pola) kuc|\betaz\w* kuc"), "opis spominje dio kuće ili etažu"),
@@ -107,6 +112,12 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) ->
                     if rx.search(text):
                         warnings.append(label)
                         break
+        heading = f"{subtype} {title}"
+        if _POOL.search(heading) and not _NO_POOL.search(heading):
+            reasons.append("s bazenom (naslov)")
+            near_miss_only = False
+        elif _POOL.search(text) and not _NO_POOL.search(text):
+            warnings.append("opis spominje bazen")
     elif listing.kind == LAND:
         limits = criteria["zemljiste"]
         land_type = subtype or title  # index.hr ne daje vrstu zemljišta, samo naslov
@@ -183,7 +194,8 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None) ->
         if estimate:
             value, med, where = estimate
             basis = f"procjena ≈ {fmt_eur(value)} (medijan traženih {where}: {fmt_eur(med)}/m²)"
-            luxury = bool(_LUXURY.search(fold(f"{listing.subtype} {listing.title}")))
+            # Luksuz iz naslova ili opisa ("Obiteljska kuća Kostrena", a u opisu "luksuzna vila").
+            luxury = bool(_LUXURY.search(fold(f"{listing.subtype} {listing.title} {listing.description}")))
             limit = limits["max_cijena"]
             unfinished = bool(_RENOVATION.search(text) or _UNFINISHED.search(text))
             if not unfinished and ((luxury and value * LUXURY_FACTOR > limit)
