@@ -66,7 +66,8 @@ class Runner:
         self.criteria = self.cfg["kriteriji"]
         self.http = Http()
         notif = self.cfg.get("obavijesti", {})
-        self.telegram = Telegram.from_env() if send and notif.get("telegram", True) else None
+        self.wants_telegram = send and notif.get("telegram", True)    # trebao bi slati (provjera postavki)
+        self.telegram = Telegram.from_env() if self.wants_telegram else None
         self.email = Email.from_env() if send and notif.get("email", True) else None
         self.log_lines: list[str] = []
         self.muted: set[str] = set()   # "Ne zanima me" (gumb ispod poruke)
@@ -161,6 +162,8 @@ class Runner:
             self.log(f"Tiho zabilježeni odbijeni oglasi više se ne smatraju viđenima: {n}")
         # Rezerva se uspoređuje sa zadnjim pokretanjem glavnog okidača, ne sa svojim: inače bi za
         # ispada cron-job.org radila svakih 40 umjesto 20 minuta.
+        if not state.meta_get("popravak:tiho_duplikati"):
+            self._repair_silent_twins(state)
         last = state.meta_get("glavni_okidac") or state.meta_get("last_run")
         if reserve and last and self._age(last) is not None and self._age(last) < timedelta(minutes=RESERVE_MINUTES):
             self.log(f"Rezervno pokretanje: glavni okidač radi (zadnje pokretanje {last[11:16]}), ništa se ne radi.")
@@ -186,7 +189,15 @@ class Runner:
                     continue
                 first = state.meta_get(f"baseline:{src.name}") is None
                 mode = FULL if first else INCREMENTAL
-                src.since = next((h["last_ok"] for h in state.health_all() if h["source"] == src.name), None)
+                # Prošlo čitanje nije stiglo do oglasa od pretprošlog (Njuškalo: najviše stranica):
+                # čita se od istog trenutka, dublje, dok se praznina ne zatvori.
+                gap = state.meta_get(f"od:{src.name}") or ""
+                src.since = gap or next((h["last_ok"] for h in state.health_all() if h["source"] == src.name), None)
+                src.catch_up = bool(gap)
+                src.known_prices = state.known_prices(src.name)
+                # Jednom dnevno, poslijepodne (jutarnje pokretanje već ima dnevne provjere).
+                src.deep = (getattr(src, "deep_daily", False) and not first and self.now.hour >= 12
+                            and state.meta_get(f"dubinsko:{src.name}") != today)
                 src.pending = [] if first else self._load_pending(state, src.name)
                 src.captcha_until = state.meta_get(f"stanka:{src.name}") or ""   # nakon captche (Njuškalo)
                 self.log(f"{src.label}: dohvat ({'početni, cijelo područje' if first else 'najnoviji'})")
@@ -251,11 +262,14 @@ class Runner:
                     state.conn.commit()
                     self._source_failed(state, src, RuntimeError(
                         f"{len(errors)} od {len(listings)} oglasa nije obrađeno (promjena stranice?) – {errors[0]}"))
+                    # Obrađeni oglasi su zapisani (i nova cijena): njihove obavijesti čekaju u redu.
+                    self._remember_unsent(state, self._prev_unsent + to_notify)
                     continue
                 if errors:
                     self.log(f"{src.label}: preskočeno zbog greške {len(errors)} oglasa – {errors[0]}")
                 self._source_ok(state, src)
                 self._detail_health(state, src)
+                self._read_gap(state, src)
                 counts = {s: sum(1 for _, d in decided if d.status == s) for s in (PASS, WARN, REJECT)}
                 self.log(f"{src.label}: {len(listings)} oglasa – ✅ {counts[PASS]}, ⚠ {counts[WARN]}, ❌ {counts[REJECT]}")
                 if first:
@@ -264,6 +278,8 @@ class Runner:
                     state.meta_set(f"baseline:{src.name}", self.stamp)
                 if src.daily:
                     state.meta_set(f"daily:{src.name}", today)
+                if getattr(src, "deep", False):
+                    state.meta_set(f"dubinsko:{src.name}", today)
                 state.conn.commit()
                 # Red obavijesti se sprema odmah: ako pokretanje stane prije slanja (istek
                 # vremena, prekid), sljedeće ih pošalje i kad ih portal više ne prikazuje.
@@ -302,6 +318,34 @@ class Runner:
                 self._export(state)
         finally:
             state.close()
+
+    def _repair_silent_twins(self, state: State) -> None:
+        """Jednokratno: oglasi označeni "isti kao" tiho zabilježen oglas (početak praćenja,
+        stari oglas) smatrali su se poslanima, a korisnik nijedan nije vidio. Oznaka se briše,
+        pa stižu kad se ponovno pojave."""
+        marks = {k: m or "" for k, m in state.conn.execute("SELECT key, notified_at FROM listings")}
+        if self._redmi_usable():
+            other = State(self.redmi_db)
+            marks.update({k: m or "" for k, m in other.conn.execute("SELECT key, notified_at FROM listings")
+                          if k not in marks})
+            other.close()
+
+        def ends_silent(key: str) -> bool:
+            for _ in range(10):
+                mark = marks.get(key, "")
+                if not mark.startswith("dup:"):
+                    return mark.startswith("tiho:")
+                key = mark[4:]
+            return False
+
+        keys = [k for k, m in state.conn.execute("SELECT key, notified_at FROM listings WHERE notified_at LIKE 'dup:%' "
+                                                 "AND status != ?", (REJECT,)) if ends_silent(m[4:])]
+        for k in keys:
+            state.conn.execute("UPDATE listings SET notified_at = NULL, notified_price = NULL WHERE key = ?", (k,))
+        state.meta_set("popravak:tiho_duplikati", self.stamp)
+        state.conn.commit()
+        if keys:
+            self.log(f"Isti kao tiho zabilježen oglas (nije poslan): {len(keys)} oglasa opet može stići")
 
     def _prune(self, state: State) -> None:
         """Jednom dnevno: odbijeni oglasi koji se dugo ne pojavljuju (State.prune); s našeg
@@ -989,6 +1033,8 @@ class Runner:
             self.log(f"{len(to_notify)} obavijesti (Telegram nije postavljen):")
             for x, d, h in to_notify:
                 self.log(f"  {h} {x.title} | {x.url}")
+            if self.wants_telegram:    # trebao bi slati: kao Telegram koji ne radi (GitHub to vidi i na Redmiju)
+                self._telegram_health(state, "Telegram nije postavljen (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)")
             return
         if len(to_notify) > limit:
             entries = [report.entry(x, d) for x, d, _ in to_notify]
@@ -1140,6 +1186,20 @@ class Runner:
         state.health_ok(src.name, self.stamp)
         if was_alerted:
             self._alert(f"Scraper: izvor {src.label} ponovno radi", f"Izvor {src.label} ponovno radi ({self.stamp}).")
+
+    def _read_gap(self, state: State, src) -> None:
+        """Čitanje stalo prije oglasa od prošlog pokretanja: "since" se ne pomiče (sljedeće
+        pokretanje čita dublje). Praznina starija od 2 dana se napušta (zapis u dnevnik)."""
+        if not getattr(src, "incomplete", False) or not src.since:
+            state.meta_set(f"od:{src.name}", "")
+            return
+        age = self._age(src.since)
+        if age is not None and age > timedelta(days=2):
+            self.log(f"{src.label}: oglasi od {src.since[:16]} nisu dočitani ni nakon 2 dana – nastavlja se od sada")
+            state.meta_set(f"od:{src.name}", "")
+            return
+        self.log(f"{src.label}: nije dočitano do oglasa od {src.since[:16]} – sljedeće pokretanje čita dublje")
+        state.meta_set(f"od:{src.name}", src.since)
 
     def _detail_health(self, state: State, src) -> None:
         """Captcha na stranicama oglasa dok popis radi (izvor je "ispravan"): oglasi čekaju,

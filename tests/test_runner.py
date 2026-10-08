@@ -1455,3 +1455,62 @@ def test_weekly_labels_redmi_health_rows(tmp_path):
     r._email = lambda subject, text, body=None, **k: bodies.append(body)
     r.weekly(record=False)
     assert "<li>Redmi – " in bodies[0] and "Unauthorized" in bodies[0]
+
+
+# --- jedanaesta runda: nijedan oglas koji odgovara ne smije se tiho izgubiti ---
+
+def test_silently_recorded_twin_is_not_delivered_and_repair(tmp_path):
+    """Tiho zabilježen oglas (početak praćenja, stari oglas) korisnik nije vidio: isti oglas s
+    drugog portala nije "već poslan". Jednokratni popravak briše takve oznake "isti kao"."""
+    from scraper.dedupe import Seen
+    from scraper.locations import Locator
+
+    base = {"kind": HOUSE, "jls": "Crikvenica", "price": 270_000, "area": 70, "title": "Kuća Crikvenica",
+            "settlement": "Crikvenica", "notified_price": None}
+    seen = Seen(Locator())
+    silent = {**base, "key": "njuskalo:1", "source": "njuskalo", "notified_at": "tiho:2026-10-06T08:00:00+02:00"}
+    copy = {**base, "key": "index_oglasi:2", "source": "index_oglasi", "notified_at": "dup:njuskalo:1"}
+    sent = {**base, "key": "oglasnik:3", "source": "oglasnik", "notified_at": "2026-10-06T08:00:00+02:00"}
+    for r in (silent, copy, sent):
+        seen.add(r)
+    assert not seen.delivered(silent, "x") and not seen.delivered(copy, "x") and seen.delivered(sent, "x")
+
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    for sid, mark in (("1", "tiho:2026-10-06"), ("2", "dup:t:1"), ("3", "2026-10-06"), ("4", "dup:t:3")):
+        state.upsert(listing(sid=sid), Decision(PASS, jls="Punat"), "t1")
+        state.conn.execute("UPDATE listings SET notified_at = ? WHERE key = ?", (mark, f"t:{sid}"))
+    r._repair_silent_twins(state)
+    marks = dict(state.conn.execute("SELECT key, notified_at FROM listings"))
+    assert marks["t:2"] is None and marks["t:4"] == "dup:t:3" and marks["t:1"].startswith("tiho:")
+    state.close()
+
+
+def test_incomplete_read_keeps_since_for_next_run(tmp_path):
+    from datetime import timedelta
+    from types import SimpleNamespace
+
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    since = (r.now - timedelta(hours=9)).isoformat(timespec="seconds")
+    r._read_gap(state, SimpleNamespace(name="njuskalo", label="Njuškalo", incomplete=True, since=since))
+    assert state.meta_get("od:njuskalo") == since                      # sljedeće pokretanje: od istog
+    r._read_gap(state, SimpleNamespace(name="njuskalo", label="Njuškalo", incomplete=False, since=since))
+    assert state.meta_get("od:njuskalo") == ""
+    old = (r.now - timedelta(days=3)).isoformat(timespec="seconds")
+    r._read_gap(state, SimpleNamespace(name="njuskalo", label="Njuškalo", incomplete=True, since=old))
+    assert state.meta_get("od:njuskalo") == ""                         # praznina starija od 2 dana
+    state.close()
+
+
+def test_missing_telegram_counts_as_telegram_failure(tmp_path, monkeypatch):
+    """Uređaj koji bi trebao slati, a nema Telegram postavljen: bilježi se kao Telegram koji
+    ne radi (GitHub to vidi i za Redmi), a ne samo zapis u dnevniku."""
+    monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
+    monkeypatch.delenv("TELEGRAM_CHAT_ID", raising=False)
+    r = Runner(tmp_path / "s.db", tmp_path, send=True)
+    assert r.telegram is None and r.wants_telegram
+    state = State(tmp_path / "s.db")
+    r._send_notifications(state, [(listing(), Decision(PASS, jls="Punat"), "")])
+    assert [h["failures"] for h in state.health_all() if h["source"] == "telegram"] == [1]
+    state.close()

@@ -91,6 +91,9 @@ class State:
         rows = self.conn.execute("SELECT source_id FROM listings WHERE source = ?", (source,))
         return {r[0] for r in rows}
 
+    def known_prices(self, source: str) -> dict[str, float | None]:
+        return dict(self.conn.execute("SELECT source_id, price FROM listings WHERE source = ?", (source,)))
+
     def prune(self, ours: set[str], before_ours: str, before_other: str) -> int:
         """Briše odbijene oglase koji nikad nisu javljeni i dugo se ne pojavljuju: s našeg
         područja kad ispadnu iz usporedbe cijena (before_ours), ostale ranije (before_other).

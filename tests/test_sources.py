@@ -7,7 +7,7 @@ from pathlib import Path
 import pytest
 
 from scraper.locations import Locator
-from scraper.models import HOUSE, LAND
+from scraper.models import HOUSE, LAND, Listing
 from scraper.runner import load_config
 from scraper.sources import index_oglasi, nekretnine_hr, oglasnik
 from scraper.sources.fina import Fina
@@ -126,7 +126,7 @@ def test_njuskalo_list_houses():
     from scraper.sources.njuskalo import parse_list
 
     items = {x.source_id: x for x in parse_list(read("njuskalo_kuce.html.gz"), HOUSE)}
-    assert len(items) == 31 and sum(x.extra["istaknut"] for x in items.values()) == 6
+    assert len(items) == 34 and sum(x.extra["istaknut"] for x in items.values()) == 9   # 3 SuperVau
     x = items["45131418"]
     assert x.subtype == "Samostojeća kuća" and x.price == 500000 and x.area == 157
     assert (x.municipality, x.settlement) == ("Krk", "Krk") and x.published.startswith("2026-10-05T09:27")
@@ -141,6 +141,16 @@ def test_njuskalo_list_land_area_from_title():
     items = {x.source_id: x for x in parse_list(read("njuskalo_zemljista.html.gz"), LAND)}
     assert items["51465742"].area == 965 and items["42353257"].area == 758
     assert items["47267864"].area is None  # naslov bez površine – dopunjuje se sa stranice oglasa
+
+
+def test_njuskalo_list_includes_super_vau():
+    """Plaćeno istaknuti oglasi (SuperVau) su oglasi iste kategorije: čitaju se (bez datuma u
+    odluci o sljedećoj stranici); "Latest" (najnoviji s cijelog Njuškala) ne."""
+    from scraper.sources.njuskalo import parse_list
+
+    items = {x.source_id: x for x in parse_list(read("njuskalo_kuce.html.gz"), HOUSE)}
+    assert {"48499657", "47749175"} <= set(items) and items["48499657"].extra["istaknut"]
+    assert "51741047" not in items
 
 
 def test_njuskalo_detail():
@@ -726,3 +736,111 @@ def test_hanging_detail_pages_stop_after_time_budget(monkeypatch):
     src.fetch(INCREMENTAL, set())
     assert http.details == 3 and http.retries == {base.DETAIL_RETRIES}   # 0, 85, 170 s; nakon 255 s staje
     assert len(src.deferred) > 3                                       # ostali čekaju sljedeće pokretanje
+
+
+def _nj_item(sid, when):
+    from datetime import timezone
+    return (f'<li class="EntityList-item EntityList-item--n1 EntityList-item--Regular"><article>'
+            f'<h3 class="entity-title"><a href="/nekretnine/kuca-oglas-{sid}" name="{sid}" class="l"><span>Kuća {sid}</span>'
+            f'</a></h3><div class="entity-description">Samostojeća kuća<br/>Stambena površina: 120 m2<br/>'
+            f'Lokacija: Punat, Punat</div><time datetime="{when.astimezone(timezone.utc):%Y-%m-%dT%H:%M:%S.000Z}">x</time>'
+            f'<strong class="price price--eur">500.000 €</strong></article></li>')
+
+
+def test_njuskalo_page_cap_leaves_gap_for_next_run():
+    """Više novih oglasa od 4 stranice (jutro nakon noći): čitanje je nepotpuno (runner ne
+    pomiče "since"), a sljedeće pokretanje (catch_up) čita do 10 stranica."""
+    from datetime import datetime, timedelta, timezone
+
+    from scraper.sources.base import INCREMENTAL
+    from scraper.sources.njuskalo import Njuskalo
+
+    now = datetime(2026, 10, 8, 7, 10, tzinfo=timezone.utc)
+    pages = ["<ul>" + "".join(_nj_item(60_000_000 - p * 25 - i, now - timedelta(minutes=p * 25 + i))
+                              for i in range(25)) + "</ul>" for p in range(8)]
+
+    class Browser:
+        calls = []
+
+        def get(self, url, wait_selector="body"):
+            Browser.calls.append(url)
+            if "prodaja-kuca" in url:
+                n = int(url.split("page=")[1]) if "page=" in url else 1
+                return pages[n - 1] if n <= len(pages) else "<ul></ul>"
+            if "prodaja-zemljista" in url:
+                return pages[-1]                                  # zemljišta: već prva je starija
+            return "<html><title>prazno</title></html>"
+
+        def close(self):
+            pass
+
+    src = Njuskalo(None, Locator(), load_config()["kriteriji"], browser=Browser())
+    src.since = (now - timedelta(minutes=150)).isoformat()      # s 15 min zalihe: 7 stranica
+    src.fetch(INCREMENTAL, {"1"})
+    assert src.incomplete and sum("prodaja-kuca" in u for u in Browser.calls) == 4
+    Browser.calls.clear()
+    src.catch_up = True
+    src.fetch(INCREMENTAL, {"1"})
+    assert not src.incomplete and sum("prodaja-kuca" in u for u in Browser.calls) == 7
+
+
+def test_nekretnine_reads_modified_while_prices_change(monkeypatch):
+    """"Nedavno izmijenjeni" (sniženja): čita se dalje dok stranica ima nov oglas ili promijenjenu
+    cijenu (ujutro nakon noći ih je više od jedne stranice), najviše 10."""
+    from scraper.sources import nekretnine_hr
+    from scraper.sources.base import INCREMENTAL
+
+    def page_of(url):
+        return int(url.split("pag=")[1])
+
+    def fake_parse(text, kind):
+        n, sort = text
+        if sort != "dataModifica" or kind != HOUSE:
+            return [], 1
+        xs = [Listing(source="nekretnine_hr", source_id=f"{n}{i:02d}", url="u", title="Kuća", kind=HOUSE,
+                      price=380_000 if n <= 2 else 500_000) for i in range(25)]
+        return xs, 20
+
+    class Http:
+        calls = []
+
+        def get(self, url, **kw):
+            Http.calls.append(url)
+            return SimpleNamespace(text=(page_of(url), "dataModifica" if "dataModifica" in url else "data"))
+
+    from types import SimpleNamespace
+    monkeypatch.setattr(nekretnine_hr, "parse_page", fake_parse)
+    src = nekretnine_hr.NekretnineHr(Http(), Locator(), load_config()["kriteriji"])
+    known = {f"{n}{i:02d}" for n in range(1, 21) for i in range(25)}
+    src.known_prices = {k: 500_000 for k in known}                     # str. 1–2: sniženo na 380.000
+    src.fetch(INCREMENTAL, known)
+    modified = [page_of(u) for u in Http.calls if "dataModifica" in u and "samostojeca" in u]
+    assert modified == [1, 2, 3]                                        # 3.: bez promjena → dalje ne
+
+
+def test_realestatecroatia_daily_deep_read_finds_price_drop(monkeypatch):
+    """Popis je po broju oglasa: oglas koji je bio skuplji od granice pa pojeftinio pojavi se
+    duboko. Jednom dnevno (deep) čita se cijeli popis do granice cijene."""
+    from scraper.sources import realestatecroatia as rc
+    from scraper.sources.base import INCREMENTAL
+
+    def fake_parse(text, kind):
+        vrsta, page = text
+        if kind != HOUSE:                                               # zemljišta: jedno, poznato
+            return [Listing(source="realestatecroatia", source_id="5", url="u", title="Zemljište", kind=LAND,
+                            price=100_000, area=800, extra={"istaknut": False})]
+        if page > 3:
+            return []
+        start = 3000 - (page - 1) * rc.PAGE_SIZE
+        return [Listing(source="realestatecroatia", source_id=str(start - i), url="u", title="Kuća", kind=HOUSE,
+                        price=380_000, area=120, extra={"istaknut": False}) for i in range(rc.PAGE_SIZE)]
+
+    monkeypatch.setattr(rc, "parse_list", fake_parse)
+    src = rc.RealEstateCroatia(None, Locator(), load_config()["kriteriji"])
+    src._list = lambda vrsta, cap, page: (vrsta, page)
+    src.worth_detail = lambda x: False
+    known = {str(i) for i in range(2900, 3001)} | {"5"}
+    known.discard("2945")                                               # pojeftinio, duboko na 3. stranici
+    assert "2945" not in {x.source_id for x in src.fetch(INCREMENTAL, known)}   # redovno: staje na 1. str.
+    src.deep = True
+    assert "2945" in {x.source_id for x in src.fetch(INCREMENTAL, known)}

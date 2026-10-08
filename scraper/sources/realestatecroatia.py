@@ -15,6 +15,7 @@ pa se otvaraju novi oglasi koji bi mogli proći (najviše MAX_DETAILS po pokreta
 
 import html
 import re
+import time
 
 from ..models import HOUSE, LAND, Listing
 from ..text import fmt_eur, parse_number
@@ -25,6 +26,7 @@ REGION_PGZ = 8
 KINDS = [(1, HOUSE, "kuca"), (3, LAND, "zemljiste")]
 PAGE_SIZE = 20
 MAX_DETAILS = 10
+DEEP_SECONDS = 240     # dnevno dublje čitanje: najviše toliko po vrsti (kuće, zemljišta)
 
 
 def _clean(value: str) -> str:
@@ -92,11 +94,19 @@ class RealEstateCroatia(Source):
         return self.http.get(f"{BASE}list.asp?regija={REGION_PGZ}&vrsta={vrsta}&akcija=1&sort=objekt_id&smjer=desc"
                              f"&cijenaDo={int(cap)}&page={page}").text
 
+    deep_daily = True   # popis je po broju oglasa: sniženje ispod granice vidi se samo dubljim čitanjem
+
     def fetch(self, mode, known_ids):
         found: dict[str, Listing] = {}
+        # Jednom dnevno (deep) cijeli popis do granice cijene, najviše DEEP_SECONDS: oglas koji
+        # je bio skuplji od granice pa pojeftinio pojavi se duboko, na mjestu svog broja.
+        deep = mode != FULL and self.deep
         for vrsta, kind, key in KINDS:
             cap = self.criteria[key]["max_cijena"]
-            for page in range(1, (250 if mode == FULL else 10) + 1):   # redovno: staje kod poznatih
+            deadline = time.monotonic() + DEEP_SECONDS
+            for page in range(1, (250 if mode == FULL or deep else 10) + 1):   # redovno: staje kod poznatih
+                if deep and page > 1 and time.monotonic() > deadline:
+                    break
                 items = parse_list(self._list(vrsta, cap, page), kind)
                 if page == 1 and not items:      # kuća i zemljišta u PGŽ-u uvijek ima
                     raise RuntimeError(f"realestatecroatia.com: popis {key} je prazan (promjena stranice?)")
@@ -106,7 +116,7 @@ class RealEstateCroatia(Source):
                 # Najnoviji prvi: kad je i najstariji redovni oglas na stranici poznat, dalje su
                 # samo stariji. (Ne "bilo koji poznat": oglasi odgođeni prošli put su između.)
                 regular = [x for x in items if not x.extra["istaknut"] and x.price]
-                if len(items) < PAGE_SIZE or (mode != FULL and regular and
+                if len(items) < PAGE_SIZE or (mode != FULL and not deep and regular and
                                               min(regular, key=lambda x: int(x.source_id)).source_id in known_ids):
                     break
         if mode == FULL:

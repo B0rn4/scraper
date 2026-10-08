@@ -1,6 +1,8 @@
 """Već viđeni oglasi: isti oglas na drugom portalu ili ponovno objavljen pod novim brojem.
 
-Oglas je "isti" kao već viđeni (poslan, u početnom popisu ili tiho zabilježen) ako su
+Oglas je "isti" kao već poslani (pojedinačno ili u početnom popisu; tiho zabilježen –
+početak praćenja bez popisa, stari oglas ponovno objavljen – se ne broji, jer ga korisnik
+nije vidio) ako su
 vrsta i grad/općina isti, površina se razlikuje najviše 2 % (barem 1 m²), naselja
 spomenuta u naslovu se ne razlikuju (Vrh ≠ Krk-Centar), a uz to:
 - cijena je ista do eura i površina do pola kvadrata – a kod okruglih brojeva
@@ -122,11 +124,11 @@ class Seen:
     def delivered(self, r: dict, key: str) -> bool:
         """Je li poruka o ovom oglasu stvarno stigla? Kopija "dup:K" ("isti kao K") vrijedi
         samo ako je K (ili kopija od koje je K kopija…) poslan – a nije ako je to upravo
-        oglas `key` čije slanje nije uspjelo, ili K u viđenima nema."""
+        oglas `key` čije slanje nije uspjelo, K u viđenima nema ili je K samo tiho zabilježen."""
         for _ in range(10):
             mark = r.get("notified_at") or ""
             if not mark.startswith("dup:"):
-                return bool(mark)
+                return bool(mark) and not mark.startswith("tiho:")   # tiho zabilježen: korisnik ga nije vidio
             target = mark[4:]
             if target == key or target not in self.by_key:
                 return False

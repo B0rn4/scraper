@@ -26,11 +26,13 @@ BASE = "https://www.njuskalo.hr"
 REGION = "primorsko-goranska"
 CATEGORIES = [("prodaja-kuca", HOUSE), ("prodaja-zemljista", LAND)]
 MAX_PAGES = 4          # najviše stranica po kategoriji u jednom pokretanju
+CATCHUP_PAGES = 10     # kad prošlo čitanje nije stiglo do oglasa od pretprošlog (jutro nakon noći, ispad)
 MAX_DETAILS = 8        # najviše otvorenih oglasa u jednom pokretanju (zaštita od captche)
 OLD_MARGIN = 60_000    # ~3 dana novih brojeva oglasa
 CAPTCHA_PAUSE = timedelta(hours=2)   # nakon captche na stranici oglasa (REDMI.md: zaštitu ostaviti na miru)
 
-_ITEM = re.compile(r'<li class="EntityList-item EntityList-item--n\d+ EntityList-item--(Regular|VauVau)[^"]*">(.*?)</article>',
+# Redovni i plaćeno istaknuti (VauVau, SuperVau); "Latest" su najnoviji oglasi cijelog Njuškala.
+_ITEM = re.compile(r'<li class="EntityList-item EntityList-item--n\d+ EntityList-item--(Regular|VauVau|SuperVau)[^"]*">(.*?)</article>',
                    re.S)
 _LINK = re.compile(r'<h3 class="entity-title"><a href="([^"]+)"[^>]*name="(\d+)"[^>]*>.*?<span>([^<]*)</span>', re.S)
 _DESC = re.compile(r'<div class="entity-description">(.*?)</div>', re.S)
@@ -97,7 +99,7 @@ def parse_list(page: str, kind: str) -> list[Listing]:
             location_text=fields.get("lokacija", ""),
             image_url=img.group(1) if img else "",
             published=date.group(1) if date else "",
-            extra={"istaknut": m.group(1) == "VauVau", "samo_popis": True,   # opis tek sa stranice oglasa
+            extra={"istaknut": m.group(1) != "Regular", "samo_popis": True,   # opis tek sa stranice oglasa
                    "povrsina_iz_teksta": from_title},
         ))
     return out
@@ -182,9 +184,11 @@ class Njuskalo(Source):
         own_browser = self.browser is None
         since = self.since_time()
         found: dict[str, Listing] = {}
+        self.incomplete = False
+        pages = 1 if mode == FULL else (CATCHUP_PAGES if self.catch_up else MAX_PAGES)
         try:
             for category, kind in CATEGORIES:
-                for page in range(1, (1 if mode == FULL else MAX_PAGES) + 1):
+                for page in range(1, pages + 1):
                     text = browser.get(_page_url(category, page), "li.EntityList-item")
                     if _is_captcha(text):
                         raise RuntimeError("Njuškalo je vratio captchu (zaštita ShieldSquare)")
@@ -192,6 +196,9 @@ class Njuskalo(Source):
                     if not items:
                         if page == 1:
                             raise RuntimeError(f"Njuškalo: na stranici {category} nema oglasa (promjena stranice?)")
+                        # Popis tolikog područja ne završava nakon nekoliko stranica: stranica se
+                        # nije učitala, a oglasi iza nje nisu pročitani.
+                        self.incomplete = self.incomplete or bool(since)
                         break
                     for x in items:
                         found.setdefault(x.source_id, x)
@@ -201,6 +208,8 @@ class Njuskalo(Source):
                     oldest = min(dates) if dates else ""
                     if not since or not oldest or datetime.fromisoformat(oldest.replace("Z", "+00:00")) < since:
                         break
+                else:                   # najviše stranica, a oglasi od prošlog pokretanja nisu dosegnuti
+                    self.incomplete = self.incomplete or (bool(since) and mode != FULL)
             if mode != FULL:
                 self.add_pending(found, known_ids)
             threshold = _old_threshold(known_ids, found)

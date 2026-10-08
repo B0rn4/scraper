@@ -115,8 +115,9 @@ class NekretnineHr(Source):
             else:
                 # Dok ima novih (ujutro i nakon prekida ih je više), najviše 10 stranica.
                 self._crawl(f"{BASE}/{category}/{COUNTY_SLUG}/", kind, found, known_ids, max_pages=10, stop_on_known=True)
-                # Nedavno izmijenjeni oglasi (npr. snižena cijena).
-                self._crawl(f"{BASE}/{category}/{COUNTY_SLUG}/", kind, found, known_ids, max_pages=1,
+                # Nedavno izmijenjeni oglasi (npr. snižena cijena): dok stranica ima nov oglas ili
+                # promijenjenu cijenu (ujutro nakon noći ih je više od jedne stranice), najviše 10.
+                self._crawl(f"{BASE}/{category}/{COUNTY_SLUG}/", kind, found, known_ids, max_pages=10,
                             stop_on_known=False, sort="dataModifica")
         if mode != FULL:
             details, deadline = 0, details_deadline()
@@ -139,9 +140,14 @@ class NekretnineHr(Source):
             resp = self.http.get(f"{url}?criterio={sort}&ordine=desc&pag={page}")
             listings, pages = parse_page(resp.text, kind)
             new = [x for x in listings if x.source_id not in known_ids and x.source_id not in found]
+            changed = [x for x in listings if self.known_prices.get(x.source_id, "nov") != x.price]
             for x in listings:
                 found.setdefault(x.source_id, x)
-            if not listings or page >= pages or (stop_on_known and not new):
+            if sort == "dataModifica":
+                stop = page >= 2 and not changed      # izmijenjeni: dalje samo stariji, već viđeni
+            else:
+                stop = stop_on_known and not new
+            if not listings or page >= pages or stop:
                 break
             page += 1
 

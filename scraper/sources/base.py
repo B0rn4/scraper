@@ -39,6 +39,15 @@ class Source:
     detail_blocked = False
     detail_ok = False
     captcha_until = ""
+    # Čitanje stalo prije oglasa od prošlog pokretanja (najviše stranica, stranica se nije
+    # učitala): runner tada ne pomiče "since" i sljedeće pokretanje čita dublje (catch_up).
+    incomplete = False
+    catch_up = False
+    # Cijene već viđenih oglasa (postavlja runner): koliko daleko čitati "nedavno izmijenjene".
+    known_prices: dict = {}
+    # Jednom dnevno dublje čitanje (izvori kojima se sniženje inače ne vidi); runner postavlja deep.
+    deep_daily = False
+    deep = False
 
     def __init__(self, http: Http, locator: Locator, criteria: dict):
         self.http = http
