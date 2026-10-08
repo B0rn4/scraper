@@ -233,6 +233,10 @@ def parse_detail(page: str, listing: Listing) -> None:
     if coords:
         listing.extra["lat"], listing.extra["lon"] = float(coords.group(1)), float(coords.group(2))
         listing.extra["priblizna_lokacija"] = coords.group(3) == "true"
+        # Približna lokacija je krug na karti (mapBox.circle.radius, u metrima; 8. 10. 2026.: 500).
+        circle = re.search(r'"mapBox":\{[^{}]*"circle":\{"radius":(\d+)', page)
+        if circle and listing.extra["priblizna_lokacija"]:
+            listing.extra["krug_m"] = int(circle.group(1))
     for key, name in (("broj parkirnih mjesta", "parking"), ("godina izgradnje", "godina_izgradnje"),
                       ("namjena", "namjena")):
         if fields.get(key):

@@ -34,7 +34,7 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   kuće: dogradnja i zamjenska gradnja ograničene, provjeriti legalnost); bez točne
   lokacije piše „nije provjereno” (kod kuća se taj redak prvi izostavlja kad je poruka
   preduga). Za zemljišta uz to PPV na samoj lokaciji. Zemljište s približnom oznakom (krug na
-  karti portala, nekretnine.hr 250 m): točan udio kruga u građevinskom području naselja i
+  karti portala: nekretnine.hr 250 m, Njuškalo 500 m; index.hr daje samo mjesto, pa se ne računa): točan udio kruga u građevinskom području naselja i
   izvan naselja, iz obrisa slojeva (GeoServer Ministarstva kroz ISPU, KML), te naselje iz
   bloka PPV-a u središtu (samo postoci, bez ⚠).
 - **Uvjeti gradnje (📏, zemljišta):** najmanja građevna čestica, kig i kis za

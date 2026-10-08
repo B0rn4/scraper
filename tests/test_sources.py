@@ -1045,3 +1045,18 @@ def test_realestatecroatia_deep_read_resumes_where_it_stopped(monkeypatch):
         pages.clear()
         src.fetch(INCREMENTAL, known)
     assert 10 in pages and src.deep_reached == {}                          # do kraja popisa
+
+
+def test_njuskalo_detail_reads_approximate_circle_radius():
+    """Približna lokacija na Njuškalu je krug na karti; polumjer je u podacima stranice (mapBox)."""
+    from scraper.sources.njuskalo import parse_detail
+
+    x = Listing(source="njuskalo", source_id="1", url="u", title="Kuća", kind=HOUSE)
+    page = ('<div class="ClassifiedDetail"></div><script>{"coordinates":{"latitude":45.16,"longitude":14.60},'
+            '"isApproximateLocationOnMap":true},"mapBox":{"showPointsOfInterestControls":true,'
+            '"showNearbyListingsControl":true,"circle":{"radius":500,"paint":{"circle-opacity":0.2}}}</script>')
+    parse_detail(page, x)
+    assert x.extra["priblizna_lokacija"] and x.extra["krug_m"] == 500
+    y = Listing(source="njuskalo", source_id="2", url="u", title="Kuća", kind=HOUSE)
+    parse_detail(page.replace('"isApproximateLocationOnMap":true', '"isApproximateLocationOnMap":false'), y)
+    assert "krug_m" not in y.extra

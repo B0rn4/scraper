@@ -23,6 +23,7 @@ API = "https://ispu.mgipu.hr/api/v1/"
 # ne navodi u podacima oglasa – APPROX_RADIUS_M po izvoru (izmjereno s karte portala).
 APPROX_RADIUS_M = {"default": 300,
                    "nekretnine_hr": 250,   # kod karte portala: krug "only_area" polumjera 250 m (8. 10. 2026.)
+                   "njuskalo": 500,        # stranica oglasa: mapBox.circle.radius (čita se i iz svakog oglasa)
                    # index.hr: "neprecizna" lokacija su koordinate mjesta iz izbornika (kod portala,
                    # isPreciseLocation=false), ne krug oko čestice – postotak bi zavaravao.
                    "index_oglasi": None}
