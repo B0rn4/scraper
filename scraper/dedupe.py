@@ -27,7 +27,9 @@ _GENERIC = set("""kuca kuce kucu prodaja prodaje prodajem obiteljska obiteljsku 
 zemljista gradevinsko gradevinska otok otoku pogled pogledom more mora moru okucnica okucnicom nova novo
 novogradnja vila vile vilu centar centru blizini blizina mirnoj lokaciji lokacija prilika odlicna odlican
 atraktivna atraktivno prekrasna prekrasan lijepa sobe soba garazom garaza bazen bazenom parcela teren""".split())
-FIELDS = ("key", "source", "kind", "jls", "price", "area", "title", "settlement", "notified_at", "notified_price")
+# podaci, poruka: za dopunu s drugog portala (dopuna.py). Starija datoteka ih nema (zip ih izostavi).
+FIELDS = ("key", "source", "kind", "jls", "price", "area", "title", "settlement", "notified_at", "notified_price",
+          "podaci", "poruka", "status")
 _PLACE_WORDS: set[str] = set()   # riječi iz naziva naselja i gradova/općina (nisu opis nekretnine)
 
 
@@ -134,6 +136,41 @@ class Seen:
                 return False
             r = self.by_key[target]
         return False
+
+    def root(self, key: str) -> dict | None:
+        """Oglas čija je poruka stvarno poslana: kraj lanca kopija "dup:K"."""
+        r = self.by_key.get(key)
+        for _ in range(10):
+            mark = (r or {}).get("notified_at") or ""
+            if not mark.startswith("dup:"):
+                return r
+            r = self.by_key.get(mark[4:])
+        return None
+
+    def message_root(self, key: str) -> dict | None:
+        """Prvi oglas, ako je stigao kao vlastita poruka (ne u datoteci s popisom ni tiho):
+        samo na takvu poruku ide dopuna."""
+        r = self.root(key)
+        mark = (r or {}).get("notified_at") or ""
+        return r if mark and not mark.startswith(("zbirno:", "tiho:", "dup:")) else None
+
+    def family(self, key: str) -> list[dict]:
+        """Kopije (izravne i preko druge kopije) zabilježene kao "isti kao `key`"."""
+        children: dict[str, list[dict]] = {}
+        for r in self.by_key.values():
+            mark = r.get("notified_at") or ""
+            if mark.startswith("dup:"):
+                children.setdefault(mark[4:], []).append(r)
+        out, todo, done = [], [key], set()
+        while todo:
+            k = todo.pop()
+            if k in done:
+                continue
+            done.add(k)
+            for r in children.get(k, []):
+                out.append(r)
+                todo.append(r["key"])
+        return out
 
     def add_state(self, state) -> None:
         for r in state.seen_rows():

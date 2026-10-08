@@ -272,6 +272,20 @@ class Telegram:
             plain = html.unescape(re.sub(r"<[^>]+>", "", text))
             return _message_id(self._call("sendMessage", {k: v for k, v in data.items() if k != "parse_mode"} | {"text": plain}))
 
+    def send_reply(self, text: str, reply_to: int | None, url: str, silent: bool = True) -> int | None:
+        """Dopuna s drugog portala: odgovor na prvu poruku o oglasu (kad je njen broj poznat), s
+        gumbom za novi oglas; vraća broj poruke (za reakciju 👎)."""
+        data = {"chat_id": self.chat_id, "text": text, "parse_mode": "HTML", "disable_web_page_preview": "true",
+                "disable_notification": str(silent).lower(), "reply_markup": _button(url, "Otvori oglas")}
+        if reply_to:
+            data["reply_parameters"] = json.dumps({"message_id": reply_to, "allow_sending_without_reply": True})
+        try:
+            return _message_id(self._call("sendMessage", data))
+        except RuntimeError as exc:
+            if not _rejected(exc):
+                raise
+            return _message_id(self._send_plain(text, url))
+
     # --- gumb "Ne zanima me": pritisci se čitaju pri pokretanju (nema stalnog poslužitelja) ---
 
     def get_updates(self, offset: int | None, wait: int = 0) -> list[dict]:

@@ -427,6 +427,7 @@ class LandCheck:
     warning: str = ""              # ⚠ kad zemljište nije u građevinskom području naselja
     info: PointInfo | None = None  # podaci ISPU-a (za PPV na lokaciji)
     heritage: str = ""             # ⚠ zaštićeno kulturno dobro / cjelina na lokaciji
+    basis: int = 0                 # na čemu se temelji: 3 čestica, 2 oznaka na karti, 1 krug oko približne, 0 ništa
 
 
 def heritage_warning(items: list[Heritage], caveat: str = "", land: bool = False) -> str:
@@ -451,16 +452,16 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
     """Je li zemljište (ili kuća) u građevinskom području: prvo po katastarskoj čestici iz
     teksta (točno), inače po oznaci na karti oglasa (ako portal kaže da nije približna)."""
     parcels = parcels_in_text(text)
-    info, where = None, ""
+    info, where, basis = None, "", 0
     for ko, kc in parcels[:3]:
         found = ispu.parcel(ko, kc, names)
         if found:
             info = ispu.identify(found["x"], found["y"])
             area = f", {fmt_m2(found['povrsina'])}" if found.get("povrsina") else ""
-            where = f"k.č. {kc} k.o. {ko}{area}"
+            where, basis = f"k.č. {kc} k.o. {ko}{area}", 3
             break
     if info is None and lat and lon and not approximate:
-        info, where = ispu.point(lat, lon), "oznaci na karti oglasa"
+        info, where, basis = ispu.point(lat, lon), "oznaci na karti oglasa", 2
     if info is None:
         why = "čestica iz oglasa nije pronađena u katastru" if parcels else (
             "oglas ima samo mjesto (ne lokaciju čestice)" if lat and lon and approximate and radius is None
@@ -468,6 +469,7 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
         line, warning = f"🗺 Građevinsko područje: nije provjereno – {why}", ""
         if lat and lon and approximate and radius and not house and hasattr(ispu, "gp_share"):
             line, warning = _share_check(*ispu.gp_share(lat, lon, radius), radius)
+            basis = 1
         heritage = ""
         if lat and lon and OLD_CORE.search(fold(text)):
             # Približna oznaka + opis spominje staru jezgru: provjera samo za cjeline (ne pojedinačne građevine).
@@ -478,10 +480,11 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
             if areas:
                 heritage = "vjerojatno " + heritage_warning(
                     areas, " (opis spominje staru jezgru, oznaka na karti je približna)", land=not house)
-        return LandCheck(line, warning, heritage=heritage)
+        return LandCheck(line, warning, heritage=heritage, basis=basis)
     caveat = " (oznaka može biti približna)" if where.startswith("oznaci") else ""
     result = _gp_check(info, where, caveat, house, use=info.use.split(") ", 1)[-1].capitalize() if info.use else "")
     result.heritage = heritage_warning(info.heritage, caveat, land=not house)
+    result.basis = basis
     if not info.heritage_checked:
         result.line += " (kulturna dobra nisu provjerena – ISPU nije odgovorio)"
     return result

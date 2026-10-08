@@ -47,6 +47,12 @@ CREATE TABLE IF NOT EXISTS messages (
     key TEXT NOT NULL,
     at TEXT
 );
+CREATE INDEX IF NOT EXISTS messages_key ON messages(key);
+CREATE TABLE IF NOT EXISTS podaci (
+    key TEXT PRIMARY KEY,
+    info TEXT,
+    at TEXT
+);
 CREATE TABLE IF NOT EXISTS muted (
     key TEXT PRIMARY KEY,
     at TEXT,
@@ -108,6 +114,7 @@ class State:
             chunk = keys[i:i + 500]
             q = ",".join("?" * len(chunk))
             self.conn.execute(f"DELETE FROM price_history WHERE key IN ({q})", chunk)
+            self.conn.execute(f"DELETE FROM podaci WHERE key IN ({q})", chunk)   # odbijena kopija s dopunom
             self.conn.execute(f"DELETE FROM listings WHERE key IN ({q})", chunk)
         return len(keys)
 
@@ -194,6 +201,11 @@ class State:
         """Poruka s oglasom: reakcija 👎 nosi samo broj poruke, ne oglas."""
         self.conn.execute("INSERT OR REPLACE INTO messages (message_id, key, at) VALUES (?, ?, ?)", (message_id, key, at))
 
+    def set_info(self, key: str, info: dict, at: str) -> None:
+        """Što je poslana poruka (ili dopuna) rekla o oglasu – za dopunu s drugog portala."""
+        self.conn.execute("INSERT OR REPLACE INTO podaci (key, info, at) VALUES (?, ?, ?)",
+                          (key, json.dumps(info, ensure_ascii=False), at))
+
     def message_key(self, message_id: int) -> str | None:
         row = self.conn.execute("SELECT key FROM messages WHERE message_id = ?", (message_id,)).fetchone()
         return row[0] if row else None
@@ -221,9 +233,12 @@ class State:
     def seen_rows(self) -> list[dict]:
         """Oglasi koje smo već "vidjeli" (poslani, u početnom popisu ili tiho zabilježeni)."""
         rows = self.conn.execute(
-            "SELECT key, source, kind, jls, price, area, title, settlement, notified_at, notified_price "
+            "SELECT l.key, source, kind, jls, price, area, title, settlement, notified_at, notified_price, "
+            # Za dopunu: što je poruka rekla i njen broj (odgovor na nju).
+            "p.info AS podaci, (SELECT MIN(message_id) FROM messages m WHERE m.key = l.key) AS poruka, status "
             # I bez cijene ("cijena na upit"): isti oglas na upit s drugog portala ne smije stići ponovno.
-            "FROM listings WHERE notified_at IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
+            "FROM listings l LEFT JOIN podaci p ON p.key = l.key "
+            "WHERE notified_at IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
         )
         return [dict(r) for r in rows]
 

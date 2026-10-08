@@ -537,7 +537,7 @@ bez stotina poruka.
       sa strane); greška „popis bez oglasa” sad nosi naslov stranice, a stranica se sprema
       za slanje (`redmi_probe.py --posalji`). Alat `tools/provjeri_lokaciju.py` (tijek
       rada „Planovi”, naredba `lokacija`) provjerava lokaciju bilo kojeg oglasa.
-   5. **(djelomično) Testovi:** automatski 284 (8. 10.); vježbe kvarova (izvor ne radi,
+   5. **(djelomično) Testovi:** automatski 292 (8. 10.); vježbe kvarova (izvor ne radi,
       Telegram ne radi, ISPU ne radi, Redmi ne javlja, prekid usred pokretanja) napravljene
       su u rundama pregleda i simulacijama. Ostaje popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj
@@ -555,15 +555,24 @@ bez stotina poruka.
 
 ## Otvorena pitanja i sitnice (8. 10.)
 
-- **Dopuna s preciznijeg portala** (pitanje korisnika 8. 10.): kad isti oglas stigne s
-  portala bez lokacije (oglasnik, index.hr „neprecizno”, burza, realestatecroatia), a kasnije
-  se pojavi na portalu s točnom ili približnom lokacijom ili s brojem čestice, poslati kratku
-  dopunu kao odgovor na prvu poruku (🗺 građevinsko područje, PPV na lokaciji). Prijedlog
-  čeka odluku korisnika (vidi razgovor 8. 10.).
+- **(gotovo 8. 10.) Dopuna s drugog portala (➕):** kad isti oglas stigne s portala koji zna
+  više, kratka poruka kao odgovor na prvu – samo gumb za taj oglas i popis novog (odluka
+  korisnika 8. 10.: lokacija i građevinsko, podaci koji su nedostajali, nova upozorenja iz
+  opisa; kad prema novom portalu ne odgovara – dopuna s ⚠; kuće i zemljišta).
+  - Što je poruka rekla pamti se pri slanju (tablica `podaci`, i u sažetku za Redmi); dopune
+    se pribrajaju, pa ista novost ne stiže dvaput. Bolja lokacija: broj čestice > točna
+    oznaka > krug oko približne > ništa.
+  - Samo za oglase koji su stigli kao vlastita poruka (u stvarnim podacima 407 od 424
+    odbijenih kopija bile su kopije oglasa iz početnog popisa – bez dopune).
+  - ⚠ „ne odgovara” ne dolazi od granica cijene i površine ni od grada/općine izvan popisa
+    (to je promjena pravila, isti grad/općina), ni kad je prvi oglas danas i sam odbijen.
+    Procjena iz stvarnih podataka: nekoliko ⚠ dopuna tjedno (npr. „Bregi” umjesto „Matulji”).
+  - Poruke poslane prije ove promjene nemaju snimku: za njih se zna samo lokacija portala
+    (oglasnik, burza, realestatecroatia: nikad; vender: uvijek točna).
 - **Provjera stanja 9. 10. popodne** (zakazana): lažni ili propušteni alarmi novog nadzora,
   dublje čitanje realestatecroatije do kraja popisa, Njuškalo u novom izgledu, približne
-  lokacije u porukama.
-- **Podjela `scraper/runner.py`** (2.070 redaka: glavni tok, nadzor, tjedni izvještaj) na
+  lokacije u porukama; prve dopune (➕) – ponavljaju li nešto iz prve poruke.
+- **Podjela `scraper/runner.py`** (2.230 redaka: glavni tok, nadzor, tjedni izvještaj) na
   dvije-tri datoteke – bez promjene ponašanja, na pregledu nakon 1–2 tjedna.
 - **(gotovo 8. 10.) 📏 uvjeti gradnje za natječaje:** uz svaku česticu zemljišta iz natječaja
   isti redak kao za oglase (naselje iz teksta oko čestice, površina, izgrađeni / neizgrađeni

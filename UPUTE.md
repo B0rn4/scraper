@@ -45,6 +45,7 @@ Primjer (zemljište u Matuljima):
 | ⚠ | nešto treba provjeriti (oglas je ipak stigao) |
 | 📉 | snižena cijena (u naslovu poruke: stara → nova) |
 | 🔄 | prije odbijen, sad odgovara (izmijenjen oglas) |
+| ➕ | dopuna: isti oglas na drugom portalu donosi nešto novo (vidi poglavlje 4) |
 
 **🗺 Građevinsko područje** se provjerava ovako:
 - **po broju čestice iz opisa** (k.č. … k.o. …) – najtočnije;
@@ -71,6 +72,18 @@ Primjer (zemljište u Matuljima):
 
 ## 4. Ostale poruke na Telegramu
 
+- **➕ Dopuna s <portal>** (odgovor na poruku oglasa): isti oglas se pojavio i na drugom
+  portalu, a on zna više. U dopuni je samo ono što prva poruka nije imala – ostalo vrijedi
+  i dalje:
+  - bolja lokacija: 🗺 građevinsko područje, 🏛 PPV na lokaciji, 📏 uvjeti gradnje;
+  - podaci koji su nedostajali: 📍 naselje, 🏗 vrsta kuće, okućnica, godina, vlasnički
+    list, 🚗 parking, ✂️ parcelacija;
+  - ⚠ nova upozorenja iz opisa ili s ISPU-a;
+  - ⚠ „prema ovom oglasu ne odgovara kriterijima: …” – novi portal pokazuje da oglas ne
+    odgovara (npr. poljoprivredno zemljište, naselje koje nije na popisu).
+
+  Gumb vodi na oglas s novog portala. Dopuna je tiha (bez zvuka), osim kad ima ⚠.
+  👎 na dopunu znači isto kao na prvu poruku. Za oglase iz datoteke s popisom dopune nema.
 - **„N novih oglasa – previše za pojedinačne poruke”**: datoteka s popisom (više od 30
   odjednom, npr. nakon prekida). Otvori je u pregledniku.
 - **📜 Natječaji**: prodaja nekretnina gradova, općina, PGŽ-a i države na našem području

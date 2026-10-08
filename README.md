@@ -15,6 +15,14 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   okruglih brojeva i isto naselje ili slične riječi u naslovu). Ako je negdje jeftiniji,
   stiže s napomenom „📉 Već viđen na … – sad jeftiniji”. Preskočeni su popisani u
   tjednom izvještaju. Kad pravilo nije sigurno, oglas stiže.
+- **Dopuna s drugog portala (➕):** kad isti oglas stigne s portala koji zna više, kratka
+  poruka kao odgovor na prvu – samo gumb za taj oglas i ono što je novo: bolja lokacija
+  (broj čestice > točna oznaka > krug oko približne) s 🗺, PPV-om na lokaciji i 📏; podaci
+  koji su nedostajali (naselje, vrsta kuće, okućnica, godina, vlasnički list, parking,
+  parcelacija); nova upozorenja iz opisa. Kad prema novom portalu oglas ne odgovara
+  (npr. „poljoprivredno”, isključeno naselje), dopuna nosi ⚠ i nije tiha; inače je tiha.
+  Samo za oglase koji su stigli kao vlastita poruka (ne iz datoteke s popisom). Što je
+  poruka rekla pamti se (tablica `podaci`), pa ista novost ne stiže dvaput (`scraper/dopuna.py`).
 - **Parcelacija (✂️):** oglas koji u naslovu ili opisu spominje mogućnost parcelacije
   (i „parcelizacija”, „parcelirati”, „podijeliti na dvije čestice”, engleski…) stiže
   neovisno o cijeni i površini – one se navode kao ⚠. Mjesto (popis naselja) i ostala

@@ -14,7 +14,7 @@ from zoneinfo import ZoneInfo
 
 import yaml
 
-from . import dedupe, planwatch, report, risks, tenders, watch
+from . import dedupe, dopuna, planwatch, report, risks, tenders, watch
 from .ispu import APPROX_RADIUS_M, Ispu, check_land, gp_text, heritage_warning
 from .plans import Plans
 from .prices import MAX_AGE_DAYS, PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
@@ -36,6 +36,9 @@ PLAN_CHECK_SECONDS = 180    # najdulje čitanje odluka o planovima za tjedni izv
 PLAN_PAGE_SECONDS = 20      # najdulje čekanje jedne stranice (sn.pgz.hr, zavod.pgz.hr)
 RESERVE_MINUTES = 30        # GitHubov raspored radi samo kad cron-job.org kasni ovoliko
 UNSENT_DAYS = 7             # neposlana obavijest (Telegram ne radi) čeka najviše toliko
+SUPPLEMENT_DAYS = 7         # neposlana dopuna s drugog portala čeka najviše toliko
+SUPPLEMENT_MAX = 10         # najviše dopuna po pokretanju (ostale čekaju sljedeće)
+SUPPLEMENT_LAND_SECONDS = 60   # najdulje provjere građevinskog područja za dopune po pokretanju
 PRUNE_DAYS = 30             # odbijeni oglas izvan našeg područja ostaje u bazi toliko dana nakon zadnjeg viđenja
 DETAIL_ALERT_RUNS = 9       # stranice oglasa (captcha ili greška) toliko pokretanja zaredom (3 sata) → upozorenje
 MAIN_TRIGGER_ALERT = timedelta(hours=2)   # cron-job.org toliko ne pokreće GitHub (radi samo rezerva) → upozorenje
@@ -89,6 +92,9 @@ class Runner:
         self._redmi_ok: bool | None = None
         self._prev_unsent: list = []           # neposlane obavijesti iz prošlih pokretanja
         self._unsent_since: dict[str, str] = {}
+        self._supplements: list[dict] = []     # dopune s drugog portala koje čekaju slanje (dopuna.py)
+        self._sent_info: dict[str, tuple[dict, int | None]] = {}   # poslano u ovom pokretanju: snimka, broj poruke
+        self._family_info: dict[str, dict] = {}                    # što su prva poruka i dopune rekle
 
     # --- pomoćno ---
 
@@ -196,6 +202,7 @@ class Runner:
         self._read_feedback(state)
         self.muted = state.muted(self._github_info().get("utisani"))
         self._prev_unsent = self._load_unsent(state)
+        self._supplements = self._load_supplements(state)
         seen = self._load_seen(state)
         prices = self._load_prices(state)
         to_notify: list[tuple[Listing, Decision, str]] = []
@@ -243,7 +250,7 @@ class Runner:
                     # Jedan neispravan oglas (promijenjeno polje na portalu, greška u programu) ne ruši
                     # pokretanje, a od njega se ništa ne zapisuje (ni nova cijena): sljedeći put se
                     # obrađuje ponovno, kao da ga ovo pokretanje nije vidjelo.
-                    done = len(decided)
+                    done, queued = len(decided), len(self._supplements)
                     state.conn.execute("SAVEPOINT oglas")
                     try:
                         prev = state.get(x.key)
@@ -275,6 +282,8 @@ class Runner:
                             continue
                         if not first:
                             headline = self._notify_reason(x, d, old)
+                            if headline is None and old is None and d.status == REJECT:
+                                self._rejected_copy(state, seen, x, d)
                             if headline is not None and self._is_muted(state, seen, x, d, old):
                                 headline = None
                             if headline is not None:
@@ -285,6 +294,7 @@ class Runner:
                     except Exception as exc:  # noqa: BLE001
                         state.conn.execute("ROLLBACK TO oglas")
                         del decided[done:]
+                        del self._supplements[queued:]
                         errors.append(f"{x.key}: {type(exc).__name__}: {exc}")
                         failed.append(x)
                         traceback.print_exc()
@@ -342,6 +352,11 @@ class Runner:
                 for x, d, _ in to_notify:
                     self._check_land(x, d, deadline)
             self._send_notifications(state, to_notify)
+            try:
+                self._send_supplements(state, seen, {x.key for x, _, _ in to_notify} - set(self._sent_info))
+            except Exception as exc:  # noqa: BLE001 – dopuna ne smije zaustaviti pokretanje
+                self.log(f"Dopune: GREŠKA {type(exc).__name__}: {exc}")
+                traceback.print_exc()
             if self.wants_telegram and not self.telegram:
                 # Trebao bi slati: kao Telegram koji ne radi (GitHub to vidi i na Redmiju), i kad
                 # nema oglasa – inače bi tišina izgledala kao "nema novih oglasa".
@@ -841,6 +856,7 @@ class Runner:
             return
         x.extra["gp"] = result.line
         x.extra["gp_neprovjereno"] = house and result.info is None
+        x.extra["lokacija_rang"] = result.basis      # dopuna s preciznijeg portala (scraper/dopuna.py)
         for warning in (result.warning, result.heritage):
             self._warn(d, warning)
         info = result.info
@@ -1185,6 +1201,8 @@ class Runner:
                     # "Ne zanima me"): inače se provjerava svaki put, a kasnije sniženje stiže
                     # kao "sad odgovara kriterijima".
                     state.mark_notified(x.key, x.price, f"dup:{cheapest['key']}")
+                    if seen.message_root(cheapest["key"]):
+                        self._queue_supplement(state, x, d, cheapest["key"])
                 self.log(f"Već viđen ({cheapest['key']}): {x.title[:60]}")
                 return None
             if old is None:
@@ -1241,8 +1259,9 @@ class Runner:
                 self._telegram_health(state, "zbirna datoteka nije poslana")
                 return
             self._telegram_health(state, None)
-            for x, _, _ in to_notify:
+            for x, d, _ in to_notify:
                 state.mark_notified(x.key, x.price, f"zbirno:{self.stamp}")
+                self._remember_info(state, x, d, None)
             self._remember_unsent(state, [])
             return
         sent, failed, error = 0, [], ""
@@ -1252,6 +1271,7 @@ class Runner:
                 state.mark_notified(x.key, x.price, self.stamp)
                 for message_id in message_ids or []:     # za reakciju 👎 (nosi samo broj poruke)
                     state.remember_message(message_id, x.key, self.stamp)
+                self._remember_info(state, x, d, (message_ids or [None])[0])
                 state.conn.commit()          # poslano je poslano, i ako pokretanje odmah stane
                 sent += 1
             except Exception as exc:  # noqa: BLE001
@@ -1261,6 +1281,123 @@ class Runner:
         self._remember_unsent(state, failed)
         self._telegram_health(state, None if sent else error)
         self.log(f"Poslano obavijesti: {sent}/{len(to_notify)}")
+
+    def _remember_info(self, state: State, x: Listing, d: Decision, message_id: int | None) -> None:
+        """Što je poruka rekla (za dopunu s drugog portala); greška ne smije zadržati slanje."""
+        try:
+            info = dopuna.snapshot(x, d)
+            state.set_info(x.key, info, self.stamp)
+            self._sent_info[x.key] = (info, message_id)
+        except Exception as exc:  # noqa: BLE001
+            self.log(f"Snimka poruke ({x.key}): {type(exc).__name__}: {exc}")
+
+    # --- dopuna s drugog portala (scraper/dopuna.py) ---
+
+    def _load_supplements(self, state: State) -> list[dict]:
+        try:
+            items = json.loads(state.meta_get("dopune") or "[]")
+        except ValueError:
+            return []
+        return [i for i in items if isinstance(i, dict) and i.get("oglas") and i.get("za")]
+
+    def _queue_supplement(self, state: State, x: Listing, d: Decision, target: str, rejected: bool = False) -> None:
+        """Isti oglas kao već poslani `target`: dopuna se šalje nakon obavijesti (zapis je u istoj
+        transakciji kao oznaka "isti kao", pa prekid ne gubi dopunu)."""
+        if any(i["oglas"].get("source") == x.source and i["oglas"].get("source_id") == x.source_id
+               for i in self._supplements):
+            return
+        try:                    # greška u dopuni ne smije zadržati obradu oglasa
+            item = {"oglas": x.to_dict(), "odluka": dataclasses.asdict(d), "za": target, "od": self.stamp,
+                    "odbijen": rejected}
+            state.meta_set("dopune", json.dumps(self._supplements + [item], ensure_ascii=False))
+            self._supplements.append(item)
+        except Exception as exc:  # noqa: BLE001
+            self.log(f"Dopuna ({x.key}) nije zapamćena: {type(exc).__name__}: {exc}")
+
+    def _rejected_copy(self, state: State, seen: dedupe.Seen, x: Listing, d: Decision) -> None:
+        """Nov oglas odbijen zbog podatka koji prva poruka nije imala (npr. vrsta „poljoprivredno”,
+        rečenica iz opisa), a isti je oglas već poslan s drugog portala: dopuna s ⚠."""
+        if x.key in self.muted or not d.jls or not x.area or not dopuna.new_reasons(d):
+            return
+        try:
+            # Prvi oglas i danas odbijen (npr. promijenjena pravila): ovaj ne donosi ništa novo.
+            roots = [r for t in seen.twins(dedupe.row(x, d), cheaper_ok=False) if seen.delivered(t, x.key)
+                     and (r := seen.message_root(t["key"])) and r.get("status") != REJECT]
+        except Exception as exc:  # noqa: BLE001 – dopuna ne smije zadržati obradu oglasa
+            self.log(f"Dopuna ({x.key}): {type(exc).__name__}: {exc}")
+            return
+        if roots:
+            self.log(f"Odbijen, a isti je poslan ({roots[0]['key']}): {x.title[:60]}")
+            self._queue_supplement(state, x, d, roots[0]["key"], rejected=True)
+
+    def _send_supplements(self, state: State, seen: dedupe.Seen, waiting: set[str]) -> None:
+        """Dopune: kratka poruka kao odgovor na prvu, samo s onim što je novo (dopuna.news).
+        Čekaju (najviše SUPPLEMENT_DAYS) dok prva poruka nije poslana, dok ISPU nije stigao
+        provjeriti bolju lokaciju (najviše dan) i kad Telegram ne primi poruku."""
+        if not self._supplements:
+            return
+        oldest = (self.now - timedelta(days=SUPPLEMENT_DAYS)).isoformat(timespec="seconds")
+        recent = (self.now - timedelta(days=1)).isoformat(timespec="seconds")
+        deadline = time.monotonic() + SUPPLEMENT_LAND_SECONDS
+        keep, sent = [], 0
+        for item in self._supplements:
+            try:
+                x, d = Listing(**item["oglas"]), Decision(**item["odluka"])
+            except (TypeError, KeyError):
+                continue
+            since = item.get("od") or self.stamp
+            if since < oldest:
+                self.log(f"Dopuna ({x.key}) čeka više od {SUPPLEMENT_DAYS} dana – odbačena")
+                continue
+            root = seen.message_root(item["za"])
+            if root is None or root["key"] in waiting:      # prva poruka još nije stigla
+                keep.append(item)
+                continue
+            first, reply = self._sent_info.get(root["key"], (None, None))
+            if root["key"] in self._sent_info and not reply:
+                continue                                  # poslan u datoteci s popisom (previše novih)
+            family = seen.family(root["key"])
+            if {x.key, root["key"], *(r["key"] for r in family)} & self.muted:
+                continue
+            if sent >= SUPPLEMENT_MAX:
+                keep.append(item)
+                continue
+            old = self._family_info.get(root["key"]) or dopuna.merge(
+                first or dopuna.load(root) or dopuna.legacy(root), *(dopuna.load(r) for r in family))
+            before = list(d.warnings)
+            if old.get("lokacija") is not None and dopuna.potential_rank(x) > old["lokacija"]:
+                self._check_land(x, d, deadline)
+                if dopuna.unchecked(x) and since >= recent:
+                    keep.append(item)                 # bez nove lokacije dopuna gubi smisao
+                    continue
+            elif x.kind == LAND:
+                self._building_rules(x, d)            # 📏 kad novi portal navodi naselje
+            new = dopuna.snapshot(x, d)
+            lines = dopuna.news(old, new, x, d, bool(item.get("odbijen")), [w for w in d.warnings if w not in before])
+            if not lines:
+                self.log(f"Dopuna ({x.key} → {root['key']}): ništa novo")
+                continue
+            if not self.telegram or not hasattr(self.telegram, "send_reply"):
+                self.log(f"Dopuna ({x.key} → {root['key']}): {' | '.join(lines)}")
+                continue
+            reply = reply or root.get("poruka")
+            text = dopuna.message(x, SOURCE_LABELS.get(x.source, x.source), lines, None if reply else root)
+            try:
+                message_id = self.telegram.send_reply(text, reply, x.url,
+                                                      silent=not any(line.startswith("⚠") for line in lines))
+            except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeće pokretanje
+                self.log(f"Dopuna nije poslana ({x.key}): {type(exc).__name__}: {exc}")
+                keep.append(item)
+                continue
+            state.set_info(x.key, new, self.stamp)
+            if message_id:          # 👎 na dopunu = ne zanima me prvi oglas (i preko njega kopije)
+                state.remember_message(message_id, root["key"], self.stamp)
+            self._family_info[root["key"]] = dopuna.merge(old, new)
+            sent += 1
+            self.log(f"Dopuna poslana ({x.key} → {root['key']}): {len(lines)} redaka")
+        self._supplements = keep
+        state.meta_set("dopune", json.dumps(keep, ensure_ascii=False))
+        state.conn.commit()
 
     def _telegram_health(self, state: State, error: str | None) -> None:
         """Telegram ne prima ništa (blokiran bot, promijenjen token): nakon 3 pokretanja
