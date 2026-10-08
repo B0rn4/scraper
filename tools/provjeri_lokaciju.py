@@ -19,7 +19,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scraper.http import Http  # noqa: E402
 from scraper.ispu import APPROX_RADIUS_M, Ispu, _share_check, gp_text  # noqa: E402
 
-RADII = sorted({APPROX_RADIUS_M["default"], 100, 200, 300, 500})
+RADII = sorted({*APPROX_RADIUS_M.values(), 100, 200, 500})
 _COORDS = re.compile(r'"latitude":\s*(-?[\d.]+),\s*"longitude":\s*(-?[\d.]+)')
 _MARKER = re.compile(r'"marker":\s*"(\w+)"')
 
@@ -110,10 +110,12 @@ def main() -> int:
             if "lat" in item:
                 center = None
                 item["krug"] = {}
-                for radius in RADII:                # polumjer kruga portal ne navodi: nekoliko mogućih
+                own = APPROX_RADIUS_M["nekretnine_hr" if "nekretnine.hr" in arg else "default"]
+                for radius in RADII:                # i drugi polumjeri, za usporedbu
                     center, shares = ispu.gp_share(item["lat"], item["lon"], radius)
                     item["krug"][radius] = {k: round(v * 100, 1) for k, v in shares.items()}
-                    item.setdefault("redak", _share_check(center, shares, radius))
+                    if radius == own:
+                        item["redak"] = _share_check(center, shares, radius)
                 item["sredina"] = {"gp": gp_text(center), "namjena": center.use, "blok": center.block,
                                    "ppv_gradevinsko": center.land_values,
                                    "kulturna_dobra": [h.describe() for h in center.heritage]}

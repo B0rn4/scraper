@@ -49,10 +49,13 @@ Primjer (zemljište u Matuljima):
 **🗺 Građevinsko područje** se provjerava ovako:
 - **po broju čestice iz opisa** (k.č. … k.o. …) – najtočnije;
 - **po točnoj oznaci na karti oglasa**;
-- **po približnoj oznaci** (krug na karti) – provjeravaju se središte i 8 točaka oko njega
-  (200 m). Piše „vjerojatno u građevinskom području”, „granica je blizu (7 od 9)” ili
-  „vjerojatno NIJE” (⚠). U zagradi je naselje u kojem je središte oznake, što pomaže kad
-  oglas navodi samo općinu. Za kuće se oko približne oznake ne provjerava.
+- **po približnoj oznaci** (krug na karti portala; nekretnine.hr: polumjer 250 m) – točno se
+  izračuna koliki je dio kruga u građevinskom području (iz obrisa područja Ministarstva):
+  „Krug 250 m oko približne oznake na karti (Rukavac): 52 % u građevinskom području
+  naselja, ostatak izvan”. Ako je zemljište bilo gdje u krugu jednako vjerojatno, to je i
+  vjerojatnost da je u građevinskom području. Ispod 50 % stiže ⚠, a cijeli krug izvan
+  područja daje „vjerojatno NIJE” (⚠). U zagradi je naselje u kojem je središte oznake,
+  što pomaže kad oglas navodi samo općinu. Za kuće se oko približne oznake ne provjerava.
 - „nije provjereno” – oglas nema ni čestice ni oznake.
 
 **Duga poruka** se nastavlja u drugoj poruci odmah ispod (bez zvuka).
