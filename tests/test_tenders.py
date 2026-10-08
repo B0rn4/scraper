@@ -150,13 +150,23 @@ def test_runner_tender_message_with_parcels(tmp_path):
                                      prices, 10 ** 12)
     lines = message.splitlines()
     assert lines[2] == "📊 more 0,3 km · Rijeka 35 min · skuplji od 0 % područja, 0 % mjesta · PPV −35 %"
-    assert lines[4:10] == [
+    assert lines[4:11] == [
         "📍 Omišalj – Njivice",
         "🗺 k.č. 1234/5 k.o. Njivice (650 m²): u građevinskom području naselja (neizgrađeni dio)",
         "💶 početna cijena 65.000 € · 100 €/m²",
+        "📏 UPU Njivice (2025): min. čest. 400 m² · kig 0,35 (tlocrt ≤ 227 m²) · kis 0,8 (GBP ≤ 400 m²)",
         "🏛 PPV (na lokaciji, blok Njivice - Građevinsko): građevinsko 158–219 €/m² – početna cijena 35 % ispod donje",
         "📐 Područje, zemljišta 300–799 m² (31): medijan 225 €/m² – ovaj 56 % ispod · skuplji od 0 %",
         "🏘 Njivice, zemljišta 300–799 m² (10): medijan 200 €/m² – ovaj 50 % ispod · skuplji od 0 %"]
+    # Čestica manja od najmanje za kuću: 📏 uz česticu i ⚠ na kraju.
+    text = "Predmet prodaje: k.č. 1234/6 k.o. Njivice, površine 300 m², početna cijena 30.000,00 EUR."
+    t = Tender("n2", "Općina Omišalj", "Omišalj", "Natječaj za prodaju zemljišta u Njivicama", "https://o.hr/n2",
+               TODAY.isoformat(), text)
+    found = tenders.lots(text)
+    lines = runner._tender_message(t, tenders.details(text), found, "Omišalj", tenders.place_text(t, found), None,
+                                   None, 10 ** 12).splitlines()
+    assert any(x.startswith("📏 UPU Njivice (2025): min. čest. 400 m²") for x in lines)
+    assert any(x.startswith("⚠ k.č. 1234/6 k.o. Njivice: čestica 300 m² manja je od najmanje") for x in lines)
 
 
 def test_runner_tenders_first_day_and_later(tmp_path, monkeypatch):

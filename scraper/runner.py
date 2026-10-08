@@ -1114,11 +1114,28 @@ class Runner:
                     parts.insert(0, brief or "")
             if unit:
                 short[i] = [p for p in parts if p]
+            if not lot.house and jls:
+                rules = self._tender_rules(t, lot, jls, settlement, point)
+                if rules:
+                    lot.notes.insert(0, rules[0])
+                    if rules[1]:
+                        warnings.append(f"{lot.label}: {rules[1]}")
         if info.get("dio"):
             warnings.append("prodaje se dio nekretnine (suvlasnički udio) – provjeri")
         price_parts = next(iter(short.values())) if len(short) == 1 else []   # više čestica: usporedbe su uz svaku
         summary = summary_text(mjere, price_parts, len(warnings))
         return tenders.format_tender(t, info, found, summary, place, warnings)
+
+    def _tender_rules(self, t: tenders.Tender, lot: tenders.Lot, jls: str, settlement: str,
+                      point) -> tuple[str, str] | None:
+        """📏 uvjeti gradnje za česticu iz natječaja, kao za oglas zemljišta: naselje iz teksta oko
+        čestice (ili naslova), površina čestice, izgrađeni / neizgrađeni dio s ISPU-a."""
+        x = Listing("natjecaj", t.key, t.url, f"{t.title} {lot.context}", LAND, area=lot.size, settlement=settlement)
+        use = (point.use if point else "").upper()
+        x.extra["gp_dio"] = "neizgrađeni dio" if "NEIZGRAĐENI" in use else "izgrađeni dio" if "IZGRAĐENI" in use else ""
+        d = Decision(PASS, jls=jls)
+        self._building_rules(x, d)
+        return (x.extra["uvjeti"], d.warnings[0] if d.warnings else "") if x.extra.get("uvjeti") else None
 
     def _load_prices(self, state: State) -> AskingPrices | None:
         """Medijani traženih cijena: na GitHubu iz baza (i spremi za Redmi), na Redmiju iz

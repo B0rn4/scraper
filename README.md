@@ -37,7 +37,7 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   karti portala: nekretnine.hr 250 m, Njuškalo 500 m; index.hr daje samo mjesto, pa se ne računa): točan udio kruga u građevinskom području naselja i
   izvan naselja, iz obrisa slojeva (GeoServer Ministarstva kroz ISPU, KML), te naselje iz
   bloka PPV-a u središtu (samo postoci, bez ⚠).
-- **Uvjeti gradnje (📏, zemljišta):** najmanja građevna čestica, kig i kis za
+- **Uvjeti gradnje (📏, zemljišta i čestice iz natječaja):** najmanja građevna čestica, kig i kis za
   samostojeću obiteljsku kuću iz UPU-a naselja (ako postoji), inače iz PPU-a grada/općine,
   s izračunom za površinu iz oglasa: „📏 UPU Njivice (2025): min. čest. 400 m² · kig 0,35
   (tlocrt ≤ 210 m²) · kis 0,8 (GBP ≤ 400 m²)”. Kad plan propisuje različito po zonama, a

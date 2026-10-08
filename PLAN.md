@@ -565,13 +565,15 @@ bez stotina poruka.
   lokacije u porukama.
 - **Podjela `scraper/runner.py`** (2.070 redaka: glavni tok, nadzor, tjedni izvještaj) na
   dvije-tri datoteke – bez promjene ponašanja, na pregledu nakon 1–2 tjedna.
-- **📏 uvjeti gradnje za natječaje** (čestice iz natječaja) – redak još ne postoji.
-- **Kuće s približnom oznakom:** postotak kruga u GP-u računa se samo za zemljišta (manje
-  upita ISPU-u); uključiti i za kuće ako korisnik želi.
-- **Zona zaštite kulturno-povijesne cjeline (A, B, C):** nije dostupna u digitalnom obliku
-  (provjereno 7. 10.); čeka izvor.
+- **(gotovo 8. 10.) 📏 uvjeti gradnje za natječaje:** uz svaku česticu zemljišta iz natječaja
+  isti redak kao za oglase (naselje iz teksta oko čestice, površina, izgrađeni / neizgrađeni
+  dio s ISPU-a); čestica manja od najmanje → ⚠.
+- **(odluka 8. 10.: ne radi se) Kuće s približnom oznakom:** postotak kruga u GP-u računa se
+  samo za zemljišta.
+- **(odluka 8. 10.: ne radi se) Zona zaštite kulturno-povijesne cjeline (A, B, C):** nije
+  dostupna u digitalnom obliku (provjereno 7. 10.); ne traži se dalje.
 - **Brisanje starih oglasa iz usporedbe cijena:** novogodišnja poruka podsjeća; korisnik
-  će o tome razmisliti oko 2028.
+  će o tome razmisliti kad stigne podsjetnik (oko 2028.).
 - **Završni pregled i kraj pravila „stari oglas”** (7.7) i **pregled nakon 1–2 tjedna**
   (7.8) – nakon povratka korisnika.
 

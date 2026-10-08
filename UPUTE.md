@@ -38,7 +38,7 @@ Primjer (zemljište u Matuljima):
 | 🏗 / 🔨 | godina izgradnje i obnove, vlasnički list / kuća za obnovu ili starina |
 | 🚗 | parking ili garaža (kuće) |
 | 🗺 | građevinsko područje prema ISPU-u (vidi niže) |
-| 📏 | uvjeti gradnje iz prostornog plana: najmanja čestica, kig, kis (zemljišta) |
+| 📏 | uvjeti gradnje iz prostornog plana: najmanja čestica, kig, kis (zemljišta i čestice iz natječaja) |
 | 🏛 | PPV: ostvarene cijene građevinskog zemljišta (Ministarstvo), na lokaciji ili za naselje |
 | 📐 / 🏘 | usporedba s drugim oglasima iste vrste i veličine: cijelo područje / naselje |
 | ✂️ | oglas spominje parcelaciju – stiže neovisno o cijeni i površini |
