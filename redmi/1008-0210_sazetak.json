@@ -1,0 +1,17 @@
+{
+ "vrijeme": "2026-10-08 02:10:28",
+ "python": "3.14.4",
+ "sustav": "Linux-6.17.0-PRoot-Distro-aarch64-with-glibc2.43",
+ "argumenti": [
+  "--spremi",
+  "https://www.njuskalo.hr/nekretnine/krk-kuca-2-stana-blizu-mora-oglas-43797207"
+ ],
+ "njuskalo_oglas_43797207 [playwright]": {
+  "status": 200,
+  "kB": 122,
+  "s": 3.5,
+  "title": "Krk, kuća sa 2 stana, blizu mora! (prodaja)",
+  "oglasa": 0,
+  "captcha": false
+ }
+}
