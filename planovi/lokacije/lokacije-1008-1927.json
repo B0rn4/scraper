@@ -1,0 +1,39 @@
+[
+ {
+  "ulaz": "https://www.nekretnine.hr/oglasi/4253231/",
+  "lat": 45.36394119,
+  "lon": 14.29045963,
+  "oznaka": "only_area",
+  "krug": {
+   "100": {
+    "naselja": 56.7,
+    "izvan naselja": 0.0
+   },
+   "200": {
+    "naselja": 59.0,
+    "izvan naselja": 0.0
+   },
+   "300": {
+    "naselja": 45.9,
+    "izvan naselja": 0.0
+   },
+   "500": {
+    "naselja": 31.4,
+    "izvan naselja": 0.0
+   }
+  },
+  "redak": [
+   "🗺 Krug 100 m oko približne oznake na karti (Rukavac): 57 % u građevinskom području naselja, ostatak izvan – ISPU; točnu česticu provjeri",
+   ""
+  ],
+  "sredina": {
+   "gp": "u građevinskom području naselja (izgrađeni dio)",
+   "namjena": "(GP) IZGRAĐENI DIO GRAĐEVINSKOG PODRUČJA NASELJA",
+   "blok": "RUKAVAC - GRAĐEVINSKO PODRUČJE",
+   "ppv_gradevinsko": [
+    52.81
+   ],
+   "kulturna_dobra": []
+  }
+ }
+]
