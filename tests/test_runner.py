@@ -446,6 +446,28 @@ def test_redmi_watches_github(tmp_path):
     state.close()
 
 
+def test_redmi_tells_its_own_download_problem_from_github_outage(tmp_path):
+    """github.json se zamijeni pri svakom preuzimanju: kad je i on star, ne preuzima Redmi
+    (internet, token), a ne GitHub – poruka to kaže."""
+    import json
+    import os
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    alerts = []
+    path = tmp_path / "github.json"
+    path.write_text(json.dumps({"zadnje_pokretanje": "2026-10-07T11:40:00+02:00"}))
+    fetched = datetime(2026, 10, 7, 11, 45, tzinfo=ZoneInfo("Europe/Zagreb")).timestamp()
+    os.utime(path, (fetched, fetched))
+    r = Runner(tmp_path / "r.db", tmp_path / "out", send=False, device="redmi", seen_file=tmp_path / "seen.json.gz")
+    r.now = datetime(2026, 10, 7, 14, 0, tzinfo=ZoneInfo("Europe/Zagreb"))
+    r._alert = lambda subject, text: alerts.append((subject, text))
+    state = State(tmp_path / "r.db")
+    r._check_github(state)
+    assert alerts[0][0] == "Scraper: Redmi ne preuzima stanje s GitHuba" and "07.10. u 11:45" in alerts[0][1]
+    state.close()
+
+
 def test_corrupt_files_on_phone_do_not_crash(tmp_path):
     """Prekinut prijenos na Redmiju: skraćen seen.json.gz (EOFError) samo se zabilježi;
     sažetak se na GitHubu piše preko privremene datoteke."""
@@ -708,6 +730,21 @@ def test_reserve_run_skipped_while_main_trigger_works(tmp_path, monkeypatch):
     assert FakeSource.modes == ["full", "incremental"]           # drugo (10 min kasnije) preskočeno
 
 
+def test_reserve_runs_every_slot_while_main_trigger_is_down(tmp_path, monkeypatch):
+    """cron-job.org ne radi: rezerva se uspoređuje sa zadnjim glavnim pokretanjem, ne sa
+    svojim, pa radi u svakom terminu (20 min), a ne u svakom drugom."""
+    from datetime import timedelta
+
+    def configure(r, i):
+        if i:                                                     # rezerva 40, 60 i 80 min poslije
+            r.now = r.now + timedelta(minutes=20 + 20 * i)
+            r.stamp = r.now.isoformat(timespec="seconds")
+            r.run = lambda force=False, reserve=True, run=r.run: run(force, reserve)
+
+    _runs(tmp_path, monkeypatch, [[listing(sid="1")]] * 4, configure)
+    assert FakeSource.modes == ["full", "incremental", "incremental", "incremental"]
+
+
 def test_telegram_button_url_and_photo_timeout(monkeypatch):
     import json
 
@@ -907,11 +944,48 @@ def test_weekly_report_retried_when_mail_fails(tmp_path):
     r._retry_weekly(state)
     assert len(mail.sent) == 1                                  # samo jednom
 
+    # Poslan i naredbom "tjedni" nakon neuspjeha u ponedjeljak: redovno pokretanje ne šalje opet.
+    state.meta_set("tjedni:neposlan", r.stamp)
+    r._retry_weekly(state)
+    assert len(mail.sent) == 1 and not state.meta_get("tjedni:neposlan")
+
+    # Dva dana neuspjeha: upozorenje, pa stanka do sljedećeg tjedna (ne pokušava svakih 20 min).
     alerts = []
     r._alert = lambda subject, text: alerts.append(subject) or True
+    state.meta_set("tjedni:tjedan", "2026-40")
     state.meta_set("tjedni:neposlan", (r.now - timedelta(days=3)).isoformat())
     r._retry_weekly(state)
     assert alerts == ["Scraper: tjedni izvještaj nije poslan"] and not state.meta_get("tjedni:neposlan")
+    r._retry_weekly(state)
+    assert len(mail.sent) == 1 and len(alerts) == 1
+    state.close()
+
+
+def test_weekly_retry_reads_plan_decisions_once(tmp_path):
+    """Ponovno slanje istog tjedna koristi isto čitanje odluka o planovima."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    from scraper import planwatch
+
+    class Mail:
+        ok = False
+
+        def send(self, subject, *a, **k):
+            if not self.ok:
+                raise OSError("SMTP")
+
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    r.email, r.now = Mail(), datetime(2026, 10, 12, 7, 15, tzinfo=ZoneInfo("Europe/Zagreb"))
+    crawls = []
+    r._plan_decisions = lambda: crawls.append(1) or planwatch.Result(
+        [planwatch.PlanDecision("Omišalj", "Odluka o donošenju UPU 1 Omišalj", "https://x/1")], 5, [],
+        {planwatch.SEEN_KEY: '["https://x/1"]'})
+    assert r.weekly(record=False) is False and r.weekly(record=False) is False
+    r.email.ok = True
+    assert r.weekly(record=False) is True and len(crawls) == 1
+    state = State(tmp_path / "s.db")
+    assert state.meta_get(planwatch.SEEN_KEY) == '["https://x/1"]'
     state.close()
 
 

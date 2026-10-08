@@ -3,6 +3,7 @@
 import dataclasses
 import html
 import json
+import re
 import sqlite3
 import time
 import traceback
@@ -156,11 +157,15 @@ class Runner:
             state.meta_set("popravak:tiho_odbijeni", self.stamp)
             state.conn.commit()
             self.log(f"Tiho zabilježeni odbijeni oglasi više se ne smatraju viđenima: {n}")
-        last = state.meta_get("last_run")
+        # Rezerva se uspoređuje sa zadnjim pokretanjem glavnog okidača, ne sa svojim: inače bi za
+        # ispada cron-job.org radila svakih 40 umjesto 20 minuta.
+        last = state.meta_get("glavni_okidac") or state.meta_get("last_run")
         if reserve and last and self._age(last) is not None and self._age(last) < timedelta(minutes=RESERVE_MINUTES):
             self.log(f"Rezervno pokretanje: glavni okidač radi (zadnje pokretanje {last[11:16]}), ništa se ne radi.")
             state.close()
             return
+        if not reserve:
+            state.meta_set("glavni_okidac", self.stamp)
         self._read_feedback(state)
         self.muted = state.muted(self._github_info().get("utisani"))
         self._prev_unsent = self._load_unsent(state)
@@ -520,12 +525,21 @@ class Runner:
             return
         try:
             # Dio naselja s vlastitim UPU-om iz naslova ("Gornja Drenova", "Dobrinčevo"), koji
-            # popis naselja ne zna; inače naselje kao drugdje (polje naselja, pa naslov).
-            part = self.plans.place_in(jls, x.title)
-            if part and any(j.name == jls for j in self.locator.by_settlement(part)):
-                part = ""
-            place = (part or place_of(self.locator, jls, x.title, x.settlement)
-                     or self.plans.place_in(jls, x.settlement) or x.settlement)
+            # popis naselja ne zna; inače naselje kao drugdje (polje naselja, pa naslov). Polje
+            # naselja koje nabraja više mjesta ("Muraj, Kornić, Lakmartin") ne bira plan.
+            # Naslov bira plan samo kad sva mjesta koja spominje potpadaju pod isti plan ("Ika-Oprić"
+            # da, skupna lokacija portala "Veprinac, Poljane" ne); naziv samog grada/općine ("Krk",
+            # "Malinska") ne određuje naselje (kao u place_of).
+            parts = [n for n in self.plans.places_in(jls, x.title) if self.locator.by_name(n) is None]
+            others = {n for j, n in self.locator.scan_names(x.title) if j.name == jls and self.locator.by_name(n) is None
+                      and n != "centar" and not any(f" {n} " in f" {p} " for p in parts)}
+            covering = [self.plans.find(jls, n) for n in [*parts, *others]]
+            same_plan = None not in covering and len({id(p) for p in covering}) == 1
+            part = parts[0] if parts and same_plan else ""
+            official = bool(part) and any(j.name == jls for j in self.locator.by_settlement(part))
+            single = x.settlement if len(re.split(r"[,;/]", x.settlement or "")) == 1 else ""
+            place = ((part if not official else "") or place_of(self.locator, jls, x.title, x.settlement)
+                     or part or self.plans.place_in(jls, single) or x.settlement)
             found = self.plans.check(x, jls, place, x.extra.get("gp_dio", ""))
         except Exception as exc:  # noqa: BLE001 – uvjeti gradnje nisu nužni za obavijest
             self.log(f"Uvjeti gradnje ({x.key}): {type(exc).__name__}: {exc}")
@@ -548,6 +562,8 @@ class Runner:
         redak "nije provjereno" se prvi izostavlja kad je poruka preduga."""
         if x.kind not in (LAND, HOUSE):
             return
+        if x.extra.get("gp") and "nije provjereno" not in x.extra["gp"]:
+            return                       # provjereno prošli put (neposlana obavijest): lokacija je ista
         house = x.kind == HOUSE
         if deadline is not None and time.monotonic() > deadline:
             x.extra["gp"] = "🗺 Građevinsko područje: nije provjereno (vremensko ograničenje pokretanja)"
@@ -1171,11 +1187,23 @@ class Runner:
                 self._alert("Scraper: GitHub ponovno radi", f"Zadnje pokretanje na GitHubu: {last[:16].replace('T', ' ')}.")
             return
         _, alerted = state.health_fail("github", f"zadnje pokretanje {last[:16]}")
-        if not alerted and self._alert(
-                "Scraper: GitHub ne radi",
-                f"GitHub nije pokrenuo scraper od {last[:16].replace('T', ' ')}. Dok ne proradi, ne prate se "
-                "portali osim Njuškala (Redmi radi). Provjeri cron-job.org (povijest pokretanja) i "
-                "githubstatus.com; ako je sve u redu, javi Claudeu ovu poruku.") is not False:
+        # github.json se zamijeni pri svakom uspješnom preuzimanju: ako je star, ne preuzima Redmi.
+        try:
+            fetched = datetime.fromtimestamp(Path(self.seen_file).with_name("github.json").stat().st_mtime, self.tz)
+        except OSError:
+            fetched = None
+        if fetched and self.now - fetched > timedelta(minutes=limit):
+            subject = "Scraper: Redmi ne preuzima stanje s GitHuba"
+            text = (f"Redmi zadnji put preuzeo stanje s GitHuba {fetched:%d.%m. u %H:%M} (zadnje poznato pokretanje "
+                    f"na GitHubu {last[:16].replace('T', ' ')}). Dok ne proradi, poruke s Njuškala mogu se ponoviti. "
+                    "Provjeri internet na Redmiju i GITHUB_TOKEN u ~/.scraper.env (zapis u ~/scraper.log); "
+                    "ako je sve u redu, javi Claudeu ovu poruku.")
+        else:
+            subject = "Scraper: GitHub ne radi"
+            text = (f"GitHub nije pokrenuo scraper od {last[:16].replace('T', ' ')}. Dok ne proradi, ne prate se "
+                    "portali osim Njuškala (Redmi radi). Provjeri cron-job.org (povijest pokretanja) i "
+                    "githubstatus.com; ako je sve u redu, javi Claudeu ovu poruku.")
+        if not alerted and self._alert(subject, text) is not False:
             state.mark_alerted("github")
 
     def review(self) -> Path:
@@ -1242,11 +1270,16 @@ class Runner:
         """Tjedni izvještaj šalje prvo redovno pokretanje u ponedjeljak (zasebno pokretanje u
         7:15 čekalo bi u redu iza pokretanja koje čeka gumbe, a takvo GitHub može otkazati);
         propušten ponedjeljak se nadoknađuje. Ako mail ne prođe, ponavlja se pri redovnim
-        pokretanjima najviše dva dana; zatim upozorenje (i na Telegram)."""
+        pokretanjima najviše dva dana; zatim upozorenje (i na Telegram) i stanka do sljedećeg
+        tjedna."""
         if self.device != "github":
             return
         last = state.meta_get("tjedni:tjedan")
+        if last == self._week() and state.meta_get("tjedni:neposlan"):
+            state.meta_set("tjedni:neposlan", "")      # poslan u međuvremenu (naredba "tjedni")
+            return
         if not state.meta_get("tjedni:neposlan") and last != self._week() \
+                and state.meta_get("tjedni:odustao") != self._week() \
                 and (self.now.weekday() == 0 or last is not None):
             state.conn.commit()
             try:
@@ -1266,6 +1299,7 @@ class Runner:
                            f"Tjedni izvještaj ({failed_at[:10]}) dva dana nije otišao mailom. Provjeri mail "
                            "(SMTP_USER, SMTP_PASSWORD) i javi Claudeu ovu poruku.") is not False:
                 state.meta_set("tjedni:neposlan", "")
+                state.meta_set("tjedni:odustao", self._week())   # do sljedećeg tjedna (ili naredbe "tjedni")
             return
         try:
             if self.weekly(record=False):
@@ -1295,6 +1329,28 @@ class Runner:
             return None
         finally:
             state.close()
+
+    def _weekly_plans(self) -> "planwatch.Result | None":
+        """Odluke o planovima čitaju se jednom tjedno: ponovno slanje izvještaja (mail nije
+        prošao) koristi isto čitanje, a ne čita sn.pgz.hr i zavod.pgz.hr svakih 20 minuta."""
+        state = State(self.db_path)
+        try:
+            cached = json.loads(state.meta_get("tjedni:planovi") or "{}")
+            if cached.get("tjedan") == self._week():
+                return planwatch.Result([planwatch.PlanDecision(**d) for d in cached["nove"]],
+                                        cached["poznato"], cached["greske"], cached["izmjene"])
+        except (ValueError, TypeError, KeyError):
+            pass
+        finally:
+            state.close()
+        plans = self._plan_decisions()
+        if plans is not None:
+            state = State(self.db_path)
+            state.meta_set("tjedni:planovi", json.dumps(
+                {"tjedan": self._week(), "nove": [dataclasses.asdict(d) for d in plans.new], "poznato": plans.known,
+                 "greske": plans.errors, "izmjene": plans._updates}, ensure_ascii=False))
+            state.close()
+        return plans
 
     @staticmethod
     def _plan_section(plans: "planwatch.Result | None") -> str:
@@ -1366,7 +1422,7 @@ class Runner:
 <h3>Preskočeni kao već viđeni ({len(dups)})</h3><p>Isti oglas na drugom portalu ili ponovno objavljen,
 bez niže cijene.</p><ul>{dl}</ul>
 <h3>Stanje izvora</h3><ul>{hl}</ul>"""
-        plans = self._plan_decisions()
+        plans = self._weekly_plans()
         body += self._plan_section(plans)
         text = "Tjedni izvještaj scrapera – otvori HTML verziju maila."
         ok = self._email(f"Scraper: tjedni izvještaj {self.now:%d.%m.%Y.}", text, body) is not False
@@ -1378,6 +1434,8 @@ bez niže cijene.</p><ul>{dl}</ul>
         if record:
             state = State(self.db_path)
             state.meta_set("tjedni:neposlan" if not ok else "tjedni:tjedan", self.stamp if not ok else self._week())
+            if ok:
+                state.meta_set("tjedni:neposlan", "")
             state.close()
         return ok
 

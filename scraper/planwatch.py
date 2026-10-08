@@ -46,9 +46,9 @@ def _text(fragment: str) -> str:
     return re.sub(r"\s+", " ", unescape(re.sub(r"<[^>]+>", " ", fragment))).strip()
 
 
-def sn_page_urls(year: int) -> list[tuple[str, str]]:
-    """(grad/općina, adresa popisa) za tekuću i prošlu godinu."""
-    return [(name, f"{SN}default.asp?Link=popis&sifra={code}&godina={y}")
+def sn_page_urls(year: int) -> list[tuple[str, int, str]]:
+    """(grad/općina, godina, adresa popisa) za tekuću i prošlu godinu."""
+    return [(name, y, f"{SN}default.asp?Link=popis&sifra={code}&godina={y}")
             for name, code in SN_PLACES.items() for y in (year, year - 1)]
 
 
@@ -104,14 +104,17 @@ class Result:
 
 def check(get, state, year: int | None = None, deadline: float | None = None) -> Result:
     """Nove odluke od prošlog spremljenog čitanja. get(url) vraća HTML ili baca grešku.
-    Prvo uspješno čitanje nekog izvora (grad na sn.pgz.hr, registar) samo bilježi njegove
-    odluke – inače bi prvi izvještaj nabrojao sve odluke od 2003. naovamo. Izvor se smatra
-    pročitanim tek kad su sve njegove stranice stigle i prave su (izbornik Službenih novina,
-    odluke u registru – ne stranica održavanja). deadline (time.monotonic()): stranice koje nisu stigle na red ostaju za
-    sljedeći tjedan – nedostupni poslužitelji ne smiju zaustaviti redovno pokretanje."""
+    Prvo uspješno čitanje nekog izvora (godina grada na sn.pgz.hr, registar) samo bilježi
+    njegove odluke – inače bi prvi izvještaj nabrojao sve odluke od 2003. naovamo. Izvor je
+    pročitan kad je stranica stigla i prava je (izbornik Službenih novina, odluke u
+    registru – ne stranica održavanja). deadline (time.monotonic()): stranice koje nisu
+    stigle na red ostaju za sljedeći tjedan – nedostupni poslužitelji ne smiju zaustaviti
+    redovno pokretanje."""
     year = year or datetime.now().year
     # Registar prvi: ima i odluke gradova s vlastitim glasilom, pa ne smije ostati za kraj.
-    pages = [("registar", "", REGISTRY)] + [(f"sn:{jls}", jls, url) for jls, url in sn_page_urls(year)]
+    # Pročitano se bilježi po stranici (grad i godina): ako stigne samo jedna od dvije, odluke
+    # s druge nisu "viđene" kad ona proradi.
+    pages = [("registar", "", REGISTRY)] + [(f"sn:{jls}:{y}", jls, url) for jls, y, url in sn_page_urls(year)]
     by_source: dict[str, list[PlanDecision]] = {}
     incomplete: set[str] = set()
     errors: list[str] = []
@@ -137,6 +140,8 @@ def check(get, state, year: int | None = None, deadline: float | None = None) ->
         errors.append("nije stiglo na red (vremensko ograničenje): " + ", ".join(late))
     seen = json.loads(state.meta_get(SEEN_KEY) or "[]")
     sources = set(json.loads(state.meta_get(SOURCES_KEY) or "[]"))
+    # Nova godina: stranica nove godine grada čija je prošlogodišnja pročitana nije "prvo čitanje".
+    sources |= {f"sn:{jls}:{year}" for jls in SN_PLACES if f"sn:{jls}:{year - 1}" in sources}
     known = set(seen)
     new, added = [], []
     for source, items in by_source.items():

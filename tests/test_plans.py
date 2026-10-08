@@ -157,11 +157,22 @@ def test_dpu_without_plan_and_part_of_settlement_from_title(tmp_path):
             ("Malinska-Dubašnica", "Građevinsko zemljište Dobrinčevo", "Malinska", "UPU 3 Dobrinčevo"),
             ("Malinska-Dubašnica", "Zemljište Malinska", "Sveti Vid-Miholjice", "PPUO Malinska"),
             ("Matulji", "Zemljište Biškupi", "Matulji", "UPU 8 Biškupi"),
-            ("Opatija", "Zemljište", "Strmice", "UPU Poljane")]:
+            ("Opatija", "Zemljište", "Strmice", "UPU Poljane"),
+            ("Opatija", "Ika-Oprić građevinsko zemljište 2071 m2", "", "UPU Ika-Oprić"),
+            ("Opatija", "Zemljište", "Opatija - Centar", "UPU Opatija"),
+            ("Rijeka", "Zemljište Drenova", "Škurinje, Pehlin, Drenova", "GUP Rijeka (2023): min. čest. 600"),
+            # Skupna lokacija portala (više mjesta, različiti planovi): plan grada/općine.
+            ("Opatija", "Građevinsko zemljište Veprinac, Opatija - Okolica, Veprinac, Poljane, Opatija",
+             "Veprinac, Poljane", "PPUG Opatija"),
+            ("Krk", "Građevinsko zemljište, Muraj, Kornić, Lakmartin, Krk", "Muraj, Kornić, Lakmartin", "PPUG Krk"),
+            ("Krk", "Građevinsko zemljište Vrh, Krk, Vrh, Pinezići, Krk", "", "PPUG Krk"),
+            ("Krk", "OTOK KRK, DUNAT – Poljoprivredno zemljište", "", "PPUG Krk")]:
         x = Listing(source="t", source_id="1", url="u", title=title, kind=LAND, price=150_000, area=900,
                     settlement=settlement)
         runner._building_rules(x, Decision(PASS, jls=jls))
         assert x.extra["uvjeti"].startswith(f"📏 {plan}"), (title, x.extra["uvjeti"])
+        assert ("Škurinjsko" not in x.extra["uvjeti"]) and (settlement != "Škurinje, Pehlin, Drenova"
+                                                          or "DPU u dijelu naselja: Drenova-Bok" in x.extra["uvjeti"])
 
 
 def test_size_limits_written_as_up_to_and_including():
@@ -171,3 +182,21 @@ def test_size_limits_written_as_up_to_and_including():
     assert "tlocrt ≤ 200 m²" in plans.check(land(1001), "Punat", "Punat", "izgrađeni dio")[0]
     assert "kig 0,25" in plans.check(land(500), "Dobrinj", "Dobrinj")[0]
     assert "kig 0,3 " in plans.check(land(501), "Dobrinj", "Dobrinj")[0]
+
+
+def test_recheck_of_unsent_notification_keeps_checked_zone_line(tmp_path):
+    """Neposlana obavijest se sljedeći put ponovno provjerava: redak 🗺 iz uspjele provjere
+    ostaje (i kad je vrijeme za provjere potrošeno), uz isto upozorenje."""
+    from scraper.models import PASS, Decision
+    from scraper.notify import format_parts
+    from scraper.runner import Runner
+
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    x = Listing(source="t", source_id="1", url="u", title="Građevinsko zemljište Punat", kind=LAND, price=150_000,
+                area=600, municipality="Punat")
+    d = Decision(PASS, jls="Punat")
+    x.extra["gp"] = "🗺 Građevinsko područje: izvan građevinskog područja (k.č. 123, k.o. Punat)"
+    runner._warn(d, "prema ISPU-u izvan građevinskog područja – provjeri")
+    runner._check_land(x, d, deadline=0)
+    text = format_parts(x, d)[0]
+    assert "izvan građevinskog područja (k.č. 123" in text and "nije provjereno" not in text

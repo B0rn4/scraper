@@ -11,9 +11,11 @@ import re
 import unicodedata
 from dataclasses import dataclass, field
 from datetime import date, datetime, timedelta
+from email.utils import parsedate_to_datetime
 from functools import lru_cache
 from pathlib import Path
 from urllib.parse import urljoin, urlparse
+from zoneinfo import ZoneInfo
 
 import yaml
 
@@ -22,6 +24,7 @@ from .ispu import _KO, parcel_mentions
 from .text import area_matches, areas_in_text, fmt_eur, fmt_m2, fold, parse_number
 
 SITES_FILE = Path(__file__).resolve().parent.parent / "data" / "natjecaji.yaml"
+ZAGREB = ZoneInfo("Europe/Zagreb")
 
 # Nad fold() tekstom (mala slova, bez dijakritika; "/" je razmak).
 _SALE = re.compile(r"\b(prodaj\w*|kupoprodaj\w*|javn\w* nadmetanj\w*|licitacij\w*|draz\w*|ponud\w* za kupnj\w*)")
@@ -399,9 +402,10 @@ class Reader:
                 title, link = _clean(tag("title")), tag("link")
                 if not relevant(title):
                     continue
-                try:
-                    published = datetime.strptime(tag("pubDate")[:16], "%a, %d %b %Y").date().isoformat()
-                except ValueError:
+                try:          # RFC 822 ("Wed, 7 Oct 2026 22:30:00 +0000"): datum u Zagrebu
+                    when = parsedate_to_datetime(tag("pubDate"))
+                    published = (when.astimezone(ZAGREB) if when.tzinfo else when).date().isoformat()
+                except (TypeError, ValueError, IndexError):
                     published = ""
                 body = tag("content:encoded") or tag("description")
                 out.append(Tender(link, site["naziv"], site.get("jls", ""), title, link, published, _clean(body)[:20000],

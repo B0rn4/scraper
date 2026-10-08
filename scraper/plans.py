@@ -82,14 +82,19 @@ class Plans:
             item["naselja"] = [fold(n) for n in item.get("naselja") or []]
             self.plans.append(Plan(**item, pravila=rules))
 
-    def place_in(self, jls: str, text: str) -> str:
-        """Naselje ili dio naselja s vlastitim planom (ili DPU-om) koji se spominje u tekstu,
-        najdulji naziv prvi ("Gornja Drenova" prije "Drenova"): popis naselja zna samo
-        službena naselja, a UPU-i nose i nazive dijelova naselja (Dobrinčevo, Zarok, Okoli…)."""
+    def places_in(self, jls: str, text: str) -> list[str]:
+        """Naselja ili dijelovi naselja s vlastitim planom (ili DPU-om) koji se spominju u
+        tekstu, najdulji naziv prvi; "Drenova" se ne broji kad je dio "Gornja Drenova". Popis
+        naselja zna samo službena naselja, a UPU-i nose i nazive dijelova naselja
+        (Dobrinčevo, Zarok, Okoli…)."""
         words = f" {fold(text or '')} "
         names = {n for p in self.plans if p.jls == jls for n in p.naselja}
         names |= {place for j, place in self.dpu if j == jls}
-        return next((n for n in sorted(names, key=len, reverse=True) if f" {n} " in words), "")
+        found = [n for n in sorted(names, key=lambda n: (-len(n), n)) if f" {n} " in words]
+        return [n for n in found if not any(n != m and f" {n} " in f" {m} " for m in found)]
+
+    def place_in(self, jls: str, text: str) -> str:
+        return (self.places_in(jls, text) or [""])[0]
 
     def find(self, jls: str, place: str) -> Plan | None:
         """UPU naselja, inače PPU grada/općine."""

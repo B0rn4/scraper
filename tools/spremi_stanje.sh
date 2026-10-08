@@ -1,7 +1,7 @@
 #!/bin/bash
 # Šalje stanje (state.db, seen.json.gz, cijene.json, github.json) na granu state. Poziva ga
-# workflow na kraju posla, a redovno pokretanje i odmah nakon čitanja portala: Redmi u :10
-# treba stanje ovog pokretanja, a ono nakon toga još čeka pritiske gumba do :19.
+# workflow na kraju posla; Redmi ga preuzima u :10, :30 i :50 (posao koji traje dulje od
+# 10 minuta, npr. dnevne provjere u 7 h, Redmi dočeka u sljedećem pokretanju).
 set -e
 [ -f state.db ] && [ -f .stanje-ucitano ] || exit 0
 # Oštećena baza se ne sprema (ostaje prethodno stanje; kopije su na grani state-kopija).

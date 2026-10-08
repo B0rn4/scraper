@@ -121,11 +121,43 @@ def test_source_that_failed_or_came_back_empty_stays_unread(tmp_path):
     first = planwatch.check(get, state, 2026)
     first.save(state)
     read = planwatch.json.loads(state.meta_get(planwatch.SOURCES_KEY))
-    assert "sn:Omišalj" in read and "registar" in read and "sn:Crikvenica" in read
-    assert "sn:Krk" not in read and "sn:Rijeka" not in read
+    assert {"sn:Omišalj:2026", "sn:Omišalj:2025", "registar", "sn:Crikvenica:2026"} <= set(read)
+    assert not {"sn:Krk:2026", "sn:Krk:2025", "sn:Rijeka:2026"} & set(read)
     down["krk"] = False
     second = planwatch.check(get, state, 2026)
-    assert second.new == [] and "sn:Krk" in second._updates[planwatch.SOURCES_KEY]
+    assert second.new == [] and "sn:Krk:2025" in second._updates[planwatch.SOURCES_KEY]
+    state.close()
+
+
+def test_page_that_failed_does_not_swallow_new_decisions_of_the_other(tmp_path):
+    """Pročitano se bilježi po stranici: prošla godina Omišlja ne odgovara dva tjedna, a nova
+    odluka na ovogodišnjoj stranici ipak stiže; kad prošla godina proradi, njezine stare
+    odluke ne stižu kao nove. U siječnju je stranica nove godine već "pročitana"."""
+    pages = {"2026": SN_PAGE, "2025": None}
+
+    def get(url):
+        if "zavod" in url:
+            return REGISTRY
+        if "sifra=51513" in url:
+            page = pages[url[-4:]]
+            if page is None:
+                raise OSError("mreža")
+            return page
+        return "<a href='default.asp?Link=popis&sifra=00001'>Županija</a>"
+
+    state = State(tmp_path / "s.db")
+    planwatch.check(get, state, 2026).save(state)                       # 1. tjedan: početno stanje
+    pages["2026"] += '<a href="default.asp?Link=odluke&id=101">Odluka o donošenju UPU 1 Omišalj</a>'
+    week2 = planwatch.check(get, state, 2026)
+    assert [d.url[-3:] for d in week2.new] == ["101"]
+    week2.save(state)
+    pages["2025"] = SN_PAGE.replace("5170", "5150")                        # proradila: stare odluke
+    week3 = planwatch.check(get, state, 2026)
+    assert week3.new == []
+    week3.save(state)
+    january = '<a href="default.asp?Link=odluke&id=201">Odluka o izradi izmjena PPUO Omišalj</a>'
+    pages.update({"2027": january, "2026": pages["2026"]})
+    assert [d.url[-3:] for d in planwatch.check(get, state, 2027).new] == ["201"]
     state.close()
 
 

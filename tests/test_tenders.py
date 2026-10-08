@@ -64,6 +64,10 @@ def test_reader_wp_rss_page():
     assert items[0].published == "2026-09-21" and "k.č. 12/3" in items[0].text
     items = reader.fetch({"naziv": "Općina Baška", "jls": "Baška", "nacin": "rss", "url": "https://b.hr/"})
     assert items[0].published == "2026-09-21" and items[0].url == "https://b.hr/n1"
+    # Datum u Zagrebu (22:30 UTC je sljedeći dan), i dan jednom znamenkom.
+    http.routes["b.hr"] = rss.replace("Mon, 21 Sep 2026 08:00:00 +0000", "Wed, 7 Oct 2026 22:30:00 +0000")
+    items = reader.fetch({"naziv": "Općina Baška", "jls": "Baška", "nacin": "rss", "url": "https://b.hr/"})
+    assert items[0].published == "2026-10-08"
     items = reader.fetch({"naziv": "Općina Dobrinj", "jls": "Dobrinj", "nacin": "stranica", "url": "https://dobrinj.hr/natj"})
     assert [t.url for t in items] == ["https://dobrinj.hr/natjecaj-zemljiste", "https://dobrinj.hr/x.pdf"]
     # Regionalno tijelo: zadržava se samo objava koja spominje naše područje.
