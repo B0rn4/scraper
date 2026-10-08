@@ -1,0 +1,91 @@
+[
+ {
+  "ulaz": "obrisi:45.36394119,14.29045963",
+  "oblici": {
+   "225_kml": {
+    "status": 200,
+    "vrsta": "application/vnd.google-earth.kml+xml",
+    "bajtova": 68899,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:ns2=\"http://www.google.com/kml/ext/2.2\" xmlns:ns3=\"http://www.w3.org/2005/Atom\" xmlns:ns4=\"urn"
+   },
+   "225_kml_vektor": {
+    "status": 200,
+    "vrsta": "application/vnd.google-earth.kml+xml",
+    "bajtova": 68899,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:ns2=\"http://www.google.com/kml/ext/2.2\" xmlns:ns3=\"http://www.w3.org/2005/Atom\" xmlns:ns4=\"urn"
+   },
+   "225_kml_atributi": {
+    "status": 200,
+    "vrsta": "application/vnd.google-earth.kml+xml",
+    "bajtova": 68899,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:ns2=\"http://www.google.com/kml/ext/2.2\" xmlns:ns3=\"http://www.w3.org/2005/Atom\" xmlns:ns4=\"urn"
+   },
+   "225_svg": {
+    "status": 200,
+    "vrsta": "image/svg+xml",
+    "bajtova": 756,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN'\n          'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>\n<svg color-interpolation=\"auto\" color-render"
+   },
+   "225_png": {
+    "status": 200,
+    "vrsta": "image/png",
+    "bajtova": 7696,
+    "pocetak": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0002\u001c\u0000\u0000\u0002\u001c\b\u0006\u0000\u0000\u0000��w|\u0000\u0000\u001d�IDATx^�ֱ\r\u00001\f\u0003�쿴3�\u0015\u0002X|\u001b\u0001o\u0016�����\u0003\u0006\u0018`�\u0001\u0006\u0018(\r�\r��\u0000\u0003\f0�\u0000\u0003��|��%o�q\u0006\u0018`�\u0001\u00066\f\b\u000eU�\u0000\u0003\f0�\u0000\u0003��|@yn��;�\u0013\u0003\f0�@i@p�Z\u0006\u0018`�\u0001\u0006\u0018�\r�\u0003e-y[�3�\u0000\u0003\f0�a@p�Z\u0006\u0018`�\u0001\u0006\u0018�\r�\u0003�s�<�ɝ\u0018`�\u0001\u0006J\u0003�C�2�\u0000\u0003"
+   },
+   "225_json": {
+    "status": 200,
+    "vrsta": "application/vnd.ogc.se_xml",
+    "bajtova": 365,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"https://gis4.mgipu.hr/srv1/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1"
+   },
+   "225_geojson": {
+    "status": 200,
+    "vrsta": "application/vnd.ogc.se_xml",
+    "bajtova": 369,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"https://gis4.mgipu.hr/srv1/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1"
+   },
+   "224_kml": {
+    "status": 200,
+    "vrsta": "application/vnd.google-earth.kml+xml",
+    "bajtova": 1120,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:ns2=\"http://www.google.com/kml/ext/2.2\" xmlns:ns3=\"http://www.w3.org/2005/Atom\" xmlns:ns4=\"urn"
+   },
+   "224_kml_vektor": {
+    "status": 200,
+    "vrsta": "application/vnd.google-earth.kml+xml",
+    "bajtova": 1120,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:ns2=\"http://www.google.com/kml/ext/2.2\" xmlns:ns3=\"http://www.w3.org/2005/Atom\" xmlns:ns4=\"urn"
+   },
+   "224_kml_atributi": {
+    "status": 200,
+    "vrsta": "application/vnd.google-earth.kml+xml",
+    "bajtova": 1120,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?>\n<kml xmlns=\"http://www.opengis.net/kml/2.2\" xmlns:ns2=\"http://www.google.com/kml/ext/2.2\" xmlns:ns3=\"http://www.w3.org/2005/Atom\" xmlns:ns4=\"urn"
+   },
+   "224_svg": {
+    "status": 200,
+    "vrsta": "image/svg+xml",
+    "bajtova": 756,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n<!DOCTYPE svg PUBLIC '-//W3C//DTD SVG 1.0//EN'\n          'http://www.w3.org/TR/2001/REC-SVG-20010904/DTD/svg10.dtd'>\n<svg color-interpolation=\"auto\" color-render"
+   },
+   "224_png": {
+    "status": 200,
+    "vrsta": "image/png",
+    "bajtova": 7696,
+    "pocetak": "�PNG\r\n\u001a\n\u0000\u0000\u0000\rIHDR\u0000\u0000\u0002\u001c\u0000\u0000\u0002\u001c\b\u0006\u0000\u0000\u0000��w|\u0000\u0000\u001d�IDATx^�ֱ\r\u00001\f\u0003�쿴3�\u0015\u0002X|\u001b\u0001o\u0016�����\u0003\u0006\u0018`�\u0001\u0006\u0018(\r�\r��\u0000\u0003\f0�\u0000\u0003��|��%o�q\u0006\u0018`�\u0001\u00066\f\b\u000eU�\u0000\u0003\f0�\u0000\u0003��|@yn��;�\u0013\u0003\f0�@i@p�Z\u0006\u0018`�\u0001\u0006\u0018�\r�\u0003e-y[�3�\u0000\u0003\f0�a@p�Z\u0006\u0018`�\u0001\u0006\u0018�\r�\u0003�s�<�ɝ\u0018`�\u0001\u0006J\u0003�C�2�\u0000\u0003"
+   },
+   "224_json": {
+    "status": 200,
+    "vrsta": "application/vnd.ogc.se_xml",
+    "bajtova": 365,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"https://gis4.mgipu.hr/srv1/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1"
+   },
+   "224_geojson": {
+    "status": 200,
+    "vrsta": "application/vnd.ogc.se_xml",
+    "bajtova": 369,
+    "pocetak": "<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"https://gis4.mgipu.hr/srv1/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1"
+   }
+  }
+ }
+]
