@@ -38,7 +38,8 @@ jobs:
       - name: Instaliraj ovisnosti
         run: |
           pip install -r requirements.txt
-          sudo apt-get install -y -qq poppler-utils > /dev/null
+          # poppler (PDF u tekst) treba samo naredbi "preuzmi"; zastarjeli popis paketa ne smije srušiti ostale.
+          { sudo apt-get update -qq && sudo apt-get install -y -qq poppler-utils; } > /dev/null || echo "poppler-utils nije instaliran"
 
       - name: Grana debug
         env:
