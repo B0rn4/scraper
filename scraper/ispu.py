@@ -273,6 +273,8 @@ class Ispu:
         circle = [(cx + radius * math.cos(2 * math.pi * i / _CIRCLE_SIDES),
                    cy + radius * math.sin(2 * math.pi * i / _CIRCLE_SIDES)) for i in range(_CIRCLE_SIDES)]
         box = (cx - radius - 20, cy - radius - 20, cx + radius + 20, cy + radius + 20)
+        half = max(radius + 20, 300)        # upit: obrisi koji sijeku kvadrat dolaze cijeli
+        query = (cx - half, cy - half, cx + half, cy + half)
         full = math.pi * radius ** 2 * math.cos(math.pi / _CIRCLE_SIDES) * math.sin(math.pi / _CIRCLE_SIDES) \
             / (math.pi / _CIRCLE_SIDES)                    # površina 256-kuta (≈ krug)
         shares: dict[str, float] = {}
@@ -281,7 +283,7 @@ class Ispu:
                 continue
             kind = "izvan naselja" if "izvan naselja" in la["label"].get("hr", "") else "naselja"
             area = sum(clip_area(outer, box, circle) - sum(clip_area(h, box, circle) for h in holes)
-                       for outer, holes in self._polygons(la, box))
+                       for outer, holes in self._polygons(la, query))
             shares[kind] = min(1.0, shares.get(kind, 0.0) + max(0.0, area) / full)
         return center, shares
 
@@ -289,11 +291,13 @@ class Ispu:
         """Obrisi sloja koji sijeku pravokutnik (HTRS96/TM): [(vanjski prsten, [rupe])]."""
         params = {"layerHash": layer["hash"], "serviceId": layer["serviceId"], "SERVICE": "WMS", "VERSION": "1.1.1",
                   "REQUEST": "GetMap", "LAYERS": layer["layers"], "STYLES": "", "SRS": "EPSG:3765",
-                  "BBOX": ",".join(f"{v:.0f}" for v in box), "WIDTH": 512, "HEIGHT": 512,
-                  "FORMAT": "application/vnd.google-earth.kml+xml", "FORMAT_OPTIONS": "kmscore:100;kmattr:true"}
+                  "BBOX": ",".join(f"{v:.0f}" for v in box), "WIDTH": 540, "HEIGHT": 540, "TRANSPARENT": "true",
+                  "FORMAT": "application/vnd.google-earth.kml+xml", "FORMAT_OPTIONS": "kmscore:100"}
+        # GeoServer je jednom vratio NullPointerException za mali kvadrat: drugi pokušaj bez opcija.
         for attempt in range(2):
             if attempt:
                 time.sleep(self.retry_pause)
+                params.pop("FORMAT_OPTIONS", None)
             r = self.session.get(API + "gis/wms", params=params, headers=HEADERS, timeout=self.timeout)
             if r.status_code == 200 and "<kml" in r.text[:2000]:
                 break
