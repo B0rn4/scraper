@@ -1,0 +1,31 @@
+[
+ {
+  "ulaz": "https://www.nekretnine.hr/oglasi/4253231/",
+  "lat": 45.36394119,
+  "lon": 14.29045963,
+  "oznaka": "only_area",
+  "sredina": {
+   "gp": "u građevinskom području naselja (izgrađeni dio)",
+   "namjena": "(GP) IZGRAĐENI DIO GRAĐEVINSKOG PODRUČJA NASELJA",
+   "blok": "RUKAVAC - GRAĐEVINSKO PODRUČJE",
+   "ppv_gradevinsko": [
+    52.81
+   ],
+   "kulturna_dobra": []
+  },
+  "krug_m": 200,
+  "krug": [
+   "naselja",
+   "naselja",
+   "naselja",
+   "naselja",
+   "naselja",
+   null,
+   "naselja",
+   null,
+   "naselja"
+  ],
+  "redak": "🗺 Granica građevinskog područja je blizu – ISPU, oko približne oznake na karti (krug 200 m, 9 točaka): naselja 7 od 9; točnu česticu provjeri",
+  "upozorenje": ""
+ }
+]
