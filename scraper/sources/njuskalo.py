@@ -138,6 +138,8 @@ def parse_detail(page: str, listing: Listing) -> None:
                       ("namjena", "namjena")):
         if fields.get(key):
             listing.extra[name] = fields[key]
+    if "ClassifiedDetailUnavailableNotice" in page:
+        listing.extra["neaktivan"] = True     # "Ovaj oglas je neaktivan." (istekao, prodan, povučen)
     listing.extra["detalji"] = True
     listing.extra.pop("samo_popis", None)
     listing.extra.pop("povrsina_iz_teksta", None)
@@ -226,7 +228,8 @@ class Njuskalo(Source):
             if own_browser:
                 browser.close()
         # Odgođeni oglasi se pamte (runner) i otvaraju sljedeći put, i kad su pali s pročitanih stranica.
-        return [x for x in found.values() if x.source_id not in later]
+        # Oglas koji je u međuvremenu istekao (odgođen pa otvoren kasnije) ne stiže.
+        return [x for x in found.values() if x.source_id not in later and not x.extra.get("neaktivan")]
 
 
     def search_links(self):
