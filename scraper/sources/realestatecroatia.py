@@ -98,19 +98,25 @@ class RealEstateCroatia(Source):
                              f"&cijenaDo={int(cap)}&page={page}").text
 
     deep_daily = True   # popis je po broju oglasa: sniženje ispod granice vidi se samo dubljim čitanjem
+    deep_from: dict = {}      # dublje čitanje: od koje stranice se nastavlja (po vrsti; postavlja runner)
+    deep_reached: dict = {}   # dokle je stiglo ovo pokretanje (nema vrste = pročitano do kraja)
 
     def fetch(self, mode, known_ids):
         found: dict[str, Listing] = {}
-        # Jednom dnevno (deep) cijeli popis do granice cijene, najviše DEEP_SECONDS: oglas koji
-        # je bio skuplji od granice pa pojeftinio pojavi se duboko, na mjestu svog broja.
+        # Jednom dnevno (deep) cijeli popis do granice cijene: oglas koji je bio skuplji od granice
+        # pa pojeftinio pojavi se duboko, na mjestu svog broja. Najviše DEEP_SECONDS po vrsti i
+        # pokretanju; nedočitano se nastavlja sljedeće pokretanje (deep_from → deep_reached, stranica
+        # ranije zbog novih oglasa koji guraju popis), dok popis nije pročitan do kraja.
         deep = mode != FULL and self.deep
-        self.deep_error = ""
+        self.deep_error, self.deep_reached = "", {}
         for vrsta, kind, key in KINDS:
             cap = self.criteria[key]["max_cijena"]
             deadline = time.monotonic() + DEEP_SECONDS
             regular_done = False             # redovno čitanje bi ovdje stalo (dalje je samo dublje)
-            for page in range(1, (250 if mode == FULL or deep else 10) + 1):   # redovno: staje kod poznatih
-                if deep and page > 1 and time.monotonic() > deadline:
+            page, last = 1, (250 if mode == FULL or deep else 10)   # redovno: staje kod poznatih
+            while page <= last:
+                if deep and regular_done and time.monotonic() > deadline:
+                    self.deep_reached[key] = page
                     break
                 try:
                     items = parse_list(self._list(vrsta, cap, page), kind)
@@ -119,6 +125,7 @@ class RealEstateCroatia(Source):
                         raise
                     # Greška na dubljoj stranici ne ruši redovno čitanje (novi oglasi s vrha ostaju).
                     self.deep_error = f"{key}, stranica {page}: {type(exc).__name__}: {exc}"[:200]
+                    self.deep_reached[key] = page
                     break
                 if page == 1 and not items:      # kuća i zemljišta u PGŽ-u uvijek ima
                     raise RuntimeError(f"realestatecroatia.com: popis {key} je prazan (promjena stranice?)")
@@ -132,6 +139,12 @@ class RealEstateCroatia(Source):
                     regular and min(regular, key=lambda x: int(x.source_id)).source_id in known_ids)
                 if len(items) < PAGE_SIZE or (mode != FULL and not deep and regular_done):
                     break
+                page += 1
+                if deep and regular_done:
+                    page = max(page, (self.deep_from or {}).get(key, 0) - 1)
+            else:
+                if deep:
+                    self.deep_reached[key] = page        # 250 stranica: ostatak sljedeći put
         if mode == FULL:
             return list(found.values())
         self.add_pending(found, known_ids)

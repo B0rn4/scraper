@@ -1522,6 +1522,22 @@ def test_incomplete_read_keeps_since_for_next_run(tmp_path):
     assert len(alerts) == 2                                               # javljeno jednom
     read(False)
     assert alerts[-1][0] == "Scraper: Njuškalo ponovno čita sve nove oglase"
+    assert "Nakon prve poruke nisu pročitani" in alerts[-1][1] and "do 08.10. 06:12" in alerts[-1][1]
+    state.close()
+
+
+def test_failed_one_off_alert_is_retried(tmp_path):
+    """Jednokratno upozorenje (npr. nepročitani oglasi) koje ne prođe čeka i šalje se sljedeći put."""
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    r._alert = lambda subject, text: False
+    r._alert_or_queue(state, "Scraper: Njuškalo – dio oglasa nije pročitan", "x")
+    r._retry_alerts(state)
+    sent = []
+    r._alert = lambda subject, text: sent.append(subject)
+    r._retry_alerts(state)
+    r._retry_alerts(state)
+    assert sent == ["Scraper: Njuškalo – dio oglasa nije pročitan"]
     state.close()
 
 
@@ -1822,20 +1838,30 @@ def test_source_without_new_listings_is_reported(tmp_path):
 
 
 def test_deep_read_failure_is_tracked_not_fatal(tmp_path):
-    """Dnevno dublje čitanje koje staje na grešci: upozorenje nakon DEEP_ALERT_DAYS dana zaredom."""
+    """Dnevno dublje čitanje koje ne pročita cijeli popis (vrijeme, greška) nastavlja se; ne završi
+    li DEEP_ALERT_DAYS dana, upozorenje (jednom) sa zadnjom greškom, i kad opet završi."""
+    from datetime import timedelta
     from types import SimpleNamespace as NS
 
     from scraper.runner import DEEP_ALERT_DAYS
 
     alerts = []
     r = Runner(tmp_path / "s.db", tmp_path, send=False)
-    r._alert = lambda subject, text: alerts.append(subject)
+    r._alert = lambda subject, text: alerts.append((subject, text))
     state = State(tmp_path / "s.db")
-    for _ in range(DEEP_ALERT_DAYS + 1):
-        r._deep_health(state, NS(name="realestatecroatia", label="realestatecroatia.com", deep_error="stranica 40: HTTP 500"))
-    assert alerts == ["Scraper: realestatecroatia.com – dnevno dublje čitanje ne uspijeva"]
-    r._deep_health(state, NS(name="realestatecroatia", label="realestatecroatia.com", deep_error=""))
-    assert alerts[-1] == "Scraper: realestatecroatia.com – dnevno dublje čitanje ponovno radi"
+    state.meta_set("dubinsko:realestatecroatia", (r.now - timedelta(days=DEEP_ALERT_DAYS)).date().isoformat())
+    src = NS(name="realestatecroatia", label="realestatecroatia.com", deep_error="zemljiste, stranica 40: HTTP 500",
+             deep_reached={"zemljiste": 40})
+    r._deep_health(state, src, done=False)
+    assert alerts == []                                                   # još u roku
+    r.now += timedelta(days=1)
+    r._deep_health(state, NS(name="realestatecroatia", label="realestatecroatia.com", deep_error="",
+                             deep_reached={"zemljiste": 41}), done=False)
+    r._deep_health(state, src, done=False)
+    assert [a[0] for a in alerts] == ["Scraper: realestatecroatia.com – dnevno dublje čitanje ne završava"]
+    assert "HTTP 500" in alerts[0][1] and "zemljiste od stranice 41" in alerts[0][1]
+    r._deep_health(state, NS(name="realestatecroatia", label="realestatecroatia.com", deep_error=""), done=True)
+    assert alerts[-1][0] == "Scraper: realestatecroatia.com – dnevno dublje čitanje ponovno radi"
     state.close()
 
 
@@ -1854,3 +1880,42 @@ def test_weekly_marks_stale_redmi_rows_unknown(tmp_path):
     r._weekly_plans = lambda: None
     r.weekly(record=False)
     assert "Redmi – Njuškalo: ❔ nepoznato – stanje s Redmija od 2026-10-09 14:12" in bodies[0]
+
+
+def test_failed_listing_is_retried_even_if_source_no_longer_lists_it(tmp_path, monkeypatch):
+    """Izvor koji ne čita odgođene (index, nekretnine…): oglas koji se pri obradi srušio i pao s
+    pročitanih stranica obrađuje se ponovno iz reda (runner), pa stiže kad greška prođe."""
+    import scraper.runner as runner_mod
+
+    calls = {"n": 0}
+    real = runner_mod.Runner._notify_reason
+
+    def flaky(self, x, d, old):
+        if x.key == "t:5" and calls["n"] == 0:
+            calls["n"] += 1
+            raise KeyError("jednom")
+        return real(self, x, d, old)
+
+    monkeypatch.setattr(runner_mod.Runner, "_notify_reason", flaky)
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="1")], [listing(sid="1"), listing(sid="5")], [listing(sid="1")],
+                                         [listing(sid="1")]])
+    assert sent[1] == [] and sent[2] == [("t:5", "")] and sent[3] == []
+
+
+def test_interrupt_during_processing_keeps_price_drop(tmp_path, monkeypatch):
+    """Prekid (Ctrl+C, otkazan posao) usred obrade: nezapisano se odbacuje – nova cijena ne ostaje
+    zapisana bez obavijesti, pa sniženje stiže sljedeći put."""
+    import scraper.runner as runner_mod
+
+    real = runner_mod.Runner._enrich
+
+    def interrupt(self, x, d, prices):
+        if x.price == 280_000 and not getattr(interrupt, "done", False):
+            interrupt.done = True
+            raise Killed()
+        return real(self, x, d, prices)
+
+    monkeypatch.setattr(runner_mod.Runner, "_enrich", interrupt)
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="1")], [listing(sid="1")], [listing(280_000, "1")],
+                                         [listing(280_000, "1")]])
+    assert sent[2] == [] and sent[3] and sent[3][0][1].startswith("📉 Snižena cijena")

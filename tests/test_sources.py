@@ -998,3 +998,50 @@ def test_njuskalo_list_without_dates_is_an_error():
     src.since = "2026-10-08T16:20:00+02:00"
     with pytest.raises(RuntimeError, match="nemaju datum"):
         src.fetch(INCREMENTAL, {"1"})
+
+
+def test_realestatecroatia_deep_read_resumes_where_it_stopped(monkeypatch):
+    """Dublje čitanje ograničeno vremenom: sljedeće pokretanje nastavlja od stranice gdje je stalo
+    (jednu ranije – novi oglasi guraju popis), dok popis nije pročitan do kraja."""
+    from scraper.sources import realestatecroatia as rc
+    from scraper.sources.base import INCREMENTAL
+
+    def fake_parse(text, kind):
+        vrsta, page = text
+        if kind != HOUSE:
+            return [Listing(source="realestatecroatia", source_id="5", url="u", title="Zemljište", kind=LAND,
+                            price=100_000, area=800, extra={"istaknut": False})]
+        if page > 9:
+            return []
+        start = 3001 - (page - 1) * rc.PAGE_SIZE
+        return [Listing(source="realestatecroatia", source_id=str(start - i), url="u", title="Kuća", kind=HOUSE,
+                        price=380_000, area=120, extra={"istaknut": False}) for i in range(rc.PAGE_SIZE)]
+
+    clock = {"t": 0.0}
+    pages = []
+
+    def fake_list(vrsta, cap, page):
+        clock["t"] += 100                                                  # svaka stranica "100 s"
+        pages.append(page)
+        return (vrsta, page)
+
+    monkeypatch.setattr(rc, "parse_list", fake_parse)
+    monkeypatch.setattr(rc.time, "monotonic", lambda: clock["t"])
+    src = rc.RealEstateCroatia(None, Locator(), load_config()["kriteriji"])
+    src._list = fake_list
+    src.worth_detail = lambda x: False
+    known = {str(i) for i in range(2700, 3001)} | {"5"}
+    src.deep, src.deep_from = True, {}
+    src.fetch(INCREMENTAL, known)
+    assert src.deep_reached == {"kuca": 4}                                 # 240 s: stranice 1–3
+    pages.clear()
+    src.deep_from = src.deep_reached
+    src.fetch(INCREMENTAL, known)
+    assert pages == [1, 3, 4, 1] and src.deep_reached == {"kuca": 5}     # 1. (novi), pa od 3.; zemljišta
+    for _ in range(10):
+        if not src.deep_reached:
+            break
+        src.deep_from = src.deep_reached
+        pages.clear()
+        src.fetch(INCREMENTAL, known)
+    assert 10 in pages and src.deep_reached == {}                          # do kraja popisa

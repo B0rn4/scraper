@@ -216,6 +216,10 @@ class Runner:
                 # Jednom dnevno, poslijepodne (jutarnje pokretanje već ima dnevne provjere).
                 src.deep = (getattr(src, "deep_daily", False) and not first and self.now.hour >= 12
                             and state.meta_get(f"dubinsko:{src.name}") != today)
+                try:     # dublje čitanje koje nije stiglo do kraja nastavlja se gdje je stalo
+                    src.deep_from = json.loads(state.meta_get(f"dubinsko_str:{src.name}") or "{}")
+                except ValueError:
+                    src.deep_from = {}
                 src.pending = [] if first else self._load_pending(state, src.name)
                 src.captcha_until = state.meta_get(f"stanka:{src.name}") or ""   # nakon captche (Njuškalo)
                 self.log(f"{src.label}: dohvat ({'početni, cijelo područje' if first else 'najnoviji'})")
@@ -226,6 +230,11 @@ class Runner:
                 except Exception as exc:  # noqa: BLE001
                     self._source_failed(state, src, exc)
                     continue
+                # Oglasi koji se prošli put nisu dali obraditi: ponovno, i kad ih izvor ovaj put nije
+                # pročitao (index, nekretnine… ne čitaju odgođene; oglas je mogao pasti na 3. stranicu).
+                have = {x.key for x in listings} | {x.key for x in getattr(src, "deferred", [])}
+                listings = listings + [p for p in src.pending if p.extra.get("greska_obrade")
+                                       and p.key not in have and not state.get(p.key)]
                 decided, errors, failed = [], [], []
                 silent_baseline = first and not getattr(src, "baseline_report", True)
                 if not state.conn.in_transaction:
@@ -304,8 +313,6 @@ class Runner:
                 self._listing_errors(state, src, errors, failed)
                 self._detail_health(state, src)
                 self._read_gap(state, src)
-                if getattr(src, "deep", False):
-                    self._deep_health(state, src)
                 self._fresh_health(state, src)
                 counts = {s: sum(1 for _, d in decided if d.status == s) for s in (PASS, WARN, REJECT)}
                 self.log(f"{src.label}: {len(listings)} oglasa – ✅ {counts[PASS]}, ⚠ {counts[WARN]}, ❌ {counts[REJECT]}")
@@ -316,7 +323,11 @@ class Runner:
                 if src.daily:
                     state.meta_set(f"daily:{src.name}", today)
                 if getattr(src, "deep", False):
-                    state.meta_set(f"dubinsko:{src.name}", today)
+                    reached = getattr(src, "deep_reached", None) or {}
+                    state.meta_set(f"dubinsko_str:{src.name}", json.dumps(reached))
+                    if not reached:                 # cijeli popis pročitan: do sutra ne treba
+                        state.meta_set(f"dubinsko:{src.name}", today)
+                    self._deep_health(state, src, done=not reached)
                 state.conn.commit()
                 # Red obavijesti se sprema odmah: ako pokretanje stane prije slanja (istek
                 # vremena, prekid), sljedeće ih pošalje i kad ih portal više ne prikazuje.
@@ -350,6 +361,7 @@ class Runner:
             except Exception as exc:  # noqa: BLE001
                 self.log(f"PPV podsjetnik: GREŠKA {type(exc).__name__}: {exc}")
             self._retry_weekly(state)
+            self._retry_alerts(state)
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
                 self._check_redmi(state)
@@ -357,6 +369,11 @@ class Runner:
                 self._check_github(state)
             if self.device == "github":
                 self._export(state)
+        except BaseException:
+            # Prekid (Ctrl+C, otkazan posao) usred obrade: nezapisano se odbacuje, kao kad proces
+            # ubije sustav – inače bi nova cijena ostala zapisana, a obavijest o sniženju ne bi čekala.
+            state.conn.rollback()
+            raise
         finally:
             state.close()
 
@@ -1368,17 +1385,24 @@ class Runner:
         """Čitanje stalo prije oglasa od prošlog pokretanja (Njuškalo: najviše stranica, stranica se
         nije učitala): sljedeće pokretanje jednom čita dublje od istog trenutka ("od:"). Ne zatvori
         li se ni tada, više se ne može (oglasi u praznini samo tonu niže): upozorenje s poveznicom za
-        ručni pregled, a čitanje se nastavlja od sada. Kad čitanje ponovno stiže do kraja nakon
-        ponovljenih praznina (npr. druga stranica se ne učitava), još jedna poruka."""
+        ručni pregled, a čitanje se nastavlja od sada. Daljnja nepročitana razdoblja prije nego što
+        čitanje opet stigne do kraja skupljaju se i stižu u poruci kad stigne (ništa se ne preskače)."""
         key = f"{src.name}:praznina"
+        more = f"praznine:{src.name}"
         row = next((h for h in state.health_all() if h["source"] == key), None)
         if not getattr(src, "incomplete", False) or not src.since:
             state.meta_set(f"od:{src.name}", "")
             if row and row.get("failures"):
                 state.health_ok(key, self.stamp)
+                periods = json.loads(state.meta_get(more) or "[]")
+                state.meta_set(more, "[]")
                 if row.get("alerted") and row["failures"] > 1:
-                    self._alert(f"Scraper: {src.label} ponovno čita sve nove oglase",
-                                f"Čitanje popisa ponovno stiže do oglasa od prošlog pokretanja ({self.stamp[:16].replace('T', ' ')}).")
+                    links = "\n".join(f"{label}: {url}" for label, url in src.search_links())
+                    self._alert_or_queue(
+                        state, f"Scraper: {src.label} ponovno čita sve nove oglase",
+                        f"Čitanje popisa ponovno stiže do oglasa od prošlog pokretanja ({self.stamp[:16].replace('T', ' ')})."
+                        + (f"\n\nNakon prve poruke nisu pročitani ni oglasi objavljeni ili ponovno objavljeni "
+                           f"{'; '.join(periods)} – pogledaj ih ručno:\n{links}" if periods else ""))
             return
         if not getattr(src, "catch_up", False):
             self.log(f"{src.label}: nije dočitano do oglasa od {src.since[:16]} – sljedeće pokretanje čita dublje")
@@ -1389,15 +1413,37 @@ class Runner:
         reason = getattr(src, "deep_error", "")
         self.log(f"{src.label}: oglasi {period} nisu pročitani ni dubljim čitanjem – nastavlja se od sada"
                  + (f" ({reason})" if reason else ""))
-        failures, alerted = state.health_fail(key, f"nepročitano {period}" + (f": {reason}" if reason else ""))
+        _, alerted = state.health_fail(key, f"nepročitano {period}" + (f": {reason}" if reason else ""))
+        if alerted:                     # već javljeno: razdoblje stiže u poruci kad čitanje opet stigne do kraja
+            state.meta_set(more, json.dumps(json.loads(state.meta_get(more) or "[]")[-20:] + [period], ensure_ascii=False))
+            return
         links = "\n".join(f"{label}: {url}" for label, url in src.search_links())
-        if not alerted and self._alert(
-                f"Scraper: {src.label} – dio oglasa nije pročitan",
-                f"{src.label}: oglasi objavljeni ili ponovno objavljeni {period} nisu pročitani – bilo ih je više "
-                "nego što se čita u dva pokretanja" + (f" (dublje čitanje stalo: {reason})" if reason else "")
-                + f". Među njima može biti nov oglas; pogledaj ih ručno:\n{links}\n\nAko se ova poruka "
-                "ponavlja, javi Claudeu.") is not False:
-            state.mark_alerted(key)
+        self._alert_or_queue(
+            state, f"Scraper: {src.label} – dio oglasa nije pročitan",
+            f"{src.label}: oglasi objavljeni ili ponovno objavljeni {period} nisu pročitani – bilo ih je više nego što "
+            "se čita u dva pokretanja" + (f" (dublje čitanje stalo: {reason})" if reason else "")
+            + f". Među njima može biti nov oglas; pogledaj ih ručno:\n{links}\n\nAko se ponavlja, daljnja "
+            "razdoblja stižu u jednoj poruci kad čitanje opet stigne do kraja; javi Claudeu.")
+        state.mark_alerted(key)
+
+    def _alert_or_queue(self, state: State, subject: str, text: str) -> None:
+        """Jednokratno upozorenje (nema retka stanja koji bi ga ponovio): ne prođe li sad, čeka u
+        meta "upozorenja" i šalje se sljedećih pokretanja (najviše 7 dana)."""
+        if self._alert(subject, text) is False:
+            queued = json.loads(state.meta_get("upozorenja") or "[]")
+            state.meta_set("upozorenja", json.dumps(queued[-20:] + [{"naslov": subject, "tekst": text, "od": self.stamp}],
+                                                    ensure_ascii=False))
+
+    def _retry_alerts(self, state: State) -> None:
+        try:
+            queued = json.loads(state.meta_get("upozorenja") or "[]")
+        except ValueError:
+            queued = []
+        if not queued:
+            return
+        oldest = (self.now - timedelta(days=UNSENT_DAYS)).isoformat(timespec="seconds")
+        left = [a for a in queued if a.get("od", "") >= oldest and self._alert(a["naslov"], a["tekst"]) is False]
+        state.meta_set("upozorenja", json.dumps(left, ensure_ascii=False))
 
     def _listing_errors(self, state: State, src, errors: list[str], failed: list[Listing]) -> None:
         """Oglasi koji se ne daju obraditi (greška u programu za neobičan oglas) ne stižu, a izvor
@@ -1458,25 +1504,40 @@ class Runner:
         if self._alert(subject, text) is not False:
             state.mark_alerted(key)
 
-    def _deep_health(self, state: State, src) -> None:
-        """Dnevno dublje čitanje (realestatecroatia) koje staje na grešci ne ruši izvor, ali se
-        prati: DEEP_ALERT_DAYS dana zaredom → upozorenje (sniženja starijih oglasa se ne vide)."""
+    def _deep_health(self, state: State, src, done: bool) -> None:
+        """Dnevno dublje čitanje (realestatecroatia) staje na ograničenju vremena ili na grešci i
+        nastavlja se sljedeće pokretanje. Ne pročita li cijeli popis DEEP_ALERT_DAYS dana,
+        upozorenje (jednom) – sniženja starijih oglasa ispod granice cijene tada se ne vide."""
         key = f"{src.name}:dubinsko"
         row = next((h for h in state.health_all() if h["source"] == key), None)
         error = getattr(src, "deep_error", "")
-        if not error:
+        if error:
+            self.log(f"{src.label}: dublje čitanje stalo – {error}")
+            state.meta_set(f"dubinsko_greska:{src.name}", error)
+        if done:
+            state.meta_set(f"dubinsko_greska:{src.name}", "")
             if row and row.get("failures"):
                 state.health_ok(key, self.stamp)
                 if row.get("alerted"):
                     self._alert(f"Scraper: {src.label} – dnevno dublje čitanje ponovno radi",
-                                "Ponovno se vide i sniženja starijih oglasa ispod granice cijene.")
+                                "Cijeli popis ponovno je pročitan: vide se i sniženja starijih oglasa ispod granice cijene.")
             return
-        self.log(f"{src.label}: dublje čitanje stalo – {error}")
-        failures, alerted = state.health_fail(key, error)
-        if failures >= DEEP_ALERT_DAYS and not alerted and self._alert(
-                f"Scraper: {src.label} – dnevno dublje čitanje ne uspijeva",
-                f"{src.label}: dnevno dublje čitanje {failures} dana zaredom staje na grešci:\n{error}\n\nNovi oglasi i "
-                "dalje stižu; ne vide se samo sniženja starijih oglasa ispod granice cijene. Javi Claudeu ovu poruku.") is not False:
+        last = state.meta_get(f"dubinsko:{src.name}") or (state.meta_get(f"baseline:{src.name}") or self.stamp)[:10]
+        try:
+            days = (self.now.date() - datetime.fromisoformat(last[:10]).date()).days
+        except ValueError:
+            return
+        if days <= DEEP_ALERT_DAYS:
+            return
+        error = state.meta_get(f"dubinsko_greska:{src.name}") or ""
+        where = ", ".join(f"{k} od stranice {v}" for k, v in (getattr(src, "deep_reached", None) or {}).items())
+        failures, alerted = state.health_fail(key, f"nije dočitano od {last[:10]}" + (f": {error}" if error else ""))
+        if not alerted and self._alert(
+                f"Scraper: {src.label} – dnevno dublje čitanje ne završava",
+                f"{src.label}: dnevno dublje čitanje nije pročitalo cijeli popis od {last[:10]} (ostaje {where})."
+                + (f"\nZadnja greška: {error}" if error else "")
+                + "\n\nNovi oglasi i dalje stižu; ne vide se samo sniženja starijih oglasa ispod granice cijene. "
+                  "Javi Claudeu ovu poruku.") is not False:
             state.mark_alerted(key)
 
     def _fresh_health(self, state: State, src) -> None:
