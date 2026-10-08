@@ -74,6 +74,9 @@ def parse_detail(page: str, x: Listing) -> None:
     plot = re.search(r"Okućnica:\s*([\d.,]+)\s*m2", text)
     desc = re.search(r"OPIS OBJEKTA\s*Hrvatski English Deutsch Italiano Ruski\s*(.*?)(?:Interni broj|REC ID)", text)
     image = re.search(r'(https://data\.realestatecroatia\.com/thumbnails/userimages/[^"\']+\.jpe?g)', page, re.I)
+    if not area and not desc:
+        # Ni površine ni opisa: stranica se promijenila (ili nije učitana), ne "oglas bez podataka".
+        raise ValueError("realestatecroatia.com: na stranici oglasa nema površine ni opisa")
     if area:
         x.area = parse_number(area.group(1))
     if plot and x.kind == HOUSE:
@@ -101,13 +104,22 @@ class RealEstateCroatia(Source):
         # Jednom dnevno (deep) cijeli popis do granice cijene, najviše DEEP_SECONDS: oglas koji
         # je bio skuplji od granice pa pojeftinio pojavi se duboko, na mjestu svog broja.
         deep = mode != FULL and self.deep
+        self.deep_error = ""
         for vrsta, kind, key in KINDS:
             cap = self.criteria[key]["max_cijena"]
             deadline = time.monotonic() + DEEP_SECONDS
+            regular_done = False             # redovno čitanje bi ovdje stalo (dalje je samo dublje)
             for page in range(1, (250 if mode == FULL or deep else 10) + 1):   # redovno: staje kod poznatih
                 if deep and page > 1 and time.monotonic() > deadline:
                     break
-                items = parse_list(self._list(vrsta, cap, page), kind)
+                try:
+                    items = parse_list(self._list(vrsta, cap, page), kind)
+                except Exception as exc:  # noqa: BLE001
+                    if not regular_done:
+                        raise
+                    # Greška na dubljoj stranici ne ruši redovno čitanje (novi oglasi s vrha ostaju).
+                    self.deep_error = f"{key}, stranica {page}: {type(exc).__name__}: {exc}"[:200]
+                    break
                 if page == 1 and not items:      # kuća i zemljišta u PGŽ-u uvijek ima
                     raise RuntimeError(f"realestatecroatia.com: popis {key} je prazan (promjena stranice?)")
                 for x in items:
@@ -116,8 +128,9 @@ class RealEstateCroatia(Source):
                 # Najnoviji prvi: kad je i najstariji redovni oglas na stranici poznat, dalje su
                 # samo stariji. (Ne "bilo koji poznat": oglasi odgođeni prošli put su između.)
                 regular = [x for x in items if not x.extra["istaknut"] and x.price]
-                if len(items) < PAGE_SIZE or (mode != FULL and not deep and regular and
-                                              min(regular, key=lambda x: int(x.source_id)).source_id in known_ids):
+                regular_done = regular_done or bool(
+                    regular and min(regular, key=lambda x: int(x.source_id)).source_id in known_ids)
+                if len(items) < PAGE_SIZE or (mode != FULL and not deep and regular_done):
                     break
         if mode == FULL:
             return list(found.values())
@@ -134,8 +147,10 @@ class RealEstateCroatia(Source):
             details += 1
             try:
                 parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x)
+                self.detail_result()
             except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                 x.extra["detalji_greska"] = str(exc)[:200]
+                self.detail_result(f"{type(exc).__name__}: {exc}")
                 if self.defer(x, failed=True):
                     continue
             out.append(x)

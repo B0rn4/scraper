@@ -245,8 +245,13 @@ chmod +x ~/.termux/boot/start-scraper
 ### Provjera
 
 U Ubuntuu `tail -30 ~/scraper.log` pokazuje zadnja pokretanja. Ako Redmi ne radi,
-GitHub nakon 90 minuta šalje mail „Redmi se ne javlja”; ako Redmi radi, ali ne može
-slati na Telegram, mail „Redmi ne može slati na Telegram”.
+GitHub nakon 90 minuta šalje mail „Redmi se ne javlja”; ako se Redmi javlja, ali
+pokretanja ne završavaju, „Redmi ne završava pokretanja” (tada pošalji Claudeu ispis
+`tail -40 ~/scraper.log`); ako Redmi radi, ali ne može slati na Telegram, mail „Redmi ne
+može slati na Telegram” (i njegova ostala upozorenja stižu mailom). Sat mobitela mjeri se
+prema GitHubu pri svakom pokretanju; odstupa li više od 10 minuta, stiže „Sat na Redmiju
+nije točan”. Radi li Redmi šest sati s drukčijim kodom od GitHuba, stiže „Redmi radi sa
+starim kodom”.
 
 Kod se osvježava sam pri svakom pokretanju (uvijek točno kao na GitHubu; izmjene u
 `~/scraper` na Redmiju se odbacuju), a novi paketi se instaliraju kad se promijeni

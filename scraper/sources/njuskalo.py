@@ -184,32 +184,53 @@ class Njuskalo(Source):
         own_browser = self.browser is None
         since = self.since_time()
         found: dict[str, Listing] = {}
-        self.incomplete = False
+        self.incomplete, self.reached, self.deep_error = False, "", ""
         pages = 1 if mode == FULL else (CATCHUP_PAGES if self.catch_up else MAX_PAGES)
+
+        def stopped(oldest: str) -> None:
+            """Čitanje kategorije stalo prije oglasa od prošlog pokretanja."""
+            if since and mode != FULL:
+                self.incomplete = True
+                self.reached = max(self.reached, oldest)
+
         try:
             for category, kind in CATEGORIES:
+                oldest = ""
                 for page in range(1, pages + 1):
-                    text = browser.get(_page_url(category, page), "li.EntityList-item")
-                    if _is_captcha(text):
-                        raise RuntimeError("Njuškalo je vratio captchu (zaštita ShieldSquare)")
+                    deep = page > MAX_PAGES
+                    if deep and self.deep_error:      # zaštita se već javila dublje: ne čita se dalje
+                        stopped(oldest)
+                        break
+                    try:
+                        text = browser.get(_page_url(category, page), "li.EntityList-item")
+                        if _is_captcha(text):
+                            raise RuntimeError("Njuškalo je vratio captchu (zaštita ShieldSquare)")
+                    except Exception as exc:  # noqa: BLE001
+                        if not deep:
+                            raise
+                        # Sustizanje je dodatak: captcha ili greška dublje ne ruši čitanje (pročitano
+                        # ostaje), a nepročitano javlja runner.
+                        self.deep_error = f"stranica {page}: {exc}"[:200]
+                        stopped(oldest)
+                        break
                     items = parse_list(text, kind)
                     if not items:
                         if page == 1:
                             raise RuntimeError(f"Njuškalo: na stranici {category} nema oglasa (promjena stranice?)")
                         # Popis tolikog područja ne završava nakon nekoliko stranica: stranica se
                         # nije učitala, a oglasi iza nje nisu pročitani.
-                        self.incomplete = self.incomplete or bool(since)
+                        stopped(oldest)
                         break
                     for x in items:
                         found.setdefault(x.source_id, x)
                     # Sljedeća stranica samo ako je i najstariji redovni oglas objavljen nakon
                     # prošlog pokretanja (inače smo sve novo već vidjeli).
                     dates = [x.published for x in items if not x.extra.get("istaknut") and x.published]
-                    oldest = min(dates) if dates else ""
-                    if not since or not oldest or datetime.fromisoformat(oldest.replace("Z", "+00:00")) < since:
+                    oldest = min(dates) if dates else oldest
+                    if not since or not dates or datetime.fromisoformat(oldest.replace("Z", "+00:00")) < since:
                         break
                 else:                   # najviše stranica, a oglasi od prošlog pokretanja nisu dosegnuti
-                    self.incomplete = self.incomplete or (bool(since) and mode != FULL)
+                    stopped(oldest)
             if mode != FULL:
                 self.add_pending(found, known_ids)
             threshold = _old_threshold(known_ids, found)
@@ -227,7 +248,7 @@ class Njuskalo(Source):
                     continue
                 if threshold is not None and int(x.source_id) <= threshold:
                     x.extra["stari_oglas"] = True
-                elif mode != FULL and self.worth_detail(x):
+                elif mode != FULL and not x.extra.get("detalji") and self.worth_detail(x):
                     # Sljedeći put (bez stranice oglasa stigao bi bez površine); čeka li predugo
                     # (MAX_DEFERRALS), stiže s podacima s popisa.
                     if details >= MAX_DETAILS or self.detail_blocked or past(deadline):
@@ -247,9 +268,10 @@ class Njuskalo(Source):
                         if "ClassifiedDetail" not in page:
                             raise RuntimeError("stranica oglasa bez podataka")
                         parse_detail(page, x)
-                        self.detail_ok = True
+                        self.detail_result()
                     except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                         x.extra["detalji_greska"] = str(exc)[:200]
+                        self.detail_result(f"{type(exc).__name__}: {exc}")
                         if self.defer(x, failed=True):
                             later.add(x.source_id)
         finally:

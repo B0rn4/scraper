@@ -27,14 +27,35 @@ SOURCE_LABELS = {
     "burza": "burza.com.hr",
     "njuskalo": "Njuškalo",
     "redmi": "Redmi (Njuškalo)",
-    # Stanje (tjedni izvještaj): nisu izvori oglasa.
+    # Stanje (tjedni izvještaj): nisu izvori oglasa. Dijelovi izvora ("njuskalo:oglasi") – health_label.
     "telegram": "Telegram",
     "github": "GitHub (nadzor)",
-    "njuskalo:oglasi": "Njuškalo – stranice oglasa",
-    "realestatecroatia:oglasi": "realestatecroatia.com – stranice oglasa",
-    "burza:oglasi": "burza.com.hr – stranice oglasa",
+    "mail": "Mail",
+    "sat": "Sat na Redmiju",
+    "cron-job": "cron-job.org (pokretanje GitHuba svakih 20 min)",
     "redmi:telegram": "Redmi – slanje na Telegram",
+    "redmi:kod": "Redmi – kod jednak GitHubovu",
 }
+_HEALTH_PARTS = {
+    "oglasi": "stranice oglasa",
+    "novi": "novi oglasi",
+    "obrada": "obrada oglasa",
+    "praznina": "svi novi oglasi pročitani",
+    "dubinsko": "dnevno dublje čitanje",
+}
+
+
+def health_label(key: str) -> str:
+    """Naziv retka stanja: "njuskalo:oglasi" → "Njuškalo – stranice oglasa", "redmi:njuskalo" →
+    "Redmi – Njuškalo" (upozorenje Redmija proslijeđeno s GitHuba)."""
+    if key in SOURCE_LABELS:
+        return SOURCE_LABELS[key]
+    base, _, part = key.partition(":")
+    if base == "redmi" and part:
+        return f"Redmi – {health_label(part)}"
+    if part in _HEALTH_PARTS:
+        return f"{SOURCE_LABELS.get(base, base)} – {_HEALTH_PARTS[part]}"
+    return key
 
 
 def _minutes(value: float) -> str:

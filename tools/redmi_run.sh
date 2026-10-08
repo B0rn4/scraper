@@ -25,8 +25,9 @@ fi
   . "$HOME/venv/bin/activate"
   set -a; . "$HOME/.scraper.env"; set +a
   # Kod uvijek točno kao na GitHubu (Redmi nema svojih izmjena; "git pull --ff-only" bi nakon
-  # prepisane povijesti zauvijek ostao na starom kodu).
-  timeout 5m git fetch -q origin && git reset -q --hard '@{u}' || echo "kod s GitHuba nije osvježen – radim sa starim kodom"
+  # prepisane povijesti zauvijek ostao na starom kodu). --prune: obrisana grana na GitHubu je
+  # greška, a ne tiho ostajanje na zadnjem kodu (GitHub uspoređuje kod i javlja razliku).
+  timeout 5m git fetch --prune -q origin && git reset -q --hard '@{u}' || echo "kod s GitHuba nije osvježen – radim sa starim kodom"
   # Paketi: dok popis (requirements.txt) nije uspješno instaliran – i nakon neuspjeha ili
   # ručnog "git pull" – pokušava se pri svakom pokretanju.
   req=$(git rev-parse HEAD:requirements.txt 2>/dev/null)

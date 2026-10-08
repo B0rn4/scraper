@@ -39,10 +39,17 @@ class Source:
     detail_blocked = False
     detail_ok = False
     captcha_until = ""
+    # Stranica oglasa vratila grešku (ne captcha): koliko puta i zadnja greška. Kad sve otvorene
+    # stranice oglasa pucaju više pokretanja zaredom, runner upozorava (promjena stranice?).
+    detail_failed = 0
+    detail_error = ""
     # Čitanje stalo prije oglasa od prošlog pokretanja (najviše stranica, stranica se nije
     # učitala): runner tada ne pomiče "since" i sljedeće pokretanje čita dublje (catch_up).
     incomplete = False
     catch_up = False
+    reached = ""          # dokle je čitanje stiglo (najstariji pročitani oglas) kad je incomplete
+    # Dublje čitanje (sustizanje, dnevno dublje) koje nije uspjelo: ne ruši izvor, runner ga prati.
+    deep_error = ""
     # Cijene već viđenih oglasa (postavlja runner): koliko daleko čitati "nedavno izmijenjene".
     known_prices: dict = {}
     # Jednom dnevno dublje čitanje (izvori kojima se sniženje inače ne vidi); runner postavlja deep.
@@ -74,6 +81,7 @@ class Source:
             x = found.get(p.source_id, p)      # svježi podaci s popisa, ako ga popis ima
             x.extra["pokusaja"] = max(x.extra.get("pokusaja", 0), p.extra.get("pokusaja", 0))
             x.extra["odgodjeno_puta"] = max(x.extra.get("odgodjeno_puta", 0), p.extra.get("odgodjeno_puta", 0))
+            x.extra["greska_obrade"] = max(x.extra.get("greska_obrade", 0), p.extra.get("greska_obrade", 0))
             x.extra["odgodjen"] = True
             waiting[x.source_id] = x
         rest = {k: v for k, v in found.items() if k not in waiting}
@@ -95,6 +103,14 @@ class Source:
             return False
         self.deferred.append(x)
         return True
+
+    def detail_result(self, error: str = "") -> None:
+        """Ishod otvaranja stranice oglasa (bez captche): runner prati jesu li sve pucale."""
+        if error:
+            self.detail_failed += 1
+            self.detail_error = error[:200]
+        else:
+            self.detail_ok = True
 
     def fetch(self, mode: str, known_ids: set[str]) -> list[Listing]:
         raise NotImplementedError

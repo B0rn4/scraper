@@ -80,7 +80,9 @@ def _year(value) -> int | None:
 
 def parse_single(data: dict, listing: Listing) -> None:
     """Podaci iz samog oglasa: opis, vrsta kuće/zemljišta, okućnica, godine, parking, papiri."""
-    ad = (data.get("data") or [{}])[0]
+    if not data.get("data"):
+        raise ValueError("index.hr: odgovor za oglas je prazan")
+    ad = data["data"][0]
     listing.description = ad.get("description") or listing.description
     types = HOUSE_TYPES if listing.kind == HOUSE else LAND_TYPES if listing.kind == LAND else {}
     if ad.get("houseType" if listing.kind == HOUSE else "landType") in types:
@@ -160,8 +162,10 @@ class IndexOglasi(Source):
                 try:
                     parse_single(self.http.get(f"{BASE}/api/aditem/single-ad?code={x.source_id}&format=1",
                                                headers=JSON_HEADERS, retries=DETAIL_RETRIES).json(), x)
+                    self.detail_result()
                 except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
                     x.extra["detalji_greska"] = str(exc)[:200]
+                    self.detail_result(f"{type(exc).__name__}: {exc}")
         return list(found.values())
 
     def _recent(self, items: list[Listing]) -> bool:

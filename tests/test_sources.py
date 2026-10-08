@@ -844,3 +844,89 @@ def test_realestatecroatia_daily_deep_read_finds_price_drop(monkeypatch):
     assert "2945" not in {x.source_id for x in src.fetch(INCREMENTAL, known)}   # redovno: staje na 1. str.
     src.deep = True
     assert "2945" in {x.source_id for x in src.fetch(INCREMENTAL, known)}
+
+
+def test_njuskalo_catchup_captcha_deep_keeps_pages_read():
+    """Sustizanje (do 10 stranica) je dodatak: captcha na 5.+ stranici ne ruši izvor – pročitano
+    ostaje, dublje se više ne čita (ni u drugoj kategoriji), a nepročitano javlja runner."""
+    from datetime import datetime, timedelta, timezone
+
+    from scraper.sources.base import INCREMENTAL
+    from scraper.sources.njuskalo import Njuskalo
+
+    now = datetime(2026, 10, 8, 7, 10, tzinfo=timezone.utc)
+    pages = ["<ul>" + "".join(_nj_item(60_000_000 - p * 25 - i, now - timedelta(minutes=p * 25 + i))
+                              for i in range(25)) + "</ul>" for p in range(10)]
+
+    class Browser:
+        calls = []
+
+        def get(self, url, wait_selector="body"):
+            Browser.calls.append(url)
+            n = int(url.split("page=")[1]) if "page=" in url else 1
+            if "prodaja-kuca" in url or "prodaja-zemljista" in url:
+                return "<html><head><title>Captcha</title></head></html>" if n >= 5 else pages[n - 1]
+            return "<html><title>prazno</title></html>"
+
+        def close(self):
+            pass
+
+    src = Njuskalo(None, Locator(), load_config()["kriteriji"], browser=Browser())
+    src.since = (now - timedelta(hours=5)).isoformat()
+    src.catch_up = True
+    found = src.fetch(INCREMENTAL, {"1"})
+    assert len({x.source_id for x in found} | {x.source_id for x in src.deferred}) == 100   # 4 stranice kuća
+    assert src.incomplete and "captchu" in src.deep_error and src.reached.startswith("2026-10-08T")
+    assert sum("prodaja-kuca" in u for u in Browser.calls) == 5          # 5. je captcha, dalje ništa
+    assert sum("prodaja-zemljista" in u for u in Browser.calls) == 4     # druga kategorija: ne dublje
+
+
+def test_realestatecroatia_deep_page_error_keeps_regular_read(monkeypatch):
+    """Greška na dubokoj stranici dnevnog dubljeg čitanja ne ruši izvor: novi oglasi s vrha
+    ostaju, greška se bilježi (deep_error). Greška na stranici redovnog čitanja i dalje ruši."""
+    import pytest
+
+    from scraper.sources import realestatecroatia as rc
+    from scraper.sources.base import INCREMENTAL
+
+    def fake_parse(text, kind):
+        vrsta, page = text
+        if kind != HOUSE:
+            return [Listing(source="realestatecroatia", source_id="5", url="u", title="Zemljište", kind=LAND,
+                            price=100_000, area=800, extra={"istaknut": False})]
+        start = 3001 - (page - 1) * rc.PAGE_SIZE
+        return [Listing(source="realestatecroatia", source_id=str(start - i), url="u", title="Kuća", kind=HOUSE,
+                        price=380_000, area=120, extra={"istaknut": False}) for i in range(rc.PAGE_SIZE)]
+
+    def fake_list(vrsta, cap, page):
+        if page == bad["page"]:
+            raise RuntimeError("HTTP 500")
+        return (vrsta, page)
+
+    bad = {"page": 4}
+    monkeypatch.setattr(rc, "parse_list", fake_parse)
+    src = rc.RealEstateCroatia(None, Locator(), load_config()["kriteriji"])
+    src._list = fake_list
+    src.worth_detail = lambda x: False
+    known = {str(i) for i in range(2800, 3001)} | {"5"}                  # nov je samo 3001
+    src.deep = True
+    ids = {x.source_id for x in src.fetch(INCREMENTAL, known)}
+    assert "3001" in ids and "HTTP 500" in src.deep_error and "stranica 4" in src.deep_error
+    bad["page"] = 1                                                       # redovno čitanje: greška izvora
+    with pytest.raises(RuntimeError):
+        src.fetch(INCREMENTAL, known)
+
+
+def test_detail_parsers_reject_empty_pages():
+    """Stranica oglasa bez ičega prepoznatljivog (promjena stranice) je greška, ne "oglas bez
+    podataka" – inače nadzor stranica oglasa ne bi ništa vidio."""
+    import pytest
+
+    from scraper.sources import burza, index_oglasi, realestatecroatia
+
+    x = Listing(source="t", source_id="1", url="u", title="Kuća", kind=HOUSE)
+    for call in (lambda: realestatecroatia.parse_detail("<html>nova stranica</html>", x),
+                 lambda: burza.parse_detail("<html>nova stranica</html>", x),
+                 lambda: index_oglasi.parse_single({"data": []}, x)):
+        with pytest.raises(ValueError):
+            call()

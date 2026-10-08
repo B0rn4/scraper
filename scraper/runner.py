@@ -5,6 +5,7 @@ import html
 import json
 import re
 import sqlite3
+import subprocess
 import time
 import traceback
 from datetime import datetime, timedelta
@@ -22,8 +23,8 @@ from .filters import effective_price, evaluate
 from .http import Http, blocked
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
-from .notify import (DISLIKE, MUTE_PREFIX, SOURCE_LABELS, UNMUTE_PREFIX, Email, Telegram, muted_markup, summary_text,
-                     safe_url, unmuted_markup)
+from .notify import (DISLIKE, MUTE_PREFIX, SOURCE_LABELS, UNMUTE_PREFIX, Email, Telegram, health_label, muted_markup,
+                     safe_url, summary_text, unmuted_markup)
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
 from .text import fmt_eur, fold, plural
@@ -36,7 +37,18 @@ PLAN_PAGE_SECONDS = 20      # najdulje čekanje jedne stranice (sn.pgz.hr, zavod
 RESERVE_MINUTES = 30        # GitHubov raspored radi samo kad cron-job.org kasni ovoliko
 UNSENT_DAYS = 7             # neposlana obavijest (Telegram ne radi) čeka najviše toliko
 PRUNE_DAYS = 30             # odbijeni oglas izvan našeg područja ostaje u bazi toliko dana nakon zadnjeg viđenja
-DETAIL_ALERT_RUNS = 9       # captcha na stranicama oglasa toliko pokretanja zaredom (3 sata) → upozorenje
+DETAIL_ALERT_RUNS = 9       # stranice oglasa (captcha ili greška) toliko pokretanja zaredom (3 sata) → upozorenje
+MAIN_TRIGGER_ALERT = timedelta(hours=2)   # cron-job.org toliko ne pokreće GitHub (radi samo rezerva) → upozorenje
+CLOCK_TOLERANCE = timedelta(minutes=10)   # sat na Redmiju smije toliko odstupati
+LISTING_ERROR_RUNS = 3      # isti izvor toliko pokretanja zaredom ima oglase koji se ne daju obraditi → upozorenje
+DEEP_ALERT_DAYS = 3         # dnevno dublje čitanje toliko dana zaredom ne uspijeva → upozorenje
+CODE_ALERT_RUNS = 18        # Redmi toliko GitHubovih pokretanja (~6 sati) radi s drukčijim kodom → upozorenje
+# Izvor radi, ali ovoliko dana nema nijedan nov oglas (npr. portal ne poštuje redoslijed "najnoviji"):
+# upozorenje. Stvarni tempo (listopad 2026.): Njuškalo 375–1245 dnevno, index 21–103, oglasnik 6–31
+# (noćni uvoz agencija oko 5 h), nekretnine.hr 4–28, realestatecroatia 8–14 (također ujutro), burza
+# nekoliko. Noć (8–9 sati bez čitanja) Njuškalu ne smije biti dovoljna za upozorenje.
+NEW_LISTING_DAYS = {"njuskalo": 0.5, "index_oglasi": 2, "nekretnine_hr": 3, "oglasnik": 3,
+                    "realestatecroatia": 3, "burza": 5}
 
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
@@ -69,6 +81,9 @@ class Runner:
         self.wants_telegram = send and notif.get("telegram", True)    # trebao bi slati (provjera postavki)
         self.telegram = Telegram.from_env() if self.wants_telegram else None
         self.email = Email.from_env() if send and notif.get("email", True) else None
+        # Mail se očekuje samo na GitHubu (Redmi šalje na Telegram, GitHub javlja i za njega).
+        self.wants_email = send and notif.get("email", True) and device == "github"
+        self.skew = timedelta(0)        # na Redmiju: koliko njegov sat žuri (izmjereno pri preuzimanju)
         self.log_lines: list[str] = []
         self.muted: set[str] = set()   # "Ne zanima me" (gumb ispod poruke)
         self._redmi_ok: bool | None = None
@@ -171,6 +186,9 @@ class Runner:
             return
         if not reserve:
             state.meta_set("glavni_okidac", self.stamp)
+        self._main_trigger(state, reserve)
+        self._heartbeat(state)
+        self._mail_health(state)
         try:
             self._prune(state)
         except Exception as exc:  # noqa: BLE001 – čišćenje (npr. pun disk kod VACUUM) ne smije zaustaviti pokretanje
@@ -208,14 +226,17 @@ class Runner:
                 except Exception as exc:  # noqa: BLE001
                     self._source_failed(state, src, exc)
                     continue
-                deferred = getattr(src, "deferred", [])
-                if deferred or src.pending:
-                    self.log(f"{src.label}: odgođeno za sljedeće pokretanje {len(deferred)} oglasa")
-                    state.meta_set(f"odgodjeno:{src.name}", json.dumps([x.to_dict() for x in deferred], ensure_ascii=False))
-                decided, errors = [], []
+                decided, errors, failed = [], [], []
                 silent_baseline = first and not getattr(src, "baseline_report", True)
+                if not state.conn.in_transaction:
+                    state.conn.execute("BEGIN")
                 for x in listings:
-                    try:   # jedan neispravan oglas (promijenjeno polje na portalu) ne ruši pokretanje
+                    # Jedan neispravan oglas (promijenjeno polje na portalu, greška u programu) ne ruši
+                    # pokretanje, a od njega se ništa ne zapisuje (ni nova cijena): sljedeći put se
+                    # obrađuje ponovno, kao da ga ovo pokretanje nije vidjelo.
+                    done = len(decided)
+                    state.conn.execute("SAVEPOINT oglas")
+                    try:
                         prev = state.get(x.key)
                         if prev:  # podaci sa stranice oglasa iz ranijeg dohvata (popis ih nema)
                             # Površina iz kratkog isječka ili naslova (burza, Njuškalo zemljište) ne
@@ -250,14 +271,26 @@ class Runner:
                             if headline is not None:
                                 headline = self._check_seen(state, seen, x, d, old, headline)
                             if headline is not None:
-                                x.extra["ppv"] = self.ppv.note(x, d.jls)
-                                area, place, short = prices.describe(x, d.jls) if prices else (None, None, None)
-                                x.extra["prosjek"], x.extra["usporedba"] = area, place
-                                x.extra["cijena_kratko"] = [t for t in (short, self.ppv.short(x, d.jls)) if t]
+                                self._enrich(x, d, prices)
                                 to_notify.append((x, d, headline))
                     except Exception as exc:  # noqa: BLE001
+                        state.conn.execute("ROLLBACK TO oglas")
+                        del decided[done:]
                         errors.append(f"{x.key}: {type(exc).__name__}: {exc}")
+                        failed.append(x)
                         traceback.print_exc()
+                    finally:
+                        state.conn.execute("RELEASE oglas")
+                # Odgođeni (stranica oglasa) i neobrađeni oglasi čekaju sljedeće pokretanje i kad ih
+                # popis više nema; neobrađeni najviše LISTING_ERROR_RUNS puta (zatim upozorenje).
+                deferred = list(getattr(src, "deferred", []))
+                for x in failed:
+                    x.extra["greska_obrade"] = x.extra.get("greska_obrade", 0) + 1
+                    if x.extra["greska_obrade"] < LISTING_ERROR_RUNS:
+                        deferred.append(x)
+                if deferred or src.pending:
+                    self.log(f"{src.label}: odgođeno za sljedeće pokretanje {len(deferred)} oglasa")
+                    state.meta_set(f"odgodjeno:{src.name}", json.dumps([x.to_dict() for x in deferred], ensure_ascii=False))
                 if errors and len(errors) * 2 >= len(listings):
                     state.conn.commit()
                     self._source_failed(state, src, RuntimeError(
@@ -268,8 +301,12 @@ class Runner:
                 if errors:
                     self.log(f"{src.label}: preskočeno zbog greške {len(errors)} oglasa – {errors[0]}")
                 self._source_ok(state, src)
+                self._listing_errors(state, src, errors, failed)
                 self._detail_health(state, src)
                 self._read_gap(state, src)
+                if getattr(src, "deep", False):
+                    self._deep_health(state, src)
+                self._fresh_health(state, src)
                 counts = {s: sum(1 for _, d in decided if d.status == s) for s in (PASS, WARN, REJECT)}
                 self.log(f"{src.label}: {len(listings)} oglasa – ✅ {counts[PASS]}, ⚠ {counts[WARN]}, ❌ {counts[REJECT]}")
                 if first:
@@ -294,6 +331,10 @@ class Runner:
                 for x, d, _ in to_notify:
                     self._check_land(x, d, deadline)
             self._send_notifications(state, to_notify)
+            if self.wants_telegram and not self.telegram:
+                # Trebao bi slati: kao Telegram koji ne radi (GitHub to vidi i na Redmiju), i kad
+                # nema oglasa – inače bi tišina izgledala kao "nema novih oglasa".
+                self._telegram_health(state, "Telegram nije postavljen (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)")
             try:
                 self._tenders(state, prices)
             except Exception as exc:  # noqa: BLE001 – natječaji ne smiju zaustaviti oglase
@@ -318,6 +359,126 @@ class Runner:
                 self._export(state)
         finally:
             state.close()
+
+    def _enrich(self, x: Listing, d: Decision, prices) -> None:
+        """Usporedbe cijena u poruci. Greška u njima ne smije zadržati obavijest: oglas stiže bez njih."""
+        try:
+            x.extra["ppv"] = self.ppv.note(x, d.jls)
+            area, place, short = prices.describe(x, d.jls) if prices else (None, None, None)
+            x.extra["prosjek"], x.extra["usporedba"] = area, place
+            x.extra["cijena_kratko"] = [t for t in (short, self.ppv.short(x, d.jls)) if t]
+        except Exception as exc:  # noqa: BLE001
+            self.log(f"Usporedba cijena za {x.key} nije izračunata: {type(exc).__name__}: {exc}")
+            traceback.print_exc()
+
+    def _main_trigger(self, state: State, reserve: bool) -> None:
+        """Na GitHubu: rezerva (GitHubov raspored) radi samo kad cron-job.org kasni. Kasni li u
+        radnom vremenu dulje od MAIN_TRIGGER_ALERT, upozorenje – portali se tada čitaju samo
+        nekoliko puta dnevno, a sve izgleda ispravno. Oporavak tek kad cron-job.org ponovno pokrene."""
+        if self.device != "github":
+            return
+        row = next((h for h in state.health_all() if h["source"] == "cron-job"), None)
+        if not reserve:
+            if row and row.get("failures"):
+                state.health_ok("cron-job", self.stamp)
+                if row.get("alerted"):
+                    self._alert("Scraper: cron-job.org ponovno pokreće GitHub",
+                                f"Redovna pokretanja (svakih 20 minuta) ponovno rade od {self.stamp[:16].replace('T', ' ')}.")
+            return
+        main = state.meta_get("glavni_okidac")
+        age = self._age(main) if main else None
+        if age is None:
+            return                       # glavni okidač još nije radio (prvo postavljanje)
+        start = self.now.replace(hour=self.cfg["vrijeme"]["od_sata"], minute=0, second=0, microsecond=0)
+        late = min(age, max(self.now - start, timedelta(0)))      # noć se ne broji
+        failures, alerted = state.health_fail("cron-job", f"zadnje redovno pokretanje {main[:16]}")
+        if late >= MAIN_TRIGGER_ALERT and not alerted and self._alert(
+                "Scraper: cron-job.org ne pokreće GitHub",
+                f"cron-job.org nije pokrenuo scraper na GitHubu od {main[:16].replace('T', ' ')}. GitHub ga pokreće "
+                "samo povremeno po svom rasporedu (rezerva), pa se portali osim Njuškala ne čitaju svakih 20 "
+                "minuta. Provjeri na cron-job.org povijest pokretanja i je li posao uključen; ako piše greška "
+                "401 ili 403, istekao je ili je promijenjen token za GitHub (README, cron-job.org). "
+                "Javi Claudeu ovu poruku.") is not False:
+            state.mark_alerted("cron-job")
+
+    def _heartbeat(self, state: State) -> None:
+        """Početak pokretanja, zapisan odmah: nadzor drugog uređaja razlikuje "ne javlja se" od
+        "pokreće se, ali ne završava" (prekid, greška pri kraju). Redmi bilježi i kod i sat."""
+        state.meta_set("pocetak", self.stamp)
+        if self.device == "redmi":
+            state.meta_set("kod", self._code_version())
+            self._clock(state)
+        state.conn.commit()
+        if self.device == "github":
+            path = Path(self.db_path).with_name("github.json")
+            try:
+                info = json.loads(path.read_text(encoding="utf-8"))
+            except (OSError, ValueError):
+                info = {}
+            info.update(pocetak=self.stamp, glavni_okidac=state.meta_get("glavni_okidac"))
+            tmp = path.with_name("github.json.tmp")
+            tmp.write_text(json.dumps(info, ensure_ascii=False), encoding="utf-8")
+            tmp.replace(path)
+
+    @staticmethod
+    def _code_version() -> str:
+        """Verzija koda ("<sha> <vrijeme commita>"), za usporedbu Redmija s GitHubom."""
+        try:
+            out = subprocess.run(["git", "-C", str(ROOT), "log", "-1", "--format=%H %cI"],
+                                 capture_output=True, text=True, timeout=20)
+            return out.stdout.strip() if out.returncode == 0 else ""
+        except (OSError, subprocess.SubprocessError):
+            return ""
+
+    def _clock(self, state: State) -> None:
+        """Na Redmiju: koliko sat mobitela odstupa od GitHubova (izmjereno pri preuzimanju stanja,
+        sat.txt). Zapisuje se u redmi.db (GitHub njime ispravlja vrijeme Redmija); odstupa li više od
+        CLOCK_TOLERANCE, poruka – inače nadzor laže (Redmi "živ" u budućnosti ili "mrtav" a radi)."""
+        try:
+            skew = float(Path(self.seen_file).with_name("sat.txt").read_text().strip())
+        except (TypeError, OSError, ValueError):
+            return
+        self.skew = timedelta(seconds=skew)
+        state.meta_set("sat:razlika", str(int(skew)))
+        self._clock_health(state, self.skew)
+
+    def _clock_health(self, state: State, skew: timedelta) -> None:
+        row = next((h for h in state.health_all() if h["source"] == "sat"), None)
+        if abs(skew) <= CLOCK_TOLERANCE:
+            if row and row.get("failures"):
+                state.health_ok("sat", self.stamp)
+                if row.get("alerted"):
+                    self._alert("Scraper: sat na Redmiju je ponovno točan", "Nadzor Redmija i GitHuba ponovno radi.")
+            return
+        minutes = int(abs(skew).total_seconds() // 60)
+        what = f"{'žuri' if skew > timedelta(0) else 'kasni'} {minutes} min"
+        _, alerted = state.health_fail("sat", f"sat na Redmiju {what}")
+        if not alerted and self._alert(
+                "Scraper: sat na Redmiju nije točan",
+                f"Sat na Redmiju {what}. Dok se ne ispravi, nadzor Redmija i GitHuba može lagati (pogrešno "
+                "„ne radi” ili propuštena prava greška). Na Redmiju: Postavke → Dodatne postavke → Datum i "
+                "vrijeme → uključi automatsko vrijeme. Ako je već uključeno, javi Claudeu ovu poruku.") is not False:
+            state.mark_alerted("sat")
+
+    def _mail_health(self, state: State) -> None:
+        """Na GitHubu: mail nije postavljen (obrisan ili preimenovan SMTP_USER/SMTP_PASSWORD).
+        Bez njega ne stiže tjedni izvještaj ni upozorenje kad Telegram ne radi – javi se na Telegram."""
+        if not self.wants_email:
+            return
+        row = next((h for h in state.health_all() if h["source"] == "mail"), None)
+        if self.email:
+            if row and row.get("failures"):
+                state.health_ok("mail", self.stamp)
+                if row.get("alerted"):
+                    self._alert("Scraper: mail je ponovno postavljen", "Tjedni izvještaj i upozorenja ponovno idu mailom.")
+            return
+        _, alerted = state.health_fail("mail", "nema SMTP_USER ili SMTP_PASSWORD")
+        if not alerted and self._alert(
+                "Scraper: mail nije postavljen",
+                "Na GitHubu nedostaju SMTP_USER ili SMTP_PASSWORD (Settings → Secrets and variables → Actions). "
+                "Dok se ne upišu, ne stiže tjedni izvještaj, a ni upozorenje kad Telegram ne radi. "
+                "Javi Claudeu ovu poruku.") is not False:
+            state.mark_alerted("mail")
 
     def _repair_silent_twins(self, state: State) -> None:
         """Jednokratno: oglasi označeni "isti kao" tiho zabilježen oglas (početak praćenja,
@@ -508,7 +669,8 @@ class Runner:
         označeni "Ne zanima me"."""
         dedupe.export(state, Path(self.db_path).with_name("seen.json.gz"))
         info = Path(self.db_path).with_name("github.json.tmp")
-        info.write_text(json.dumps({"zadnje_pokretanje": self.stamp, "utisani": sorted(state.muted())},
+        info.write_text(json.dumps({"zadnje_pokretanje": self.stamp, "pocetak": self.stamp,
+                                    "glavni_okidac": state.meta_get("glavni_okidac"), "utisani": sorted(state.muted())},
                                    ensure_ascii=False), encoding="utf-8")
         info.replace(info.with_suffix(""))
 
@@ -526,7 +688,8 @@ class Runner:
             return {}
         try:
             data = json.loads(Path(self.seen_file).with_name("github.json").read_text(encoding="utf-8"))
-            return {"zadnje_pokretanje": data.get("zadnje_pokretanje"), "utisani": set(data.get("utisani") or [])}
+            return {"zadnje_pokretanje": data.get("zadnje_pokretanje"), "pocetak": data.get("pocetak"),
+                    "glavni_okidac": data.get("glavni_okidac"), "utisani": set(data.get("utisani") or [])}
         except (OSError, ValueError):
             return {}
 
@@ -1033,8 +1196,6 @@ class Runner:
             self.log(f"{len(to_notify)} obavijesti (Telegram nije postavljen):")
             for x, d, h in to_notify:
                 self.log(f"  {h} {x.title} | {x.url}")
-            if self.wants_telegram:    # trebao bi slati: kao Telegram koji ne radi (GitHub to vidi i na Redmiju)
-                self._telegram_health(state, "Telegram nije postavljen (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID)")
             return
         if len(to_notify) > limit:
             entries = [report.entry(x, d) for x, d, _ in to_notify]
@@ -1077,10 +1238,18 @@ class Runner:
                     self.email_ok("Scraper: Telegram ponovno radi", "Obavijesti ponovno stižu na Telegram; neposlane su poslane.")
             return
         failures, alerted = state.health_fail("telegram", error[:300])
-        if failures >= 3 and not alerted and self.email_ok(
-                "Scraper: Telegram ne prima poruke",
-                f"Telegram {failures} pokretanja zaredom odbija sve poruke:\n{error}\n\nProvjeri da bot nije "
-                "blokiran ili obrisan. Neposlane obavijesti čekaju (najviše 7 dana). Javi Claudeu ovu poruku."):
+        if failures < 3 or alerted:
+            return
+        if error.startswith("Telegram nije postavljen"):
+            subject = "Scraper: Telegram nije postavljen"
+            text = (f"Telegram nije postavljen {failures} pokretanja zaredom: nedostaju TELEGRAM_BOT_TOKEN ili "
+                    "TELEGRAM_CHAT_ID. Na GitHubu ih upiši u Settings → Secrets and variables → Actions (na Redmiju "
+                    "u ~/.scraper.env). Obavijesti dotad ne stižu (čekaju najviše 7 dana). Javi Claudeu ovu poruku.")
+        else:
+            subject = "Scraper: Telegram ne prima poruke"
+            text = (f"Telegram {failures} pokretanja zaredom odbija sve poruke:\n{error}\n\nProvjeri da bot nije "
+                    "blokiran ili obrisan. Neposlane obavijesti čekaju (najviše 7 dana). Javi Claudeu ovu poruku.")
+        if self.email_ok(subject, text):
             state.mark_alerted("telegram")
 
     def _remember_unsent(self, state: State, items) -> None:
@@ -1187,29 +1356,82 @@ class Runner:
         if was_alerted:
             self._alert(f"Scraper: izvor {src.label} ponovno radi", f"Izvor {src.label} ponovno radi ({self.stamp}).")
 
+    def _local(self, stamp: str) -> str:
+        """"2026-10-08T05:12:00.000Z" ili lokalno vrijeme → "08.10. 07:12" (za poruke)."""
+        try:
+            when = datetime.fromisoformat(stamp.replace("Z", "+00:00"))
+        except (TypeError, ValueError):
+            return stamp or "?"
+        return f"{(when.astimezone(self.tz) if when.tzinfo else when):%d.%m. %H:%M}"
+
     def _read_gap(self, state: State, src) -> None:
-        """Čitanje stalo prije oglasa od prošlog pokretanja: "since" se ne pomiče (sljedeće
-        pokretanje čita dublje). Praznina starija od 2 dana se napušta (zapis u dnevnik)."""
+        """Čitanje stalo prije oglasa od prošlog pokretanja (Njuškalo: najviše stranica, stranica se
+        nije učitala): sljedeće pokretanje jednom čita dublje od istog trenutka ("od:"). Ne zatvori
+        li se ni tada, više se ne može (oglasi u praznini samo tonu niže): upozorenje s poveznicom za
+        ručni pregled, a čitanje se nastavlja od sada. Kad čitanje ponovno stiže do kraja nakon
+        ponovljenih praznina (npr. druga stranica se ne učitava), još jedna poruka."""
+        key = f"{src.name}:praznina"
+        row = next((h for h in state.health_all() if h["source"] == key), None)
         if not getattr(src, "incomplete", False) or not src.since:
             state.meta_set(f"od:{src.name}", "")
+            if row and row.get("failures"):
+                state.health_ok(key, self.stamp)
+                if row.get("alerted") and row["failures"] > 1:
+                    self._alert(f"Scraper: {src.label} ponovno čita sve nove oglase",
+                                f"Čitanje popisa ponovno stiže do oglasa od prošlog pokretanja ({self.stamp[:16].replace('T', ' ')}).")
             return
-        age = self._age(src.since)
-        if age is not None and age > timedelta(days=2):
-            self.log(f"{src.label}: oglasi od {src.since[:16]} nisu dočitani ni nakon 2 dana – nastavlja se od sada")
-            state.meta_set(f"od:{src.name}", "")
+        if not getattr(src, "catch_up", False):
+            self.log(f"{src.label}: nije dočitano do oglasa od {src.since[:16]} – sljedeće pokretanje čita dublje")
+            state.meta_set(f"od:{src.name}", src.since)
             return
-        self.log(f"{src.label}: nije dočitano do oglasa od {src.since[:16]} – sljedeće pokretanje čita dublje")
-        state.meta_set(f"od:{src.name}", src.since)
+        state.meta_set(f"od:{src.name}", "")
+        period = f"od {self._local(src.since)} do {self._local(getattr(src, 'reached', '') or '')}"
+        reason = getattr(src, "deep_error", "")
+        self.log(f"{src.label}: oglasi {period} nisu pročitani ni dubljim čitanjem – nastavlja se od sada"
+                 + (f" ({reason})" if reason else ""))
+        failures, alerted = state.health_fail(key, f"nepročitano {period}" + (f": {reason}" if reason else ""))
+        links = "\n".join(f"{label}: {url}" for label, url in src.search_links())
+        if not alerted and self._alert(
+                f"Scraper: {src.label} – dio oglasa nije pročitan",
+                f"{src.label}: oglasi objavljeni ili ponovno objavljeni {period} nisu pročitani – bilo ih je više "
+                "nego što se čita u dva pokretanja" + (f" (dublje čitanje stalo: {reason})" if reason else "")
+                + f". Među njima može biti nov oglas; pogledaj ih ručno:\n{links}\n\nAko se ova poruka "
+                "ponavlja, javi Claudeu.") is not False:
+            state.mark_alerted(key)
+
+    def _listing_errors(self, state: State, src, errors: list[str], failed: list[Listing]) -> None:
+        """Oglasi koji se ne daju obraditi (greška u programu za neobičan oglas) ne stižu, a izvor
+        "radi": nakon LISTING_ERROR_RUNS pokretanja zaredom upozorenje s poveznicama (jednom)."""
+        key = f"{src.name}:obrada"
+        row = next((h for h in state.health_all() if h["source"] == key), None)
+        if not errors:
+            if row and row.get("failures"):
+                state.health_ok(key, self.stamp)
+                if row.get("alerted"):
+                    self._alert(f"Scraper: {src.label} – oglasi se ponovno obrađuju",
+                                "Greška pri obradi oglasa više se ne javlja. Oglasi iz upozorenja ne stižu "
+                                "naknadno – ako ih nisi pogledao, pogledaj ih ručno.")
+            return
+        failures, alerted = state.health_fail(key, errors[0][:300])
+        if failures >= LISTING_ERROR_RUNS and not alerted and self._alert(
+                f"Scraper: {src.label} – oglasi se ne daju obraditi",
+                f"{src.label}: {plural(len(errors), 'oglas nije obrađen', 'oglasa nisu obrađena', 'oglasa nije obrađeno')} "
+                f"(greška u programu), {failures} pokretanja zaredom. Ti oglasi ne stižu dok se greška ne popravi; "
+                "pogledaj ih ručno:\n" + "\n".join(x.url for x in failed[:5])
+                + f"\n\nGreška: {errors[0]}\n\nJavi Claudeu ovu poruku.") is not False:
+            state.mark_alerted(key)
 
     def _detail_health(self, state: State, src) -> None:
-        """Captcha na stranicama oglasa dok popis radi (izvor je "ispravan"): oglasi čekaju,
-        zatim stižu samo s podacima s popisa. Nakon DETAIL_ALERT_RUNS pokretanja zaredom
-        upozorenje (jednom), i kad prođe."""
+        """Stranice oglasa ne rade dok popis radi (izvor je "ispravan"): captcha (Njuškalo) ili
+        greška na svakoj otvorenoj stranici (promjena stranice). Oglasi tada čekaju ili stižu samo s
+        podacima s popisa. Nakon DETAIL_ALERT_RUNS pokretanja zaredom upozorenje (jednom), i kad prođe."""
         key = f"{src.name}:oglasi"
         if getattr(src, "captcha_until", ""):
             state.meta_set(f"stanka:{src.name}", src.captcha_until)
         row = next((h for h in state.health_all() if h["source"] == key), None)
-        if not getattr(src, "detail_blocked", False):
+        blocked = getattr(src, "detail_blocked", False)
+        broken = bool(getattr(src, "detail_failed", 0)) and not getattr(src, "detail_ok", False)
+        if not blocked and not broken:
             # Prošlo je tek kad se neka stranica oglasa stvarno pročitala (pokretanje bez
             # ijednog otvaranja ne dokazuje ništa).
             if row and row.get("failures") and getattr(src, "detail_ok", False):
@@ -1218,12 +1440,72 @@ class Runner:
                     self._alert(f"Scraper: {src.label} – stranice oglasa ponovno rade",
                                 "Oglasi se ponovno otvaraju (površina, opis, lokacija).")
             return
-        failures, alerted = state.health_fail(key, "captcha na stranicama oglasa")
-        if failures >= DETAIL_ALERT_RUNS and not alerted and self._alert(
-                f"Scraper: {src.label} traži captchu na stranicama oglasa",
-                f"{src.label} {failures} pokretanja zaredom na stranicama oglasa vraća captchu (popis oglasa radi). "
-                "Novi oglasi čekaju do 18 pokretanja (oko 6 sati), zatim stižu samo s podacima s popisa (zemljište "
-                "bez površine, bez opisa). Obično prođe samo; ako potraje danima, javi Claudeu ovu poruku.") is not False:
+        error = "captcha na stranicama oglasa" if blocked else f"stranice oglasa ne rade: {getattr(src, 'detail_error', '')}"
+        failures, alerted = state.health_fail(key, error)
+        if failures < DETAIL_ALERT_RUNS or alerted:
+            return
+        if blocked:
+            subject = f"Scraper: {src.label} traži captchu na stranicama oglasa"
+            text = (f"{src.label} {failures} pokretanja zaredom na stranicama oglasa vraća captchu (popis oglasa radi). "
+                    "Novi oglasi čekaju do 18 pokretanja (oko 6 sati), zatim stižu samo s podacima s popisa (zemljište "
+                    "bez površine, bez opisa). Obično prođe samo; ako potraje danima, javi Claudeu ovu poruku.")
+        else:
+            subject = f"Scraper: {src.label} – stranice oglasa ne rade"
+            text = (f"{src.label} {failures} pokretanja zaredom ne može pročitati nijednu stranicu oglasa (popis oglasa "
+                    f"radi). Zadnja greška: {getattr(src, 'detail_error', '')}\n\nNovi oglasi stižu kasnije i samo s "
+                    "podacima s popisa (bez površine, opisa ili točne lokacije). Moguća promjena stranice – javi "
+                    "Claudeu ovu poruku.")
+        if self._alert(subject, text) is not False:
+            state.mark_alerted(key)
+
+    def _deep_health(self, state: State, src) -> None:
+        """Dnevno dublje čitanje (realestatecroatia) koje staje na grešci ne ruši izvor, ali se
+        prati: DEEP_ALERT_DAYS dana zaredom → upozorenje (sniženja starijih oglasa se ne vide)."""
+        key = f"{src.name}:dubinsko"
+        row = next((h for h in state.health_all() if h["source"] == key), None)
+        error = getattr(src, "deep_error", "")
+        if not error:
+            if row and row.get("failures"):
+                state.health_ok(key, self.stamp)
+                if row.get("alerted"):
+                    self._alert(f"Scraper: {src.label} – dnevno dublje čitanje ponovno radi",
+                                "Ponovno se vide i sniženja starijih oglasa ispod granice cijene.")
+            return
+        self.log(f"{src.label}: dublje čitanje stalo – {error}")
+        failures, alerted = state.health_fail(key, error)
+        if failures >= DEEP_ALERT_DAYS and not alerted and self._alert(
+                f"Scraper: {src.label} – dnevno dublje čitanje ne uspijeva",
+                f"{src.label}: dnevno dublje čitanje {failures} dana zaredom staje na grešci:\n{error}\n\nNovi oglasi i "
+                "dalje stižu; ne vide se samo sniženja starijih oglasa ispod granice cijene. Javi Claudeu ovu poruku.") is not False:
+            state.mark_alerted(key)
+
+    def _fresh_health(self, state: State, src) -> None:
+        """Izvor "radi" (popis se čita), ali dugo ne donosi nijedan nov oglas – npr. portal ne
+        poštuje redoslijed "najnoviji", pa se uvijek čitaju isti poznati oglasi. Bez ovoga bi izvor
+        zauvijek bio "✅ radi". Upozorenje jednom (prag po izvoru: NEW_LISTING_DAYS)."""
+        days = NEW_LISTING_DAYS.get(src.name)
+        if days is None:
+            return
+        key = f"{src.name}:novi"
+        stamps = [t for t in (state.newest(src.name), state.meta_get(f"baseline:{src.name}")) if self._age(t) is not None]
+        if not stamps:
+            return
+        newest = min(stamps, key=self._age)
+        row = next((h for h in state.health_all() if h["source"] == key), None)
+        if self._age(newest) <= timedelta(days=days):
+            if row and row.get("failures"):
+                state.health_ok(key, self.stamp)
+                if row.get("alerted"):
+                    self._alert(f"Scraper: {src.label} – ponovno stižu novi oglasi",
+                                f"{src.label} ponovno donosi nove oglase ({self.stamp[:16].replace('T', ' ')}).")
+            return
+        _, alerted = state.health_fail(key, f"zadnji nov oglas {newest[:16]}")
+        links = "\n".join(f"{label}: {url}" for label, url in src.search_links())
+        if not alerted and self._alert(
+                f"Scraper: {src.label} – nema novih oglasa",
+                f"{src.label} se čita bez greške, ali od {newest[:16].replace('T', ' ')} nije donio nijedan nov oglas "
+                "(inače ih je više dnevno). Možda portal više ne poštuje redoslijed „najnoviji” ili je promijenio "
+                f"pretragu. Usporedi ručno:\n{links}\n\nAko na portalu ima novijih oglasa, javi Claudeu ovu poruku.") is not False:
             state.mark_alerted(key)
 
     def _alert(self, subject: str, text: str) -> bool:
@@ -1235,6 +1517,11 @@ class Runner:
             if not self.telegram:
                 return False
         elif not self.telegram:
+            if self.wants_telegram or self.wants_email:
+                # Trebalo je stići, a nema kamo: ne smatra se poslanim (ponavlja se, a Redmijeva
+                # upozorenja GitHub prosljeđuje mailom).
+                self.log(f"(upozorenje nije poslano – nema ni maila ni Telegrama) {subject}")
+                return False
             return self._email(subject, text)
         if len(text) > 3000:                 # Telegram prima najviše 4096 znakova
             text = text[:3000] + "…"
@@ -1251,7 +1538,9 @@ class Runner:
 
     def _check_redmi(self, state: State) -> None:
         """Na GitHubu: javlja li se Redmi. Nakon svakog pokretanja Redmi šalje svoje stanje
-        na granu state-redmi; ako zadnje pokretanje kasni, stiže mail (jednom)."""
+        na granu state-redmi; ako zadnje pokretanje kasni, stiže mail (jednom). Razlikuje se
+        "ne javlja se" (struja, Wi-Fi, Termux) od "pokreće se, ali ne završava" (prekid, greška);
+        vrijeme s Redmija ispravlja se za odstupanje njegova sata."""
         path = Path(self.redmi_db)
         if not path.exists():
             return  # Redmi još nije postavljen
@@ -1264,27 +1553,115 @@ class Runner:
                 state.mark_alerted("redmi")
             return
         other = State(path)
-        last = other.meta_get("last_run")
-        telegram = next((h for h in other.health_all() if h["source"] == "telegram"), None)
+        last, started, code = other.meta_get("last_run"), other.meta_get("pocetak"), other.meta_get("kod") or ""
+        try:
+            skew = timedelta(seconds=float(other.meta_get("sat:razlika") or 0))
+        except ValueError:
+            skew = timedelta(0)
+        rows = other.health_all()
         other.close()
-        self._redmi_telegram(state, telegram)
+        self._redmi_telegram(state, next((h for h in rows if h["source"] == "telegram"), None))
+        self._redmi_relay(state, rows)
+        self._redmi_code(state, code)
         if not last or self.now.hour < self.cfg["vrijeme"]["od_sata"] + 1:
             return
-        limit = self.cfg.get("nadzor", {}).get("redmi_kasni_minuta", 90)
+        limit = timedelta(minutes=self.cfg.get("nadzor", {}).get("redmi_kasni_minuta", 90))
+
+        def age(stamp):                  # pravo vrijeme od zapisa s Redmija (njegov sat može griješiti)
+            a = self._age(stamp) if stamp else None
+            return a + skew if a is not None else None
+
         row = next((h for h in state.health_all() if h["source"] == "redmi"), None)
-        if self._age(last) is not None and self._age(last) <= timedelta(minutes=limit):
+        if age(last) is not None and age(last) < -CLOCK_TOLERANCE:
+            # Zapis iz budućnosti: Redmi bi izgledao živ i kad stane (sat nije izmjeren – stari kod).
+            _, alerted = state.health_fail("redmi", f"sat na Redmiju žuri (zadnje pokretanje {last[:16]})")
+            if not alerted and self._alert(
+                    "Scraper: sat na Redmiju nije točan",
+                    f"Redmi bilježi vrijeme u budućnosti (zadnje pokretanje {last[:16].replace('T', ' ')}), pa nadzor "
+                    "Redmija ne radi dok se sat ne ispravi. Na Redmiju: Postavke → Dodatne postavke → Datum i vrijeme → "
+                    "uključi automatsko vrijeme. Ako je već uključeno, javi Claudeu ovu poruku.") is not False:
+                state.mark_alerted("redmi")
+            return
+        if age(last) is not None and age(last) <= limit:
             state.health_ok("redmi", self.stamp)
             if row and row.get("alerted"):
                 self._alert("Scraper: Redmi se ponovno javlja", f"Redmi je ponovno pokrenuo scraper ({last[:16]}).")
             return
         state.health_fail("redmi", f"zadnje pokretanje {last[:16]}")
-        if not (row and row.get("alerted")) and self._alert(
-            "Scraper: Redmi se ne javlja",
-            f"Redmi se nije javio od {last[:16].replace('T', ' ')}. Dok se ne javi, Njuškalo se ne prati.\n\n"
-            "Provjeri je li Redmi uključen, na punjaču i na Wi-Fiju te radi li Termux "
-            "(obavijest „Termux” u traci obavijesti). Ako je sve u redu, javi Claudeu ovu poruku.",
-        ) is not False:
+        if row and row.get("alerted"):
+            return
+        njuskalo = next((h for h in rows if h["source"] == "njuskalo"), None)
+        read = njuskalo.get("last_ok") if njuskalo else None
+        alive = [t for t in (started, read) if t and t > last and age(t) is not None and age(t) <= limit]
+        when = last[:16].replace("T", " ")
+        if alive:
+            # Redmi radi i šalje stanje, ali pokretanje ne stiže do kraja (istek 15 min, greška pri kraju).
+            fresh = read and age(read) is not None and age(read) <= limit
+            subject = "Scraper: Redmi ne završava pokretanja"
+            text = (f"Redmi pokreće scraper (zadnji početak {max(alive)[:16].replace('T', ' ')}), ali nijedno pokretanje "
+                    f"nije završilo od {when}. "
+                    + (f"Njuškalo se i dalje čita (zadnje čitanje {read[:16].replace('T', ' ')}), ali dio provjera "
+                       "na kraju pokretanja ne radi. " if fresh else "Njuškalo se možda ne prati. ")
+                    + "Na Redmiju u Ubuntuu upiši: tail -40 ~/scraper.log i pošalji Claudeu ispis.")
+        else:
+            subject = "Scraper: Redmi se ne javlja"
+            text = (f"Redmi se nije javio od {when}. Dok se ne javi, Njuškalo se ne prati.\n\n"
+                    "Provjeri je li Redmi uključen, na punjaču i na Wi-Fiju te radi li Termux "
+                    "(obavijest „Termux” u traci obavijesti). Ako je sve u redu, javi Claudeu ovu poruku.")
+        if self._alert(subject, text) is not False:
             state.mark_alerted("redmi")
+
+    def _redmi_relay(self, state: State, rows: list[dict]) -> None:
+        """Upozorenja Redmija (Njuškalo ne radi, captcha, nepročitani oglasi, sat) idu samo na
+        njegov Telegram. Ne uspije li ih poslati (Telegram nije postavljen ili ne radi), ostanu
+        nepotvrđena – tada ih GitHub prosljeđuje mailom (jednom), a i kad prođe."""
+        limit = self.cfg.get("nadzor", {}).get("greske_prije_upozorenja", 3)
+        thresholds = {"oglasi": DETAIL_ALERT_RUNS, "obrada": LISTING_ERROR_RUNS, "dubinsko": DEEP_ALERT_DAYS}
+        mine = {h["source"]: h for h in state.health_all() if h["source"].startswith("redmi:")}
+        for h in rows:
+            if h["source"] in ("telegram", "github"):
+                continue                     # Telegram javlja _redmi_telegram; GitHub sam sebe ne treba
+            key = f"redmi:{h['source']}"
+            row = mine.get(key)
+            label = health_label(h["source"])
+            base, _, suffix = h["source"].partition(":")
+            needed = thresholds.get(suffix, 1) if suffix else (1 if base == "sat" else limit)
+            recovered = (h.get("failures") or 0) < needed
+            if recovered or h.get("alerted"):
+                if row and row.get("failures") and (recovered or not row.get("alerted")):
+                    state.health_ok(key, self.stamp)     # prošlo, ili je Redmi u međuvremenu sam javio
+                    if recovered and row.get("alerted"):
+                        self._alert(f"Scraper: Redmi – {label} ponovno u redu", f"Redmi javlja da je {label} ponovno u redu.")
+                continue
+            # Redmi je trebao javiti, a nije uspio: čeka se još jedno njegovo pokretanje.
+            failures, alerted = state.health_fail(key, (h.get("last_error") or "")[:300])
+            if failures >= 2 and not alerted and self._alert(
+                    f"Scraper: Redmi javlja – {label}",
+                    f"Redmi: {label} – {h.get('failures')} grešaka zaredom.\nZadnja greška: {h.get('last_error') or '—'}\n\n"
+                    "Redmi to nije uspio poslati na Telegram, pa stiže odavde. Javi Claudeu ovu poruku.") is not False:
+                state.mark_alerted(key)
+
+    def _redmi_code(self, state: State, code: str) -> None:
+        """Redmi kod osvježava s GitHuba pri svakom pokretanju. Ne uspije li (obrisana ili
+        preimenovana grana, mreža), radi sa starim kodom bez poruke – a popravci ne stižu.
+        Drukčiji kod nakon CODE_ALERT_RUNS GitHubovih pokretanja (~6 sati) → upozorenje."""
+        mine = self._code_version()
+        if not code or not mine:
+            return
+        row = next((h for h in state.health_all() if h["source"] == "redmi:kod"), None)
+        if code.split()[0] == mine.split()[0]:
+            if row and row.get("failures"):
+                state.health_ok("redmi:kod", self.stamp)
+                if row.get("alerted"):
+                    self._alert("Scraper: Redmi ponovno radi s istim kodom kao GitHub", f"Kod: {mine[:7]}.")
+            return
+        failures, alerted = state.health_fail("redmi:kod", f"Redmi {code[:7]} {code[41:51]}, GitHub {mine[:7]} {mine[41:51]}")
+        if failures >= CODE_ALERT_RUNS and not alerted and self._alert(
+                "Scraper: Redmi radi sa starim kodom",
+                f"Redmi već nekoliko sati radi s kodom {code[:7]} (od {code[41:51]}), a GitHub s {mine[:7]} (od "
+                f"{mine[41:51]}), pa popravci ne stižu na Redmi. Na Redmiju u Ubuntuu upiši: cd ~/scraper && git "
+                "status && git fetch --prune origin, i pošalji Claudeu ispis.") is not False:
+            state.mark_alerted("redmi:kod")
 
     def _redmi_telegram(self, state: State, telegram: dict | None) -> None:
         """Redmi nema mail: kad on ne može slati na Telegram (npr. promijenjen bot ili razgovor
@@ -1319,44 +1696,73 @@ class Runner:
         return self.now - (when if when.tzinfo else when.replace(tzinfo=self.now.tzinfo))
 
     def _check_github(self, state: State) -> None:
-        """Na Redmiju: radi li GitHub (zadnje pokretanje iz github.json na grani state).
-        Ako kasni (cron-job.org ne pokreće, GitHub ne pokreće poslove), poruka na Telegram
-        (jednom) i poruka kad ponovno proradi – inače bi tišina izgledala kao "nema oglasa"."""
-        last = self._github_info().get("zadnje_pokretanje")
+        """Na Redmiju: radi li GitHub (github.json na grani state: početak i kraj zadnjeg
+        pokretanja, zadnje pokretanje glavnog okidača). Ako kasni, poruka na Telegram (jednom) i
+        poruka kad ponovno proradi – inače bi tišina izgledala kao "nema oglasa". Razlikuje:
+        GitHub ne radi / radi samo rezerva (cron-job.org) / pokreće se, ali ne završava / Redmi ne
+        preuzima stanje. Vrijeme se ispravlja za odstupanje sata na Redmiju."""
+        info = self._github_info()
+        last = info.get("zadnje_pokretanje")
         if not last or self.now.hour < self.cfg["vrijeme"]["od_sata"] + 2:
             return
-        limit = self.cfg.get("nadzor", {}).get("github_kasni_minuta", 120)
+        limit = timedelta(minutes=self.cfg.get("nadzor", {}).get("github_kasni_minuta", 120))
         row = next((h for h in state.health_all() if h["source"] == "github"), None)
         if self._age(last) is None:
             self.log(f"github.json: neispravno vrijeme zadnjeg pokretanja ({last!r:.40})")
             return
-        if self._age(last) <= timedelta(minutes=limit):
+
+        def age(stamp):                  # pravo vrijeme (GitHubov sat je točan, Redmijev možda nije)
+            a = self._age(stamp) if stamp else None
+            return a - self.skew if a is not None else None
+
+        if age(last) < -CLOCK_TOLERANCE:
+            # GitHubovo vrijeme u budućnosti: sat na Redmiju kasni (nije izmjeren pri preuzimanju).
+            self._clock_health(state, -age(last))
+            return
+        main, started = info.get("glavni_okidac") or last, info.get("pocetak") or last
+        ok = lambda t: age(t) is not None and age(t) <= limit  # noqa: E731
+        if ok(main) and ok(last):
             state.health_ok("github", self.stamp)
             if row and row.get("alerted"):
-                redmi = state.meta_get("github:upozorenje") == "preuzimanje"
-                self._alert("Scraper: Redmi ponovno preuzima stanje s GitHuba" if redmi else "Scraper: GitHub ponovno radi",
+                titles = {"preuzimanje": "Scraper: Redmi ponovno preuzima stanje s GitHuba",
+                          "rezerva": "Scraper: cron-job.org ponovno pokreće GitHub",
+                          "kraj": "Scraper: GitHub ponovno završava pokretanja"}
+                self._alert(titles.get(state.meta_get("github:upozorenje") or "", "Scraper: GitHub ponovno radi"),
                             f"Zadnje pokretanje na GitHubu: {last[:16].replace('T', ' ')}.")
             return
         _, alerted = state.health_fail("github", f"zadnje pokretanje {last[:16]}")
+        if alerted:
+            return
         # github.json se zamijeni pri svakom uspješnom preuzimanju: ako je star, ne preuzima Redmi.
         try:
             fetched = datetime.fromtimestamp(Path(self.seen_file).with_name("github.json").stat().st_mtime, self.tz)
         except OSError:
             fetched = None
-        if fetched and self.now - fetched > timedelta(minutes=limit):
-            subject = "Scraper: Redmi ne preuzima stanje s GitHuba"
+        if ok(started) and not ok(main):
+            kind, subject = "rezerva", "Scraper: cron-job.org ne pokreće GitHub"
+            text = (f"cron-job.org nije pokrenuo scraper na GitHubu od {main[:16].replace('T', ' ')}; GitHub ga "
+                    f"pokreće samo povremeno po svom rasporedu (zadnje {started[:16].replace('T', ' ')}). Portali osim "
+                    "Njuškala ne čitaju se svakih 20 minuta. Provjeri na cron-job.org povijest pokretanja i je li "
+                    "posao uključen (greška 401 ili 403: token za GitHub). Javi Claudeu ovu poruku.")
+        elif ok(started):
+            kind, subject = "kraj", "Scraper: GitHub ne završava pokretanja"
+            text = (f"GitHub pokreće scraper (zadnji početak {started[:16].replace('T', ' ')}), ali nijedno pokretanje "
+                    f"nije završilo od {last[:16].replace('T', ' ')}. Obavijesti mogu kasniti ili se ponoviti. Na "
+                    "GitHubu → Actions pogledaj zadnja pokretanja (crvena ili prekinuta) i javi Claudeu ovu poruku.")
+        elif fetched and self.now - fetched > limit:
+            kind, subject = "preuzimanje", "Scraper: Redmi ne preuzima stanje s GitHuba"
             text = (f"Redmi zadnji put preuzeo stanje s GitHuba {fetched:%d.%m. u %H:%M} (zadnje poznato pokretanje "
                     f"na GitHubu {last[:16].replace('T', ' ')}). Dok ne proradi, poruke s Njuškala mogu se ponoviti. "
                     "Provjeri internet na Redmiju i GITHUB_TOKEN u ~/.scraper.env (zapis u ~/scraper.log), a na "
                     "githubstatus.com radi li GitHub; ako je sve u redu, javi Claudeu ovu poruku.")
         else:
-            subject = "Scraper: GitHub ne radi"
+            kind, subject = "github", "Scraper: GitHub ne radi"
             text = (f"GitHub nije pokrenuo scraper od {last[:16].replace('T', ' ')}. Dok ne proradi, ne prate se "
-                    "portali osim Njuškala (Redmi radi). Provjeri cron-job.org (povijest pokretanja) i "
-                    "githubstatus.com; ako je sve u redu, javi Claudeu ovu poruku.")
-        if not alerted and self._alert(subject, text) is not False:
+                    "portali osim Njuškala (Redmi radi). Provjeri cron-job.org (povijest pokretanja), na GitHubu → "
+                    "Actions zadnja pokretanja i githubstatus.com; ako je sve u redu, javi Claudeu ovu poruku.")
+        if self._alert(subject, text) is not False:
             state.mark_alerted("github")
-            state.meta_set("github:upozorenje", "preuzimanje" if "Redmi" in subject else "github")
+            state.meta_set("github:upozorenje", kind)
 
     def review(self) -> Path:
         """Pregled: cijelo područje, bez obavijesti po oglasu i bez promjene stanja."""
@@ -1533,13 +1939,19 @@ class Runner:
         since = (self.now - timedelta(days=7)).isoformat(timespec="seconds")
         counts, notified, near, health, dups = {}, [], [], [], []
         paths = [self.db_path] + ([self.redmi_db] if self._redmi_usable() else [])
+        limit = timedelta(minutes=self.cfg.get("nadzor", {}).get("redmi_kasni_minuta", 90))
         for path in paths:  # stanje s GitHuba i, ako postoji, s Redmija (Njuškalo)
             state = State(path)
             counts.update(state.counts_since(since))
             notified += state.notified_since(since)
             near += state.near_misses_since(since)
             device = "Redmi – " if path != self.db_path else ""      # npr. Telegram s Redmija
-            health += [{**h, "uredjaj": device} for h in state.health_all()]
+            # Stanje s Redmija koji se dugo ne javlja je staro: ne smije pisati "✅ radi".
+            last = state.meta_get("last_run") if device else None
+            stale = bool(device) and (self._age(last) is None or self._age(last) > limit)
+            health += [{**h, "uredjaj": device, "staro": last if stale else None,
+                        "novi": state.newest(h["source"]) if h["source"] in NEW_LISTING_DAYS else None}
+                       for h in state.health_all()]
             dups += state.duplicates_since(since)
             state.close()
         e = html.escape
@@ -1561,9 +1973,11 @@ class Runner:
             for r in dups[:100]
         ) or "<li>nijedan</li>"
         hl = "".join(
-            f"<li>{e(h['uredjaj'] + SOURCE_LABELS.get(h['source'], h['source']))}: "
-            + ("✅ radi" if not h["failures"] else f"⚠ {h['failures']} grešaka zaredom – {e(h['last_error'] or '')}")
-            + f" (zadnji uspjeh: {e(h['last_ok'] or '—')})</li>"
+            f"<li>{e(h['uredjaj'] + health_label(h['source']))}: "
+            + (f"❔ nepoznato – stanje s Redmija od {e((h['staro'] or '—')[:16].replace('T', ' '))}" if h["staro"]
+               else "✅ radi" if not h["failures"] else f"⚠ {h['failures']} grešaka zaredom – {e(h['last_error'] or '')}")
+            + f" (zadnji uspjeh: {e(h['last_ok'] or '—')}"
+            + (f"; zadnji nov oglas: {e(h['novi'][:16].replace('T', ' '))}" if h["novi"] else "") + ")</li>"
             for h in health
         )
         body = f"""<h2>Tjedni izvještaj scrapera</h2>
@@ -1578,7 +1992,10 @@ bez niže cijene.</p><ul>{dl}</ul>
         plans = self._weekly_plans()
         body += self._plan_section(plans)
         text = "Tjedni izvještaj scrapera – otvori HTML verziju maila."
-        ok = self._email(f"Scraper: tjedni izvještaj {self.now:%d.%m.%Y.}", text, body) is not False
+        subject = f"Scraper: tjedni izvještaj {self.now:%d.%m.%Y.}"
+        # Bez postavki za mail izvještaj nije poslan (ponavlja se, nakon 2 dana upozorenje na Telegram).
+        ok = self.email_ok(subject, text) if self.wants_email and not self.email else \
+            self._email(subject, text, body) is not False
         if ok and plans:
             state = State(self.db_path)
             plans.save(state)

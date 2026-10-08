@@ -129,8 +129,10 @@ class NekretnineHr(Source):
                 details += 1
                 try:
                     parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x)
+                    self.detail_result()
                 except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
                     x.extra["detalji_greska"] = str(exc)[:200]
+                    self.detail_result(f"{type(exc).__name__}: {exc}")
         return list(found.values())
 
 

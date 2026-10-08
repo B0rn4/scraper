@@ -80,7 +80,9 @@ jobs:
             git fetch -q --depth=1 origin state-redmi
             # Redmi šalje sažeto (redmi.db.gz); stariji kod slao je redmi.db.
             if git show FETCH_HEAD:redmi.db.gz > redmi.db.gz 2>/dev/null; then
-              gunzip -c redmi.db.gz > redmi.db || { echo "redmi.db.gz nije raspakiran (oštećen)"; rm -f redmi.db; }
+              # Neraspakirana datoteka ostaje kao oštećena baza (ne briše se): bez nje bi nadzor mislio da
+              # Redmi još nije postavljen i ne bi javio ništa, ni kad Redmi stane.
+              gunzip -c redmi.db.gz > redmi.db || { echo "redmi.db.gz nije raspakiran (oštećen)"; echo oštećen > redmi.db; }
               rm -f redmi.db.gz
             else
               rm -f redmi.db.gz
@@ -128,7 +130,10 @@ jobs:
           fi
           if [ -f "state-$DAY.db.gz" ]; then echo "Kopija za $DAY već postoji."; exit 0; fi
           gzip -c "$GITHUB_WORKSPACE/state.db" > "state-$DAY.db.gz"
-          if [ -f "$GITHUB_WORKSPACE/redmi.db" ]; then gzip -c "$GITHUB_WORKSPACE/redmi.db" > "redmi-$DAY.db.gz"; fi
+          # Samo ispravna baza (ne oznaka "oštećen" iz učitavanja stanja).
+          if head -c 15 "$GITHUB_WORKSPACE/redmi.db" 2>/dev/null | grep -q "SQLite format"; then
+            gzip -c "$GITHUB_WORKSPACE/redmi.db" > "redmi-$DAY.db.gz"
+          fi
           for prefix in state redmi; do ls -1 $prefix-*.db.gz 2>/dev/null | sort -r | tail -n +8 | xargs -r git rm -q --cached --ignore-unmatch; done
           for prefix in state redmi; do ls -1 $prefix-*.db.gz 2>/dev/null | sort -r | tail -n +8 | xargs -r rm -f; done
           git add -A

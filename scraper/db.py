@@ -111,6 +111,10 @@ class State:
             self.conn.execute(f"DELETE FROM listings WHERE key IN ({q})", chunk)
         return len(keys)
 
+    def newest(self, source: str) -> str | None:
+        """Kad je zadnji put zabilježen nov oglas izvora (nadzor: izvor radi, a ništa novo)."""
+        return self.conn.execute("SELECT MAX(first_seen) FROM listings WHERE source = ?", (source,)).fetchone()[0]
+
     def count(self, source: str) -> int:
         return self.conn.execute("SELECT COUNT(*) FROM listings WHERE source = ?", (source,)).fetchone()[0]
 

@@ -107,7 +107,12 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
   `data/uvjeti_gradnje.yaml`. Prvo čitanje samo bilježi postojeće odluke.
 - **Nadzor:** GitHub provjerava javlja li se Redmi (mail), a Redmi provjerava radi li
   GitHub (Telegram, ako nije pokrenuo scraper 2 h, od 9 h) – tišina inače izgleda kao
-  „nema novih oglasa”.
+  „nema novih oglasa”. Poruka stiže i kad izvor radi, a danima nema nijedan nov oglas
+  (portal promijenio redoslijed), kad stranice oglasa ne rade, kad se dio oglasa nije
+  stigao pročitati (Njuškalo, s poveznicom za ručni pregled), kad se oglas ne da obraditi
+  (greška u programu, s poveznicom), kad cron-job.org ne pokreće GitHub, kad pokretanja ne
+  završavaju, kad sat na Redmiju ne valja ili Redmi radi sa starim kodom, kad mail ili
+  Telegram nisu postavljeni. Upozorenja Redmija koja ne stignu na Telegram GitHub šalje mailom.
 - **Pregledni izvještaj:** jedna HTML datoteka sa svim oglasima i razlogom odluke.
 
 ## Izvori
@@ -216,6 +221,9 @@ Redmijem).
 - Tijelo: `{"ref":"claude/real-estate-scraper-primorska-jrlscq","inputs":{"naredba":"raspored"}}`
 - Tjedni izvještaj šalje prvo redovno pokretanje u ponedjeljak (od 7. 10.); poseban poziv
   s `"naredba":"tjedni"` više nije potreban (ako postoji, ne šalje izvještaj drugi put).
-- Token: GitHub fine-grained token samo za ovaj repozitorij, dozvola **Actions: Read and write**.
+- Token: GitHub fine-grained token samo za ovaj repozitorij, dozvola **Actions: Read and write**,
+  rok trajanja **No expiration** (zadano je 30 dana – nakon toga cron-job.org dobiva grešku 401).
+  Kad cron-job.org stane, GitHub radi samo kao rezerva i nakon 2 sata (u radnom vremenu) šalje
+  „cron-job.org ne pokreće GitHub”.
 
 `raspored` poštuje radno vrijeme 7–23 h, a ručni `run` radi odmah.

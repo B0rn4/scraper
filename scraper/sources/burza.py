@@ -105,6 +105,8 @@ def parse_detail(page: str, x: Listing) -> None:
         x.settlement = _clean(place.group(1))
         x.location_text = x.settlement
     desc = re.search(r'<div class="bad-text[^"]*"[^>]*>(.*?)</div>', page, re.S)
+    if not place and not desc:
+        raise ValueError("burza.com.hr: na stranici oglasa nema mjesta ni opisa")
     if desc:
         x.description = re.sub(r"^Opis:\s*", "", _clean(desc.group(1)))[:3000]
         x.extra.pop("opis_skracen", None)
@@ -140,9 +142,11 @@ class Burza(Source):
     def _detail(self, x: Listing) -> bool:
         try:
             parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x)
+            self.detail_result()
             return True
         except Exception as exc:  # noqa: BLE001
             x.extra["detalji_greska"] = str(exc)[:200]
+            self.detail_result(f"{type(exc).__name__}: {exc}")
             return False
 
     def fetch(self, mode, known_ids):

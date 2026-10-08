@@ -1,6 +1,7 @@
 """Logika obavijesti (nov oglas, snižena cijena, početni popis) bez mreže."""
 
 import json
+from types import SimpleNamespace
 
 from scraper import report
 from scraper.db import State
@@ -1487,30 +1488,369 @@ def test_silently_recorded_twin_is_not_delivered_and_repair(tmp_path):
 
 
 def test_incomplete_read_keeps_since_for_next_run(tmp_path):
+    """Nepotpuno čitanje: sljedeće pokretanje jednom čita dublje od istog trenutka. Ne zatvori li
+    se praznina ni tada, više se ne može (oglasi tonu niže): upozorenje s poveznicama (jednom) i
+    nastavlja se od sada. Poruka da je opet sve u redu samo nakon ponovljenih praznina."""
     from datetime import timedelta
     from types import SimpleNamespace
 
+    alerts = []
     r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    r._alert = lambda subject, text: alerts.append((subject, text))
     state = State(tmp_path / "s.db")
     since = (r.now - timedelta(hours=9)).isoformat(timespec="seconds")
-    r._read_gap(state, SimpleNamespace(name="njuskalo", label="Njuškalo", incomplete=True, since=since))
-    assert state.meta_get("od:njuskalo") == since                      # sljedeće pokretanje: od istog
-    r._read_gap(state, SimpleNamespace(name="njuskalo", label="Njuškalo", incomplete=False, since=since))
+
+    def read(incomplete, catch_up=False):
+        r._read_gap(state, SimpleNamespace(name="njuskalo", label="Njuškalo", incomplete=incomplete, since=since,
+                                           catch_up=catch_up, reached="2026-10-08T04:12:00.000Z", deep_error="",
+                                           search_links=lambda: [("kuće", "https://www.njuskalo.hr/x")]))
+
+    read(True)
+    assert state.meta_get("od:njuskalo") == since and alerts == []        # sljedeće pokretanje: od istog
+    read(False, catch_up=True)
+    assert state.meta_get("od:njuskalo") == "" and alerts == []           # dublje čitanje zatvorilo prazninu
+    read(True)
+    read(True, catch_up=True)                                             # ni dublje: odustaje se i javlja
     assert state.meta_get("od:njuskalo") == ""
-    old = (r.now - timedelta(days=3)).isoformat(timespec="seconds")
-    r._read_gap(state, SimpleNamespace(name="njuskalo", label="Njuškalo", incomplete=True, since=old))
-    assert state.meta_get("od:njuskalo") == ""                         # praznina starija od 2 dana
+    assert alerts[0][0] == "Scraper: Njuškalo – dio oglasa nije pročitan"
+    assert "do 08.10. 06:12" in alerts[0][1] and "https://www.njuskalo.hr/x" in alerts[0][1]
+    read(False)
+    assert len(alerts) == 1                                               # jednokratna praznina: bez "opet radi"
+    for _ in range(2):                                                    # npr. 2. stranica se ne učitava
+        read(True)
+        read(True, catch_up=True)
+    assert len(alerts) == 2                                               # javljeno jednom
+    read(False)
+    assert alerts[-1][0] == "Scraper: Njuškalo ponovno čita sve nove oglase"
     state.close()
 
 
 def test_missing_telegram_counts_as_telegram_failure(tmp_path, monkeypatch):
     """Uređaj koji bi trebao slati, a nema Telegram postavljen: bilježi se kao Telegram koji
-    ne radi (GitHub to vidi i za Redmi), a ne samo zapis u dnevniku."""
+    ne radi (GitHub to vidi i za Redmi) i kad nema oglasa, a poruka kaže što upisati."""
+    import scraper.runner as runner_mod
+
     monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
     monkeypatch.delenv("TELEGRAM_CHAT_ID", raising=False)
-    r = Runner(tmp_path / "s.db", tmp_path, send=True)
-    assert r.telegram is None and r.wants_telegram
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    FakeSource.modes, FakeSource.batches = [], [[listing(sid="1")]] + [[listing(sid="1")]] * 3
+    mails = []
+    for _ in range(4):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=True)
+        assert r.telegram is None and r.wants_telegram
+        r.cfg["izvori"] = {"fake": True}
+        r.email = SimpleNamespace(send=lambda subject, text, *a: mails.append((subject, text)))
+        r._check_land = r._banks = r._tenders = r._ppv_reminder = r._retry_weekly = lambda *a, **k: None
+        r.run(force=True)
     state = State(tmp_path / "s.db")
-    r._send_notifications(state, [(listing(), Decision(PASS, jls="Punat"), "")])
-    assert [h["failures"] for h in state.health_all() if h["source"] == "telegram"] == [1]
+    assert [h["failures"] for h in state.health_all() if h["source"] == "telegram"] == [4]
     state.close()
+    subjects = [m[0] for m in mails]
+    assert subjects.count("Scraper: Telegram nije postavljen") == 1
+    text = next(t for s, t in mails if s == "Scraper: Telegram nije postavljen")
+    assert "Secrets" in text and "blokiran" not in text
+
+
+def test_reserve_runs_alert_when_cron_job_stops(tmp_path, monkeypatch):
+    """cron-job.org ne pokreće: GitHub radi samo povremeno (rezerva). Kad glavni okidač u radnom
+    vremenu kasni 2 sata, upozorenje (jednom); kad cron-job.org opet pokrene, poruka. Jutarnja
+    rezerva prije prvog glavnog pokretanja nije kvar (noć se ne broji)."""
+    from datetime import timedelta
+
+    alerts = []
+
+    def configure(r, i):
+        r._alert = lambda subject, text: alerts.append(subject)
+        start = r.now.replace(hour=10, minute=0, second=0, microsecond=0)
+        r.now = start + timedelta(minutes=[0, 50, 130, 200, 220][i])
+        r.stamp = r.now.isoformat(timespec="seconds")
+        if i in (1, 2, 3):
+            r.run = lambda force=False, reserve=True, run=r.run: run(force, reserve)
+
+    _runs(tmp_path, monkeypatch, [[listing(sid="1")]] * 5, configure)
+    assert alerts == ["Scraper: cron-job.org ne pokreće GitHub", "Scraper: cron-job.org ponovno pokreće GitHub"]
+
+    alerts.clear()
+    state = State(tmp_path / "s.db")
+    state.meta_set("glavni_okidac", "2026-10-07T22:40:00+02:00")          # sinoć
+    state.close()
+
+    def morning(r, i):
+        r._alert = lambda subject, text: alerts.append(subject)
+        r.now = r.now.replace(year=2026, month=10, day=8, hour=7, minute=5)
+        r.run = lambda force=False, reserve=True, run=r.run: run(force, reserve)
+
+    _runs(tmp_path, monkeypatch, [[listing(sid="1")]], morning)
+    assert alerts == []
+
+
+def test_redmi_running_but_not_finishing_is_not_reported_as_silent(tmp_path):
+    """Redmi šalje stanje i čita Njuškalo, ali pokretanje ne završava (istek 15 min): poruka to
+    kaže (i traži dnevnik), a ne "Redmi se ne javlja … provjeri struju i Wi-Fi"."""
+    from datetime import timedelta
+
+    alerts = []
+    redmi = State(tmp_path / "redmi.db")
+    r = Runner(tmp_path / "s.db", tmp_path, send=False, redmi_db=tmp_path / "redmi.db")
+    r.now = r.now.replace(hour=12)
+    stamp = lambda minutes: (r.now - timedelta(minutes=minutes)).isoformat(timespec="seconds")  # noqa: E731
+    redmi.meta_set("last_run", stamp(180))
+    redmi.meta_set("pocetak", stamp(15))
+    redmi.health_ok("njuskalo", stamp(14))
+    redmi.close()
+    r._alert = lambda subject, text: alerts.append((subject, text))
+    state = State(tmp_path / "s.db")
+    r._check_redmi(state)
+    state.close()
+    assert alerts[0][0] == "Scraper: Redmi ne završava pokretanja"
+    assert "Njuškalo se i dalje čita" in alerts[0][1] and "tail -40 ~/scraper.log" in alerts[0][1]
+
+
+def test_redmi_clock_is_measured_and_corrected(tmp_path):
+    """Sat na Redmiju: odstupanje izmjereno pri preuzimanju (sat.txt) bilježi se u redmi.db i javlja;
+    GitHub njime ispravlja vrijeme Redmija. Bez mjerenja, zapis iz budućnosti je greška, ne "živ"."""
+    from datetime import timedelta
+
+    alerts = []
+    (tmp_path / "sat.txt").write_text("-10800")                             # kasni 3 sata
+    r = Runner(tmp_path / "redmi.db", tmp_path / "out", send=False, device="redmi", seen_file=tmp_path / "seen.json.gz")
+    r.now = r.now.replace(hour=12)
+    r.stamp = r.now.isoformat(timespec="seconds")
+    r._alert = lambda subject, text: alerts.append(subject)
+    redmi = State(tmp_path / "redmi.db")
+    r._heartbeat(redmi)
+    redmi.meta_set("last_run", r.stamp)                                     # po satu Redmija (3 h kasni)
+    redmi.close()
+    assert alerts == ["Scraper: sat na Redmiju nije točan"]
+
+    alerts.clear()
+    g = Runner(tmp_path / "s.db", tmp_path, send=False, redmi_db=tmp_path / "redmi.db")
+    g.now = r.now + timedelta(hours=3, minutes=10)                          # pravo vrijeme: 10 min poslije
+    g._alert = lambda subject, text: alerts.append(subject)
+    state = State(tmp_path / "s.db")
+    g._check_redmi(state)
+    assert alerts == []                                                     # nije "ne javlja se"
+
+    redmi = State(tmp_path / "redmi.db")                                    # stari kod: bez mjerenja, sat žuri
+    redmi.meta_set("sat:razlika", "0")
+    redmi.meta_set("last_run", (g.now + timedelta(days=1)).isoformat(timespec="seconds"))
+    redmi.close()
+    g._check_redmi(state)
+    assert alerts == ["Scraper: sat na Redmiju nije točan"]
+    state.close()
+
+
+def test_redmi_alert_without_telegram_is_relayed_by_github(tmp_path):
+    """Redmi bez Telegrama: njegovo upozorenje (Njuškalo ne radi) nije "poslano", ostaje
+    nepotvrđeno, pa ga GitHub prosljeđuje mailom (jednom), a i kad prođe."""
+    import os
+
+    for name in ("TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID"):
+        os.environ.pop(name, None)
+    redmi = Runner(tmp_path / "redmi.db", tmp_path / "out", send=True, device="redmi")
+    assert redmi._alert("Scraper: izvor Njuškalo ne radi", "x") is False
+    state = State(tmp_path / "redmi.db")
+    alerts = []
+    g = Runner(tmp_path / "s.db", tmp_path, send=False, redmi_db=tmp_path / "redmi.db")
+    g.now = g.now.replace(hour=12)
+    for _ in range(4):
+        state.health_fail("njuskalo", "captcha")
+    state.meta_set("last_run", g.now.isoformat(timespec="seconds"))
+    state.close()
+    g._alert = lambda subject, text: alerts.append(subject)
+    state = State(tmp_path / "s.db")
+    g._check_redmi(state)                                                   # Redmi dobiva još jednu priliku
+    g._check_redmi(state)
+    g._check_redmi(state)
+    assert alerts == ["Scraper: Redmi javlja – Njuškalo"]
+    other = State(tmp_path / "redmi.db")
+    other.health_ok("njuskalo", "t")
+    other.close()
+    g._check_redmi(state)
+    assert alerts[-1] == "Scraper: Redmi – Njuškalo ponovno u redu"
+    state.close()
+
+
+def test_redmi_running_old_code_is_reported(tmp_path):
+    """Redmi ne osvježava kod (obrisana grana, mreža): nakon ~6 sati drukčijeg koda upozorenje."""
+    from scraper.runner import CODE_ALERT_RUNS
+
+    alerts = []
+    redmi = State(tmp_path / "redmi.db")
+    redmi.meta_set("kod", "f3b26a1" + "0" * 33 + " 2026-10-01T10:00:00+02:00")
+    redmi.close()
+    g = Runner(tmp_path / "s.db", tmp_path, send=False, redmi_db=tmp_path / "redmi.db")
+    g._code_version = lambda: "237dc21" + "1" * 33 + " 2026-10-08T10:00:00+02:00"
+    g._alert = lambda subject, text: alerts.append(subject)
+    state = State(tmp_path / "s.db")
+    for _ in range(CODE_ALERT_RUNS + 2):
+        g._check_redmi(state)
+    assert alerts == ["Scraper: Redmi radi sa starim kodom"]
+    state.close()
+
+
+def test_github_watchdog_tells_reserve_only_and_unfinished_runs(tmp_path):
+    """Na Redmiju: GitHub radi samo rezervno (cron-job.org stao) – jedna poruka, bez "ponovno radi"
+    pri svakom povremenom pokretanju; GitHub se pokreće, ali ne završava – poruka to kaže."""
+    from datetime import datetime
+    from zoneinfo import ZoneInfo
+
+    alerts = []
+
+    def check(now, **info):
+        (tmp_path / "github.json").write_text(json.dumps(info))
+        r = Runner(tmp_path / "r.db", tmp_path / "out", send=False, device="redmi", seen_file=tmp_path / "seen.json.gz")
+        r.now = datetime.fromisoformat(now).replace(tzinfo=ZoneInfo("Europe/Zagreb"))
+        r._alert = lambda subject, text: alerts.append(subject)
+        state = State(tmp_path / "r.db")
+        r._check_github(state)
+        state.close()
+
+    main = "2026-10-07T09:00:00+02:00"
+    check("2026-10-07T12:00", zadnje_pokretanje="2026-10-07T11:50:00+02:00", pocetak="2026-10-07T11:50:00+02:00",
+          glavni_okidac=main)
+    check("2026-10-07T14:00", zadnje_pokretanje="2026-10-07T11:50:00+02:00", pocetak="2026-10-07T11:50:00+02:00",
+          glavni_okidac=main)
+    check("2026-10-07T14:20", zadnje_pokretanje="2026-10-07T14:10:00+02:00", pocetak="2026-10-07T14:10:00+02:00",
+          glavni_okidac=main)                                                # povremena rezerva: nije oporavak
+    assert alerts == ["Scraper: cron-job.org ne pokreće GitHub"]
+    check("2026-10-07T15:00", zadnje_pokretanje="2026-10-07T14:40:00+02:00", pocetak="2026-10-07T14:40:00+02:00",
+          glavni_okidac="2026-10-07T14:40:00+02:00")
+    assert alerts[-1] == "Scraper: cron-job.org ponovno pokreće GitHub"
+    check("2026-10-07T18:00", zadnje_pokretanje="2026-10-07T15:00:00+02:00", pocetak="2026-10-07T17:40:00+02:00",
+          glavni_okidac="2026-10-07T17:40:00+02:00")
+    assert alerts[-1] == "Scraper: GitHub ne završava pokretanja"
+
+
+def test_missing_mail_alerts_on_telegram_and_weekly_is_not_sent(tmp_path, monkeypatch):
+    """Na GitHubu bez SMTP postavki: poruka na Telegram (jednom), a tjedni izvještaj se ne
+    smatra poslanim (ponavlja se, nakon 2 dana upozorenje)."""
+    for name in ("SMTP_USER", "SMTP_PASSWORD"):
+        monkeypatch.delenv(name, raising=False)
+    sent = []
+    r = Runner(tmp_path / "s.db", tmp_path, send=True)
+    assert r.email is None and r.wants_email
+    r.telegram = SimpleNamespace(send_text=lambda text: sent.append(text))
+    state = State(tmp_path / "s.db")
+    r._mail_health(state)
+    r._mail_health(state)
+    assert len(sent) == 1 and "mail nije postavljen" in sent[0]
+    state.close()
+    r._weekly_plans = lambda: None
+    assert r.weekly(record=False) is False
+
+
+def test_listing_error_rolls_back_and_is_reported(tmp_path, monkeypatch):
+    """Greška pri obradi jednog oglasa: ništa od njega se ne zapisuje (sniženje stiže kad greška
+    prođe), a ponavlja li se, upozorenje s poveznicom (izvor inače "radi")."""
+    import scraper.runner as runner_mod
+
+    calls = {"n": 0}
+    real = runner_mod.Runner._notify_reason
+
+    def flaky(self, x, d, old):
+        if x.key == "t:1" and x.price == 280_000 and calls["n"] == 0:
+            calls["n"] += 1
+            raise KeyError("jednom")
+        if x.key == "t:9":
+            raise KeyError("uvijek")
+        return real(self, x, d, old)
+
+    monkeypatch.setattr(runner_mod.Runner, "_notify_reason", flaky)
+    alerts = []
+    sent = _runs(tmp_path, monkeypatch,
+                 [[listing(sid="1"), listing(sid="2"), listing(sid="3")],
+                  [listing(sid="1"), listing(sid="2"), listing(sid="3")],
+                  [listing(280_000, "1"), listing(sid="2"), listing(sid="3"), listing(sid="4")],
+                  [listing(280_000, "1"), listing(sid="2"), listing(sid="3"), listing(sid="4"), listing(sid="9")],
+                  [listing(sid="2"), listing(sid="3"), listing(sid="4"), listing(sid="9")],
+                  [listing(sid="2"), listing(sid="3"), listing(sid="4"), listing(sid="9")]],
+                 lambda r, i: setattr(r, "_alert", lambda subject, text: alerts.append((subject, text))))
+    assert ("t:4", "") in sent[2] and not any(k == "t:1" for k, _ in sent[2])
+    assert any(k == "t:1" and h.startswith("📉 Snižena cijena") for k, h in sent[3])    # nije izgubljeno
+    assert [a[0] for a in alerts] == ["Scraper: fake – oglasi se ne daju obraditi"]
+    assert "https://x" in alerts[0][1] and "uvijek" in alerts[0][1]
+
+
+def test_detail_pages_failing_are_reported(tmp_path):
+    """Stranice oglasa pucaju (promjena stranice), popis radi: nakon DETAIL_ALERT_RUNS pokretanja
+    zaredom upozorenje (jednom); pokretanje bez otvaranja ne broji ni ne poništava."""
+    from types import SimpleNamespace as NS
+
+    from scraper.runner import DETAIL_ALERT_RUNS
+
+    alerts = []
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    r._alert = lambda subject, text: alerts.append(subject)
+    state = State(tmp_path / "s.db")
+    broken = NS(name="nekretnine_hr", label="nekretnine.hr", detail_failed=2, detail_ok=False, detail_error="ValueError: x")
+    for _ in range(DETAIL_ALERT_RUNS - 1):
+        r._detail_health(state, broken)
+        r._detail_health(state, NS(name="nekretnine_hr", label="nekretnine.hr"))     # bez otvaranja
+    assert alerts == []
+    r._detail_health(state, broken)
+    r._detail_health(state, broken)
+    assert alerts == ["Scraper: nekretnine.hr – stranice oglasa ne rade"]
+    r._detail_health(state, NS(name="nekretnine_hr", label="nekretnine.hr", detail_failed=1, detail_ok=True))
+    assert alerts[-1] == "Scraper: nekretnine.hr – stranice oglasa ponovno rade"
+    state.close()
+
+
+def test_source_without_new_listings_is_reported(tmp_path):
+    """Izvor se čita bez greške, a danima ne donosi ništa novo (portal ne poštuje redoslijed):
+    upozorenje jednom, i kad opet stižu novi."""
+    from datetime import timedelta
+    from types import SimpleNamespace as NS
+
+    alerts = []
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    r._alert = lambda subject, text: alerts.append((subject, text))
+    state = State(tmp_path / "s.db")
+    src = NS(name="index_oglasi", label="index.hr/oglasi", search_links=lambda: [("kuće", "https://index.hr/x")])
+    old = (r.now - timedelta(days=3)).isoformat(timespec="seconds")
+    state.meta_set("baseline:index_oglasi", old)
+    state.upsert(listing(source="index_oglasi"), Decision(PASS, jls="Punat"), old)
+    r._fresh_health(state, src)
+    r._fresh_health(state, src)
+    assert [a[0] for a in alerts] == ["Scraper: index.hr/oglasi – nema novih oglasa"]
+    assert "https://index.hr/x" in alerts[0][1]
+    state.upsert(listing(sid="2", source="index_oglasi"), Decision(PASS, jls="Punat"), r.stamp)
+    r._fresh_health(state, src)
+    assert alerts[-1][0] == "Scraper: index.hr/oglasi – ponovno stižu novi oglasi"
+    r._fresh_health(state, NS(name="fake", label="fake"))                 # izvori bez praga se ne prate
+    state.close()
+
+
+def test_deep_read_failure_is_tracked_not_fatal(tmp_path):
+    """Dnevno dublje čitanje koje staje na grešci: upozorenje nakon DEEP_ALERT_DAYS dana zaredom."""
+    from types import SimpleNamespace as NS
+
+    from scraper.runner import DEEP_ALERT_DAYS
+
+    alerts = []
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    r._alert = lambda subject, text: alerts.append(subject)
+    state = State(tmp_path / "s.db")
+    for _ in range(DEEP_ALERT_DAYS + 1):
+        r._deep_health(state, NS(name="realestatecroatia", label="realestatecroatia.com", deep_error="stranica 40: HTTP 500"))
+    assert alerts == ["Scraper: realestatecroatia.com – dnevno dublje čitanje ne uspijeva"]
+    r._deep_health(state, NS(name="realestatecroatia", label="realestatecroatia.com", deep_error=""))
+    assert alerts[-1] == "Scraper: realestatecroatia.com – dnevno dublje čitanje ponovno radi"
+    state.close()
+
+
+def test_weekly_marks_stale_redmi_rows_unknown(tmp_path):
+    """Redmi se danima ne javlja: njegovi stari reci u tjednom izvještaju nisu "✅ radi"."""
+    from datetime import timedelta
+
+    redmi = State(tmp_path / "redmi.db")
+    redmi.health_ok("njuskalo", "2026-10-09T14:12:00+02:00")
+    redmi.meta_set("last_run", "2026-10-09T14:12:00+02:00")
+    redmi.close()
+    bodies = []
+    r = Runner(tmp_path / "s.db", tmp_path, send=False, redmi_db=tmp_path / "redmi.db")
+    r.now = r.now.replace(year=2026, month=10, day=12, hour=7) + timedelta(0)
+    r._email = lambda subject, text, html_body="", attachments=(): bodies.append(html_body) or True
+    r._weekly_plans = lambda: None
+    r.weekly(record=False)
+    assert "Redmi – Njuškalo: ❔ nepoznato – stanje s Redmija od 2026-10-09 14:12" in bodies[0]

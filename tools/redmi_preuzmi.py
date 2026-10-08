@@ -5,22 +5,32 @@ pokretanje poslalo praznu bazu preko stare (poslane poruke, 👎 na stare poruke
 
 Preko GitHub API-ja, ne raw.githubusercontent.com: raw adresa do 5 minuta vraća staro
 stanje, a Redmi kreće 10 minuta nakon GitHuba baš da vidi njegovo najnovije stanje.
-Ako API ne odgovori, pokušava se raw adresa. Datoteka koja se ne preuzme ostaje stara."""
+Ako API ne odgovori, pokušava se raw adresa. Datoteka koja se ne preuzme ostaje stara.
+
+Usput se mjeri sat mobitela prema GitHubovu (zaglavlje Date): odstupanje (sekunde, + kad
+mobitel žuri) ide u sat.txt; scraper ga zapisuje u redmi.db i javlja kad je preveliko."""
 
 import gzip
 import os
 import sqlite3
 import sys
+import time
 import urllib.error
 import urllib.request
+from email.utils import parsedate_to_datetime
 from pathlib import Path
 
 REPO = "B0rn4/scraper"
 FILES = ("seen.json.gz", "cijene.json", "github.json")
+SERVER_TIME: list[float] = []      # (lokalno - GitHub) iz odgovora
 
 
 def _get(url: str, headers: dict) -> bytes:
     with urllib.request.urlopen(urllib.request.Request(url, headers=headers), timeout=60) as resp:
+        try:
+            SERVER_TIME.append(time.time() - parsedate_to_datetime(resp.headers["Date"]).timestamp())
+        except (KeyError, TypeError, ValueError):
+            pass
         return resp.read()
 
 
@@ -65,6 +75,8 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             print(f"redmi_preuzmi: {name} nije preuzet ({type(exc).__name__}: {str(exc).replace(token, '***') if token else exc})")
             failed += 1
+    if SERVER_TIME:
+        (home / "sat.txt").write_text(str(round(min(SERVER_TIME, key=abs))))
     return 1 if failed else 0
 
 
