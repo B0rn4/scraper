@@ -263,7 +263,7 @@ def test_gp_share_exact_area_from_building_zone_outlines():
 
     class Resp:
         def __init__(self, text=None, data=None):
-            self.status_code, self.text, self.data = 200, text or "", data
+            self.status_code, self.text, self.data, self.headers = 200, text or "", data, {}
 
         def json(self):
             return self.data

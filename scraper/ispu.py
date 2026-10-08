@@ -21,7 +21,8 @@ API = "https://ispu.mgipu.hr/api/v1/"
 # Približna oznaka na karti oglasa (krug na portalu): točan udio kruga u građevinskom području, iz
 # obrisa slojeva (GeoServer Ministarstva kroz ISPU-ov WMS posrednik, KML). Polumjer kruga portal
 # ne navodi u podacima oglasa – APPROX_RADIUS_M po izvoru (izmjereno s karte portala).
-APPROX_RADIUS_M = {"default": 300}
+APPROX_RADIUS_M = {"default": 300,
+                   "nekretnine_hr": 250}   # kod karte portala: krug "only_area" polumjera 250 m (8. 10. 2026.)
 _CIRCLE_SIDES = 256
 _PLACEMARK = re.compile(r"<Placemark[^>]*>(.*?)</Placemark>", re.S)
 _POLYGON = re.compile(r"<Polygon>(.*?)</Polygon>", re.S)
@@ -294,10 +295,11 @@ class Ispu:
             if attempt:
                 time.sleep(self.retry_pause)
             r = self.session.get(API + "gis/wms", params=params, headers=HEADERS, timeout=self.timeout)
-            if r.status_code == 200 and "<kml" in r.text[:500]:
+            if r.status_code == 200 and "<kml" in r.text[:2000]:
                 break
         else:
-            raise RuntimeError(f"ISPU obrisi građevinskog područja: HTTP {r.status_code}")
+            raise RuntimeError(f"ISPU obrisi građevinskog područja: HTTP {r.status_code} "
+                               f"({r.headers.get('content-type', '')}) {r.text[:300]!r}")
 
         def ring(coords: str) -> list[tuple[float, float]]:
             pts = [c.split(",") for c in coords.split()]
