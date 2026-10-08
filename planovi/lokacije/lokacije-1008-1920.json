@@ -1,0 +1,100 @@
+[
+ {
+  "ulaz": "https://www.nekretnine.hr/oglasi/4253231/",
+  "greska": "RuntimeError: ISPU obrisi građevinskog područja: HTTP 200"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/oglasi/4253231/",
+  "skripti": 30,
+  "isjecci": [
+   {
+    "skripta": "framework-d7b9dd0daf63df57.js",
+    "isjecak": "typeof t?\"\":t)))}function cR(e,t,n){return n=n.ownerDocument.defaultView,{rect:e,abs:\"absolute\"===t.position||\"fixed\"===t.position,clip:\"none\"!==t.clipPath||\"visible\"!==t.overflow||\"none\"!==t.filter||\"none\"!==t.mask||\"none\"!==t.mask||\"0px\"!==t.borderRadius,view:0<=e.bottom&&0<=e.right&&e.top<=n.innerHeight&&e.left<=n.innerWidth}}function cA(e){return cR(e.getBoundingClientRect(),getComputedStyle(e),e)}function cU(e){var t=e.getBoundingClientRect();return cR(t=new DOMRect(t.x+2e4,t.y+2e4,t.width,t.heig"
+   },
+   {
+    "skripta": "_app-4b22dc795c97d1a0.js",
+    "isjecak": "place\"===e.searchType,s=e=>\"polygon\"===e.searchType&&\"Route\"!==e.value.type,l=e=>\"circle\"===e.searchType,u=e=>\"polygon\"===e.searchType&&\"Route\"===e.value.type,c=e=>a(e)&&g(e.value[0]),d=e=>l(e)||u(e),h=e=>!!(\"Point\"===e.geometry.type&&e.properties&&\"radius\"in e.properties),f=({type:e})=>e===o.z.city,p=({type:e})=>e===o.z.province,m=({type:e})=>e===o.z.macroarea,g=({type:e})=>e===o.z.touristicArea,v=(e,t)=>e.parents.some(e=>e.type===t),y=({type:e})=>e===o.z.cityZone,E=({type:e})=>e===o.z.microzone,b=({"
+   },
+   {
+    "skripta": "_app-4b22dc795c97d1a0.js",
+    "isjecak": "chType){case\"polygon\":return e.value.transport??null;case\"circle\":return\"circle\";default:return null}})(n),\"Isochronous - Range Selected\":(e=>{if(!e)return null;switch(e.searchType){case\"polygon\":return e.value.time??null;case\"circle\":return e.value.radius;default:return null}})(n),\"Isocronous Point Method Selected\":n?.value.selectionMethod?V[n.value.selectionMethod]:null,\"Metro Lines Selected\":i?i.fkMetro:null,\"Metro Stations Selected\":i?i.fkMetroStation:null,Points:o?.split(\";\").join(\"|\"),Circles:i&"
+   },
+   {
+    "skripta": "_app-4b22dc795c97d1a0.js",
+    "isjecak": "LTING=\"defaulting\",g.SUSPENDED_FROM_FEED=\"suspended-from-feed\",g.PRE_DEFAULTING=\"pre-defaulting\",g.LITIGATION=\"litigation\",g.TO_ACTIVATE=\"to-activate\",g.CANCELLED=\"cancelled\",g.LIGHT=\"light\",g.FRAUD=\"fraud\",g.SUSPENDED=\"suspended\",g),F=((v={}).AREA=\"only_area\",v.MARKER=\"marker\",v.NO_MAP=\"no_map\",v),G=((y={}).SPECIFICATIONS=\"capitolato\",y.PROJECT_DESCRIPTION=\"descrizione progetto\",y.PLANIMETRY=\"planimetria\",y.APE=\"ape\",y),j=((E={})[E.ACTIVE=1]=\"ACTIVE\",E[E.SOLD=3]=\"SOLD\",E[E.SECRET=14]=\"SECRET\",E),V=((b={"
+   },
+   {
+    "skripta": "9547-302ad706d9c0c5d0.js",
+    "isjecak": "&&{lng:i},..._&&{path:_},...a===O.z.metroLine&&E&&{children:E}}},C=e=>{let{geometry:I,properties:A}=e;return{searchType:\"polygon\",value:{points:(0,E.Ic)(I.coordinates[0]),indirizzo:A.indirizzo}}},_=e=>{if((0,R.Sy)(e)){let{geometry:I,properties:A}=e,{radius:E,selectionMethod:R}=A,[O,l]=I.coordinates;return{searchType:\"circle\",value:{radius:E,center:[l,O],selectionMethod:R}}}let{geometry:I,properties:A}=e,{address:O,addressComponents:l,center:t,label:i,selectionMethod:C,time:_,transport:a}=A;return{sear"
+   },
+   {
+    "skripta": "9547-302ad706d9c0c5d0.js",
+    "isjecak": "I,properties:A}=e;return{searchType:\"polygon\",value:{points:(0,E.Ic)(I.coordinates[0]),indirizzo:A.indirizzo}}},_=e=>{if((0,R.Sy)(e)){let{geometry:I,properties:A}=e,{radius:E,selectionMethod:R}=A,[O,l]=I.coordinates;return{searchType:\"circle\",value:{radius:E,center:[l,O],selectionMethod:R}}}let{geometry:I,properties:A}=e,{address:O,addressComponents:l,center:t,label:i,selectionMethod:C,time:_,transport:a}=A;return{searchType:\"polygon\",value:{type:\"Route\",points:(0,E.Ic)(I.coordinates[0]),center:t,labe"
+   },
+   {
+    "skripta": "9547-302ad706d9c0c5d0.js",
+    "isjecak": "[...I[e]]}}return A})(e.value),A=e.value.find(e=>e.type===O.z.road);return e.idMacroarea&&(I.idMacroarea=e.idMacroarea),A&&(I.roadSegmentId=Number(A.id),e.indirizzo&&(I.indirizzo=e.indirizzo)),I}return(0,R.cb)(e)&&(I.raggio=String(Math.round(e.value.radius)),I.centro=e.value.center.join(\",\")),(0,R.Ag)(e)&&(e.value.idComune&&(I.idComune=e.value.idComune),e.value.idProvincia&&(I.idProvincia=e.value.idProvincia),e.value.idRegione&&(I.fkRegione=e.value.idRegione),e.value.idNazione&&(I.idNazione=e.value.id"
+   },
+   {
+    "skripta": "8309-eb030d567301c071.js",
+    "isjecak": ",l=new Date,c=Math.floor(l.getTime()/1e3),d={fkMacrozonaV2:e.idMZona?e.idMZona.join(\",\"):void 0,poligono:e.vrt||e.raggio?(e.vrt?n={mode:\"polygon\",area:e.vrt.split(\";\").map(e=>e.split(\",\").map(parseFloat))}:e.raggio&&e.centro&&(n={mode:\"circle\",area:{radius:e.raggio,center:e.centro.split(\";\").map(e=>e.split(\",\"))[0]}}),n):void 0,fkCategoria:e.idCategoria?String(e.idCategoria):void 0,fkContratto:e.idContratto?String(e.idContratto):void 0,fkProvincia:e.idProvincia?String(e.idProvincia):void 0,fkComune:e."
+   },
+   {
+    "skripta": "3025-5890d8b8eedf4c4a.js",
+    "isjecak": ".w)(\"staticMapUrl\");n.width=n.width||628,n.height=n.height||245,n.language=n.language||\"it\",n.scale=n.scale||1,n.fillColor=n.fillColor||\"0x319ACF\",n.strokeColor=n.strokeColor||\"0x319ACF\",n.strokeWeight=n.strokeWeight||2,n.numPoints=n.numPoints||40,n.radius=n.radius||250,n.radius=n.radius/1e3;let a={zoom:s&&s>0?s:void 0,size:`${n.width}x${n.height}`,language:n.language,style:n.style,scale:1!==n.scale?n.scale:void 0,sensor:!1},o=\"\";switch(n.markerType){case 3:o+=`color:${n.strokeColor}|fillcolor:${n.fil"
+   },
+   {
+    "skripta": "3025-5890d8b8eedf4c4a.js",
+    "isjecak": "icMapUrl\");n.width=n.width||628,n.height=n.height||245,n.language=n.language||\"it\",n.scale=n.scale||1,n.fillColor=n.fillColor||\"0x319ACF\",n.strokeColor=n.strokeColor||\"0x319ACF\",n.strokeWeight=n.strokeWeight||2,n.numPoints=n.numPoints||40,n.radius=n.radius||250,n.radius=n.radius/1e3;let a={zoom:s&&s>0?s:void 0,size:`${n.width}x${n.height}`,language:n.language,style:n.style,scale:1!==n.scale?n.scale:void 0,sensor:!1},o=\"\";switch(n.markerType){case 3:o+=`color:${n.strokeColor}|fillcolor:${n.fillColor}|w"
+   },
+   {
+    "skripta": "3025-5890d8b8eedf4c4a.js",
+    "isjecak": "idth=n.width||628,n.height=n.height||245,n.language=n.language||\"it\",n.scale=n.scale||1,n.fillColor=n.fillColor||\"0x319ACF\",n.strokeColor=n.strokeColor||\"0x319ACF\",n.strokeWeight=n.strokeWeight||2,n.numPoints=n.numPoints||40,n.radius=n.radius||250,n.radius=n.radius/1e3;let a={zoom:s&&s>0?s:void 0,size:`${n.width}x${n.height}`,language:n.language,style:n.style,scale:1!==n.scale?n.scale:void 0,sensor:!1},o=\"\";switch(n.markerType){case 3:o+=`color:${n.strokeColor}|fillcolor:${n.fillColor}|weight:${n.stro"
+   },
+   {
+    "skripta": "3025-5890d8b8eedf4c4a.js",
+    "isjecak": "dth||628,n.height=n.height||245,n.language=n.language||\"it\",n.scale=n.scale||1,n.fillColor=n.fillColor||\"0x319ACF\",n.strokeColor=n.strokeColor||\"0x319ACF\",n.strokeWeight=n.strokeWeight||2,n.numPoints=n.numPoints||40,n.radius=n.radius||250,n.radius=n.radius/1e3;let a={zoom:s&&s>0?s:void 0,size:`${n.width}x${n.height}`,language:n.language,style:n.style,scale:1!==n.scale?n.scale:void 0,sensor:!1},o=\"\";switch(n.markerType){case 3:o+=`color:${n.strokeColor}|fillcolor:${n.fillColor}|weight:${n.strokeWeight}"
+   },
+   {
+    "skripta": "3025-5890d8b8eedf4c4a.js",
+    "isjecak": "${n.strokeColor}|fillcolor:${n.fillColor}|weight:${n.strokeWeight}`,a.path=o+=((e,t,s,r)=>{let l=\"\",n=s/111,i=n/Math.cos(Math.PI/180*e);for(let s=0;s<r+1;s++){let a=s/(r/2)*Math.PI,o=e+n*Math.sin(a),c=t+i*Math.cos(a);l+=`|${o},${c}`}return l})(e,t,n.radius,n.numPoints);break;case 1:a.markers=`icon:https://s1.nekretnine.hr/_next/static/media/map-marker.67a91aaf.png|${e},${t}`,a.center=`${e},${t}`;break;default:a.center=`${e},${t}`}return(0,l.Cw)(i,a)}},92901:(e,t,s)=>{\"use strict\";s.d(t,{O:()=>v});var "
+   },
+   {
+    "skripta": "9172-57a61dbec75ec4d3.js",
+    "isjecak": "zo\"},p=e=>{let a={};switch(Object.keys(e).forEach(t=>{h[t]&&(a[h[t]]=e[t])}),e.vrt?(a.gm_area=JSON.stringify({mode:\"polygon\",area:e.vrt.split(\";\").map(e=>e.split(\",\"))}),a.tipoRicerca=\"mappa\"):e.raggio&&(a.gm_area=JSON.stringify({mode:\"circle\",area:{radius:e.raggio,center:e.centro?.split(\";\").map(e=>e.split(\",\"))[0]}}),a.tipoRicerca=\"mappa\"),e.idMZona&&(a.zona=e.idMZona.join(\",\")),e.idQuartiere&&(a.fkMicrozona=e.idQuartiere.join(\",\")),e.idCategoria){case l.R6.STANZE:e.idTipologia&&e.idTipologia.length"
+   },
+   {
+    "skripta": "9172-57a61dbec75ec4d3.js",
+    "isjecak": "ext/geography/surface\",{searchParams:w}).json():null},m[0]=a,m[1]=w,m[2]=u):u=m[2],(0,Y.U)(u));e:{if(G){s=G.surface;break e}if(g){let e;_[9]!==g?(e=(0,q.Ag)(g)||(0,q.tY)(g)?Math.round((0,K.mx)(g.value.points)):(0,q.cb)(g)?Math.round((0,K.OP)(g.value.radius)):null,_[9]=g,_[10]=e):e=_[10],s=e;break e}s=null}let X=s,J=!!T||H,ee=(v?.resultsCount||0)<=U,ea=(0,W.A8)(D,$),et=!!X&&X<B,er=!et,ei=!ee,es=!ea,eo=!J;_[11]!==S||_[12]!==V||_[13]!==er||_[14]!==ei||_[15]!==es||_[16]!==eo||_[17]!==p||_[18]!==e?(o=(0,N."
+   },
+   {
+    "skripta": "9172-57a61dbec75ec4d3.js",
+    "isjecak": "ilter(Boolean).join(\"/\")},_=(e,a,t)=>{let r={width:a.w,height:a.h,markerType:3,style:\"feature:road|element:labels|visibility:off\",fillColor:\"0x0074c14d\",strokeColor:\"0x0074c1ff\",strokeWeight:2,scale:t};return\"circle\"===e.searchType?(r.markerType=2,r.radius=e.value.radius,(0,s.l)(parseFloat(e.value.center[0]),parseFloat(e.value.center[1]),0,r)):\"polygon\"===e.searchType?(r.path=e.value.points,(0,s.l)(0,0,0,r)):null}},78140:(e,a,t)=>{\"use strict\";t.d(a,{S:()=>c,v:()=>l});var r=t(48643),i=t(53536),s=t(670"
+   },
+   {
+    "skripta": "9172-57a61dbec75ec4d3.js",
+    "isjecak": "join(\"/\")},_=(e,a,t)=>{let r={width:a.w,height:a.h,markerType:3,style:\"feature:road|element:labels|visibility:off\",fillColor:\"0x0074c14d\",strokeColor:\"0x0074c1ff\",strokeWeight:2,scale:t};return\"circle\"===e.searchType?(r.markerType=2,r.radius=e.value.radius,(0,s.l)(parseFloat(e.value.center[0]),parseFloat(e.value.center[1]),0,r)):\"polygon\"===e.searchType?(r.path=e.value.points,(0,s.l)(0,0,0,r)):null}},78140:(e,a,t)=>{\"use strict\";t.d(a,{S:()=>c,v:()=>l});var r=t(48643),i=t(53536),s=t(67089),o=t(45596),"
+   },
+   {
+    "skripta": "4778-da596859370e3d52.js",
+    "isjecak": "Dialog_radio__XLcxH\"}},32852:e=>{e.exports={button:\"PriceReferenceIndex_button__IF6E2\"}},34410:(e,t,a)=>{\"use strict\";a.d(t,{C:()=>o});var i=a(13469),n=a(48643),r=a(10992),s=a(69634),l=a.n(s);function o(e){let t,a,s,o,c,d=(0,n.c)(18),{border:_,borderRadius:u,children:m,customClass:p,hasSoftGradientBackground:g,onClick:h,ref:f}=e,b=void 0===_?\"default\":_;d[0]!==h?(t=h&&{role:\"button\",tabIndex:0,onClick:h,onKeyDown:e=>{\"Enter\"===e.key&&h&&h(e)}},d[0]=h,d[1]=t):t=d[1],d[2]!==t?(a={...t},d[2]=t,d[3]=a):a="
+   },
+   {
+    "skripta": "4778-da596859370e3d52.js",
+    "isjecak": ".wrapper__gradientBorder,C=\"highlighted\"===b&&l().wrapper__highlightedBorder;d[4]!==p||d[5]!==v||d[6]!==y||d[7]!==j||d[8]!==C?(s=(0,r.A)(l().wrapper,v,y,j,C,p),d[4]=p,d[5]=v,d[6]=y,d[7]=j,d[8]=C,d[9]=s):s=d[9];let S=\"md\"===(void 0===u?\"md\":u)?\"var(--radius-md)\":\"var(--radius-lg)\";return d[10]!==S?(o={\"--radius\":S},d[10]=S,d[11]=o):o=d[11],d[12]!==m||d[13]!==x||d[14]!==f||d[15]!==s||d[16]!==o?(c=(0,i.jsx)(\"div\",{className:s,ref:f,style:o,...x,children:m}),d[12]=m,d[13]=x,d[14]=f,d[15]=s,d[16]=o,d[17]=c"
+   },
+   {
+    "skripta": "4778-da596859370e3d52.js",
+    "isjecak": "order,C=\"highlighted\"===b&&l().wrapper__highlightedBorder;d[4]!==p||d[5]!==v||d[6]!==y||d[7]!==j||d[8]!==C?(s=(0,r.A)(l().wrapper,v,y,j,C,p),d[4]=p,d[5]=v,d[6]=y,d[7]=j,d[8]=C,d[9]=s):s=d[9];let S=\"md\"===(void 0===u?\"md\":u)?\"var(--radius-md)\":\"var(--radius-lg)\";return d[10]!==S?(o={\"--radius\":S},d[10]=S,d[11]=o):o=d[11],d[12]!==m||d[13]!==x||d[14]!==f||d[15]!==s||d[16]!==o?(c=(0,i.jsx)(\"div\",{className:s,ref:f,style:o,...x,children:m}),d[12]=m,d[13]=x,d[14]=f,d[15]=s,d[16]=o,d[17]=c):c=d[17],c}},34434"
+   },
+   {
+    "skripta": "4778-da596859370e3d52.js",
+    "isjecak": "er__highlightedBorder;d[4]!==p||d[5]!==v||d[6]!==y||d[7]!==j||d[8]!==C?(s=(0,r.A)(l().wrapper,v,y,j,C,p),d[4]=p,d[5]=v,d[6]=y,d[7]=j,d[8]=C,d[9]=s):s=d[9];let S=\"md\"===(void 0===u?\"md\":u)?\"var(--radius-md)\":\"var(--radius-lg)\";return d[10]!==S?(o={\"--radius\":S},d[10]=S,d[11]=o):o=d[11],d[12]!==m||d[13]!==x||d[14]!==f||d[15]!==s||d[16]!==o?(c=(0,i.jsx)(\"div\",{className:s,ref:f,style:o,...x,children:m}),d[12]=m,d[13]=x,d[14]=f,d[15]=s,d[16]=o,d[17]=c):c=d[17],c}},34434:e=>{e.exports={box:\"ReferenceBox_bo"
+   },
+   {
+    "skripta": "4778-da596859370e3d52.js",
+    "isjecak": ");return(0,l.BU)({nation:t.idNazione,region:t.fkRegione??u(t.idRegione),province:t.idProvincia,city:u(t.idComune),macrozones:t.idMZona?.map(String),metros:t.fkMetro,metroStations:t.fkMetroStation,area:t.vrt,center:t.centro?t.centro.split(\",\"):void 0,radius:t.raggio})}},87467:e=>{e.exports={list:\"AICallFeatures_list__sbg1q\",list__md:\"AICallFeatures_list__md__vlh_U\",list__sm:\"AICallFeatures_list__sm__sQJd4\",listItem:\"AICallFeatures_listItem__HjHRa\",icon:\"AICallFeatures_icon__uYzVW\"}},88965:e=>{e.exports"
+   }
+  ]
+ }
+]
