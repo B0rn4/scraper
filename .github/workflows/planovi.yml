@@ -7,12 +7,12 @@ on:
   workflow_dispatch:
     inputs:
       naredba:
-        description: "popis (obiđi stranice; bez adresa zavod.pgz.hr), preuzmi (PDF-ovi u tekst), sn (odluke o planovima), ispu (slojevi) ili ppv (cjenovni blokovi)"
+        description: "popis (obiđi stranice; bez adresa zavod.pgz.hr), preuzmi (PDF-ovi u tekst), sn (odluke o planovima), ispu (slojevi), ppv (cjenovni blokovi) ili lokacija (oglas u ISPU-u)"
         type: choice
-        options: [popis, preuzmi, sn, ispu, ppv, ppv-svi]
+        options: [popis, preuzmi, sn, ispu, ppv, ppv-svi, lokacija]
         default: popis
       adrese:
-        description: "Adrese odvojene razmakom: početne stranice (popis) ili PDF-ovi (preuzmi)"
+        description: "Adrese odvojene razmakom: početne stranice (popis), PDF-ovi (preuzmi) ili oglasi / lat,lon (lokacija)"
         required: false
         default: ""
 
@@ -57,6 +57,8 @@ jobs:
             python tools/ispu_istrazi.py debug-out/planovi/ispu
           elif [ "${{ inputs.naredba }}" = ppv ]; then
             python tools/ppv_istrazi.py debug-out/planovi/ispu
+          elif [ "${{ inputs.naredba }}" = lokacija ]; then
+            python tools/provjeri_lokaciju.py debug-out/planovi/lokacije $ADRESE
           elif [ "${{ inputs.naredba }}" = ppv-svi ]; then
             python tools/ppv_preuzmi.py debug-out/planovi/ppv/naselja_ppv.json.gz || true
           else

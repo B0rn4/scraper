@@ -48,8 +48,31 @@ def test_check_land_by_parcel_and_by_map():
     assert "IZVAN naselja" in r.line and "nije za obiteljsku kuću" in r.warning
 
     fake = FakeIspu(inside)
-    r = check_land(fake, "Zemljište", 45.1, 14.5, True)        # približna lokacija → ne provjerava se
+    r = check_land(fake, "Zemljište", 45.1, 14.5, True)        # približna lokacija bez provjere okolice
     assert r.line.endswith("oglas nema točnu lokaciju ni broj čestice") and not fake.calls
+
+
+class RingIspu(FakeIspu):
+    def __init__(self, ring):
+        super().__init__(None)
+        self.ring = ring
+
+    def gp_around(self, lat, lon):
+        self.calls.append(("gp_around", lat, lon))
+        return self.ring
+
+
+def test_check_land_around_approximate_marker():
+    """Približna oznaka (krug na portalu): ISPU u središtu i na krugu oko nje."""
+    r = check_land(RingIspu(["naselja"] * 9), "Zemljište", 45.33, 14.29, True)
+    assert r.line.startswith("🗺 Vjerojatno u građevinskom području naselja") and not r.warning
+    r = check_land(RingIspu([None] * 9), "Zemljište", 45.33, 14.29, True)
+    assert "Vjerojatno NIJE" in r.line and r.warning.startswith("prema ISPU-u oko približne oznake nema")
+    r = check_land(RingIspu(["naselja"] * 4 + [None] * 4 + ["izvan naselja"]), "Zemljište", 45.33, 14.29, True)
+    assert "naselja 4 od 9, izvan naselja 1" in r.line and not r.warning
+    fake = RingIspu(["naselja"] * 9)
+    r = check_land(fake, "Kuća", 45.33, 14.29, True, house=True)       # kuće: bez provjere okolice
+    assert "nije provjereno" in r.line and not fake.calls
 
 
 def test_runner_marks_land_outside_building_zone(tmp_path):
