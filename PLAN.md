@@ -124,16 +124,16 @@ bez stotina poruka.
 
 0. **Test izvedivosti** (gotovo): rezultati su u `probe/results/`. GitHub poslužitelji
    izlaze s američkih IP adresa; blokirani su Njuškalo, Crozilla, Indomio i Realitica.
-1. **(u tijeku)** Jezgra (konfiguracija, filter, lokacije, baza), Telegram, e-mail,
+1. **(gotovo 4. 10.)** Jezgra (konfiguracija, filter, lokacije, baza), Telegram, e-mail,
    pregledni izvještaj, GitHub Actions, FINA, nekretnine.hr, oglasnik.hr, index.hr/oglasi.
-   Kod je u `scraper/`, upute u README.md. Početni popis poslan 4. 10. 2026.
-   (15.894 oglasa). Poznato: isti oglas na više portala stiže više puta (rješava faza 5);
-   GitHub raspored se nije sam pokrenuo – rješenje u README.md („Raspored ne radi”).
+   Kod je u `scraper/`, upute u README.md i UPUTE.md. Početni popis poslan 4. 10. 2026.
+   (15.894 oglasa). Isti oglas na više portala: riješeno u 3.1. Pokretanje svakih 20
+   minuta: cron-job.org (GitHubov raspored je samo rezerva).
 2. **2a (gotovo 4. 10. 2026.)** Ostali portali s GitHuba: vender.hr (WordPress API).
    Izostavljeni: nekretnine24.hr (0 oglasa za područje), oglasi.hr (1 oglas),
    trazimstan.hr (većinom najam, robots.txt zabranjuje /api/), gohome.hr (vidi tablicu
    izvora; mjerni alati za otkrivanje maknuti 6. 10., ostaju u povijesti gita).
-   **2b (u tijeku)** Redmi Note 9S, samo za Njuškalo (Realitica izostavljena: 49 od 50
+   **2b (gotovo 5. 10.; novi izgled Njuškala 8. 10.)** Redmi Note 9S, samo za Njuškalo (Realitica izostavljena: 49 od 50
    najnovijih oglasa već je na našim portalima). Ubuntu unutar Termuxa (proot-distro).
    Proba 5. 10.: bez preglednika Njuškalo nakon nekoliko zahtjeva vraća ShieldSquare
    captchu; Chromium (Playwright) s trajnim profilom prolazi. Na vrhu „najnovijih” su
@@ -173,7 +173,7 @@ bez stotina poruka.
       nedvosmisleno** (npr. „prodaje se suvlasnički dio”), inače ⚠ s citiranom
       rečenicom. Niječni izrazi („bez tereta”, „legalizirano”, „1/1”) se izuzimaju.
       Dobre ponude se ne smiju izgubiti.
-   4. Cijena: ostvarene cijene (ISPU, Plan približnih vrijednosti) važnije su od
+   4. **(gotovo 5. 10.)** Cijena: ostvarene cijene (ISPU, Plan približnih vrijednosti) važnije su od
       traženih; medijan traženih cijena iz naše baze po naselju samo kad ima dovoljno
       oglasa, inače po općini, s napomenom.
       - **(gotovo 5. 10.)** Medijan traženih €/m² (`scraper/prices.py`): svi viđeni
@@ -201,6 +201,12 @@ bez stotina poruka.
         „približne lokacije”, index.hr s točnom lokacijom). ISPU sloj „Građevinska
         područja (rujan 2024.)”: u GP naselja (izgrađeni/neizgrađeni dio), GP izvan
         naselja (⚠) ili izvan GP-a (⚠). Bez točne lokacije: „nije provjereno”.
+        **(8. 10.)** Zemljište s približnom oznakom (krug na karti portala: nekretnine.hr
+        250 m iz koda karte, Njuškalo 500 m iz svakog oglasa): točan udio kruga u GP-u
+        naselja i izvan naselja, iz obrisa slojeva (GeoServer Ministarstva kroz ISPU, KML),
+        i naselje iz bloka PPV-a u središtu; samo postoci, bez ⚠ (odluka korisnika).
+        index.hr za „nepreciznu” lokaciju daje središte mjesta – tamo se ne računa;
+        oglasnik.hr, realestatecroatia i burza nemaju lokaciju čestice.
       - Cijena se ne koristi za odbijanje (osim granice iz kriterija) – samo oznake.
       - **Kuće prema stanovima (6. 10.):** fiksnog omjera nema. Tražene cijene na
         index.hr u istom gradu (13 gradova s ≥ 8 oglasa svake vrste): kuća / stan po m²
@@ -260,7 +266,7 @@ bez stotina poruka.
      objava. Stranica koja 3 dana zaredom ne radi → upozorenje.
    - Ministarstvo (mpgi.gov.hr) nema zaseban popis prodaje; državnu imovinu prodaju
      CERP i Državne nekretnine d.o.o.
-5. **(6. 10.) Agencije.**
+5. **(gotovo 6. 10.) Agencije.**
    - Najaktivnije na našem području (nekretnine.hr, oglasi koji prolaze kriterije):
      Dogma 195, RE/MAX Centar 135, DUX 114, Euro Immobilien 88, Miro 60, Pontera 52,
      Manor 52, Premium SM 46, Vero Krk 44, Smart Invest 42.
@@ -278,7 +284,7 @@ bez stotina poruka.
      proći. (6. 10.) Novi oglasi iznad ograničenja otvaranja (10 po pokretanju) više se ne
      šalju bez površine nego čekaju sljedeće pokretanje; isto za Njuškalo (8). Novi oglasi koji su već poslani s drugog portala ne
      stižu ponovno (već viđeni).
-6. **(6. 10.) Dodaci za kuće.**
+6. **(gotovo 6. 10.) Dodaci za kuće.**
    - Građevinsko područje (ISPU) kao kod zemljišta: po k.č. iz opisa ili točnoj oznaci
      na karti. Izvan građevinskog područja → samo ⚠ (oglas stiže). Kuće rijetko imaju
      točnu lokaciju, pa je redak „nije provjereno” prvi koji otpada kad je poruka preduga.
@@ -519,13 +525,25 @@ bez stotina poruka.
         kartama UPU-a (PDF). ISPU ima sloj „Cjenovni blokovi”, a blokovi nose ime naselja
         („KRK - GRAĐEVINSKO 1”) – za PPV naselja iz svih blokova dovoljno je gušće
         uzorkovanje točaka oko naselja.
-   5. **Testovi:** automatski (sad 207) dopuniti cijelim pokretanjem na spremljenim
-      stvarnim stranicama i vježbama kvarova (izvor ne radi, Telegram ne radi, ISPU ne
-      radi, Redmi ne javlja) – stiže li upozorenje. Popis provjera koje može samo
+      **Sedma do dvanaesta runda (7.–8. 10., nove instance):** ukupno oko 60 nalaza, svi
+      provjereni skriptom i popravljeni uz test. Teme: vrijeme i kalendar (noć, ponoć,
+      ljetno vrijeme), Redmi i razmjena stanja s GitHubom, „nijedan oglas koji odgovara ne
+      smije se tiho izgubiti” (11A, 12), „ništa ne smije tiho stati, nadzor ne smije lagati”
+      (11B: cron-job.org, sat na Redmiju, pokretanja koja ne završavaju, stari kod na
+      Redmiju, izvor bez novih oglasa, stranice oglasa, praznine u čitanju Njuškala,
+      dnevno dublje čitanje realestatecroatije, prosljeđivanje Redmijevih upozorenja).
+      **8. 10.:** Njuškalo je oko 13:30 promijenio izgled popisa (greška izvora javljena
+      nakon 3 pokretanja; popravljeno isti dan, stari i novi izgled se čitaju, „Super Vau”
+      sa strane); greška „popis bez oglasa” sad nosi naslov stranice, a stranica se sprema
+      za slanje (`redmi_probe.py --posalji`). Alat `tools/provjeri_lokaciju.py` (tijek
+      rada „Planovi”, naredba `lokacija`) provjerava lokaciju bilo kojeg oglasa.
+   5. **(djelomično) Testovi:** automatski 284 (8. 10.); vježbe kvarova (izvor ne radi,
+      Telegram ne radi, ISPU ne radi, Redmi ne javlja, prekid usred pokretanja) napravljene
+      su u rundama pregleda i simulacijama. Ostaje popis provjera koje može samo
       korisnik: izgled poruka na mobitelu, mail tjednog izvještaja (nije u neželjenoj
       pošti), Redmi nakon nestanka struje / ponovnog pokretanja, obavijesti
       cron-job.org kod neuspjeha, ručna usporedba s portalima (popis praćenih stranica).
-   6. **Upute za korisnika** (`UPUTE.md`): značenje svakog retka i oznake u poruci,
+   6. **(gotovo 8. 10.) Upute za korisnika** (`UPUTE.md`): značenje svakog retka i oznake u poruci,
       kako promijeniti kriterije i naselja, dodati stranicu natječaja, pauzirati, što
       napraviti kad stigne upozorenje o kvaru.
    7. **Završni pregled** (dogovor 5. 10., dopuna 6. 10.): svi aktivni oglasi koji
@@ -535,9 +553,35 @@ bez stotina poruka.
    8. **Nakon 1–2 tjedna rada:** s korisnikom proći što je stiglo, a bilo je
       nepotrebno, i što je propušteno; podesiti pravila.
 
+## Otvorena pitanja i sitnice (8. 10.)
+
+- **Dopuna s preciznijeg portala** (pitanje korisnika 8. 10.): kad isti oglas stigne s
+  portala bez lokacije (oglasnik, index.hr „neprecizno”, burza, realestatecroatia), a kasnije
+  se pojavi na portalu s točnom ili približnom lokacijom ili s brojem čestice, poslati kratku
+  dopunu kao odgovor na prvu poruku (🗺 građevinsko područje, PPV na lokaciji). Prijedlog
+  čeka odluku korisnika (vidi razgovor 8. 10.).
+- **Provjera stanja 9. 10. popodne** (zakazana): lažni ili propušteni alarmi novog nadzora,
+  dublje čitanje realestatecroatije do kraja popisa, Njuškalo u novom izgledu, približne
+  lokacije u porukama.
+- **Podjela `scraper/runner.py`** (2.070 redaka: glavni tok, nadzor, tjedni izvještaj) na
+  dvije-tri datoteke – bez promjene ponašanja, na pregledu nakon 1–2 tjedna.
+- **📏 uvjeti gradnje za natječaje** (čestice iz natječaja) – redak još ne postoji.
+- **Kuće s približnom oznakom:** postotak kruga u GP-u računa se samo za zemljišta (manje
+  upita ISPU-u); uključiti i za kuće ako korisnik želi.
+- **Zona zaštite kulturno-povijesne cjeline (A, B, C):** nije dostupna u digitalnom obliku
+  (provjereno 7. 10.); čeka izvor.
+- **Brisanje starih oglasa iz usporedbe cijena:** novogodišnja poruka podsjeća; korisnik
+  će o tome razmisliti oko 2028.
+- **Završni pregled i kraj pravila „stari oglas”** (7.7) i **pregled nakon 1–2 tjedna**
+  (7.8) – nakon povratka korisnika.
+
 ## Zadaci za korisnika
 
 - Njuškalo: spremljene pretrage s obavijestima u aplikaciji.
 - Facebook: u lokalnim grupama uključiti obavijesti „Sve objave”.
-- Telegram bot i GitHub Secrets (prije faze 1).
-- Gmail lozinka za aplikacije za slanje maila (prije faze 1).
+- (gotovo) Telegram bot i GitHub Secrets (prije faze 1).
+- (gotovo) Gmail lozinka za aplikacije za slanje maila (prije faze 1).
+- (gotovo 8. 10.) Token za cron-job.org s rokom „No expiration”.
+- Provjere koje može samo korisnik (7.5): izgled poruka na mobitelu, tjedni izvještaj nije
+  u neželjenoj pošti, Redmi nakon nestanka struje / ponovnog paljenja, obavijesti
+  cron-job.org kod neuspjeha, ručna usporedba s portalima (popis praćenih stranica).
