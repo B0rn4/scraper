@@ -798,7 +798,11 @@ class Runner:
         how = "Na GitHubu: Actions → „PPV – godišnje osvježavanje” → Run workflow."
         if state.meta_get(f"ppv:nova_godina:{self.now.year}") is None:
             text = (f"Sretna Nova godina! PPV u porukama je još za 1.1.{PPV_YEAR}. Kad ISPU objavi PPV za "
-                    f"1.1.{self.now.year}., javit ću da pokreneš osvježavanje. {how}")
+                    f"1.1.{self.now.year}., javit ću da pokreneš osvježavanje. {how}\n\n"
+                    f"Podsjetnik: razmisli o brisanju starih oglasa. Medijani traženih cijena gledaju oglase iz "
+                    f"zadnjih {MAX_AGE_DAYS} dana, a odbijeni oglasi s našeg područja brišu se kad ispadnu iz "
+                    f"tog razdoblja. Kraće razdoblje (npr. 6 mjeseci) bolje prati promjenu cijena, ali daje manje "
+                    f"oglasa po naselju. Ako želiš promjenu, javi Claudeu.")
             self.telegram.send_text(f"🏛 <b>PPV</b>\n{html.escape(text)}")   # greška: ponovno sljedeći put
             self._email(f"Scraper: osvježi PPV ({self.now.year})", text)
             state.meta_set(f"ppv:nova_godina:{self.now.year}", self.stamp)

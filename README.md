@@ -198,7 +198,8 @@ GitHubu pokreni tijek rada **PPV – godišnje osvježavanje** (Actions → Run 
 preuzme sve cjenovne blokove oko naših naselja (upit po kvadratu od 4 km preko ISPU-ova
 WMS posrednika), sažme ih po naseljima u `data/ppv_naselja.json` (medijan, raspon, broj
 blokova) i spremi. Poruke same preuzmu novu godinu; PPV na točnoj lokaciji (ISPU) uvijek
-je najnoviji.
+je najnoviji. Novogodišnja poruka podsjeća i da razmisliš o brisanju starih oglasa
+(razdoblje medijana traženih cijena, sad godinu dana).
 
 ## Automatsko pokretanje (cron-job.org)
 

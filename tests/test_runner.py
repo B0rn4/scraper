@@ -335,6 +335,7 @@ def test_ppv_new_year_reminder(tmp_path, monkeypatch):
     r._ppv_reminder(state)
     r._ppv_reminder(state)                                        # isti dan samo jednom
     assert len(sent) == 1 and "Nova godina" in sent[0] and mails == ["Scraper: osvježi PPV (2027)"]
+    assert "razmisli o brisanju starih oglasa" in sent[0]
     ispu.year = 2027
     runner("2027-01-02T07:00")._ppv_reminder(state)
     runner("2027-01-03T07:00")._ppv_reminder(state)
