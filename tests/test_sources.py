@@ -201,9 +201,11 @@ def test_njuskalo_fetch_old_and_new(fina):
         assert items["41395237"].extra.get("stari_oglas") and items["45131418"].extra.get("stari_oglas") is None
 
 
-def test_njuskalo_deferred_listing_that_expired_is_dropped(fina):
-    """Oglas odgođen prošli put, a u međuvremenu istekao ("Ovaj oglas je neaktivan."): stranica
-    i dalje ima cijenu i opis, ali obavijest ne stiže i ne odgađa se ponovno."""
+def test_njuskalo_deferred_listing_that_expired_comes_with_warning(fina):
+    """Oglas odgođen prošli put, a u međuvremenu istekao ("Ovaj oglas je neaktivan."): stiže
+    s upozorenjem (prilika – drugi ga više ne vide), s podacima sa stranice."""
+    from scraper.filters import evaluate
+    from scraper.models import WARN
     from scraper.sources.base import INCREMENTAL
     from scraper.sources.njuskalo import Njuskalo, parse_list
 
@@ -211,15 +213,16 @@ def test_njuskalo_deferred_listing_that_expired_is_dropped(fina):
         "<h1", '<div class="ClassifiedDetailUnavailableNotice"><h3>Ovaj oglas je neaktivan.</h3></div><h1', 1)
     browser = FakeBrowser({"prodaja-kuca": read("njuskalo_kuce.html.gz"),
                            "prodaja-zemljista": read("njuskalo_zemljista.html.gz"), "oglas-": expired})
-    src = Njuskalo(None, Locator(), load_config()["kriteriji"], browser=browser)
+    cfg = load_config()["kriteriji"]
+    src = Njuskalo(None, Locator(), cfg, browser=browser)
     src.since = "2026-10-05T11:30:00+02:00"
     waiting = next(x for x in parse_list(read("njuskalo_kuce.html.gz"), HOUSE) if x.source_id == "51323938")
     waiting.source_id, waiting.url = "51000001", waiting.url.replace("51323938", "51000001")
     src.pending = [waiting]
-    items = {x.source_id: x for x in src.fetch(INCREMENTAL, {"45180000"})}
-    assert any("51000001" in u for u in browser.calls)                   # otvoren
-    assert "51000001" not in items and not any(x.source_id == "51000001" for x in src.deferred)
-    assert "51323938" not in items                                       # isto za svaki istekli oglas
+    x = {x.source_id: x for x in src.fetch(INCREMENTAL, {"45180000"})}["51000001"]
+    assert x.extra["neaktivan"] and x.plot_area == 250 and "samo_popis" not in x.extra
+    d = evaluate(x, cfg, Locator())
+    assert d.status == WARN and "oglas je istekao (Njuškalo: neaktivan, nije više na popisu)" in d.warnings
 
 
 # Zemljišta: popis nije prazan (prazna prva stranica kategorije je greška izvora).
