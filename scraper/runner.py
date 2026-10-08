@@ -16,7 +16,7 @@ import yaml
 from . import dedupe, planwatch, report, risks, tenders, watch
 from .ispu import Ispu, check_land, gp_text, heritage_warning
 from .plans import Plans
-from .prices import PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
+from .prices import MAX_AGE_DAYS, PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
 from .db import State
 from .filters import effective_price, evaluate
 from .http import Http, blocked
@@ -35,6 +35,8 @@ PLAN_CHECK_SECONDS = 180    # najdulje čitanje odluka o planovima za tjedni izv
 PLAN_PAGE_SECONDS = 20      # najdulje čekanje jedne stranice (sn.pgz.hr, zavod.pgz.hr)
 RESERVE_MINUTES = 30        # GitHubov raspored radi samo kad cron-job.org kasni ovoliko
 UNSENT_DAYS = 7             # neposlana obavijest (Telegram ne radi) čeka najviše toliko
+PRUNE_DAYS = 30             # odbijeni oglas izvan našeg područja ostaje u bazi toliko dana nakon zadnjeg viđenja
+DETAIL_ALERT_RUNS = 9       # captcha na stranicama oglasa toliko pokretanja zaredom (3 sata) → upozorenje
 
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
@@ -166,6 +168,7 @@ class Runner:
             return
         if not reserve:
             state.meta_set("glavni_okidac", self.stamp)
+        self._prune(state)
         self._read_feedback(state)
         self.muted = state.muted(self._github_info().get("utisani"))
         self._prev_unsent = self._load_unsent(state)
@@ -248,6 +251,7 @@ class Runner:
                 if errors:
                     self.log(f"{src.label}: preskočeno zbog greške {len(errors)} oglasa – {errors[0]}")
                 self._source_ok(state, src)
+                self._detail_health(state, src)
                 counts = {s: sum(1 for _, d in decided if d.status == s) for s in (PASS, WARN, REJECT)}
                 self.log(f"{src.label}: {len(listings)} oglasa – ✅ {counts[PASS]}, ⚠ {counts[WARN]}, ❌ {counts[REJECT]}")
                 if first:
@@ -294,6 +298,21 @@ class Runner:
                 self._export(state)
         finally:
             state.close()
+
+    def _prune(self, state: State) -> None:
+        """Jednom dnevno: odbijeni oglasi koji se dugo ne pojavljuju (State.prune); s našeg
+        područja nakon godine dana (koliko gleda usporedba cijena), ostali nakon PRUNE_DAYS."""
+        today = self.now.date().isoformat()
+        if state.meta_get("ciscenje:dan") == today:
+            return
+        ours = {j.name for j in self.locator.jls.values() if j.included}
+        n = state.prune(ours, (self.now - timedelta(days=MAX_AGE_DAYS)).isoformat(timespec="seconds"),
+                        (self.now - timedelta(days=PRUNE_DAYS)).isoformat(timespec="seconds"))
+        state.meta_set("ciscenje:dan", today)
+        state.conn.commit()
+        if n:
+            state.conn.execute("VACUUM")             # datoteka se stvarno smanji
+            self.log(f"Čišćenje baze: obrisano {n} starih odbijenih oglasa")
 
     def _read_feedback(self, state: State) -> None:
         """Pritisci gumba "Ne zanima me" od zadnjeg pokretanja (čita ih samo GitHub, i za
@@ -538,7 +557,8 @@ class Runner:
             part = parts[0] if parts and same_plan else ""
             official = bool(part) and any(j.name == jls for j in self.locator.by_settlement(part))
             single = x.settlement if len(re.split(r"[,;/]", x.settlement or "")) == 1 else ""
-            place = ((part if not official else "") or place_of(self.locator, jls, x.title, x.settlement)
+            place = (self._lead_place(x, jls) or (part if not official else "")
+                     or place_of(self.locator, jls, x.title, x.settlement)
                      or part or self.plans.place_in(jls, single) or x.settlement)
             found = self.plans.check(x, jls, place, x.extra.get("gp_dio", ""))
         except Exception as exc:  # noqa: BLE001 – uvjeti gradnje nisu nužni za obavijest
@@ -555,6 +575,17 @@ class Runner:
             d.warnings.append(warning)
             if d.status == PASS:
                 d.status = WARN
+
+    def _lead_place(self, x: Listing, jls: str) -> str:
+        """nekretnine.hr: "Građevinsko zemljište Vrh, Krk, Vrh, Pinezići, Krk" – mjesto odmah iza
+        vrste je točna lokacija, ostalo je skupna lokacija portala. Naziv grada/općine ne vrijedi."""
+        m = re.match(r"\s*\w+\s+zemlji\w*\s+([^,]+),", x.title or "") if x.source == "nekretnine_hr" else None
+        if not m:
+            return ""
+        lead = fold(m.group(1))                 # cijeli naziv ("Sušačka draga" nije "Draga")
+        names = {n for n in self.plans.places_in(jls, lead) if n == lead}
+        names |= {n for j, n in self.locator.scan_names(m.group(1)) if j.name == jls and n == lead}
+        return lead if names and lead != "centar" and self.locator.by_name(lead) is None else ""
 
     def _check_ispu(self, x: Listing, d: Decision, deadline: float | None = None) -> None:
         """Građevinsko područje na točnoj lokaciji (ISPU), za zemljište i PPV. Izvan
@@ -1102,6 +1133,27 @@ class Runner:
         if was_alerted:
             self._alert(f"Scraper: izvor {src.label} ponovno radi", f"Izvor {src.label} ponovno radi ({self.stamp}).")
 
+    def _detail_health(self, state: State, src) -> None:
+        """Captcha na stranicama oglasa dok popis radi (izvor je "ispravan"): oglasi čekaju,
+        zatim stižu samo s podacima s popisa. Nakon DETAIL_ALERT_RUNS pokretanja zaredom
+        upozorenje (jednom), i kad prođe."""
+        key = f"{src.name}:oglasi"
+        row = next((h for h in state.health_all() if h["source"] == key), None)
+        if not getattr(src, "detail_blocked", False):
+            if row and row.get("failures"):
+                state.health_ok(key, self.stamp)
+                if row.get("alerted"):
+                    self._alert(f"Scraper: {src.label} – stranice oglasa ponovno rade",
+                                "Oglasi se ponovno otvaraju (površina, opis, lokacija).")
+            return
+        failures, alerted = state.health_fail(key, "captcha na stranicama oglasa")
+        if failures >= DETAIL_ALERT_RUNS and not alerted and self._alert(
+                f"Scraper: {src.label} traži captchu na stranicama oglasa",
+                f"{src.label} {failures} pokretanja zaredom na stranicama oglasa vraća captchu (popis oglasa radi). "
+                "Novi oglasi čekaju do 6 sati, zatim stižu samo s podacima s popisa (zemljište bez površine, bez "
+                "opisa). Obično prođe samo; ako potraje danima, javi Claudeu ovu poruku.") is not False:
+            state.mark_alerted(key)
+
     def _alert(self, subject: str, text: str) -> bool:
         """Upozorenje mailom; kad mail ne radi ili nije postavljen (Redmi), na Telegram. False
         kad slanje nije uspjelo nikamo (pozivatelj ga tada ponavlja sljedeći put)."""
@@ -1141,7 +1193,9 @@ class Runner:
             return
         other = State(path)
         last = other.meta_get("last_run")
+        telegram = next((h for h in other.health_all() if h["source"] == "telegram"), None)
         other.close()
+        self._redmi_telegram(state, telegram)
         if not last or self.now.hour < self.cfg["vrijeme"]["od_sata"] + 1:
             return
         limit = self.cfg.get("nadzor", {}).get("redmi_kasni_minuta", 90)
@@ -1159,6 +1213,27 @@ class Runner:
             "(obavijest „Termux” u traci obavijesti). Ako je sve u redu, javi Claudeu ovu poruku.",
         ) is not False:
             state.mark_alerted("redmi")
+
+    def _redmi_telegram(self, state: State, telegram: dict | None) -> None:
+        """Redmi nema mail: kad on ne može slati na Telegram (npr. promijenjen bot ili razgovor
+        na GitHubu, a ne i u ~/.scraper.env), javlja GitHub (mail, inače njegov Telegram) –
+        jednom, i kad proradi."""
+        row = next((h for h in state.health_all() if h["source"] == "redmi:telegram"), None)
+        if not telegram or (telegram.get("failures") or 0) < 3:
+            if row and row.get("failures"):
+                state.health_ok("redmi:telegram", self.stamp)
+                if row.get("alerted"):
+                    self._alert("Scraper: Redmi ponovno šalje na Telegram", "Obavijesti s Njuškala ponovno stižu.")
+            return
+        error = telegram.get("last_error") or ""
+        _, alerted = state.health_fail("redmi:telegram", error[:300])
+        if not alerted and self._alert(
+                "Scraper: Redmi ne može slati na Telegram",
+                f"Redmi {telegram['failures']} pokretanja zaredom ne može ništa poslati na Telegram:\n{error}\n\n"
+                "Obavijesti s Njuškala ne stižu (neposlane čekaju najviše 7 dana). Ako je mijenjan bot ili "
+                "razgovor, iste vrijednosti (TELEGRAM_BOT_TOKEN, TELEGRAM_CHAT_ID) upiši i u ~/.scraper.env na "
+                "Redmiju (REDMI.md). Javi Claudeu ovu poruku.") is not False:
+            state.mark_alerted("redmi:telegram")
 
     def _age(self, stamp) -> timedelta | None:
         """Koliko je prošlo od zapisanog vremena; None kad zapis nije ispravan (datoteka s
@@ -1184,7 +1259,9 @@ class Runner:
         if self._age(last) <= timedelta(minutes=limit):
             state.health_ok("github", self.stamp)
             if row and row.get("alerted"):
-                self._alert("Scraper: GitHub ponovno radi", f"Zadnje pokretanje na GitHubu: {last[:16].replace('T', ' ')}.")
+                redmi = state.meta_get("github:upozorenje") == "preuzimanje"
+                self._alert("Scraper: Redmi ponovno preuzima stanje s GitHuba" if redmi else "Scraper: GitHub ponovno radi",
+                            f"Zadnje pokretanje na GitHubu: {last[:16].replace('T', ' ')}.")
             return
         _, alerted = state.health_fail("github", f"zadnje pokretanje {last[:16]}")
         # github.json se zamijeni pri svakom uspješnom preuzimanju: ako je star, ne preuzima Redmi.
@@ -1196,8 +1273,8 @@ class Runner:
             subject = "Scraper: Redmi ne preuzima stanje s GitHuba"
             text = (f"Redmi zadnji put preuzeo stanje s GitHuba {fetched:%d.%m. u %H:%M} (zadnje poznato pokretanje "
                     f"na GitHubu {last[:16].replace('T', ' ')}). Dok ne proradi, poruke s Njuškala mogu se ponoviti. "
-                    "Provjeri internet na Redmiju i GITHUB_TOKEN u ~/.scraper.env (zapis u ~/scraper.log); "
-                    "ako je sve u redu, javi Claudeu ovu poruku.")
+                    "Provjeri internet na Redmiju i GITHUB_TOKEN u ~/.scraper.env (zapis u ~/scraper.log), a na "
+                    "githubstatus.com radi li GitHub; ako je sve u redu, javi Claudeu ovu poruku.")
         else:
             subject = "Scraper: GitHub ne radi"
             text = (f"GitHub nije pokrenuo scraper od {last[:16].replace('T', ' ')}. Dok ne proradi, ne prate se "
@@ -1205,6 +1282,7 @@ class Runner:
                     "githubstatus.com; ako je sve u redu, javi Claudeu ovu poruku.")
         if not alerted and self._alert(subject, text) is not False:
             state.mark_alerted("github")
+            state.meta_set("github:upozorenje", "preuzimanje" if "Redmi" in subject else "github")
 
     def review(self) -> Path:
         """Pregled: cijelo područje, bez obavijesti po oglasu i bez promjene stanja."""
@@ -1386,7 +1464,8 @@ class Runner:
             counts.update(state.counts_since(since))
             notified += state.notified_since(since)
             near += state.near_misses_since(since)
-            health += state.health_all()
+            device = "Redmi – " if path != self.db_path else ""      # npr. Telegram s Redmija
+            health += [{**h, "uredjaj": device} for h in state.health_all()]
             dups += state.duplicates_since(since)
             state.close()
         e = html.escape
@@ -1408,7 +1487,7 @@ class Runner:
             for r in dups[:100]
         ) or "<li>nijedan</li>"
         hl = "".join(
-            f"<li>{e(SOURCE_LABELS.get(h['source'], h['source']))}: "
+            f"<li>{e(h['uredjaj'] + SOURCE_LABELS.get(h['source'], h['source']))}: "
             + ("✅ radi" if not h["failures"] else f"⚠ {h['failures']} grešaka zaredom – {e(h['last_error'] or '')}")
             + f" (zadnji uspjeh: {e(h['last_ok'] or '—')})</li>"
             for h in health

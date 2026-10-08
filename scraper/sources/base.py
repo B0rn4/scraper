@@ -1,7 +1,7 @@
 """Zajednička sučelja izvora."""
 
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from ..http import Http
 from ..locations import Locator
@@ -11,6 +11,7 @@ from ..models import HOUSE, LAND, REJECT, Listing
 INCREMENTAL = "incremental"   # redovno pokretanje: samo najnoviji oglasi
 FULL = "full"                 # pregled i početni popis: sve na području
 MAX_ATTEMPTS = 3              # stranica oglasa ne odgovara 3 puta → oglas stiže s podacima s popisa
+MAX_WAIT = timedelta(hours=6)  # najdulje čekanje na otvaranje (captcha): zatim stiže s podacima s popisa
 SINCE_MARGIN = timedelta(minutes=15)
 # Otvaranje stranica oglasa: najviše toliko sekundi po izvoru i pokretanju, s jednim ponovnim
 # pokušajem. Zaglavljene stranice oglasa inače produlje pokretanje preko ograničenja posla
@@ -33,6 +34,7 @@ class Source:
     daily = False      # True: provjerava se jednom dnevno
     baseline_report = True  # False: prvo pokretanje se samo zabilježi, bez početnog popisa
     since: str | None = None  # vrijeme zadnjeg uspješnog dohvata (postavlja runner)
+    detail_blocked = False  # stranice oglasa traže captchu (popis radi); runner to prati u stanju izvora
 
     def __init__(self, http: Http, locator: Locator, criteria: dict):
         self.http = http
@@ -58,6 +60,9 @@ class Source:
                 continue
             x = found.get(p.source_id, p)      # svježi podaci s popisa, ako ga popis ima
             x.extra["pokusaja"] = max(x.extra.get("pokusaja", 0), p.extra.get("pokusaja", 0))
+            for key in ("odgodjen_od", "captcha_do"):   # od kada čeka; stanka nakon captche
+                if p.extra.get(key):
+                    x.extra[key] = p.extra[key]
             x.extra["odgodjen"] = True
             waiting[x.source_id] = x
         rest = {k: v for k, v in found.items() if k not in waiting}
@@ -67,11 +72,20 @@ class Source:
 
     def defer(self, x: Listing, failed: bool = False) -> bool:
         """Odgađa otvaranje oglasa za sljedeće pokretanje. False kad stranica oglasa nije
-        odgovorila ni nakon MAX_ATTEMPTS pokušaja – tada oglas stiže s podacima s popisa."""
+        odgovorila ni nakon MAX_ATTEMPTS pokušaja, ili oglas čeka dulje od MAX_WAIT – tada
+        stiže s podacima s popisa."""
+        now = datetime.now(timezone.utc)
+        since = x.extra.setdefault("odgodjen_od", now.isoformat(timespec="seconds"))
+        try:
+            waited = now - datetime.fromisoformat(since)
+        except ValueError:
+            waited = timedelta(0)
         if failed:
             x.extra["pokusaja"] = x.extra.get("pokusaja", 0) + 1
             if x.extra["pokusaja"] >= MAX_ATTEMPTS:
                 return False
+        if waited > MAX_WAIT:
+            return False
         self.deferred.append(x)
         return True
 

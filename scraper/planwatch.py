@@ -139,9 +139,10 @@ def check(get, state, year: int | None = None, deadline: float | None = None) ->
     if late:
         errors.append("nije stiglo na red (vremensko ograničenje): " + ", ".join(late))
     seen = json.loads(state.meta_get(SEEN_KEY) or "[]")
-    sources = set(json.loads(state.meta_get(SOURCES_KEY) or "[]"))
-    # Nova godina: stranica nove godine grada čija je prošlogodišnja pročitana nije "prvo čitanje".
-    sources |= {f"sn:{jls}:{year}" for jls in SN_PLACES if f"sn:{jls}:{year - 1}" in sources}
+    stored = set(json.loads(state.meta_get(SOURCES_KEY) or "[]"))
+    # Nova godina: stranica nove godine grada čija je prošlogodišnja pročitana nije "prvo
+    # čitanje" (i sprema se, da iduće godine vrijedi isto).
+    sources = stored | {f"sn:{jls}:{year}" for jls in SN_PLACES if f"sn:{jls}:{year - 1}" in stored}
     known = set(seen)
     new, added = [], []
     for source, items in by_source.items():
@@ -156,6 +157,6 @@ def check(get, state, year: int | None = None, deadline: float | None = None) ->
     if added:
         updates[SEEN_KEY] = json.dumps((seen + added)[-MAX_SEEN:], ensure_ascii=False)
     read = set(by_source) - incomplete
-    if read - sources:
+    if sources | read != stored:
         updates[SOURCES_KEY] = json.dumps(sorted(sources | read), ensure_ascii=False)
     return Result(new, len(known), errors, updates)

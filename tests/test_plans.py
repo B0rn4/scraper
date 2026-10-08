@@ -166,10 +166,19 @@ def test_dpu_without_plan_and_part_of_settlement_from_title(tmp_path):
              "Veprinac, Poljane", "PPUG Opatija"),
             ("Krk", "Građevinsko zemljište, Muraj, Kornić, Lakmartin, Krk", "Muraj, Kornić, Lakmartin", "PPUG Krk"),
             ("Krk", "Građevinsko zemljište Vrh, Krk, Vrh, Pinezići, Krk", "", "PPUG Krk"),
-            ("Krk", "OTOK KRK, DUNAT – Poljoprivredno zemljište", "", "PPUG Krk")]:
-        x = Listing(source="t", source_id="1", url="u", title=title, kind=LAND, price=150_000, area=900,
-                    settlement=settlement)
+            ("Krk", "OTOK KRK, DUNAT – Poljoprivredno zemljište", "", "PPUG Krk"),
+            # nekretnine.hr: mjesto odmah iza vrste je točna lokacija (cijeli naziv).
+            ("Krk", "NH Građevinsko zemljište Vrh, Krk, Vrh, Pinezići, Krk", "", "UPU 5 Vrh"),
+            ("Opatija", "NH Građevinsko zemljište Dobreć, Opatija - Okolica, Vela Učka, Dobreć, Oprič", "", "UPU Dobreć"),
+            ("Opatija", "NH Građevinsko zemljište Veprinac, Opatija - Okolica, Veprinac, Poljane, Opatija", "",
+             "PPUG Opatija"),
+            ("Rijeka", "NH Građevinsko zemljište Sušačka draga, Rijeka, Sušak, Rijeka", "", "")]:
+        x = Listing(source="nekretnine_hr" if title.startswith("NH ") else "t", source_id="1", url="u",
+                    title=title.removeprefix("NH "), kind=LAND, price=150_000, area=900, settlement=settlement)
         runner._building_rules(x, Decision(PASS, jls=jls))
+        if not plan:
+            assert "uvjeti" not in x.extra, (title, x.extra["uvjeti"])
+            continue
         assert x.extra["uvjeti"].startswith(f"📏 {plan}"), (title, x.extra["uvjeti"])
         assert ("Škurinjsko" not in x.extra["uvjeti"]) and (settlement != "Škurinje, Pehlin, Drenova"
                                                           or "DPU u dijelu naselja: Drenova-Bok" in x.extra["uvjeti"])

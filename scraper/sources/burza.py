@@ -174,8 +174,8 @@ class Burza(Source):
                 details += 1
                 if self._detail(x) or not self.defer(x, failed=True):
                     out.append(x)
-            else:                                              # sljedeći put (bez mjesta bi bili "nepoznata lokacija")
-                self.defer(x)
+            elif not self.defer(x):                            # sljedeći put (bez mjesta bi bili "nepoznata lokacija")
+                out.append(x)                                  # čeka predugo: stiže s podacima s popisa
         return out
 
     def search_links(self):

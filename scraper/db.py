@@ -4,7 +4,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-from .models import Decision, Listing
+from .models import REJECT, Decision, Listing
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS listings (
@@ -90,6 +90,23 @@ class State:
     def known_ids(self, source: str) -> set[str]:
         rows = self.conn.execute("SELECT source_id FROM listings WHERE source = ?", (source,))
         return {r[0] for r in rows}
+
+    def prune(self, ours: set[str], before_ours: str, before_other: str) -> int:
+        """Briše odbijene oglase koji nikad nisu javljeni i dugo se ne pojavljuju: s našeg
+        područja kad ispadnu iz usporedbe cijena (before_ours), ostale ranije (before_other).
+        Bez toga baza raste bez kraja (Redmi je šalje na GitHub svakih 20 minuta, GitHub
+        odbija datoteke veće od 100 MB). Vrati li se takav oglas, obrađuje se kao nov."""
+        marks = ",".join("?" * len(ours)) or "''"
+        keys = [r[0] for r in self.conn.execute(
+            f"""SELECT key FROM listings WHERE status = ? AND notified_at IS NULL AND (
+                    (jls IN ({marks}) AND last_seen < ?) OR ((jls IS NULL OR jls NOT IN ({marks})) AND last_seen < ?))""",
+            (REJECT, *ours, before_ours, *ours, before_other))]
+        for i in range(0, len(keys), 500):
+            chunk = keys[i:i + 500]
+            q = ",".join("?" * len(chunk))
+            self.conn.execute(f"DELETE FROM price_history WHERE key IN ({q})", chunk)
+            self.conn.execute(f"DELETE FROM listings WHERE key IN ({q})", chunk)
+        return len(keys)
 
     def count(self, source: str) -> int:
         return self.conn.execute("SELECT COUNT(*) FROM listings WHERE source = ?", (source,)).fetchone()[0]

@@ -44,8 +44,12 @@ def main() -> int:
     if chat:
         print(f"   ID razgovora pronađen iz tvoje poruke botu: {chat}")
     else:
-        chat = ask("2/3 ID razgovora (TELEGRAM_CHAT_ID s GitHuba; ili napiši botu bilo što pa pokreni ponovno): ",
-                   secret=False)
+        # GitHub svakih 20 minuta pročita (i potvrdi) poruke botu, pa ih skripta poslije ne vidi.
+        print("   ID razgovora nije pronađen: napiši botu bilo što (npr. „bok”) i ODMAH pokreni skriptu\n"
+              "   ponovno (GitHub svakih 20 minuta pročita poruke botu). Ili ga upiši ako ga znaš.")
+        chat = ask("2/3 ID razgovora (Enter za prekid): ", secret=False)
+        if not chat:
+            return 1
     sent = requests.post(f"https://api.telegram.org/bot{tg}/sendMessage",
                          data={"chat_id": chat, "text": "✅ Redmi je spojen na scraper (Njuškalo)."}, timeout=30).json()
     if not sent.get("ok"):

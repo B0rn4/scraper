@@ -1,8 +1,10 @@
-"""Šalje stanje s Redmija (redmi.db) na granu state-redmi na GitHubu.
+"""Šalje stanje s Redmija (redmi.db, sažeto u redmi.db.gz) na granu state-redmi na GitHubu.
 
 GitHub iz toga zna da Redmi radi (inače šalje mail) i uključuje Njuškalo u tjedni
-izvještaj. Grana uvijek ima samo jednu verziju datoteke (kao grana state)."""
+izvještaj. Grana uvijek ima samo jednu verziju datoteke (kao grana state). Sažeto jer se
+šalje svakih 20 minuta (baza je oko 5 puta manja)."""
 
+import gzip
 import os
 import shutil
 import subprocess
@@ -24,12 +26,15 @@ def main() -> int:
         print("redmi_sync: nema GITHUB_TOKEN u ~/.scraper.env")
         return 1
     with tempfile.TemporaryDirectory() as tmp:
-        shutil.copy(db, Path(tmp) / "redmi.db")
+        copy = Path(tmp) / "kopija.db"
+        shutil.copy(db, copy)
+        (Path(tmp) / "redmi.db.gz").write_bytes(gzip.compress(copy.read_bytes(), mtime=0))
+        copy.unlink()
         env = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}
         run = lambda *args: subprocess.run(["git", *args], cwd=tmp, env=env, capture_output=True, text=True)  # noqa: E731
         run("init", "-q")
         run("checkout", "-q", "-b", BRANCH)
-        run("add", "redmi.db")
+        run("add", "redmi.db.gz")
         run("-c", "user.name=Redmi", "-c", "user.email=redmi@users.noreply.github.com", "commit", "-qm", "Stanje s Redmija")
         result = run("push", "-qf", f"https://x-access-token:{token}@github.com/{REPO}.git", BRANCH)
     if result.returncode != 0:

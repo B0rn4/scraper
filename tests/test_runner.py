@@ -167,6 +167,18 @@ def test_redmi_watchdog(tmp_path):
     check(220)  # upozorenje samo jednom
     check(10)
     assert mails == ["Scraper: Redmi se ne javlja", "Scraper: Redmi se ponovno javlja"]
+    # Redmi radi, ali ne može slati na Telegram (on nema mail): javlja GitHub, jednom.
+    mails.clear()
+    for _ in range(3):
+        redmi.health_fail("telegram", "Unauthorized")
+    redmi.conn.commit()
+    check(10)
+    check(10)
+    assert mails == ["Scraper: Redmi ne može slati na Telegram"]
+    redmi.health_ok("telegram", "t")
+    redmi.conn.commit()
+    check(10)
+    assert mails[-1] == "Scraper: Redmi ponovno šalje na Telegram"
     redmi.close()
 
 
@@ -465,6 +477,9 @@ def test_redmi_tells_its_own_download_problem_from_github_outage(tmp_path):
     state = State(tmp_path / "r.db")
     r._check_github(state)
     assert alerts[0][0] == "Scraper: Redmi ne preuzima stanje s GitHuba" and "07.10. u 11:45" in alerts[0][1]
+    path.write_text(json.dumps({"zadnje_pokretanje": "2026-10-07T13:40:00+02:00"}))   # opet preuzima
+    r._check_github(state)
+    assert alerts[1][0] == "Scraper: Redmi ponovno preuzima stanje s GitHuba"
     state.close()
 
 
@@ -1373,3 +1388,64 @@ def test_renovation_category_kept_for_list_only_price_drop(tmp_path, monkeypatch
     state = State(tmp_path / "s.db")
     assert state.get("t:5")["category"] == "obnova"
     state.close()
+
+
+def test_daily_prune_of_old_rejected_listings(tmp_path):
+    """Odbijeni, nikad javljeni oglasi koji se dugo ne pojavljuju brišu se (s našeg područja
+    nakon godine dana, ostali nakon 30 dana); javljeni i oni koji prolaze ostaju."""
+    from datetime import timedelta
+
+    from scraper.models import REJECT
+
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    rows = {"nase_staro": ("Punat", REJECT, 400, None), "nase_novije": ("Punat", REJECT, 100, None),
+            "tude_staro": ("Delnice", REJECT, 40, None), "tude_novo": ("Delnice", REJECT, 10, None),
+            "javljen": ("Punat", REJECT, 400, "2025-01-01"), "prolazi": ("Punat", PASS, 400, None)}
+    for sid, (jls, status, days, notified) in rows.items():
+        x = listing(sid=sid)
+        state.upsert(x, Decision(status, jls=jls), r.stamp)
+        state.conn.execute("UPDATE listings SET last_seen = ?, notified_at = ? WHERE key = ?",
+                           ((r.now - timedelta(days=days)).isoformat(timespec="seconds"), notified, x.key))
+    state.conn.commit()
+    r._prune(state)
+    left = {k.split(":")[1] for (k,) in state.conn.execute("SELECT key FROM listings")}
+    assert left == {"nase_novije", "tude_novo", "javljen", "prolazi"}
+    assert state.conn.execute("SELECT COUNT(*) FROM price_history WHERE key = 't:nase_staro'").fetchone()[0] == 0
+    state.conn.execute("UPDATE listings SET last_seen = '2000-01-01' WHERE key = 't:tude_novo'")
+    r._prune(state)                                              # jednom dnevno
+    assert state.conn.execute("SELECT COUNT(*) FROM listings WHERE key = 't:tude_novo'").fetchone()[0] == 1
+    state.close()
+
+
+def test_detail_captcha_alert_after_three_hours(tmp_path):
+    """Captcha na stranicama oglasa dok popis radi: upozorenje nakon 9 pokretanja zaredom
+    (jednom), i kad prođe."""
+    from types import SimpleNamespace
+
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    alerts = []
+    r._alert = lambda subject, text: alerts.append(subject) or True
+    state = State(tmp_path / "s.db")
+    src = SimpleNamespace(name="njuskalo", label="Njuškalo", detail_blocked=True)
+    for _ in range(10):
+        r._detail_health(state, src)
+    assert alerts == ["Scraper: Njuškalo traži captchu na stranicama oglasa"]
+    src.detail_blocked = False
+    r._detail_health(state, src)
+    r._detail_health(state, src)
+    assert alerts[1:] == ["Scraper: Njuškalo – stranice oglasa ponovno rade"]
+    state.close()
+
+
+def test_weekly_labels_redmi_health_rows(tmp_path):
+    """Stanje izvora u tjednom izvještaju: retci s Redmija imaju oznaku uređaja."""
+    redmi = State(tmp_path / "redmi.db")
+    redmi.health_fail("telegram", "Unauthorized")
+    redmi.close()
+    r = Runner(tmp_path / "s.db", tmp_path, send=False, redmi_db=tmp_path / "redmi.db")
+    r._plan_decisions = lambda: None
+    bodies = []
+    r._email = lambda subject, text, body=None, **k: bodies.append(body)
+    r.weekly(record=False)
+    assert "<li>Redmi – " in bodies[0] and "Unauthorized" in bodies[0]

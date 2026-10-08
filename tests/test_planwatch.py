@@ -157,7 +157,13 @@ def test_page_that_failed_does_not_swallow_new_decisions_of_the_other(tmp_path):
     week3.save(state)
     january = '<a href="default.asp?Link=odluke&id=201">Odluka o izradi izmjena PPUO Omišalj</a>'
     pages.update({"2027": january, "2026": pages["2026"]})
-    assert [d.url[-3:] for d in planwatch.check(get, state, 2027).new] == ["201"]
+    jan2027 = planwatch.check(get, state, 2027)
+    assert [d.url[-3:] for d in jan2027.new] == ["201"]
+    jan2027.save(state)
+    # Zahtjev za stranicu 2027. ne odgovara u siječnju 2028.: ni tada nije "prvo čitanje".
+    pages["2027"] = None
+    pages["2028"] = '<a href="default.asp?Link=odluke&id=301">Odluka o donošenju UPU 1 Omišalj</a>'
+    assert [d.url[-3:] for d in planwatch.check(get, state, 2028).new] == ["301"]
     state.close()
 
 

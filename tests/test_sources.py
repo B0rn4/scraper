@@ -225,6 +225,40 @@ def test_njuskalo_deferred_listing_that_expired_comes_with_warning(fina):
     assert d.status == WARN and "oglas je istekao (Njuškalo: neaktivan, nije više na popisu)" in d.warnings
 
 
+def test_njuskalo_detail_captcha_pauses_without_counting_attempts(fina):
+    """Captcha na stranici oglasa (popis radi): oglas se odgađa bez brojanja pokušaja, dva sata
+    se ne otvara nijedan, a oglas koji čeka dulje od 6 sati stiže s podacima s popisa."""
+    from datetime import datetime, timedelta, timezone
+
+    from scraper.sources.base import INCREMENTAL
+    from scraper.sources.njuskalo import Njuskalo
+
+    captcha = "<html><title>Captcha</title></html>"
+    browser = FakeBrowser({"prodaja-kuca": read("njuskalo_kuce.html.gz"),
+                           "prodaja-zemljista": read("njuskalo_zemljista.html.gz"), "oglas-": captcha})
+    cfg = load_config()["kriteriji"]
+
+    def run(pending):
+        src = Njuskalo(None, Locator(), cfg, browser=browser)
+        src.since, src.pending = "2026-10-05T11:30:00+02:00", pending
+        browser.calls.clear()
+        items = {x.source_id: x for x in src.fetch(INCREMENTAL, {"45180000"})}
+        return src, items, [u for u in browser.calls if "/nekretnine/" in u]
+
+    src, items, opened = run([])
+    assert len(opened) == 1 and src.detail_blocked                     # jedna captcha, dalje ništa
+    waiting = src.deferred
+    assert waiting and "51323938" not in items
+    assert all(x.extra.get("pokusaja", 0) == 0 and x.extra["captcha_do"] for x in waiting)
+    src, items, opened = run(waiting)                                    # stanka: ne otvara
+    assert opened == [] and src.detail_blocked and len(src.deferred) == len(waiting)
+    for x in src.deferred:                                               # stanka istekla, čekaju 7 sati
+        x.extra["captcha_do"] = "2000-01-01T00:00:00+00:00"
+        x.extra["odgodjen_od"] = (datetime.now(timezone.utc) - timedelta(hours=7)).isoformat()
+    src, items, opened = run(src.deferred)
+    assert len(opened) == 1 and "51323938" in items and items["51323938"].extra.get("samo_popis")
+
+
 # Zemljišta: popis nije prazan (prazna prva stranica kategorije je greška izvora).
 LAND_ITEM = {"code": 9999, "title": "Zemljište", "price": 5_000_000, "summary": {"area": 900},
              "countyName": "Primorsko-goranska", "cityName": "Omišalj", "settlementName": "Njivice", "smartLink": "z"}

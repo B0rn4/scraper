@@ -167,8 +167,9 @@ obavijesti na Telegram i stanje na GitHub. Ako se Redmi 90 minuta ne javi, GitHu
 
 ### 2.1 Tajne (u Ubuntuu)
 
-Botu u Telegramu prvo napiši bilo što (npr. „bok”) – tako skripta sama pronađe ID
-razgovora. Zatim:
+Botu u Telegramu napiši bilo što (npr. „bok”) i **odmah** (u roku od minute) pokreni
+naredbe ispod – tako skripta sama pronađe ID razgovora. GitHub svakih 20 minuta pročita
+poruke botu, pa ih skripta poslije toga više ne vidi; ako ID ne pronađe, ponovi.
 
 ```
 cd ~/scraper && . ~/venv/bin/activate && git pull
@@ -178,7 +179,8 @@ python tools/redmi_setup.py
 Skripta pita za:
 - **token bota**: u Telegramu @BotFather → /mybots → tvoj bot → API Token (isti kao
   TELEGRAM_BOT_TOKEN na GitHubu);
-- **ID razgovora**: samo ako ga ne pronađe sama (isti kao TELEGRAM_CHAT_ID);
+- **ID razgovora**: samo ako ga ne pronađe sama (isti kao TELEGRAM_CHAT_ID; GitHub ga
+  više ne prikazuje, pa je lakše ponoviti „bok” i skriptu);
 - **GitHub token**: `redmi-scraper` iz koraka 1.2. Ako ga nisi spremio, napravi novi
   na isti način.
 
@@ -242,4 +244,27 @@ chmod +x ~/.termux/boot/start-scraper
 ### Provjera
 
 U Ubuntuu `tail -30 ~/scraper.log` pokazuje zadnja pokretanja. Ako Redmi ne radi,
-GitHub nakon 90 minuta šalje mail „Redmi se ne javlja”.
+GitHub nakon 90 minuta šalje mail „Redmi se ne javlja”; ako Redmi radi, ali ne može
+slati na Telegram, mail „Redmi ne može slati na Telegram”.
+
+Kod se osvježava sam pri svakom pokretanju (uvijek točno kao na GitHubu; izmjene u
+`~/scraper` na Redmiju se odbacuju), a novi paketi se instaliraju kad se promijeni
+`requirements.txt`.
+
+## Kad nešto zapne
+
+**Promijenjen bot ili razgovor** (novi token ili TELEGRAM_CHAT_ID na GitHubu): iste
+vrijednosti treba i Redmi. U Ubuntuu ponovi korak 2.1 (`python tools/redmi_setup.py`).
+
+**U dnevniku stalno „prethodno pokretanje još traje”:** svaki korak ima najdulje
+trajanje (ukupno oko 25 minuta), pa bi to trebalo proći samo. Ako ne prođe, u Ubuntuu:
+
+```
+pkill -f redmi_run.sh; pkill -f "scraper run"; pkill -f chrom
+```
+
+**Ponovna instalacija** (novi Ubuntu ili Termux): koraci 1.4 (do `pip install -r
+requirements.txt`), iz koraka 1b točka 2 (`pip install playwright` i `python -m
+playwright install --with-deps chromium`), zatim 2.1–2.4. Stanje Redmija (redmi.db) prvo
+pokretanje samo vrati s GitHuba; ako GitHub tada ne odgovara, pokretanje se preskoči
+(da prazna baza ne prepiše staru) i pokuša ponovno za 20 minuta.

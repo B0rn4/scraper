@@ -15,7 +15,7 @@ na našem području otvara i stranica oglasa (površine, vrsta, opis, koordinate
 import html
 import re
 import statistics
-from datetime import datetime
+from datetime import datetime, timedelta, timezone
 
 from ..browser import Browser
 from ..models import HOUSE, LAND, Listing
@@ -28,6 +28,7 @@ CATEGORIES = [("prodaja-kuca", HOUSE), ("prodaja-zemljista", LAND)]
 MAX_PAGES = 4          # najviše stranica po kategoriji u jednom pokretanju
 MAX_DETAILS = 8        # najviše otvorenih oglasa u jednom pokretanju (zaštita od captche)
 OLD_MARGIN = 60_000    # ~3 dana novih brojeva oglasa
+CAPTCHA_PAUSE = timedelta(hours=2)   # nakon captche na stranici oglasa (REDMI.md: zaštitu ostaviti na miru)
 
 _ITEM = re.compile(r'<li class="EntityList-item EntityList-item--n\d+ EntityList-item--(Regular|VauVau)[^"]*">(.*?)</article>',
                    re.S)
@@ -203,30 +204,44 @@ class Njuskalo(Source):
             if mode != FULL:
                 self.add_pending(found, known_ids)
             threshold = _old_threshold(known_ids, found)
-            details, later, blocked, deadline = 0, set(), False, details_deadline()
+            # Nakon captche na stranici oglasa ne otvara se nijedna CAPTCHA_PAUSE (zaštita bi
+            # inače ostala na oprezu); vrijeme se pamti uz odgođene oglase.
+            now = datetime.now(timezone.utc)
+            pause = max((p.extra.get("captcha_do", "") for p in self.pending), default="")
+            self.detail_blocked = pause > now.isoformat(timespec="seconds")
+            details, later, deadline = 0, set(), details_deadline()
             for x in found.values():
                 if x.source_id in known_ids:
                     continue
                 if threshold is not None and int(x.source_id) <= threshold:
                     x.extra["stari_oglas"] = True
                 elif mode != FULL and self.worth_detail(x):
-                    # Sljedeći put (bez stranice oglasa stigao bi bez površine); nakon captche
-                    # se u ovom pokretanju više ne otvara nijedan oglas.
-                    if details >= MAX_DETAILS or blocked or past(deadline):
-                        self.defer(x)
-                        later.add(x.source_id)
+                    # Sljedeći put (bez stranice oglasa stigao bi bez površine); čeka li predugo
+                    # (MAX_WAIT), stiže s podacima s popisa.
+                    if details >= MAX_DETAILS or self.detail_blocked or past(deadline):
+                        if self.defer(x):
+                            later.add(x.source_id)
                         continue
                     details += 1
                     try:
                         page = browser.get(x.url, "h1")
-                        if _is_captcha(page) or "ClassifiedDetail" not in page:
-                            blocked = _is_captcha(page)
-                            raise RuntimeError("stranica oglasa: captcha" if blocked else "stranica oglasa bez podataka")
+                        if _is_captcha(page):     # nije greška oglasa: ne broji se kao pokušaj
+                            self.detail_blocked = True
+                            pause = (now + CAPTCHA_PAUSE).isoformat(timespec="seconds")
+                            x.extra["detalji_greska"] = "stranica oglasa: captcha"
+                            if self.defer(x):
+                                later.add(x.source_id)
+                            continue
+                        if "ClassifiedDetail" not in page:
+                            raise RuntimeError("stranica oglasa bez podataka")
                         parse_detail(page, x)
                     except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                         x.extra["detalji_greska"] = str(exc)[:200]
                         if self.defer(x, failed=True):
                             later.add(x.source_id)
+            if self.detail_blocked:
+                for x in self.deferred:
+                    x.extra["captcha_do"] = pause
         finally:
             if own_browser:
                 browser.close()

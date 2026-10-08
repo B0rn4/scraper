@@ -118,7 +118,8 @@ class RealEstateCroatia(Source):
                 out.append(x)
                 continue
             if details >= MAX_DETAILS or past(deadline):
-                self.defer(x)          # otvara se sljedeći put (bez površine bi stigao kao ⚠)
+                if not self.defer(x):  # otvara se sljedeći put (bez površine bi stigao kao ⚠)
+                    out.append(x)      # čeka predugo: stiže s podacima s popisa
                 continue
             details += 1
             try:
