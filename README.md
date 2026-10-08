@@ -2,7 +2,8 @@
 
 Prati oglase za prodaju kuća i građevinskih zemljišta i za svaki novi oglas koji
 odgovara kriterijima šalje obavijest na Telegram. Radi na GitHub Actions, pa PC
-ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
+ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md). **Upute za svakodnevno
+korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
 
 ## Što dobivaš
 
