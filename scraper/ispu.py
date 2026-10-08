@@ -22,7 +22,10 @@ API = "https://ispu.mgipu.hr/api/v1/"
 # obrisa slojeva (GeoServer Ministarstva kroz ISPU-ov WMS posrednik, KML). Polumjer kruga portal
 # ne navodi u podacima oglasa – APPROX_RADIUS_M po izvoru (izmjereno s karte portala).
 APPROX_RADIUS_M = {"default": 300,
-                   "nekretnine_hr": 250}   # kod karte portala: krug "only_area" polumjera 250 m (8. 10. 2026.)
+                   "nekretnine_hr": 250,   # kod karte portala: krug "only_area" polumjera 250 m (8. 10. 2026.)
+                   # index.hr: "neprecizna" lokacija su koordinate mjesta iz izbornika (kod portala,
+                   # isPreciseLocation=false), ne krug oko čestice – postotak bi zavaravao.
+                   "index_oglasi": None}
 _CIRCLE_SIDES = 256
 _PLACEMARK = re.compile(r"<Placemark[^>]*>(.*?)</Placemark>", re.S)
 _POLYGON = re.compile(r"<Polygon>(.*?)</Polygon>", re.S)
@@ -443,7 +446,7 @@ def heritage_warning(items: list[Heritage], caveat: str = "", land: bool = False
 
 def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, approximate: bool,
                names: dict[str, str] | None = None, house: bool = False,
-               radius: float = APPROX_RADIUS_M["default"]) -> LandCheck:
+               radius: float | None = APPROX_RADIUS_M["default"]) -> LandCheck:
     """Je li zemljište (ili kuća) u građevinskom području: prvo po katastarskoj čestici iz
     teksta (točno), inače po oznaci na karti oglasa (ako portal kaže da nije približna)."""
     parcels = parcels_in_text(text)
@@ -458,9 +461,11 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
     if info is None and lat and lon and not approximate:
         info, where = ispu.point(lat, lon), "oznaci na karti oglasa"
     if info is None:
-        why = "čestica iz oglasa nije pronađena u katastru" if parcels else "oglas nema točnu lokaciju ni broj čestice"
+        why = "čestica iz oglasa nije pronađena u katastru" if parcels else (
+            "oglas ima samo mjesto (ne lokaciju čestice)" if lat and lon and approximate and radius is None
+            else "oglas nema točnu lokaciju ni broj čestice")
         line, warning = f"🗺 Građevinsko područje: nije provjereno – {why}", ""
-        if lat and lon and approximate and not house and hasattr(ispu, "gp_share"):
+        if lat and lon and approximate and radius and not house and hasattr(ispu, "gp_share"):
             line, warning = _share_check(*ispu.gp_share(lat, lon, radius), radius)
         heritage = ""
         if lat and lon and OLD_CORE.search(fold(text)):

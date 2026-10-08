@@ -76,6 +76,8 @@ def test_check_land_around_approximate_marker():
     fake = ShareIspu({"naselja": 1.0})
     r = check_land(fake, "Kuća", 45.33, 14.29, True, house=True)       # kuće: bez provjere okolice
     assert "nije provjereno" in r.line and not fake.calls
+    r = check_land(fake, "Zemljište", 45.33, 14.29, True, radius=None)  # index.hr: samo mjesto, bez kruga
+    assert r.line.endswith("oglas ima samo mjesto (ne lokaciju čestice)") and not fake.calls
 
 
 def test_runner_marks_land_outside_building_zone(tmp_path):
