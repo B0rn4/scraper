@@ -121,7 +121,19 @@ def main() -> int:
             kind, _, url = arg.partition(":")
             try:
                 if kind == "js":
-                    item = {"ulaz": url, "isjecci": search_js(url, http.get(url).text)[:200]}
+                    # Skripta i dijelovi koje učitava (isti direktorij), npr. modul karte.
+                    r = http.get(url)
+                    js = r.text
+                    base = url.rsplit("/", 1)[0]
+                    chunks = list(dict.fromkeys(re.findall(r'["\'/]([\w.-]{6,40}\.js)["\']', js)))[:60]
+                    hits = search_js(url, js)
+                    for chunk in chunks:
+                        try:
+                            hits += search_js(chunk, http.get(f"{base}/{chunk}").text)
+                        except Exception:  # noqa: BLE001
+                            continue
+                    item = {"ulaz": url, "bajtova": len(js), "pocetak": js[:200], "dijelova": len(chunks),
+                            "isjecci": hits[:300]}
                 else:
                     item = save_page(http, url, out_dir)
             except Exception as exc:  # noqa: BLE001
