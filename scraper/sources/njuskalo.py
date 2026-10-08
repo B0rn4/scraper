@@ -52,6 +52,11 @@ _NEW_LINK = re.compile(r'<h3 class="title"[^>]*>\s*<a href="([^"]+)"[^>]*\bname=
 _NEW_PRICE = re.compile(r'<div class="price"[^>]*>\s*<p[^>]*>([^<]+)</p>')
 _NEW_PLACE = re.compile(r'class="locationText"[^>]*>([^<]*)<')
 _HIGHLIGHT = re.compile(r'<dt[^>]*>([^<]*)</dt>\s*<dd[^>]*>([^<]*)</dd>')
+# "Super Vau oglasi" (plaćeno istaknuti, sa strane): samo naslov i poveznica, bez broja (name), cijene,
+# mjesta i datuma – novi se otvaraju (stranica oglasa), poznati i stari se preskaču.
+_FEATURED = re.compile(r'<section class="featuredListings"[^>]*>(.*?)</section>', re.S)
+_FEATURED_ITEM = re.compile(r'<li class="listing[^"]*"[^>]*>.*?<a href="([^"]*-oglas-(\d+))"[^>]*>.*?<span>([^<]*)</span>', re.S)
+_DETAIL_PRICE = re.compile(r'class="ClassifiedDetailSummary-priceDomestic"[^>]*>([^<]+)<')
 _COMMENT = re.compile(r"<!--.*?-->", re.S)
 _TAGS = re.compile(r"<[^>]+>")
 
@@ -132,6 +137,14 @@ def _parse_list_new(page: str, kind: str) -> list[Listing]:
         if fields.get("godina izgradnje"):
             x.extra["godina_izgradnje"] = fields["godina izgradnje"]
         out.append(x)
+    seen = {x.source_id for x in out}
+    for section in _FEATURED.findall(page):
+        for href, sid, title in _FEATURED_ITEM.findall(section):
+            if sid not in seen:
+                seen.add(sid)
+                out.append(Listing(source=Njuskalo.name, source_id=sid, url=BASE + href, title=_text(title), kind=kind,
+                                   county="Primorsko-goranska",
+                                   extra={"istaknut": True, "samo_popis": True, "bez_podataka": True}))
     return out
 
 
@@ -197,6 +210,9 @@ def parse_detail(page: str, listing: Listing) -> None:
         value = fields.get(key)
         return parse_number(re.search(r"[\d.,]+", value).group(0)) if value and re.search(r"\d", value) else None
 
+    if listing.price is None:              # "Super Vau" s popisa nema cijenu
+        price = _DETAIL_PRICE.search(page)
+        listing.price = parse_number(price.group(1).replace("€", "")) if price else None
     if listing.kind == HOUSE:
         if fields.get("tip kuće"):
             listing.subtype = f"{fields['tip kuće']} kuća"
@@ -229,6 +245,7 @@ def parse_detail(page: str, listing: Listing) -> None:
     listing.extra["detalji"] = True
     listing.extra.pop("samo_popis", None)
     listing.extra.pop("povrsina_iz_teksta", None)
+    listing.extra.pop("bez_podataka", None)
 
 
 def _is_captcha(page: str) -> bool:
@@ -321,13 +338,22 @@ class Njuskalo(Source):
                         # nije učitala, a oglasi iza nje nisu pročitani.
                         stopped(oldest)
                         break
-                    for x in items:
-                        found.setdefault(x.source_id, x)
+                    for x in items:      # oglas s podacima zamjenjuje isti "Super Vau" bez podataka
+                        if x.source_id not in found or (found[x.source_id].extra.get("bez_podataka")
+                                                        and not x.extra.get("bez_podataka")):
+                            found[x.source_id] = x
                     # Sljedeća stranica samo ako je i najstariji redovni oglas objavljen nakon
                     # prošlog pokretanja (inače smo sve novo već vidjeli).
-                    dates = [x.published for x in items if not x.extra.get("istaknut") and x.published]
+                    regular = [x for x in items if not x.extra.get("istaknut")]
+                    dates = [x.published for x in regular if x.published]
+                    if regular and not dates:
+                        # Bez datuma se ne zna dokle čitati: inače bi se tiho čitala samo 1. stranica.
+                        raise RuntimeError(f"Njuškalo: oglasi na stranici {category} nemaju datum objave "
+                                           f"({_describe(text)}) – promjena stranice?")
                     oldest = min(dates) if dates else oldest
                     if not since or not dates or datetime.fromisoformat(oldest.replace("Z", "+00:00")) < since:
+                        if since and not dates:
+                            stopped(oldest)          # samo istaknuti: dokle se stiglo, ne zna se
                         break
                 else:                   # najviše stranica, a oglasi od prošlog pokretanja nisu dosegnuti
                     stopped(oldest)
@@ -344,11 +370,15 @@ class Njuskalo(Source):
             self.detail_ok = False
             details, later, deadline = 0, set(), details_deadline()
             for x in found.values():
-                if x.source_id in known_ids:
+                bare = x.extra.get("bez_podataka")
+                if x.source_id in known_ids or (bare and (mode == FULL or (
+                        threshold is not None and int(x.source_id) <= threshold))):
+                    if bare:
+                        later.add(x.source_id)   # "Super Vau" bez podataka: poznat ili star – ništa se ne bilježi
                     continue
                 if threshold is not None and int(x.source_id) <= threshold:
                     x.extra["stari_oglas"] = True
-                elif mode != FULL and not x.extra.get("detalji") and self.worth_detail(x):
+                elif mode != FULL and not x.extra.get("detalji") and (bare or self.worth_detail(x)):
                     # Sljedeći put (bez stranice oglasa stigao bi bez površine); čeka li predugo
                     # (MAX_DEFERRALS), stiže s podacima s popisa.
                     if details >= MAX_DETAILS or self.detail_blocked or past(deadline):

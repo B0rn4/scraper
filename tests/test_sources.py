@@ -2,6 +2,7 @@
 
 import gzip
 import json
+import re
 from pathlib import Path
 
 import pytest
@@ -959,8 +960,11 @@ def test_njuskalo_new_list_layout_october_2026(fina):
 
     page = read("njuskalo_kuce_2026-10.html.gz")
     items = {x.source_id: x for x in parse_list(page, HOUSE)}
-    assert len(items) == 31 and sum(x.extra["istaknut"] for x in items.values()) == 7
+    assert len(items) == 33 and sum(x.extra["istaknut"] for x in items.values()) == 9
     assert "51175192" not in items and "51777157" not in items        # blok agencije, "Posljednji oglasi"
+    # "Super Vau" sa strane (bez broja, cijene, mjesta): 47749175 je i na popisu (s podacima).
+    assert not items["47749175"].extra.get("bez_podataka") and items["47749175"].price
+    assert items["43488416"].extra["bez_podataka"] and items["43488416"].price is None
     x = items["50863567"]
     assert (x.price, x.area, x.plot_area, x.subtype) == (450_000, 138, 316, "Samostojeća kuća")
     assert (x.municipality, x.settlement) == ("Krk", "Vrh") and not x.extra["istaknut"]
@@ -972,5 +976,25 @@ def test_njuskalo_new_list_layout_october_2026(fina):
     browser = FakeBrowser({"prodaja-kuca": page, "prodaja-zemljista": read("njuskalo_zemljista.html.gz")})
     src = Njuskalo(None, Locator(), load_config()["kriteriji"], browser=browser)
     src.since = "2026-10-08T16:20:00+02:00"
-    found = src.fetch(INCREMENTAL, {"1"})
-    assert "50863567" in {x.source_id for x in found} | {x.source_id for x in src.deferred}
+    found = src.fetch(INCREMENTAL, {"1", "43488416"})
+    ids = {x.source_id for x in found} | {x.source_id for x in src.deferred}
+    assert "50863567" in ids
+    assert "43488416" not in ids                       # poznat "Super Vau" bez podataka: ništa se ne prepisuje
+    assert "47749180" in ids                           # nov "Super Vau": otvara se (ili čeka otvaranje)
+    assert any("47749180" in u for u in browser.calls) or "47749180" in {x.source_id for x in src.deferred}
+
+
+def test_njuskalo_list_without_dates_is_an_error():
+    """Popis bez datuma objave (promjena stranice): ne zna se dokle čitati – greška izvora, a ne
+    tiho čitanje samo prve stranice."""
+    import pytest
+
+    from scraper.sources.base import INCREMENTAL
+    from scraper.sources.njuskalo import Njuskalo
+
+    page = read("njuskalo_kuce_2026-10.html.gz")
+    no_dates = re.sub(r'<time datetime="[^"]*"', "<time", page)
+    src = Njuskalo(None, Locator(), load_config()["kriteriji"], browser=FakeBrowser({"prodaja-kuca": no_dates}))
+    src.since = "2026-10-08T16:20:00+02:00"
+    with pytest.raises(RuntimeError, match="nemaju datum"):
+        src.fetch(INCREMENTAL, {"1"})
