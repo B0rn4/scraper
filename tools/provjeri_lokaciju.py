@@ -55,10 +55,49 @@ def find_radius(http: Http, url: str) -> dict:
     return {"ulaz": url, "skripti": len(scripts), "isjecci": found[:200]}
 
 
+def outline_formats(ispu: Ispu, lat: float, lon: float, out_dir: Path) -> dict:
+    """Dijagnoza: koji oblik GetMap-a za slojeve građevinskog područja vraća obrise (KML je
+    za te slojeve vraćao grešku GeoServera). Sirovi odgovori se spremaju."""
+    from scraper.ispu import API, HEADERS, to_htrs
+    cx, cy = to_htrs(lat, lon)
+    box = ",".join(f"{v:.0f}" for v in (cx - 270, cy - 270, cx + 270, cy + 270))
+    formats = {"kml": ("application/vnd.google-earth.kml+xml", ""),
+               "kml_vektor": ("application/vnd.google-earth.kml+xml", "kmscore:100"),
+               "kml_atributi": ("application/vnd.google-earth.kml+xml", "kmscore:100;kmattr:true"),
+               "svg": ("image/svg+xml", ""), "png": ("image/png", ""), "json": ("application/json", ""),
+               "geojson": ("application/geo+json", "")}
+    out = {}
+    for la in ispu.layers():
+        if "Građevinska područja" not in la["_path"]:
+            continue
+        for name, (fmt, opts) in formats.items():
+            params = {"layerHash": la["hash"], "serviceId": la["serviceId"], "SERVICE": "WMS", "VERSION": "1.1.1",
+                      "REQUEST": "GetMap", "LAYERS": la["layers"], "STYLES": "", "SRS": "EPSG:3765", "BBOX": box,
+                      "WIDTH": 540, "HEIGHT": 540, "FORMAT": fmt, "TRANSPARENT": "true"}
+            if opts:
+                params["FORMAT_OPTIONS"] = opts
+            try:
+                r = ispu.session.get(API + "gis/wms", params=params, headers=HEADERS, timeout=60)
+                body = r.content
+                key = f"{la['layers']}_{name}"
+                (out_dir / f"obris_{key}.bin").write_bytes(body[:400_000])
+                out[key] = {"status": r.status_code, "vrsta": r.headers.get("content-type", ""), "bajtova": len(body),
+                            "pocetak": body[:200].decode("utf-8", "replace")}
+            except Exception as exc:  # noqa: BLE001
+                out[f"{la['layers']}_{name}"] = {"greska": f"{type(exc).__name__}: {exc}"}
+            time.sleep(1)
+    return out
+
+
 def main() -> int:
     out_dir, args = Path(sys.argv[1]), sys.argv[2:]
+    out_dir.mkdir(parents=True, exist_ok=True)
     http, ispu, results = Http(), Ispu(), []
     for arg in args:
+        if arg.startswith("obrisi:"):
+            lat, lon = map(float, arg[len("obrisi:"):].split(","))
+            results.append({"ulaz": arg, "oblici": outline_formats(ispu, lat, lon, out_dir)})
+            continue
         if arg.startswith("radijus:"):
             try:
                 item = find_radius(http, arg[len("radijus:"):])
