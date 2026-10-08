@@ -1,0 +1,6 @@
+[
+ {
+  "ulaz": "https://www.nekretnine.hr/oglasi/4253231/",
+  "greska": "RuntimeError: ISPU obrisi građevinskog područja: HTTP 200 (application/vnd.ogc.se_xml) '<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><!DOCTYPE ServiceExceptionReport SYSTEM \"https://gis4.mgipu.hr/srv1/schemas/wms/1.1.1/WMS_exception_1_1_1.dtd\"> <ServiceExceptionReport version=\"1.1.1\" >   <ServiceException>\\n      java.lang.NullPointerException\\n</ServiceException></ServiceExcept'"
+ }
+]
