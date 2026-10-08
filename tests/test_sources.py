@@ -930,3 +930,22 @@ def test_detail_parsers_reject_empty_pages():
                  lambda: index_oglasi.parse_single({"data": []}, x)):
         with pytest.raises(ValueError):
             call()
+
+
+def test_njuskalo_empty_list_page_is_saved_and_described(tmp_path, monkeypatch):
+    """Popis bez oglasa (zaštita koja ne piše "captcha" ili promjena stranice): poruka o grešci
+    nosi naslov stranice, a stranica se sprema za slanje (redmi_probe.py --posalji)."""
+    import gzip
+
+    import pytest
+
+    from scraper.sources import njuskalo
+    from scraper.sources.base import INCREMENTAL
+
+    monkeypatch.setattr(njuskalo, "FAILED_PAGES", tmp_path)
+    page = "<html><head><title>Pardon Our Interruption</title></head><body>x</body></html>"
+    src = njuskalo.Njuskalo(None, Locator(), load_config()["kriteriji"], browser=FakeBrowser({"prodaja-kuca": page}))
+    with pytest.raises(RuntimeError, match="Pardon Our Interruption"):
+        src.fetch(INCREMENTAL, set())
+    saved = list(tmp_path.glob("*_njuskalo_greska_prodaja-kuca.html.gz"))
+    assert len(saved) == 1 and b"Pardon" in gzip.decompress(saved[0].read_bytes())

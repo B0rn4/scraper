@@ -12,10 +12,13 @@ zabilježi se bez obavijesti (extra["stari_oglas"]); sniženje cijene i dalje st
 Popis ne daje površinu zemljišta, a vrstu kuće samo ugrubo, pa se za nove oglase
 na našem području otvara i stranica oglasa (površine, vrsta, opis, koordinate)."""
 
+import gzip
 import html
 import re
 import statistics
+import time
 from datetime import datetime, timedelta, timezone
+from pathlib import Path
 
 from ..browser import Browser
 from ..models import HOUSE, LAND, Listing
@@ -30,6 +33,9 @@ CATCHUP_PAGES = 10     # kad prošlo čitanje nije stiglo do oglasa od pretproš
 MAX_DETAILS = 8        # najviše otvorenih oglasa u jednom pokretanju (zaštita od captche)
 OLD_MARGIN = 60_000    # ~3 dana novih brojeva oglasa
 CAPTCHA_PAUSE = timedelta(hours=2)   # nakon captche na stranici oglasa (REDMI.md: zaštitu ostaviti na miru)
+# Popis bez oglasa (promjena stranice ili zaštita koja ne piše "captcha"): stranica se sprema
+# ovdje, a šalje s "python tools/redmi_probe.py --posalji" (grana debug) da se vidi što je to.
+FAILED_PAGES = Path(__file__).resolve().parents[2] / "redmi-out"
 
 # Redovni i plaćeno istaknuti (VauVau, SuperVau); "Latest" su najnoviji oglasi cijelog Njuškala.
 _ITEM = re.compile(r'<li class="EntityList-item EntityList-item--n\d+ EntityList-item--(Regular|VauVau|SuperVau)[^"]*">(.*?)</article>',
@@ -155,6 +161,24 @@ def _is_captcha(page: str) -> bool:
     return "captcha" in (re.search(r"<title>([^<]*)", page) or [None, ""])[1].lower()
 
 
+def _describe(page: str) -> str:
+    """Naslov i veličina stranice, za poruku o grešci ("promjena stranice?" ili zaštita)."""
+    title = " ".join((re.search(r"<title[^>]*>([^<]*)", page) or [None, ""])[1].split())[:80]
+    return f"naslov stranice: „{title or 'bez naslova'}”, {len(page) // 1024} kB"
+
+
+def _save_failed(category: str, page: str) -> None:
+    """Sprema stranicu popisa bez oglasa (najviše zadnje 4) za slanje Claudeu."""
+    try:
+        FAILED_PAGES.mkdir(exist_ok=True)
+        path = FAILED_PAGES / f"{time.strftime('%m%d-%H%M')}_njuskalo_greska_{category}.html.gz"
+        path.write_bytes(gzip.compress(page.encode("utf-8", "replace")))
+        for old in sorted(FAILED_PAGES.glob("*_njuskalo_greska_*.html.gz"))[:-4]:
+            old.unlink()
+    except OSError:
+        pass
+
+
 def _page_url(category: str, page: int) -> str:
     return f"{BASE}/{category}/{REGION}?sort=new" + (f"&page={page}" if page > 1 else "")
 
@@ -216,7 +240,9 @@ class Njuskalo(Source):
                     items = parse_list(text, kind)
                     if not items:
                         if page == 1:
-                            raise RuntimeError(f"Njuškalo: na stranici {category} nema oglasa (promjena stranice?)")
+                            _save_failed(category, text)
+                            raise RuntimeError(f"Njuškalo: na stranici {category} nema oglasa ({_describe(text)}) – "
+                                               "promjena stranice ili zaštita?")
                         # Popis tolikog područja ne završava nakon nekoliko stranica: stranica se
                         # nije učitala, a oglasi iza nje nisu pročitani.
                         stopped(oldest)
