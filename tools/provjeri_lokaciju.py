@@ -125,13 +125,17 @@ def main() -> int:
                     r = http.get(url)
                     js = r.text
                     base = url.rsplit("/", 1)[0]
-                    chunks = list(dict.fromkeys(re.findall(r'["\'/]([\w.-]{6,40}\.js)["\']', js)))[:60]
+                    chunks = list(dict.fromkeys(re.findall(r'["\'/]([\w.-]{6,40}\.js)["\']', js)))[:600]
                     hits = search_js(url, js)
                     for chunk in chunks:
                         try:
-                            hits += search_js(chunk, http.get(f"{base}/{chunk}").text)
+                            part = http.get(f"{base}/{chunk}").text
                         except Exception:  # noqa: BLE001
                             continue
+                        # Samo dijelovi s kartom oglasa (inače previše isječaka tražilice).
+                        if re.search(r"[Aa]pproximate|L\.circle|[Cc]ircle\(|leaflet|maplibre|mapbox", part):
+                            hits += [h for h in search_js(chunk, part)
+                                     if re.search(r"[Aa]pproximate|[Cc]ircle|[Rr]adius", h["isjecak"])]
                     item = {"ulaz": url, "bajtova": len(js), "pocetak": js[:200], "dijelova": len(chunks),
                             "isjecci": hits[:300]}
                 else:
