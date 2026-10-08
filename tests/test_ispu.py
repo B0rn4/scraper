@@ -63,16 +63,16 @@ class ShareIspu(FakeIspu):
 
 
 def test_check_land_around_approximate_marker():
-    """Približna oznaka (krug na portalu): točan udio kruga u građevinskom području."""
-    r = check_land(ShareIspu({"naselja": 0.995}), "Zemljište", 45.33, 14.29, True, radius=300)
-    assert r.line.startswith("🗺 Vjerojatno u građevinskom području naselja – ISPU: cijeli krug 300 m") and not r.warning
-    r = check_land(ShareIspu({}), "Zemljište", 45.33, 14.29, True)
-    assert "Vjerojatno NIJE" in r.line and r.warning.startswith("prema ISPU-u oko približne oznake nema")
-    r = check_land(ShareIspu({"naselja": 0.784, "izvan naselja": 0.05}), "Zemljište", 45.33, 14.29, True, radius=300)
-    assert r.line == ("🗺 Krug 300 m oko približne oznake na karti (Rukavac): 78 % u građevinskom području naselja, "
-                      "5 % izvan naselja, ostatak izvan – ISPU; točnu česticu provjeri") and not r.warning
-    r = check_land(ShareIspu({"naselja": 0.3}), "Zemljište", 45.33, 14.29, True)
-    assert r.warning == "oko približne oznake samo 30 % je u građevinskom području naselja – provjeri"
+    """Približna oznaka (krug na portalu): točan udio kruga u građevinskom području, samo postoci (bez ⚠)."""
+    r = check_land(ShareIspu({"naselja": 0.998}), "Zemljište", 45.33, 14.29, True, radius=250)
+    assert r.line == ("🗺 Krug 250 m oko približne oznake na karti (Rukavac): 100 % u građevinskom području naselja "
+                      "– ISPU; točnu česticu provjeri") and not r.warning
+    r = check_land(ShareIspu({}), "Zemljište", 45.33, 14.29, True, radius=250)
+    assert "0 % u građevinskom području naselja, ostatak izvan –" in r.line and not r.warning
+    r = check_land(ShareIspu({"naselja": 0.523, "izvan naselja": 0.05}), "Zemljište", 45.33, 14.29, True, radius=250)
+    assert r.line == ("🗺 Krug 250 m oko približne oznake na karti (Rukavac): 52 % u građevinskom području naselja, "
+                      "5 % izvan naselja, ostatak izvan građevinskog područja – ISPU; točnu česticu provjeri")
+    assert not r.warning
     fake = ShareIspu({"naselja": 1.0})
     r = check_land(fake, "Kuća", 45.33, 14.29, True, house=True)       # kuće: bez provjere okolice
     assert "nije provjereno" in r.line and not fake.calls

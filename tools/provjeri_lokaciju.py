@@ -3,11 +3,12 @@
 Pokreće GitHub (radnja "Planovi", naredba "lokacija"), jer okruženje za razvoj ne dolazi do
 portala ni do ISPU-a; rezultat ide na granu debug (planovi/lokacije/).
 
-    python tools/provjeri_lokaciju.py IZLAZ ADRESA_OGLASA|LAT,LON|radijus:ADRESA_OGLASA [...]
+    python tools/provjeri_lokaciju.py IZLAZ ADRESA_OGLASA|LAT,LON|radijus:ADRESA|stranica:ADRESA|js:ADRESA [...]
 
 Za adresu oglasa koordinate i vrsta oznake ("marker": točna, "only_area": približna) čitaju se
 iz podataka stranice (nekretnine.hr, index.hr: __NEXT_DATA__ / JSON u stranici)."""
 
+import gzip
 import json
 import re
 import sys
@@ -50,9 +51,27 @@ def find_radius(http: Http, url: str) -> dict:
             js = http.get(full).text
         except Exception:  # noqa: BLE001
             continue
-        for m in re.finditer(r"only_area|onlyArea|[Rr]adius", js):
-            found.append({"skripta": full.rsplit("/", 1)[-1], "isjecak": js[max(0, m.start() - 250): m.end() + 250]})
+        found += search_js(full, js)
     return {"ulaz": url, "skripti": len(scripts), "isjecci": found[:200]}
+
+
+_JS_WORDS = re.compile(r"only_area|onlyArea|[Aa]pproximate|isPreciseLocation|[Rr]adius|[Cc]ircle\(|L\.circle")
+
+
+def search_js(name: str, js: str) -> list[dict]:
+    return [{"skripta": name.rsplit("/", 1)[-1], "isjecak": js[max(0, m.start() - 250): m.end() + 250]}
+            for m in _JS_WORDS.finditer(js)]
+
+
+def save_page(http: Http, url: str, out_dir: Path) -> dict:
+    """Cijela stranica oglasa (ima li kartu i koordinate?) i isječci oko koordinata."""
+    page = http.get(url).text
+    name = re.sub(r"[^\w.-]+", "_", url.split("//", 1)[-1])[:80]
+    (out_dir / f"stranica_{name}.html.gz").write_bytes(gzip.compress(page.encode("utf-8", "replace")))
+    hits = [page[max(0, m.start() - 120): m.end() + 120] for m in re.finditer(
+        r"(?i)latitude|longitude|\blat\b|\blng\b|\blon\b|maps\.google|google\.com/maps|leaflet|mapbox|openstreetmap|"
+        r"approximate|precise|radius|circle", page)]
+    return {"ulaz": url, "bajtova": len(page), "isjecci": hits[:60]}
 
 
 def outline_formats(ispu: Ispu, lat: float, lon: float, out_dir: Path) -> dict:
@@ -97,6 +116,17 @@ def main() -> int:
         if arg.startswith("obrisi:"):
             lat, lon = map(float, arg[len("obrisi:"):].split(","))
             results.append({"ulaz": arg, "oblici": outline_formats(ispu, lat, lon, out_dir)})
+            continue
+        if arg.startswith(("stranica:", "js:")):
+            kind, _, url = arg.partition(":")
+            try:
+                if kind == "js":
+                    item = {"ulaz": url, "isjecci": search_js(url, http.get(url).text)[:200]}
+                else:
+                    item = save_page(http, url, out_dir)
+            except Exception as exc:  # noqa: BLE001
+                item = {"ulaz": arg, "greska": f"{type(exc).__name__}: {exc}"}
+            results.append(item)
             continue
         if arg.startswith("radijus:"):
             try:

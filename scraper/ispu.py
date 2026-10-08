@@ -507,20 +507,16 @@ def clip_area(ring: list[tuple[float, float]], box: tuple[float, float, float, f
 
 
 def _share_check(center: PointInfo, shares: dict[str, float], radius: float) -> tuple[str, str]:
-    """Redak i ⚠ za približnu oznaku: koliko kruga oko nje je u građevinskom području (točno, iz
-    obrisa) i u kojem je naselju središte (prema bloku PPV-a, npr. "RUKAVAC - GRAĐEVINSKO PODRUČJE")."""
+    """Redak za približnu oznaku: koliko kruga oko nje je u građevinskom području (točno, iz obrisa)
+    i u kojem je naselju središte (prema bloku PPV-a, npr. "RUKAVAC - GRAĐEVINSKO PODRUČJE").
+    Samo postoci, bez ⚠ (odluka korisnika 8. 10.)."""
     inside, other = round(shares.get("naselja", 0) * 100), round(shares.get("izvan naselja", 0) * 100)
     place = center.block.split(" - ")[0].strip().title() if center.block else ""
-    where = f"krug {radius:.0f} m oko približne oznake na karti{f' ({place})' if place else ''}"
-    if inside >= 99:
-        return f"🗺 Vjerojatno u građevinskom području naselja – ISPU: cijeli {where}; točnu česticu provjeri", ""
-    if inside == 0 and other == 0:
-        return (f"🗺 Vjerojatno NIJE u građevinskom području – ISPU: ništa od {where[5:]}",
-                "prema ISPU-u oko približne oznake nema građevinskog područja – vjerojatno nije građevinsko, provjeri")
     parts = [f"{inside} % u građevinskom području naselja"] + ([f"{other} % izvan naselja"] if other else [])
-    line = f"🗺 {where[0].upper()}{where[1:]}: {', '.join(parts)}, ostatak izvan – ISPU; točnu česticu provjeri"
-    warning = "" if inside >= 50 else f"oko približne oznake samo {inside} % je u građevinskom području naselja – provjeri"
-    return line, warning
+    if inside + other < 100:
+        parts.append("ostatak izvan građevinskog područja" if inside + other else "ostatak izvan")
+    return (f"🗺 Krug {radius:.0f} m oko približne oznake na karti{f' ({place})' if place else ''}: "
+            f"{', '.join(parts)} – ISPU; točnu česticu provjeri"), ""
 
 
 def _gp_check(info: PointInfo, where: str, caveat: str, house: bool, use: str) -> LandCheck:

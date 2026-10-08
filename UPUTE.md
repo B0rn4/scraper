@@ -53,9 +53,9 @@ Primjer (zemljište u Matuljima):
   izračuna koliki je dio kruga u građevinskom području (iz obrisa područja Ministarstva):
   „Krug 250 m oko približne oznake na karti (Rukavac): 52 % u građevinskom području
   naselja, ostatak izvan”. Ako je zemljište bilo gdje u krugu jednako vjerojatno, to je i
-  vjerojatnost da je u građevinskom području. Ispod 50 % stiže ⚠, a cijeli krug izvan
-  područja daje „vjerojatno NIJE” (⚠). U zagradi je naselje u kojem je središte oznake,
-  što pomaže kad oglas navodi samo općinu. Za kuće se oko približne oznake ne provjerava.
+  vjerojatnost da je u građevinskom području (samo postotak, bez ⚠). U zagradi je naselje u
+  kojem je središte oznake, što pomaže kad oglas navodi samo općinu. Za kuće se oko
+  približne oznake ne provjerava.
 - „nije provjereno” – oglas nema ni čestice ni oznake.
 
 **Duga poruka** se nastavlja u drugoj poruci odmah ispod (bez zvuka).
