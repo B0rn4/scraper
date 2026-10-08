@@ -43,13 +43,12 @@ def main() -> int:
         try:
             item = locate(http, arg)
             if "lat" in item:
-                center = ispu.point(item["lat"], item["lon"])
+                center, ring = ispu.gp_around(item["lat"], item["lon"])
                 item["sredina"] = {"gp": gp_text(center), "namjena": center.use, "blok": center.block,
                                    "ppv_gradevinsko": center.land_values,
                                    "kulturna_dobra": [h.describe() for h in center.heritage]}
-                ring = ispu.gp_around(item["lat"], item["lon"])
                 item["krug_m"], item["krug"] = RING_M, ring
-                item["redak"], item["upozorenje"] = _ring_check(ring)
+                item["redak"], item["upozorenje"] = _ring_check(center, ring)
         except Exception as exc:  # noqa: BLE001
             item = {"ulaz": arg, "greska": f"{type(exc).__name__}: {exc}"}
         print(json.dumps(item, ensure_ascii=False, indent=1))

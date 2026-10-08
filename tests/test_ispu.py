@@ -59,7 +59,7 @@ class RingIspu(FakeIspu):
 
     def gp_around(self, lat, lon):
         self.calls.append(("gp_around", lat, lon))
-        return self.ring
+        return PointInfo(gp=self.ring[0], block="RUKAVAC - GRAĐEVINSKO PODRUČJE"), self.ring
 
 
 def test_check_land_around_approximate_marker():
@@ -69,7 +69,7 @@ def test_check_land_around_approximate_marker():
     r = check_land(RingIspu([None] * 9), "Zemljište", 45.33, 14.29, True)
     assert "Vjerojatno NIJE" in r.line and r.warning.startswith("prema ISPU-u oko približne oznake nema")
     r = check_land(RingIspu(["naselja"] * 4 + [None] * 4 + ["izvan naselja"]), "Zemljište", 45.33, 14.29, True)
-    assert "naselja 4 od 9, izvan naselja 1" in r.line and not r.warning
+    assert "naselja 4 od 9, izvan naselja 1" in r.line and "oznake na karti (Rukavac)" in r.line and not r.warning
     fake = RingIspu(["naselja"] * 9)
     r = check_land(fake, "Kuća", 45.33, 14.29, True, house=True)       # kuće: bez provjere okolice
     assert "nije provjereno" in r.line and not fake.calls
@@ -226,3 +226,40 @@ def test_identify_retries_then_drops_heritage_layers():
     assert not info.heritage_checked and [la["id"] for la in s.bodies[2]["layers"]] == ["1"]
     r = check_land(FakeIspu(PointInfo(gp="naselja", heritage_checked=False)), "Kuća", 45.1, 14.5, False, house=True)
     assert r.line.endswith("(kulturna dobra nisu provjerena – ISPU nije odgovorio)")
+
+
+def test_gp_around_queries_center_fully_and_ring_with_building_zone_layers_only():
+    from scraper.ispu import RING_POINTS, Ispu
+
+    class Resp:
+        status_code = 200
+
+        def __init__(self, data):
+            self.data = data
+
+        def json(self):
+            return self.data
+
+        def raise_for_status(self):
+            pass
+
+    inside = [{"catalogId": "1", "label": {"hr": "Građevinsko područje naselja"}, "items": [{"items": []}]}]
+
+    class Session:
+        def __init__(self):
+            self.bodies = []
+
+        def post(self, url, json=None, **kw):
+            self.bodies.append(json)
+            return Resp(inside if len(self.bodies) % 2 else [])        # svaka druga točka izvan
+
+    gp = {"id": "1", "hashIdentify": "a", "_path": "Građevinska područja > Građevinsko područje naselja"}
+    z = {"id": "326", "hashIdentify": "b", "_path": "Ministarstvo kulture > Zaštićena kulturna dobra"}
+    s = Session()
+    i = Ispu(session=s)
+    i._layers, i.retry_pause = [gp, z], 0
+    center, ring = i.gp_around(45.36, 14.29)
+    assert center.gp == "naselja" and len(ring) == RING_POINTS + 1 and ring.count("naselja") == 5
+    assert len(s.bodies[0]["layers"]) == 2 and all(len(b["layers"]) == 1 for b in s.bodies[1:])
+    xs = [round(b["x"]) for b in s.bodies]
+    assert max(xs) - min(xs) == 400                                     # krug od 200 m
