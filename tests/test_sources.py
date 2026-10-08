@@ -949,3 +949,28 @@ def test_njuskalo_empty_list_page_is_saved_and_described(tmp_path, monkeypatch):
         src.fetch(INCREMENTAL, set())
     saved = list(tmp_path.glob("*_njuskalo_greska_prodaja-kuca.html.gz"))
     assert len(saved) == 1 and b"Pardon" in gzip.decompress(saved[0].read_bytes())
+
+
+def test_njuskalo_new_list_layout_october_2026(fina):
+    """Novi izgled popisa (8. 10. 2026.): <li class="listing">, mjesto "Naselje - Općina", podaci u
+    "highlights". Blok agencije na vrhu i "Posljednji oglasi" cijelog Njuškala nisu oglasi popisa."""
+    from scraper.sources.base import INCREMENTAL
+    from scraper.sources.njuskalo import Njuskalo, parse_list
+
+    page = read("njuskalo_kuce_2026-10.html.gz")
+    items = {x.source_id: x for x in parse_list(page, HOUSE)}
+    assert len(items) == 31 and sum(x.extra["istaknut"] for x in items.values()) == 7
+    assert "51175192" not in items and "51777157" not in items        # blok agencije, "Posljednji oglasi"
+    x = items["50863567"]
+    assert (x.price, x.area, x.plot_area, x.subtype) == (450_000, 138, 316, "Samostojeća kuća")
+    assert (x.municipality, x.settlement) == ("Krk", "Vrh") and not x.extra["istaknut"]
+    assert x.published == "2026-10-08T14:32:40.000Z" and x.url.endswith("-oglas-50863567")
+    assert (items["49408567"].municipality, items["49408567"].settlement) == ("Novi Vinodolski", "Novi Vinodolski")
+    opatija = next(x for x in items.values() if x.municipality == "Opatija")
+    assert opatija.settlement == "Opatija - Centar"
+    # Cijeli dohvat s novim izgledom ne javlja "nema oglasa".
+    browser = FakeBrowser({"prodaja-kuca": page, "prodaja-zemljista": read("njuskalo_zemljista.html.gz")})
+    src = Njuskalo(None, Locator(), load_config()["kriteriji"], browser=browser)
+    src.since = "2026-10-08T16:20:00+02:00"
+    found = src.fetch(INCREMENTAL, {"1"})
+    assert "50863567" in {x.source_id for x in found} | {x.source_id for x in src.deferred}

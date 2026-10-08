@@ -45,6 +45,13 @@ _DESC = re.compile(r'<div class="entity-description">(.*?)</div>', re.S)
 _DATE = re.compile(r'<time[^>]*datetime="([^"]+)"')
 _PRICE = re.compile(r'<strong class="price[^"]*">([^<]+)</strong>')
 _IMG = re.compile(r'<img[^>]+src="(https://[^"]+)"')
+# Novi izgled popisa (od 8. 10. 2026. oko 13:30): <li class="listing [isPromoted]">, mjesto "Naselje - Općina",
+# podaci u <dl class="highlights">. Blok agencije na vrhu ("featuredStore") nema broj oglasa (name) – preskače se.
+_NEW_ITEM = re.compile(r'<li class="listing((?: [\w-]+)*)"[^>]*>(.*?)</article>', re.S)
+_NEW_LINK = re.compile(r'<h3 class="title"[^>]*>\s*<a href="([^"]+)"[^>]*\bname="(\d+)"[^>]*>.*?<span>([^<]*)</span>', re.S)
+_NEW_PRICE = re.compile(r'<div class="price"[^>]*>\s*<p[^>]*>([^<]+)</p>')
+_NEW_PLACE = re.compile(r'class="locationText"[^>]*>([^<]*)<')
+_HIGHLIGHT = re.compile(r'<dt[^>]*>([^<]*)</dt>\s*<dd[^>]*>([^<]*)</dd>')
 _COMMENT = re.compile(r"<!--.*?-->", re.S)
 _TAGS = re.compile(r"<[^>]+>")
 
@@ -62,6 +69,73 @@ def _place(value: str) -> tuple[str, str]:
 
 
 def parse_list(page: str, kind: str) -> list[Listing]:
+    """Oglasi s popisa – stari i novi izgled stranice (Njuškalo ih je mijenjao bez najave)."""
+    out = _parse_list_old(page, kind)
+    seen = {x.source_id for x in out}
+    return out + [x for x in _parse_list_new(page, kind) if x.source_id not in seen]
+
+
+def _number(value: str | None) -> float | None:
+    m = re.search(r"\d[\d.,]*", value or "")
+    return parse_number(m.group(0)) if m else None
+
+
+def _parse_list_new(page: str, kind: str) -> list[Listing]:
+    out = []
+    for m in _NEW_ITEM.finditer(page):
+        block = m.group(2)
+        link = _NEW_LINK.search(block)
+        if not link:
+            continue
+        href, sid, title = link.groups()
+        title = html.unescape(title).strip()
+        fields = {_text(k).lower(): _text(v) for k, v in _HIGHLIGHT.findall(block)}
+        # "Opatija - Centar - Opatija": zadnji dio je grad/općina, ostalo naselje ("Veprinac - Opatija -
+        # Okolica": grad je "Opatija - Okolica", kao u starom izgledu).
+        place = _text(_NEW_PLACE.search(block).group(1)) if _NEW_PLACE.search(block) else ""
+        parts = place.split(" - ")
+        cut = -2 if len(parts) > 2 and parts[-1] in ("Okolica", "Centar") else -1
+        municipality, settlement = " - ".join(parts[cut:]), " - ".join(parts[:cut])
+        if kind == HOUSE:
+            area = _number(fields.get("stambena površina"))
+            plot = _number(fields.get("površina okućnice"))
+            subtype = f"{fields['tip kuće']} kuća" if fields.get("tip kuće") else ""
+        else:
+            area = next((_number(v) for k, v in fields.items() if "površina" in k), None)
+            plot = None
+            subtype = f"{fields['tip zemljišta'].capitalize()} zemljište" if fields.get("tip zemljišta") else ""
+        from_title = kind == LAND and not area
+        if from_title:
+            found = areas_in_text(title)
+            area = max(found) if found else None
+        price = _NEW_PRICE.search(block)
+        date = _DATE.search(block)
+        img = _IMG.search(block)
+        x = Listing(
+            source=Njuskalo.name,
+            source_id=sid,
+            url=BASE + href,
+            title=title,
+            kind=kind,
+            subtype=subtype,
+            price=parse_number(price.group(1).replace("€", "")) if price else None,
+            area=area,
+            plot_area=plot,
+            county="Primorsko-goranska",
+            municipality=municipality,
+            settlement=settlement,
+            location_text=", ".join(filter(None, [municipality, settlement])),
+            image_url=img.group(1) if img else "",
+            published=date.group(1) if date else "",
+            extra={"istaknut": "isPromoted" in m.group(1), "samo_popis": True, "povrsina_iz_teksta": from_title},
+        )
+        if fields.get("godina izgradnje"):
+            x.extra["godina_izgradnje"] = fields["godina izgradnje"]
+        out.append(x)
+    return out
+
+
+def _parse_list_old(page: str, kind: str) -> list[Listing]:
     out = []
     for m in _ITEM.finditer(page):
         block = m.group(2)
@@ -226,7 +300,7 @@ class Njuskalo(Source):
                         stopped(oldest)
                         break
                     try:
-                        text = browser.get(_page_url(category, page), "li.EntityList-item")
+                        text = browser.get(_page_url(category, page), "li.listing, li.EntityList-item")
                         if _is_captcha(text):
                             raise RuntimeError("Njuškalo je vratio captchu (zaštita ShieldSquare)")
                     except Exception as exc:  # noqa: BLE001
@@ -292,7 +366,8 @@ class Njuskalo(Source):
                                 later.add(x.source_id)
                             continue
                         if "ClassifiedDetail" not in page:
-                            raise RuntimeError("stranica oglasa bez podataka")
+                            _save_failed(f"oglas_{x.source_id}", page)      # promijenjena stranica oglasa?
+                            raise RuntimeError(f"stranica oglasa bez podataka ({_describe(page)})")
                         parse_detail(page, x)
                         self.detail_result()
                     except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
