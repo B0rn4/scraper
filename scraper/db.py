@@ -111,14 +111,15 @@ class State:
             self.conn.execute(
                 # Površina i naselje ostaju ako ih novi dohvat nema (npr. Njuškalo popis bez
                 # površine zemljišta, a stranica oglasa otvorena je samo prvi put).
-                # Kategorija (za obnovu) ostaje kad je ovaj put samo popis bez opisa.
+                # Kategorija (za obnovu) ostaje kad je ovaj put samo popis bez opisa; "" (cijeli
+                # opis, useljiva) je briše.
                 """UPDATE listings SET last_seen = ?, title = ?, url = ?, price = ?, area = COALESCE(?, area),
                    jls = ?, status = ?, reasons = ?, near_miss = ?, settlement = COALESCE(NULLIF(?, ''), settlement),
                    category = COALESCE(?, category)
                    WHERE key = ?""",
                 (now, listing.title, listing.url, listing.price, listing.area, decision.jls,
                  decision.status, reasons, int(decision.near_miss), listing.settlement,
-                 listing.extra.get("kategorija") or None, listing.key),
+                 listing.extra.get("kategorija"), listing.key),
             )
         if old is None or (listing.price is not None and old.get("price") != listing.price):
             self.conn.execute(
@@ -205,8 +206,8 @@ class State:
     def price_rows(self) -> list[dict]:
         """Svi oglasi s cijenom i površinom (medijan traženih cijena, prosjek područja)."""
         rows = self.conn.execute(
-            "SELECT key, kind, jls, price, area, title, settlement, reasons, status, category, last_seen FROM listings "
-            "WHERE price IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
+            "SELECT key, kind, jls, price, area, title, settlement, reasons, status, category, last_seen, notified_at "
+            "FROM listings WHERE price IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
         )
         return [dict(r) for r in rows]
 

@@ -77,7 +77,7 @@ ne mora biti upaljen. Plan i odluke: [PLAN.md](PLAN.md).
 - **Parking (🚗, kuće):** parkirno mjesto ili garaža iz oglasa, ili okućnica od barem
   100 m². „Nema parkinga”, samo javni parking ili parking nije naveden → ⚠.
 - **Duga poruka:** opis uz fotografiju smije imati oko 1.000 znakova. Što ne stane
-  (redom: usporedba s medijanom mjesta, činjenice, PPV, prosjek područja, parking, mjesto,
+  (redom: usporedba s medijanom mjesta, činjenice, PPV, prosjek područja, uvjeti gradnje, parking, mjesto,
   zadnja upozorenja) stiže odmah u drugoj poruci, kao odgovor na prvu i bez zvuka; 👎 na
   bilo kojoj od njih vrijedi za oglas. Ne stane li samo naslov oglasa ili „nije
   provjereno”, druge poruke nema.

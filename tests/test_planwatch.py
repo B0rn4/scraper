@@ -57,8 +57,8 @@ def test_first_read_of_a_source_is_silent_then_new_ones_reported(tmp_path):
     pages["sn"] += '<a href="default.asp?Link=odluke&id=51800">Odluka o donošenju UPU 1 Omišalj</a>'
     pages["reg"] += '<tr><td>Kostrena</td><td>UPU N-5</td><td><a href="/sn_jls/Kostrena/2026_9_1950_donosenje.pdf">a</a></td></tr>'
     second = planwatch.check(get, state, 2026)
-    assert [(d.jls, d.title[:30]) for d in second.new] == [("Omišalj", "Odluka o donošenju UPU 1 Omiša"),
-                                                         ("Kostrena", "Kostrena UPU N-5 a")]
+    assert [(d.jls, d.title[:30]) for d in second.new] == [("Kostrena", "Kostrena UPU N-5 a"),
+                                                         ("Omišalj", "Odluka o donošenju UPU 1 Omiša")]
     second.save(state)
     assert planwatch.check(get, state, 2026).new == []
     state.close()
@@ -73,6 +73,7 @@ def test_weekly_section_text():
     assert "Omišalj: <a href='https://x/1'>Odluka o donošenju UPU 1 Omišalj</a>" in text
     assert "uvjeti_gradnje.yaml" in text and "Nije provjereno: Registar Zavoda: OSError" in text
     assert "Nijedna (praćeno 7 odluka" in Runner._plan_section(planwatch.Result([], 7, [], {}))
+    assert "Nijedna (praćeno 342 odluke" in Runner._plan_section(planwatch.Result([], 342, [], {}))
     assert "Provjera nije uspjela" in Runner._plan_section(None)
 
 
@@ -95,4 +96,53 @@ def test_weekly_remembers_decisions_only_when_mail_sent(tmp_path):
     r.email.ok = True
     assert r.weekly(record=False) is True
     assert state.meta_get(planwatch.SEEN_KEY) == '["https://x/1"]'
+    state.close()
+
+
+def test_source_that_failed_or_came_back_empty_stays_unread(tmp_path):
+    """Izvor koji prvi put ne odgovori (ili vrati praznu stranicu) nije pročitan: kad proradi,
+    njegove stare odluke ne stižu kao nove."""
+    down = {"krk": True}
+
+    def get(url):
+        if "zavod" in url:
+            return REGISTRY
+        if "sifra=51500" in url:
+            if down["krk"]:
+                raise OSError("mreža")
+            return SN_PAGE.replace("5170", "5190")
+        if "sifra=51513" in url:
+            return SN_PAGE
+        if "sifra=51000" in url:
+            return "<html><title>Održavanje</title></html>"
+        return "<a href='default.asp?Link=popis&sifra=00001'>Županija</a>"    # godina bez odluka
+
+    state = State(tmp_path / "s.db")
+    first = planwatch.check(get, state, 2026)
+    first.save(state)
+    read = planwatch.json.loads(state.meta_get(planwatch.SOURCES_KEY))
+    assert "sn:Omišalj" in read and "registar" in read and "sn:Crikvenica" in read
+    assert "sn:Krk" not in read and "sn:Rijeka" not in read
+    down["krk"] = False
+    second = planwatch.check(get, state, 2026)
+    assert second.new == [] and "sn:Krk" in second._updates[planwatch.SOURCES_KEY]
+    state.close()
+
+
+def test_deadline_leaves_remaining_sources_for_next_week(tmp_path, monkeypatch):
+    clock = [0.0]
+    monkeypatch.setattr(planwatch.time, "monotonic", lambda: clock[0])
+    calls = []
+
+    def get(url):
+        calls.append(url)
+        clock[0] += 50                   # poslužitelj ne odgovara: svaki zahtjev čeka
+        raise TimeoutError
+
+    state = State(tmp_path / "s.db")
+    res = planwatch.check(get, state, 2026, deadline=120)
+    assert len(calls) == 3
+    assert calls[0] == planwatch.REGISTRY                      # registar prvi
+    assert res.errors[-1].startswith("nije stiglo na red (vremensko ograničenje): Krk, Punat, Baška")
+    assert res.errors[-1].endswith("Kraljevica, Crikvenica") and planwatch.SOURCES_KEY not in res._updates
     state.close()

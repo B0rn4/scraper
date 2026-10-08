@@ -38,8 +38,12 @@ _TEXT_WARN = [
     (re.compile(r"\b(polovic\w*|polovin\w*|pola) kuc|\betaz\w* kuc"), "opis spominje dio kuće ili etažu"),
 ]
 _RENOVATION = re.compile(
-    r"za obnov|za adaptacij|potrebn\w* (obnov|adaptacij|renovacij)|starin|rusevin|za rusenje|zapust"
+    r"za obnov|za adaptacij|potrebn\w* (obnov|adaptacij|renovacij)|starin(?!\w* stil)|rusevin|za rusenje|zapust"
 )
+# Nijekanje neposredno ispred ("nije potrebna obnova", "bez potrebe za obnovom", "nije
+# zapuštena"); "nije useljiva, potrebna obnova" nije nijekanje (riječ između nije s popisa).
+_NOT_READY_DENIED = re.compile(r"\b(?:ne|nije|nisu|bez|nema|nimalo)\s+"
+                               r"(?:(?:je|bila|bilo|uopce|nimalo|potreb\w*|nuzn\w*)\s+){0,2}$")
 # "Cijena na upit": luksuzna nekretnina se prepoznaje po riječima u naslovu i procjeni
 # (površina × medijan traženih €/m²). Mjerenje 6. 10. na 12.378 oglasa s cijenom: od
 # kuća s takvim riječima i procjenom × 0,4 iznad granice 99 % je stvarno preskupo
@@ -55,10 +59,19 @@ LUXURY_FACTOR, HUGE_HOUSE_FACTOR = 0.4, 0.2
 _UNFINISHED = re.compile(r"rohbau|roh bau|zapocet\w* gradnj|nedovrsen\w*|siva faza|grub\w* radov")
 
 
+def _said(pattern: re.Pattern, text: str) -> bool:
+    """Izraz se spominje, a ne niječe."""
+    return any(not _NOT_READY_DENIED.search(text[max(0, m.start() - 60):m.start()]) for m in pattern.finditer(text))
+
+
+def needs_renovation(text: str) -> bool:
+    return _said(_RENOVATION, text)
+
+
 def not_ready(text: str) -> bool:
     """Kuća za obnovu, starina, ruševina ili nedovršena gradnja (tekst već prošao fold):
     zasebna kategorija u usporedbi cijena, jer ima daleko niži €/m² od useljive kuće."""
-    return bool(_RENOVATION.search(text) or _UNFINISHED.search(text))
+    return needs_renovation(text) or _said(_UNFINISHED, text)
 
 
 # "Negrađevinsko" i "izvan građevinskog (područja)" nisu građevinsko zemljište.
@@ -255,7 +268,7 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
             # Luksuz iz naslova ili opisa ("Obiteljska kuća Kostrena", a u opisu "luksuzna vila").
             luxury = bool(_LUXURY.search(fold(f"{listing.subtype} {listing.title} {listing.description}")))
             limit = limits["max_cijena"]
-            unfinished = bool(_RENOVATION.search(text) or _UNFINISHED.search(text))
+            unfinished = not_ready(text)
             if not unfinished and ((luxury and value * LUXURY_FACTOR > limit)
                                    or (listing.kind == HOUSE and value * HUGE_HOUSE_FACTOR > limit)):
                 limit_reasons.append(f"cijena na upit – {'luksuzna, ' if luxury else ''}{basis}")
@@ -282,10 +295,13 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
     else:
         reasons.extend(limit_reasons)
 
-    if listing.kind == HOUSE and _RENOVATION.search(text):
+    if listing.kind == HOUSE and needs_renovation(text):
         listing.extra["za_obnovu"] = True
     if listing.kind == HOUSE and not_ready(text):
         listing.extra["kategorija"] = "obnova"      # pamti se u bazi (usporedba cijena)
+    elif listing.kind == HOUSE and listing.description and not (
+            listing.extra.get("opis_skracen") or listing.extra.get("samo_popis")):
+        listing.extra["kategorija"] = ""            # cijeli opis: useljiva (briše raniju oznaku)
 
     if reasons:
         return Decision(REJECT, reasons, warnings, jls_name, loc.evidence, near_miss=near_miss_only)

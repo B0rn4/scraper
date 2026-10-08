@@ -1190,7 +1190,7 @@ def test_dislike_reaction_mutes_and_removal_unmutes(tmp_path):
     r._handle_updates(state, [reaction(3, 999, [], ["👎"])])              # poruka još nepoznata
     assert state.muted() == set() and json.loads(state.meta_get("reakcije:cekaju"))
     state.remember_message(999, "t:7", "t2")                              # stiglo stanje s Redmija
-    r._record_presses(state, [])
+    r._handle_updates(state, [])                                          # i bez novih ažuriranja
     assert state.muted() == {"t:7"} and json.loads(state.meta_get("reakcije:cekaju")) == []
     state.close()
 
@@ -1273,3 +1273,29 @@ def test_parcelation_listing_keeps_arriving_with_list_only_data(tmp_path, monkey
     sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [plot(900_000)], [plot(820_000, partial=True)]])
     assert [k for k, _ in sent[1]] == ["t:5"]
     assert [k for k, _ in sent[2]] == ["t:5"] and sent[2][0][1].startswith("📉")
+
+
+def test_renovation_category_kept_for_list_only_price_drop(tmp_path, monkeypatch):
+    """Kuća za obnovu prepoznata iz opisa: sniženje s popisa (bez opisa) uspoređuje se i dalje
+    s kućama za obnovu, ne s useljivima."""
+    def ruin(price, partial=False):
+        x = listing(price=price, sid="5", title="Kuća Punat", area=110)
+        if partial:
+            x.extra["samo_popis"] = True
+        else:
+            x.description = "Stara kamena kuća za obnovu."
+        return x
+
+    seen = {}
+
+    def configure(r, i):
+        def send(state, items):
+            for x, d, h in items:
+                seen[i] = x.extra.get("kategorija")
+                state.mark_notified(x.key, x.price, r.stamp)
+        r._send_notifications = send
+    _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [ruin(120_000)], [ruin(100_000, partial=True)]], configure)
+    assert seen == {1: "obnova", 2: "obnova"}
+    state = State(tmp_path / "s.db")
+    assert state.get("t:5")["category"] == "obnova"
+    state.close()

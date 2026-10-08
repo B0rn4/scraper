@@ -197,3 +197,34 @@ def test_area_line_in_message_after_ppv(loc):
     x.extra["usporedba"] = "💸 25 % iznad medijana traženih (Njivice: 200 €/m², 40 oglasa)"
     text = format_listing(x, Decision(status=WARN, jls="Omišalj"))
     assert text.index("🏛 PPV") < text.index("📐") < text.index("💸")
+
+
+def test_market_counts_same_house_on_several_portals_once(loc):
+    """Ista kuća na tri portala (120/121 m², 250.000/248.400 €): runner je kopije označio
+    "dup:K" – jedan unos u usporedbi; sniženje te kuće ne uspoređuje se samo sa sobom."""
+    others = [dict(r, key=f"o:{i}") for i, r in enumerate(area_rows(10, 2100, 110))]
+    house = {"kind": HOUSE, "jls": "Omišalj", "title": "Kamena kuća Njivice", "settlement": "", "reasons": "[]",
+             "status": "prolazi", "last_seen": "2026-10-01T10:00:00"}
+    copies = [dict(house, key="nekretnine_hr:1", price=250_000, area=120),
+              dict(house, key="index_oglasi:9", price=250_000, area=121, notified_at="dup:nekretnine_hr:1"),
+              dict(house, key="burza:5", price=248_400, area=120, notified_at="dup:index_oglasi:9")]
+    prices = AskingPrices.from_rows(others + copies, loc, NOW, CRITERIA)
+    ours = [m for m in prices.market if "nekretnine_hr:1" in m[7]]
+    assert len(prices.market) == 11 and sorted(ours[0][7]) == ["burza:5", "index_oglasi:9", "nekretnine_hr:1"]
+    cheaper = Listing(source="vender", source_id="3", url="u", title="Kamena kuća Njivice", kind=HOUSE,
+                      price=235_000, area=120, extra={"blizanci": ["burza:5"]})
+    assert "(10)" in prices.market_notes(cheaper, "Omišalj")[0]
+    # Medijan traženih: kopije se ne broje.
+    assert prices.groups[f"{HOUSE}|Omišalj|"]["n"] == 11
+
+
+def test_market_without_agricultural_land_with_warning(loc):
+    """Poljoprivredno zemljište koje stiže s ⚠ (opis spominje građevinsko) nije u usporedbi
+    građevinskih zemljišta ni u medijanu traženih."""
+    data = (area_rows(12, 200, 600, kind=LAND)
+            + area_rows(12, 25, 600, kind=LAND, reasons='["Poljoprivredno zemljište, ali opis spominje građevinsko"]'))
+    prices = AskingPrices.from_rows(data, loc, NOW, CRITERIA)
+    plot = Listing(source="t", source_id="1", url="u", title="Građevinsko zemljište Njivice", kind=LAND,
+                   price=126_000, area=600)
+    assert prices.market_notes(plot, "Omišalj")[0].startswith("📐 Područje, zemljišta 300–799 m² (12): medijan 200 €/m²")
+    assert prices.groups[f"{LAND}|Omišalj|"]["n"] == 12

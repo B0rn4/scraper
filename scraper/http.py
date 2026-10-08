@@ -36,7 +36,7 @@ class Http:
         self._last: dict[str, float] = {}
         self.requests = 0
 
-    def get(self, url: str, retries: int | None = None, **kwargs):
+    def get(self, url: str, retries: int | None = None, timeout: float | None = None, **kwargs):
         host = urlparse(url).netloc
         error = None
         for attempt in range((self.retries if retries is None else retries) + 1):
@@ -46,7 +46,7 @@ class Http:
             self._last[host] = time.monotonic()
             self.requests += 1
             try:
-                resp = self.session.get(url, timeout=self.timeout, **kwargs)
+                resp = self.session.get(url, timeout=timeout or self.timeout, **kwargs)
             except Exception as exc:  # noqa: BLE001 – mrežne greške se ponavljaju
                 error = f"{type(exc).__name__}: {exc}"
             else:

@@ -127,6 +127,8 @@ def test_runner_adds_rules_line_with_part_of_settlement_from_ispu(tmp_path):
     runner._check_land(y, d, deadline=0)
     assert y.extra["uvjeti"].startswith("📏 UPU Njivice (2025): min. čest. 400 m²")
     assert d.status == WARN and d.warnings[-1].startswith("čestica 350 m² manja je od najmanje za samostojeću kuću")
+    runner._check_land(y, d, deadline=0)          # neposlana obavijest, ponovna provjera: ⚠ jednom
+    assert len(d.warnings) == 1
 
 
 def test_dpu_note_for_settlement(tmp_path):
@@ -139,3 +141,33 @@ def test_dpu_note_for_settlement(tmp_path):
     line, _ = plans.check(land(600), "Omišalj", "Omišalj")
     assert line.endswith(" · DPU u dijelu naselja: centar Omišlja, Pesja…")
     assert "DPU" not in plans.check(land(600), "Omišalj", "Njivice")[0]
+
+
+def test_dpu_without_plan_and_part_of_settlement_from_title(tmp_path):
+    from scraper.models import PASS, Decision
+    from scraper.runner import Runner
+
+    plans = Plans()
+    assert plans.check(land(600), "Rijeka", "Trsat")[0] == \
+        "📏 DPU u dijelu naselja: Trsat, povijesna jezgra Trsata (uvjeti gradnje nisu upisani)"
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    for jls, title, settlement, plan in [
+            ("Rijeka", "Građevinsko zemljište Gornja Drenova", "Drenova", "UPU Gornja Drenova"),
+            ("Rijeka", "Zemljište Drenova", "", "GUP Rijeka"),
+            ("Malinska-Dubašnica", "Građevinsko zemljište Dobrinčevo", "Malinska", "UPU 3 Dobrinčevo"),
+            ("Malinska-Dubašnica", "Zemljište Malinska", "Sveti Vid-Miholjice", "PPUO Malinska"),
+            ("Matulji", "Zemljište Biškupi", "Matulji", "UPU 8 Biškupi"),
+            ("Opatija", "Zemljište", "Strmice", "UPU Poljane")]:
+        x = Listing(source="t", source_id="1", url="u", title=title, kind=LAND, price=150_000, area=900,
+                    settlement=settlement)
+        runner._building_rules(x, Decision(PASS, jls=jls))
+        assert x.extra["uvjeti"].startswith(f"📏 {plan}"), (title, x.extra["uvjeti"])
+
+
+def test_size_limits_written_as_up_to_and_including():
+    """"Na čestici većoj od 1.000 m²" (Punat), "400–500 m²" (Dobrinj): granica pripada manjima."""
+    plans = Plans()
+    assert "tlocrt ≤ 150 m²" in plans.check(land(1000), "Punat", "Punat", "izgrađeni dio")[0]
+    assert "tlocrt ≤ 200 m²" in plans.check(land(1001), "Punat", "Punat", "izgrađeni dio")[0]
+    assert "kig 0,25" in plans.check(land(500), "Dobrinj", "Dobrinj")[0]
+    assert "kig 0,3 " in plans.check(land(501), "Dobrinj", "Dobrinj")[0]

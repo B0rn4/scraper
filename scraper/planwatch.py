@@ -12,6 +12,7 @@ Pamte se adrese već viđenih odluka; prvo čitanje samo zabilježi stanje."""
 
 import json
 import re
+import time
 from dataclasses import dataclass
 from datetime import datetime
 from html import unescape
@@ -101,22 +102,39 @@ class Result:
             state.meta_set(key, value)
 
 
-def check(get, state, year: int | None = None) -> Result:
+def check(get, state, year: int | None = None, deadline: float | None = None) -> Result:
     """Nove odluke od prošlog spremljenog čitanja. get(url) vraća HTML ili baca grešku.
     Prvo uspješno čitanje nekog izvora (grad na sn.pgz.hr, registar) samo bilježi njegove
-    odluke – inače bi prvi izvještaj nabrojao sve odluke od 2003. naovamo."""
+    odluke – inače bi prvi izvještaj nabrojao sve odluke od 2003. naovamo. Izvor se smatra
+    pročitanim tek kad su sve njegove stranice stigle i prave su (izbornik Službenih novina,
+    odluke u registru – ne stranica održavanja). deadline (time.monotonic()): stranice koje nisu stigle na red ostaju za
+    sljedeći tjedan – nedostupni poslužitelji ne smiju zaustaviti redovno pokretanje."""
     year = year or datetime.now().year
+    # Registar prvi: ima i odluke gradova s vlastitim glasilom, pa ne smije ostati za kraj.
+    pages = [("registar", "", REGISTRY)] + [(f"sn:{jls}", jls, url) for jls, url in sn_page_urls(year)]
     by_source: dict[str, list[PlanDecision]] = {}
+    incomplete: set[str] = set()
     errors: list[str] = []
-    for jls, url in sn_page_urls(year):
+    late: list[str] = []
+    for source, jls, url in pages:
+        label = f"Službene novine PGŽ, {jls}" if jls else "Registar Zavoda"
+        if deadline is not None and time.monotonic() > deadline:
+            incomplete.add(source)
+            if (jls or "registar Zavoda") not in late:
+                late.append(jls or "registar Zavoda")
+            continue
         try:
-            by_source.setdefault(f"sn:{jls}", []).extend(sn_decisions(get(url), jls, url))
+            html = get(url)
+            items = sn_decisions(html, jls, url) if jls else registry_decisions(html)
         except Exception as exc:  # noqa: BLE001 – jedan grad ne smije srušiti provjeru
-            errors.append(f"Službene novine PGŽ, {jls}: {type(exc).__name__}")
-    try:
-        by_source["registar"] = registry_decisions(get(REGISTRY))
-    except Exception as exc:  # noqa: BLE001
-        errors.append(f"Registar Zavoda: {type(exc).__name__}")
+            incomplete.add(source)
+            errors.append(f"{label}: {type(exc).__name__}")
+            continue
+        if not re.search(r"link=(popis|odluke)" if jls else r"/sn_jls/", html or "", re.I):
+            incomplete.add(source)       # nije stranica Službenih novina / registra (održavanje i sl.)
+        by_source.setdefault(source, []).extend(items)
+    if late:
+        errors.append("nije stiglo na red (vremensko ograničenje): " + ", ".join(late))
     seen = json.loads(state.meta_get(SEEN_KEY) or "[]")
     sources = set(json.loads(state.meta_get(SOURCES_KEY) or "[]"))
     known = set(seen)
@@ -132,6 +150,7 @@ def check(get, state, year: int | None = None) -> Result:
     updates = {}
     if added:
         updates[SEEN_KEY] = json.dumps((seen + added)[-MAX_SEEN:], ensure_ascii=False)
-    if set(by_source) - sources:
-        updates[SOURCES_KEY] = json.dumps(sorted(sources | set(by_source)), ensure_ascii=False)
+    read = set(by_source) - incomplete
+    if read - sources:
+        updates[SOURCES_KEY] = json.dumps(sorted(sources | read), ensure_ascii=False)
     return Result(new, len(known), errors, updates)

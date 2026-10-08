@@ -41,10 +41,10 @@
   izvor: "UPU 3 – građevinsko područje naselja N1 Punat, II. izmjene SN PGŽ 3/20, čl. 46 i 46a – interpolacija u izgrađenom dijelu na čestici do 10 % manjoj; tlocrt 150 m², na čestici većoj od 1.000 m² 200 m²"
   url: https://arhiva.punat.hr/sites/default/files/2020-02-Odredbe.pdf
   pravila:
-    - {zona: izgrađeni dio, do: 1000, cestica: 450, iznimno: 405, kig: 0.25, kis: 1.0, tlocrt: 150}
-    - {zona: izgrađeni dio, od: 1000, cestica: 450, iznimno: 405, kig: 0.25, kis: 1.0, tlocrt: 200}
-    - {zona: neizgrađeni dio, do: 1000, cestica: 450, kig: 0.25, kis: 0.85, tlocrt: 150}
-    - {zona: neizgrađeni dio, od: 1000, cestica: 450, kig: 0.25, kis: 0.85, tlocrt: 200}
+    - {zona: izgrađeni dio, do: 1000.5, cestica: 450, iznimno: 405, kig: 0.25, kis: 1.0, tlocrt: 150}
+    - {zona: izgrađeni dio, od: 1000.5, cestica: 450, iznimno: 405, kig: 0.25, kis: 1.0, tlocrt: 200}
+    - {zona: neizgrađeni dio, do: 1000.5, cestica: 450, kig: 0.25, kis: 0.85, tlocrt: 150}
+    - {zona: neizgrađeni dio, od: 1000.5, cestica: 450, kig: 0.25, kis: 0.85, tlocrt: 200}
 - jls: Punat
   plan: PPUO Punat (2018)
   izvor: "PPUO Punat, ciljane izmjene SN PGŽ 14/15, čl. 23c (III. izmjene 30/18 dodaju samo bazen)"
@@ -167,11 +167,11 @@
 # --- Dobrinj ---
 - jls: Dobrinj
   plan: PPUO Dobrinj (2008)
-  izvor: "PPUO Dobrinj (2008.), čl. 37, 69–71 (usklađenje 2020., SN PGŽ 38/20, mijenja samo čl. 31 i 34)"
+  izvor: "PPUO Dobrinj (2008.), čl. 37, 69–71 (usklađenje 2020., SN PGŽ 38/20, mijenja samo čl. 31 i 34) – kig 0,25 na čestici 400–500 m², 0,30 na većoj"
   url: https://dobrinj.hr/Dokumenti/prostorni_plan_uredenja_opcina_dobrinj.pdf
   pravila:
-    - {od: 0, do: 500, cestica: 400, iznimno: 350, kig: 0.25, kis: 0.75, gbp: 450}
-    - {od: 500, cestica: 400, iznimno: 350, kig: 0.3, kis: 0.75, gbp: 450}
+    - {od: 0, do: 500.5, cestica: 400, iznimno: 350, kig: 0.25, kis: 0.75, gbp: 450}
+    - {od: 500.5, cestica: 400, iznimno: 350, kig: 0.3, kis: 0.75, gbp: 450}
 
 # --- Opatija ---
 - jls: Opatija

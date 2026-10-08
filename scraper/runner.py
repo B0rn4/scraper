@@ -25,11 +25,13 @@ from .notify import (DISLIKE, MUTE_PREFIX, SOURCE_LABELS, UNMUTE_PREFIX, Email, 
                      safe_url, unmuted_markup)
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
-from .text import fmt_eur, fold
+from .text import fmt_eur, fold, plural
 
 ROOT = Path(__file__).resolve().parent.parent
 LAND_CHECK_SECONDS = 120   # najdulje trajanje provjera građevinskog područja po pokretanju
 TENDER_CHECK_SECONDS = 240  # isto za čestice iz natječaja (jednom dnevno)
+PLAN_CHECK_SECONDS = 180    # najdulje čitanje odluka o planovima za tjedni izvještaj
+PLAN_PAGE_SECONDS = 20      # najdulje čekanje jedne stranice (sn.pgz.hr, zavod.pgz.hr)
 RESERVE_MINUTES = 30        # GitHubov raspored radi samo kad cron-job.org kasni ovoliko
 UNSENT_DAYS = 7             # neposlana obavijest (Telegram ne radi) čeka najviše toliko
 
@@ -204,6 +206,8 @@ class Runner:
                         if prev and partial and "spominje parcelaciju" in (prev.get("reasons") or ""):
                             x.extra["parcelacija_ranije"] = True     # opis je bio na stranici oglasa
                         d = evaluate(x, self.criteria, self.locator, prices)
+                        if prev and prev.get("category") and "kategorija" not in x.extra:
+                            x.extra["kategorija"] = prev["category"]   # iz opisa ranijeg dohvata
                         if prev and d.notify and partial and prev.get("status") == REJECT:
                             d = self._keep_text_reject(d, prev, effective_price(
                                 x.price, x.area, bool(x.extra.get("ukupna_cijena")), x.kind) is None)
@@ -412,8 +416,11 @@ class Runner:
 
     def _handle_updates(self, state: State, updates: list[dict]) -> None:
         """Pritisci "Ne zanima me" / poništenje: oznaka na gumbu, odgovor Telegramu, zapis u
-        bazu; zatim potvrda (pomak) da se isti više ne vraćaju."""
+        bazu; zatim potvrda (pomak) da se isti više ne vraćaju. Bez novih ažuriranja se
+        ipak obrađuju 👎 koje čekaju poruku s Redmija."""
         if not updates:
+            self._record_presses(state, [])
+            state.conn.commit()
             return
         self._record_presses(state, [p for u in updates if (p := self._press(u))])
         offset = max(int(u["update_id"]) for u in updates) + 1
@@ -512,17 +519,28 @@ class Runner:
         if not jls:
             return
         try:
-            place = place_of(self.locator, jls, x.title, x.settlement) or x.settlement
+            # Dio naselja s vlastitim UPU-om iz naslova ("Gornja Drenova", "Dobrinčevo"), koji
+            # popis naselja ne zna; inače naselje kao drugdje (polje naselja, pa naslov).
+            part = self.plans.place_in(jls, x.title)
+            if part and any(j.name == jls for j in self.locator.by_settlement(part)):
+                part = ""
+            place = (part or place_of(self.locator, jls, x.title, x.settlement)
+                     or self.plans.place_in(jls, x.settlement) or x.settlement)
             found = self.plans.check(x, jls, place, x.extra.get("gp_dio", ""))
         except Exception as exc:  # noqa: BLE001 – uvjeti gradnje nisu nužni za obavijest
             self.log(f"Uvjeti gradnje ({x.key}): {type(exc).__name__}: {exc}")
             return
         if found:
             x.extra["uvjeti"], warning = found
-            if warning:
-                d.warnings.append(warning)
-                if d.status == PASS:
-                    d.status = WARN
+            self._warn(d, warning)
+
+    @staticmethod
+    def _warn(d: Decision, warning: str) -> None:
+        """⚠ uz oglas – jednom i kad se neposlana obavijest ponovno provjerava."""
+        if warning and warning not in d.warnings:
+            d.warnings.append(warning)
+            if d.status == PASS:
+                d.status = WARN
 
     def _check_ispu(self, x: Listing, d: Decision, deadline: float | None = None) -> None:
         """Građevinsko područje na točnoj lokaciji (ISPU), za zemljište i PPV. Izvan
@@ -548,10 +566,7 @@ class Runner:
         x.extra["gp"] = result.line
         x.extra["gp_neprovjereno"] = house and result.info is None
         for warning in (result.warning, result.heritage):
-            if warning:
-                d.warnings.append(warning)
-                if d.status == PASS:
-                    d.status = WARN
+            self._warn(d, warning)
         info = result.info
         if info and info.gp == "naselja" and info.use:
             use = info.use.upper()
@@ -878,6 +893,7 @@ class Runner:
             if old is None:
                 where = SOURCE_LABELS.get(cheapest["source"], cheapest["source"])
                 headline = f"📉 Već viđen na {where} za {fmt_eur(low)} – sad jeftiniji"
+            x.extra["blizanci"] = [t["key"] for t in twins]   # usporedba cijena: bez same sebe
         new["notified_at"], new["notified_price"] = self.stamp, x.price
         seen.add(new)  # drugi portal u istom pokretanju ne šalje isti oglas ponovno
         return headline
@@ -1259,9 +1275,11 @@ class Runner:
             self.log(f"Tjedni izvještaj: GREŠKA {type(exc).__name__}: {exc}")
 
     def _plan_decisions(self) -> "planwatch.Result | None":
-        """Nove odluke o prostornim planovima (Službene novine PGŽ-a, Zavodov registar)."""
+        """Nove odluke o prostornim planovima (Službene novine PGŽ-a, Zavodov registar). Bez
+        ponovnih pokušaja i s ograničenim trajanjem: izvještaj ide u redovnom pokretanju, a
+        nedostupni poslužitelji ne smiju ga zadržati (neprovjereno stiže sljedeći tjedan)."""
         def get(url: str) -> str:
-            raw = self.http.get(url).content
+            raw = self.http.get(url, retries=0, timeout=PLAN_PAGE_SECONDS).content
             for enc in ("utf-8", "windows-1250"):
                 try:
                     return raw.decode(enc)
@@ -1271,7 +1289,7 @@ class Runner:
 
         state = State(self.db_path)
         try:
-            return planwatch.check(get, state, self.now.year)
+            return planwatch.check(get, state, self.now.year, time.monotonic() + PLAN_CHECK_SECONDS)
         except Exception as exc:  # noqa: BLE001 – izvještaj ide i bez ovog dijela
             self.log(f"Provjera odluka o planovima nije uspjela: {exc}")
             return None
@@ -1287,7 +1305,7 @@ class Runner:
         items = "".join(f"<li>{e(d.jls)}: <a href='{e(d.url)}'>{e(d.title)}</a></li>" for d in plans.new)
         out = head + (f"<ul>{items}</ul><p>Ako odluka mijenja uvjete gradnje obiteljske kuće, treba "
                       f"ažurirati data/uvjeti_gradnje.yaml.</p>" if items
-                      else f"<p>Nijedna (praćeno {plans.known} odluka iz Službenih novina PGŽ-a i "
+                      else f"<p>Nijedna (praćeno {plural(plans.known, 'odluka', 'odluke', 'odluka')} iz Službenih novina PGŽ-a i "
                            f"Zavodova registra).</p>")
         if plans.errors:
             out += "<p>Nije provjereno: " + e("; ".join(plans.errors)) + "</p>"

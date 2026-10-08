@@ -503,7 +503,9 @@ bez stotina poruka.
         tekstu odluka. Za natječaje redak još ne postoji.
       - (gotovo) Tjedni izvještaj: nove odluke o prostornim planovima (Službene novine PGŽ-a,
         tekuća i prošla godina; Zavodov registar prostornih planova) – umjesto obnove
-        uvjeta gradnje jednom godišnje (`scraper/planwatch.py`).
+        uvjeta gradnje jednom godišnje (`scraper/planwatch.py`). Najviše 3 minute, bez
+        ponovnih pokušaja (registar prvi); što ne stigne, piše se u izvještaju i čita se
+        sljedeći tjedan. Izvor koji nije pročitan cijeli ne bilježi se kao pročitan.
       - (gotovo) PPV naselja iz svih cjenovnih blokova građevinskog zemljišta stambene i
         mješovite namjene (medijan uz raspon i broj blokova), umjesto pet točaka oko
         središta. ISPU-ov WMS posrednik propušta zahtjeve na GeoServer (LAYERS = sloj iz

@@ -349,3 +349,24 @@ def test_land_page_opened_even_when_too_expensive(ctx):
     x = land(price=900_000, area=5_000, description="Moguća parcelacija na tri građevinske čestice.")
     text = format_listing(x, evaluate(x, crit, loc))
     assert "✂️ Moguća parcelacija na tri građevinske čestice" in text
+
+
+@pytest.mark.parametrize("text,ready", [
+    ("Nije potrebna obnova, useljiva odmah.", True),
+    ("Kuća bez potrebe za obnovom.", True),
+    ("Kuća nije zapuštena, redovno održavana.", True),
+    ("Uređena u starinskom stilu, potpuno obnovljena.", True),
+    ("Kuća za obnovu.", False),
+    ("Nije useljiva, potrebna obnova.", False),
+    ("Kamena starina u centru mjesta.", False),
+])
+def test_renovation_category_ignores_negation(ctx, text, ready):
+    x = house(description=text)
+    evaluate(x, *ctx)
+    assert (x.extra["kategorija"] == "") is ready and bool(x.extra.get("za_obnovu")) is not ready
+
+
+def test_renovation_category_only_reset_by_full_description(ctx):
+    x = house(description="Lijepa useljiva kuća.", extra={"samo_popis": True})
+    evaluate(x, *ctx)
+    assert "kategorija" not in x.extra            # samo popis: ranija oznaka iz baze ostaje

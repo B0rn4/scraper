@@ -82,6 +82,15 @@ class Plans:
             item["naselja"] = [fold(n) for n in item.get("naselja") or []]
             self.plans.append(Plan(**item, pravila=rules))
 
+    def place_in(self, jls: str, text: str) -> str:
+        """Naselje ili dio naselja s vlastitim planom (ili DPU-om) koji se spominje u tekstu,
+        najdulji naziv prvi ("Gornja Drenova" prije "Drenova"): popis naselja zna samo
+        službena naselja, a UPU-i nose i nazive dijelova naselja (Dobrinčevo, Zarok, Okoli…)."""
+        words = f" {fold(text or '')} "
+        names = {n for p in self.plans if p.jls == jls for n in p.naselja}
+        names |= {place for j, place in self.dpu if j == jls}
+        return next((n for n in sorted(names, key=len, reverse=True) if f" {n} " in words), "")
+
     def find(self, jls: str, place: str) -> Plan | None:
         """UPU naselja, inače PPU grada/općine."""
         place = fold(place or "")
@@ -94,8 +103,10 @@ class Plans:
         if listing.kind != LAND or not jls:
             return None
         plan = self.find(jls, place)
-        if not plan:
-            return None
+        dpu = self.dpu.get((jls, fold(place or "")))
+        dpu_note = "DPU u dijelu naselja: " + ", ".join(dpu[:2]) + ("…" if len(dpu) > 2 else "") if dpu else ""
+        if not plan:                     # npr. središte Rijeke: uvjeti nisu upisani, DPU postoji
+            return (f"📏 {dpu_note} (uvjeti gradnje nisu upisani)", "") if dpu else None
         area = listing.area or None
         if zone and not any(r.zona == zone for r in plan.pravila):
             zone = ""                    # zona s ISPU-a (izgrađeni dio…) za ovaj plan nije važna
@@ -122,9 +133,8 @@ class Plans:
                 parts.append(f"kis {_span(kis)}")
         if plan.napomena:
             parts.append(plan.napomena)
-        dpu = self.dpu.get((jls, fold(place or "")))
-        if dpu:
-            parts.append("DPU u dijelu naselja: " + ", ".join(dpu[:2]) + ("…" if len(dpu) > 2 else ""))
+        if dpu_note:
+            parts.append(dpu_note)
         line = f"📏 {where}: " + " · ".join(parts)
         warning = ""
         if area and mins and area < min(mins):

@@ -26,7 +26,7 @@ from datetime import datetime, timedelta
 from pathlib import Path
 
 from .models import HOUSE, LAND, REJECT, Listing
-from .text import fmt_eur, fold
+from .text import fmt_eur, fold, plural
 
 PPV_FILE = Path(__file__).resolve().parent.parent / "data" / "ppv_naselja.json"
 
@@ -72,11 +72,12 @@ def _agricultural(listing: Listing) -> bool:
     return listing.kind == LAND and "poljopriv" in fold(f"{listing.subtype} {listing.title}")
 
 
-def _ok(kind: str, price, area, reasons: str = "") -> bool:
+def _ok(kind: str, price, area, reasons: str = "", title: str = "") -> bool:
     if kind not in PLAUSIBLE or not price or not area:
         return False
-    if kind == LAND and "nije građevinsko" in (reasons or ""):
-        return False
+    if kind == LAND and ("nije građevinsko" in (reasons or "") or "ali opis spominje građevinsko" in (reasons or "")
+                         or "poljopriv" in fold(title or "")):
+        return False                     # samo građevinska (poljoprivredno s ⚠ ima daleko niži €/m²)
     (amin, amax), (pmin, pmax) = PLAUSIBLE[kind]
     return amin <= area <= amax and pmin <= price / area <= pmax
 
@@ -84,12 +85,13 @@ def _ok(kind: str, price, area, reasons: str = "") -> bool:
 def build(rows: list[dict], locator, now: datetime) -> dict:
     """Medijani €/m² po (vrsta, grad/općina, naselje); naselje "" je cijeli grad/općina."""
     since = (now - timedelta(days=MAX_AGE_DAYS)).isoformat()
+    rows = [r for r in rows if r.get("jls") and (r.get("last_seen") or "9") >= since
+            and _ok(r["kind"], r.get("price"), r.get("area"), r.get("reasons"), r.get("title"))]
+    keys = {r.get("key") for r in rows}
     unique = {}
     for r in rows:
-        if not r.get("jls") or (r.get("last_seen") or "9") < since:
-            continue
-        if not _ok(r["kind"], r.get("price"), r.get("area"), r.get("reasons")):
-            continue
+        if str(r.get("notified_at") or "").startswith("dup:") and r["notified_at"][4:] in keys:
+            continue                     # isti kao drugi oglas (drugi portal): broji se original
         unique.setdefault((r["kind"], r["jls"], round(r["price"], -3), round(r["area"])), r)
     values: dict[str, list[float]] = {}
     for r in unique.values():
@@ -118,7 +120,8 @@ def band_label(kind: str, lo: int, hi: int | None, cat: str = "") -> str:
     if cat == RENOVATION:
         return "kuće za obnovu ili nedovršene"
     what = "kuće" if kind == HOUSE else "zemljišta"
-    return f"{what} {lo}–{hi - 1} m²" if hi else f"{what} od {lo} m²"
+    lo_, hi_ = f"{lo:,}".replace(",", "."), f"{(hi or 1) - 1:,}".replace(",", ".")
+    return f"{what} {lo_}–{hi_} m²" if hi else f"{what} od {lo_} m²"
 
 
 def category(kind: str, title: str = "", stored: str | None = None) -> str:
@@ -138,26 +141,56 @@ def signature(kind: str, jls: str | None, price: float, area: float) -> str:
 
 
 def build_market(rows: list[dict], locator, now: datetime, criteria: dict) -> list[list]:
-    """Oglasi za usporedbu: [€/m², vrsta, kategorija, površina, grad/općina, naselje, potpis, ključevi]."""
+    """Oglasi za usporedbu: [€/m², vrsta, kategorija, površina, grad/općina, naselje, potpis, ključevi].
+    Isti oglas na više portala je jedan unos: isti potpis, ili kopija koju je runner
+    prepoznao ("dup:K" – isti kao oglas K, i uz malo drugačiju površinu ili cijenu)."""
     since = (now - timedelta(days=MAX_AGE_DAYS)).isoformat()
     unique: dict[str, list] = {}
+    by_key: dict[str, list] = {}
+    usable = []
     for r in rows:
         limits = criteria.get(r.get("kind")) or {}
         if r.get("status") == REJECT or not limits or not r.get("jls") or (r.get("last_seen") or "9") < since:
             continue
-        if not _ok(r["kind"], r.get("price"), r.get("area"), r.get("reasons")):
+        if not _ok(r["kind"], r.get("price"), r.get("area"), r.get("reasons"), r.get("title")):
             continue
         if r["price"] > limits.get("max_cijena", float("inf")) or r["area"] < limits.get("min_povrsina", 0):
             continue                    # npr. parcelacija: stiže i skuplja, ali ne ulazi u usporedbu
-        sig = signature(r["kind"], r["jls"], r["price"], r["area"])
-        if sig in unique:
-            unique[sig][7].append(r.get("key") or "")
-            if r.get("category"):
-                unique[sig][2] = r["category"]
-            continue
-        unique[sig] = [round(r["price"] / r["area"]), r["kind"], category(r["kind"], r.get("title"), r.get("category")),
-                       round(r["area"]), r["jls"], place_of(locator, r["jls"], r.get("title"), r.get("settlement")),
-                       sig, [r.get("key") or ""]]
+        usable.append(r)
+
+    def add(r: dict, entry: list | None) -> None:
+        if entry is None:
+            sig = signature(r["kind"], r["jls"], r["price"], r["area"])
+            entry = unique.get(sig)
+        if entry is None:
+            entry = unique[sig] = [round(r["price"] / r["area"]), r["kind"],
+                                   category(r["kind"], r.get("title"), r.get("category")), round(r["area"]), r["jls"],
+                                   place_of(locator, r["jls"], r.get("title"), r.get("settlement")), sig, []]
+        elif r.get("category"):
+            entry[2] = r["category"]
+        entry[7].append(r.get("key") or "")
+        by_key[r.get("key") or ""] = entry
+
+    def original(r: dict) -> str | None:
+        mark = str(r.get("notified_at") or "")
+        return mark[4:] if mark.startswith("dup:") else None
+
+    copies = [r for r in usable if original(r)]
+    for r in usable:
+        if not original(r):
+            add(r, None)
+    while copies:                        # kopija kopije: original dolazi prije
+        rest = []
+        for r in copies:
+            if original(r) in by_key:
+                add(r, by_key[original(r)])
+            else:
+                rest.append(r)
+        if len(rest) == len(copies):     # original nije u usporedbi (star, odbijen): kopija sama
+            for r in rest:
+                add(r, None)
+            break
+        copies = rest
     return list(unique.values())
 
 
@@ -211,11 +244,7 @@ def land_note(ppm: float, low: float, high: float, where: str, who: str = "oglas
 
 
 def _blocks(n: int) -> str:
-    if n % 10 == 1 and n % 100 != 11:
-        return f"{n} blok"
-    if n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14):
-        return f"{n} bloka"
-    return f"{n} blokova"
+    return plural(n, "blok", "bloka", "blokova")
 
 
 def median_short(ppm: float, med: float) -> str:
@@ -320,8 +349,9 @@ class AskingPrices:
         if not found:
             return None
         sig = signature(listing.kind, jls, listing.price, listing.area)
+        own = {listing.key, *listing.extra.get("blizanci", [])}     # i ista kuća prije sniženja
         same = [m for m in self.market if m[1] == listing.kind and m[2] == cat and band(m[1], m[3], cat) == found
-                and m[6] != sig and listing.key not in m[7]]
+                and m[6] != sig and not own.intersection(m[7])]
         out = {"band": found, "cat": cat, "podrucje": [m[0] for m in same], "mjesto": None}
         if jls:
             place = place_of(self.locator, jls, listing.title, listing.settlement)
@@ -409,7 +439,7 @@ class AskingPrices:
             return None
         diff = listing.price / listing.area / found[0]["med"] - 1
         if abs(diff) < 0.1:
-            return "mjesto ≈ prosjek"
+            return "mjesto ≈ medijan"
         return f"mjesto {'+' if diff > 0 else '−'}{_pct(diff)} %"
 
     def compare(self, listing: Listing, jls: str) -> str | None:

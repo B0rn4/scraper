@@ -93,6 +93,15 @@ def fmt_eur(value: float | None) -> str:
     return f"{value:,.0f} €".replace(",", ".")
 
 
+def plural(n: int, one: str, few: str, many: str) -> str:
+    """"1 blok", "2 bloka", "5 blokova" (21 blok, 12 blokova)."""
+    if n % 10 == 1 and n % 100 != 11:
+        return f"{n} {one}"
+    if n % 10 in (2, 3, 4) and n % 100 not in (12, 13, 14):
+        return f"{n} {few}"
+    return f"{n} {many}"
+
+
 def fmt_m2(value: float | None) -> str:
     if value is None:
         return "—"
