@@ -80,13 +80,13 @@ jobs:
             git fetch -q --depth=1 origin state-redmi
             # Redmi šalje sažeto (redmi.db.gz); stariji kod slao je redmi.db.
             if git show FETCH_HEAD:redmi.db.gz > redmi.db.gz 2>/dev/null; then
-              gunzip -c redmi.db.gz > redmi.db || echo "redmi.db.gz nije raspakiran (oštećen)"
+              gunzip -c redmi.db.gz > redmi.db || { echo "redmi.db.gz nije raspakiran (oštećen)"; rm -f redmi.db; }
               rm -f redmi.db.gz
             else
               rm -f redmi.db.gz
               git show FETCH_HEAD:redmi.db > redmi.db
             fi
-            echo "Stanje s Redmija učitano ($(stat -c %s redmi.db) B)"
+            [ -f redmi.db ] && echo "Stanje s Redmija učitano ($(stat -c %s redmi.db) B)"
           fi
           touch .stanje-ucitano
 

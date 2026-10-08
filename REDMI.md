@@ -87,7 +87,7 @@ ondje.
 ### 1.4 Scraper i proba
 
 ```
-apt update && DEBIAN_FRONTEND=noninteractive apt install -y python3 python3-venv git
+apt update && DEBIAN_FRONTEND=noninteractive apt install -y python3 python3-venv git procps
 ```
 
 ```
@@ -192,7 +192,8 @@ Na kraju stiže probna poruka na Telegram. Tajne ostaju samo na Redmiju.
 bash tools/redmi_run.sh; tail -15 ~/scraper.log
 ```
 
-Prvo pokretanje samo zabilježi oglase s prve stranice, bez poruka. U ispisu treba
+Prvo pokretanje samo zabilježi oglase s prve stranice, bez poruka (nakon ponovne
+instalacije stanje se vrati s GitHuba, pa mogu stići i poruke). U ispisu treba
 pisati „Njuškalo: … oglasa” i „redmi_sync: stanje poslano”. Javi mi kad prođe.
 
 ### 2.3 Automatsko pokretanje (u Termuxu)
@@ -257,14 +258,20 @@ Kod se osvježava sam pri svakom pokretanju (uvijek točno kao na GitHubu; izmje
 vrijednosti treba i Redmi. U Ubuntuu ponovi korak 2.1 (`python tools/redmi_setup.py`).
 
 **U dnevniku stalno „prethodno pokretanje još traje”:** svaki korak ima najdulje
-trajanje (ukupno oko 25 minuta), pa bi to trebalo proći samo. Ako ne prođe, u Ubuntuu:
+trajanje (ukupno oko 25 minuta), pa bi to trebalo proći samo. Ako ne prođe, u Ubuntuu
+(ako javi da `pkill` ne postoji, prvo `apt install -y procps`):
 
 ```
 pkill -f redmi_run.sh; pkill -f "scraper run"; pkill -f chrom
 ```
 
-**Ponovna instalacija** (novi Ubuntu ili Termux): koraci 1.4 (do `pip install -r
-requirements.txt`), iz koraka 1b točka 2 (`pip install playwright` i `python -m
-playwright install --with-deps chromium`), zatim 2.1–2.4. Stanje Redmija (redmi.db) prvo
-pokretanje samo vrati s GitHuba; ako GitHub tada ne odgovara, pokretanje se preskoči
-(da prazna baza ne prepiše staru) i pokuša ponovno za 20 minuta.
+**Ponovna instalacija:**
+- **novi Termux** (npr. nakon brisanja aplikacije): koraci 1.1 i 1.3 (cijeli), zatim 1.4
+  do `pip install -r requirements.txt` (bez probe);
+- **samo novi Ubuntu** (Termux je ostao): iz koraka 1.3 od `proot-distro install ubuntu`,
+  zatim 1.4 do `pip install -r requirements.txt`.
+
+Zatim iz koraka 1b točka 2 (`pip install playwright` i `python -m playwright install
+--with-deps chromium`) i koraci 2.1–2.4. Stanje Redmija (redmi.db) prvo pokretanje samo
+vrati s GitHuba; ako GitHub tada ne odgovara, pokretanje se preskoči (da prazna baza ne
+prepiše staru) i pokuša ponovno za 20 minuta.

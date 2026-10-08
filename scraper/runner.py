@@ -168,7 +168,10 @@ class Runner:
             return
         if not reserve:
             state.meta_set("glavni_okidac", self.stamp)
-        self._prune(state)
+        try:
+            self._prune(state)
+        except Exception as exc:  # noqa: BLE001 – čišćenje (npr. pun disk kod VACUUM) ne smije zaustaviti pokretanje
+            self.log(f"Čišćenje baze: GREŠKA {type(exc).__name__}: {exc}")
         self._read_feedback(state)
         self.muted = state.muted(self._github_info().get("utisani"))
         self._prev_unsent = self._load_unsent(state)
@@ -185,6 +188,7 @@ class Runner:
                 mode = FULL if first else INCREMENTAL
                 src.since = next((h["last_ok"] for h in state.health_all() if h["source"] == src.name), None)
                 src.pending = [] if first else self._load_pending(state, src.name)
+                src.captcha_until = state.meta_get(f"stanka:{src.name}") or ""   # nakon captche (Njuškalo)
                 self.log(f"{src.label}: dohvat ({'početni, cijelo područje' if first else 'najnoviji'})")
                 try:
                     listings = src.fetch(mode, state.known_ids(src.name))
@@ -1142,9 +1146,13 @@ class Runner:
         zatim stižu samo s podacima s popisa. Nakon DETAIL_ALERT_RUNS pokretanja zaredom
         upozorenje (jednom), i kad prođe."""
         key = f"{src.name}:oglasi"
+        if getattr(src, "captcha_until", ""):
+            state.meta_set(f"stanka:{src.name}", src.captcha_until)
         row = next((h for h in state.health_all() if h["source"] == key), None)
         if not getattr(src, "detail_blocked", False):
-            if row and row.get("failures"):
+            # Prošlo je tek kad se neka stranica oglasa stvarno pročitala (pokretanje bez
+            # ijednog otvaranja ne dokazuje ništa).
+            if row and row.get("failures") and getattr(src, "detail_ok", False):
                 state.health_ok(key, self.stamp)
                 if row.get("alerted"):
                     self._alert(f"Scraper: {src.label} – stranice oglasa ponovno rade",
@@ -1154,8 +1162,8 @@ class Runner:
         if failures >= DETAIL_ALERT_RUNS and not alerted and self._alert(
                 f"Scraper: {src.label} traži captchu na stranicama oglasa",
                 f"{src.label} {failures} pokretanja zaredom na stranicama oglasa vraća captchu (popis oglasa radi). "
-                "Novi oglasi čekaju do 6 sati, zatim stižu samo s podacima s popisa (zemljište bez površine, bez "
-                "opisa). Obično prođe samo; ako potraje danima, javi Claudeu ovu poruku.") is not False:
+                "Novi oglasi čekaju do 18 pokretanja (oko 6 sati), zatim stižu samo s podacima s popisa (zemljište "
+                "bez površine, bez opisa). Obično prođe samo; ako potraje danima, javi Claudeu ovu poruku.") is not False:
             state.mark_alerted(key)
 
     def _alert(self, subject: str, text: str) -> bool:
@@ -1229,6 +1237,8 @@ class Runner:
                 if row.get("alerted"):
                     self._alert("Scraper: Redmi ponovno šalje na Telegram", "Obavijesti s Njuškala ponovno stižu.")
             return
+        if row and row.get("alerted"):
+            return                       # već javljeno; čeka se oporavak (brojač ne raste svakim pokretanjem)
         error = telegram.get("last_error") or ""
         _, alerted = state.health_fail("redmi:telegram", error[:300])
         if not alerted and self._alert(

@@ -227,10 +227,11 @@ def test_njuskalo_deferred_listing_that_expired_comes_with_warning(fina):
 
 def test_njuskalo_detail_captcha_pauses_without_counting_attempts(fina):
     """Captcha na stranici oglasa (popis radi): oglas se odgađa bez brojanja pokušaja, dva sata
-    se ne otvara nijedan, a oglas koji čeka dulje od 6 sati stiže s podacima s popisa."""
+    (captcha_until, pamti runner) se ne otvara nijedan, a oglas odgođen 18 pokretanja zaredom
+    stiže s podacima s popisa. Broje se pokretanja, ne sati (noć se ne broji)."""
     from datetime import datetime, timedelta, timezone
 
-    from scraper.sources.base import INCREMENTAL
+    from scraper.sources.base import INCREMENTAL, MAX_DEFERRALS
     from scraper.sources.njuskalo import Njuskalo
 
     captcha = "<html><title>Captcha</title></html>"
@@ -238,24 +239,27 @@ def test_njuskalo_detail_captcha_pauses_without_counting_attempts(fina):
                            "prodaja-zemljista": read("njuskalo_zemljista.html.gz"), "oglas-": captcha})
     cfg = load_config()["kriteriji"]
 
-    def run(pending):
+    def run(pending, until=""):
         src = Njuskalo(None, Locator(), cfg, browser=browser)
-        src.since, src.pending = "2026-10-05T11:30:00+02:00", pending
+        src.since, src.pending, src.captcha_until = "2026-10-05T11:30:00+02:00", pending, until
         browser.calls.clear()
         items = {x.source_id: x for x in src.fetch(INCREMENTAL, {"45180000"})}
         return src, items, [u for u in browser.calls if "/nekretnine/" in u]
 
     src, items, opened = run([])
-    assert len(opened) == 1 and src.detail_blocked                     # jedna captcha, dalje ništa
-    waiting = src.deferred
-    assert waiting and "51323938" not in items
-    assert all(x.extra.get("pokusaja", 0) == 0 and x.extra["captcha_do"] for x in waiting)
-    src, items, opened = run(waiting)                                    # stanka: ne otvara
+    assert len(opened) == 1 and src.detail_blocked and not src.detail_ok   # jedna captcha, dalje ništa
+    waiting, until = src.deferred, src.captcha_until
+    assert waiting and "51323938" not in items and until
+    assert all(x.extra.get("pokusaja", 0) == 0 for x in waiting)
+    src, items, opened = run(waiting, until)                             # stanka: ne otvara
     assert opened == [] and src.detail_blocked and len(src.deferred) == len(waiting)
-    for x in src.deferred:                                               # stanka istekla, čekaju 7 sati
-        x.extra["captcha_do"] = "2000-01-01T00:00:00+00:00"
-        x.extra["odgodjen_od"] = (datetime.now(timezone.utc) - timedelta(hours=7)).isoformat()
-    src, items, opened = run(src.deferred)
+    # Stanka predaleko u budućnosti (sat na mobitelu bio je naprijed) ne vrijedi.
+    far = (datetime.now(timezone.utc) + timedelta(days=2)).isoformat(timespec="seconds")
+    src, items, opened = run(src.deferred, far)
+    assert len(opened) == 1
+    for x in src.deferred:                                               # 18 pokretanja zaredom odgođen
+        x.extra["odgodjeno_puta"] = MAX_DEFERRALS
+    src, items, opened = run(src.deferred, "2000-01-01T00:00:00+00:00")
     assert len(opened) == 1 and "51323938" in items and items["51323938"].extra.get("samo_popis")
 
 

@@ -205,10 +205,13 @@ class Njuskalo(Source):
                 self.add_pending(found, known_ids)
             threshold = _old_threshold(known_ids, found)
             # Nakon captche na stranici oglasa ne otvara se nijedna CAPTCHA_PAUSE (zaštita bi
-            # inače ostala na oprezu); vrijeme se pamti uz odgođene oglase.
+            # inače ostala na oprezu); kraj stanke pamti runner (captcha_until). Stanka dalja od
+            # CAPTCHA_PAUSE (sat na mobitelu bio je naprijed) ne vrijedi.
             now = datetime.now(timezone.utc)
-            pause = max((p.extra.get("captcha_do", "") for p in self.pending), default="")
-            self.detail_blocked = pause > now.isoformat(timespec="seconds")
+            until = self.captcha_until or ""
+            self.detail_blocked = now.isoformat(timespec="seconds") < until <= (
+                now + CAPTCHA_PAUSE).isoformat(timespec="seconds")
+            self.detail_ok = False
             details, later, deadline = 0, set(), details_deadline()
             for x in found.values():
                 if x.source_id in known_ids:
@@ -217,7 +220,7 @@ class Njuskalo(Source):
                     x.extra["stari_oglas"] = True
                 elif mode != FULL and self.worth_detail(x):
                     # Sljedeći put (bez stranice oglasa stigao bi bez površine); čeka li predugo
-                    # (MAX_WAIT), stiže s podacima s popisa.
+                    # (MAX_DEFERRALS), stiže s podacima s popisa.
                     if details >= MAX_DETAILS or self.detail_blocked or past(deadline):
                         if self.defer(x):
                             later.add(x.source_id)
@@ -227,7 +230,7 @@ class Njuskalo(Source):
                         page = browser.get(x.url, "h1")
                         if _is_captcha(page):     # nije greška oglasa: ne broji se kao pokušaj
                             self.detail_blocked = True
-                            pause = (now + CAPTCHA_PAUSE).isoformat(timespec="seconds")
+                            self.captcha_until = (now + CAPTCHA_PAUSE).isoformat(timespec="seconds")
                             x.extra["detalji_greska"] = "stranica oglasa: captcha"
                             if self.defer(x):
                                 later.add(x.source_id)
@@ -235,13 +238,11 @@ class Njuskalo(Source):
                         if "ClassifiedDetail" not in page:
                             raise RuntimeError("stranica oglasa bez podataka")
                         parse_detail(page, x)
+                        self.detail_ok = True
                     except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                         x.extra["detalji_greska"] = str(exc)[:200]
                         if self.defer(x, failed=True):
                             later.add(x.source_id)
-            if self.detail_blocked:
-                for x in self.deferred:
-                    x.extra["captcha_do"] = pause
         finally:
             if own_browser:
                 browser.close()

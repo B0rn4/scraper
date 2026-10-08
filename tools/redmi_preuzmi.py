@@ -9,6 +9,7 @@ Ako API ne odgovori, pokušava se raw adresa. Datoteka koja se ne preuzme ostaje
 
 import gzip
 import os
+import sqlite3
 import sys
 import urllib.error
 import urllib.request
@@ -29,6 +30,28 @@ def main() -> int:
     api_headers = {"Accept": "application/vnd.github.raw", "X-GitHub-Api-Version": "2022-11-28"}
     if token:
         api_headers["Authorization"] = f"Bearer {token}"
+    # Prvo baza (ponovna instalacija): bez nje se ne smije pokrenuti, pa ne smije čekati ostalo.
+    db = home / "redmi.db"
+    if not db.exists():
+        for name in ("redmi.db.gz", "redmi.db"):
+            try:
+                data = _get(f"https://api.github.com/repos/{REPO}/contents/{name}?ref=state-redmi", api_headers)
+                tmp = home / "redmi.db.tmp"
+                tmp.write_bytes(gzip.decompress(data) if name.endswith(".gz") else data)
+                if sqlite3.connect(tmp).execute("PRAGMA quick_check").fetchone()[0] != "ok":
+                    tmp.unlink()
+                    print("redmi_preuzmi: redmi.db s GitHuba je oštećen – nije vraćen")
+                    return 2
+                tmp.replace(db)
+                print(f"redmi_preuzmi: redmi.db vraćen s GitHuba ({db.stat().st_size} B)")
+                break
+            except urllib.error.HTTPError as exc:
+                if exc.code != 404:          # 404: nema te datoteke ni grane – prvo postavljanje
+                    print(f"redmi_preuzmi: redmi.db nije vraćen (HTTP {exc.code})")
+                    return 2
+            except Exception as exc:  # noqa: BLE001 – mreža: ne smije se poslati prazna baza preko stare
+                print(f"redmi_preuzmi: redmi.db nije vraćen ({type(exc).__name__})")
+                return 2
     failed = 0
     for name in FILES:
         try:
@@ -42,23 +65,6 @@ def main() -> int:
         except Exception as exc:  # noqa: BLE001
             print(f"redmi_preuzmi: {name} nije preuzet ({type(exc).__name__}: {str(exc).replace(token, '***') if token else exc})")
             failed += 1
-    db = home / "redmi.db"
-    if not db.exists():
-        for name in ("redmi.db.gz", "redmi.db"):
-            try:
-                data = _get(f"https://api.github.com/repos/{REPO}/contents/{name}?ref=state-redmi", api_headers)
-                tmp = home / "redmi.db.tmp"
-                tmp.write_bytes(gzip.decompress(data) if name.endswith(".gz") else data)
-                tmp.replace(db)
-                print(f"redmi_preuzmi: redmi.db vraćen s GitHuba ({db.stat().st_size} B)")
-                break
-            except urllib.error.HTTPError as exc:
-                if exc.code != 404:          # 404: nema te datoteke ni grane – prvo postavljanje
-                    print(f"redmi_preuzmi: redmi.db nije vraćen (HTTP {exc.code})")
-                    return 2
-            except Exception as exc:  # noqa: BLE001 – mreža: ne smije se poslati prazna baza preko stare
-                print(f"redmi_preuzmi: redmi.db nije vraćen ({type(exc).__name__})")
-                return 2
     return 1 if failed else 0
 
 

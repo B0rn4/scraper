@@ -1428,11 +1428,16 @@ def test_detail_captcha_alert_after_three_hours(tmp_path):
     alerts = []
     r._alert = lambda subject, text: alerts.append(subject) or True
     state = State(tmp_path / "s.db")
-    src = SimpleNamespace(name="njuskalo", label="Njuškalo", detail_blocked=True)
+    src = SimpleNamespace(name="njuskalo", label="Njuškalo", detail_blocked=True, detail_ok=False,
+                          captcha_until="2026-10-08T12:00:00+00:00")
     for _ in range(10):
         r._detail_health(state, src)
     assert alerts == ["Scraper: Njuškalo traži captchu na stranicama oglasa"]
+    assert state.meta_get("stanka:njuskalo") == "2026-10-08T12:00:00+00:00"     # stanka ne ovisi o odgođenima
     src.detail_blocked = False
+    r._detail_health(state, src)                    # nijedna stranica oglasa otvorena: ništa ne dokazuje
+    assert len(alerts) == 1
+    src.detail_ok = True
     r._detail_health(state, src)
     r._detail_health(state, src)
     assert alerts[1:] == ["Scraper: Njuškalo – stranice oglasa ponovno rade"]

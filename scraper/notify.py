@@ -27,6 +27,13 @@ SOURCE_LABELS = {
     "burza": "burza.com.hr",
     "njuskalo": "Njuškalo",
     "redmi": "Redmi (Njuškalo)",
+    # Stanje (tjedni izvještaj): nisu izvori oglasa.
+    "telegram": "Telegram",
+    "github": "GitHub (nadzor)",
+    "njuskalo:oglasi": "Njuškalo – stranice oglasa",
+    "realestatecroatia:oglasi": "realestatecroatia.com – stranice oglasa",
+    "burza:oglasi": "burza.com.hr – stranice oglasa",
+    "redmi:telegram": "Redmi – slanje na Telegram",
 }
 
 

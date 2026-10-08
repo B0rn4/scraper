@@ -6,7 +6,7 @@ izvještaj. Grana uvijek ima samo jednu verziju datoteke (kao grana state). Saž
 
 import gzip
 import os
-import shutil
+import sqlite3
 import subprocess
 import sys
 import tempfile
@@ -26,8 +26,13 @@ def main() -> int:
         print("redmi_sync: nema GITHUB_TOKEN u ~/.scraper.env")
         return 1
     with tempfile.TemporaryDirectory() as tmp:
+        # Kopija kroz SQLite (backup), ne kopiranje datoteke: prekinuto pokretanje može ostaviti
+        # redmi.db-journal, koji SQLite pri čitanju vrati, a goli primjerak datoteke ne.
         copy = Path(tmp) / "kopija.db"
-        shutil.copy(db, copy)
+        src, dst = sqlite3.connect(db), sqlite3.connect(copy)
+        src.backup(dst)
+        src.close()
+        dst.close()
         (Path(tmp) / "redmi.db.gz").write_bytes(gzip.compress(copy.read_bytes(), mtime=0))
         copy.unlink()
         env = {**os.environ, "GIT_TERMINAL_PROMPT": "0"}

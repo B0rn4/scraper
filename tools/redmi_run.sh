@@ -25,20 +25,25 @@ fi
   . "$HOME/venv/bin/activate"
   set -a; . "$HOME/.scraper.env"; set +a
   # Kod uvijek točno kao na GitHubu (Redmi nema svojih izmjena; "git pull --ff-only" bi nakon
-  # prepisane povijesti zauvijek ostao na starom kodu). Novi paketi kad se promijeni popis.
+  # prepisane povijesti zauvijek ostao na starom kodu).
+  timeout 5m git fetch -q origin && git reset -q --hard '@{u}' || echo "kod s GitHuba nije osvježen – radim sa starim kodom"
+  # Paketi: dok popis (requirements.txt) nije uspješno instaliran – i nakon neuspjeha ili
+  # ručnog "git pull" – pokušava se pri svakom pokretanju.
   req=$(git rev-parse HEAD:requirements.txt 2>/dev/null)
-  if timeout 5m git fetch -q origin && git reset -q --hard '@{u}'; then
-    if [ "$req" != "$(git rev-parse HEAD:requirements.txt 2>/dev/null)" ]; then
-      timeout 20m pip install -q -r requirements.txt || echo "pip install nije uspio – radim sa starim paketima"
+  if [ -n "$req" ] && [ "$req" != "$(cat "$HOME/.paketi-instalirani" 2>/dev/null)" ]; then
+    if timeout 20m pip install -q -r requirements.txt; then
+      echo "$req" > "$HOME/.paketi-instalirani"
+    else
+      echo "pip install nije uspio – pokušava se ponovno sljedeći put"
     fi
-  else
-    echo "kod s GitHuba nije osvježen – radim sa starim kodom"
   fi
   # S GitHuba: već viđeni oglasi (da isti oglas s Njuškala ne stigne ponovno), medijani
-  # cijena, zadnje pokretanje (nadzor GitHuba) i oglasi označeni "Ne zanima me".
+  # cijena, zadnje pokretanje (nadzor GitHuba) i oglasi označeni "Ne zanima me"; nakon
+  # ponovne instalacije i redmi.db. Nema li baze, a preuzimanje nije uspjelo (2 ili prekid),
+  # pokretanje se preskače: prazna baza ne smije prepisati staru na GitHubu.
   rc=0; timeout 5m python tools/redmi_preuzmi.py "$HOME" || rc=$?
-  if [ $rc -eq 2 ]; then
-    echo "redmi.db nije vraćen s GitHuba – pokretanje se preskače (prazna baza ne smije prepisati staru)"
+  if [ $rc -eq 2 ] || { [ $rc -ne 0 ] && [ ! -f "$HOME/redmi.db" ]; }; then
+    echo "redmi.db nije vraćen s GitHuba ($rc) – pokretanje se preskače (prazna baza ne smije prepisati staru)"
   else
     [ $rc -eq 0 ] || echo "dio stanja s GitHuba nije preuzet – radim sa starim"
     timeout -k 60 15m python -m scraper run --uredjaj redmi --db "$HOME/redmi.db" --out "$HOME/redmi-out" \
