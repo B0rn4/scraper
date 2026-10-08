@@ -52,25 +52,28 @@ def test_check_land_by_parcel_and_by_map():
     assert r.line.endswith("oglas nema točnu lokaciju ni broj čestice") and not fake.calls
 
 
-class RingIspu(FakeIspu):
-    def __init__(self, ring):
+class ShareIspu(FakeIspu):
+    def __init__(self, shares):
         super().__init__(None)
-        self.ring = ring
+        self.shares = shares
 
-    def gp_around(self, lat, lon):
-        self.calls.append(("gp_around", lat, lon))
-        return PointInfo(gp=self.ring[0], block="RUKAVAC - GRAĐEVINSKO PODRUČJE"), self.ring
+    def gp_share(self, lat, lon, radius):
+        self.calls.append(("gp_share", lat, lon, radius))
+        return PointInfo(gp="naselja", block="RUKAVAC - GRAĐEVINSKO PODRUČJE"), self.shares
 
 
 def test_check_land_around_approximate_marker():
-    """Približna oznaka (krug na portalu): ISPU u središtu i na krugu oko nje."""
-    r = check_land(RingIspu(["naselja"] * 9), "Zemljište", 45.33, 14.29, True)
-    assert r.line.startswith("🗺 Vjerojatno u građevinskom području naselja") and not r.warning
-    r = check_land(RingIspu([None] * 9), "Zemljište", 45.33, 14.29, True)
+    """Približna oznaka (krug na portalu): točan udio kruga u građevinskom području."""
+    r = check_land(ShareIspu({"naselja": 0.995}), "Zemljište", 45.33, 14.29, True, radius=300)
+    assert r.line.startswith("🗺 Vjerojatno u građevinskom području naselja – ISPU: cijeli krug 300 m") and not r.warning
+    r = check_land(ShareIspu({}), "Zemljište", 45.33, 14.29, True)
     assert "Vjerojatno NIJE" in r.line and r.warning.startswith("prema ISPU-u oko približne oznake nema")
-    r = check_land(RingIspu(["naselja"] * 4 + [None] * 4 + ["izvan naselja"]), "Zemljište", 45.33, 14.29, True)
-    assert "naselja 4 od 9, izvan naselja 1" in r.line and "oznake na karti (Rukavac)" in r.line and not r.warning
-    fake = RingIspu(["naselja"] * 9)
+    r = check_land(ShareIspu({"naselja": 0.784, "izvan naselja": 0.05}), "Zemljište", 45.33, 14.29, True, radius=300)
+    assert r.line == ("🗺 Krug 300 m oko približne oznake na karti (Rukavac): 78 % u građevinskom području naselja, "
+                      "5 % izvan naselja, ostatak izvan – ISPU; točnu česticu provjeri") and not r.warning
+    r = check_land(ShareIspu({"naselja": 0.3}), "Zemljište", 45.33, 14.29, True)
+    assert r.warning == "oko približne oznake samo 30 % je u građevinskom području naselja – provjeri"
+    fake = ShareIspu({"naselja": 1.0})
     r = check_land(fake, "Kuća", 45.33, 14.29, True, house=True)       # kuće: bez provjere okolice
     assert "nije provjereno" in r.line and not fake.calls
 
@@ -228,14 +231,39 @@ def test_identify_retries_then_drops_heritage_layers():
     assert r.line.endswith("(kulturna dobra nisu provjerena – ISPU nije odgovorio)")
 
 
-def test_gp_around_queries_center_fully_and_ring_with_building_zone_layers_only():
-    from scraper.ispu import RING_POINTS, Ispu
+def test_gp_share_exact_area_from_building_zone_outlines():
+    """Obrisi građevinskih područja (KML s GeoServera): točan udio kruga u svakom sloju, s rupama."""
+    import math
+
+    from scraper.ispu import Ispu, clip_area, to_htrs
+
+    lat, lon = 45.36394, 14.29046
+    cx, cy = to_htrs(lat, lon)
+
+    def to_wgs(x, y):          # obrnuto od to_htrs, Newtonom (dovoljno za test)
+        la, lo = lat, lon
+        for _ in range(5):
+            px, py = to_htrs(la, lo)
+            la += (y - py) / 111_200
+            lo += (x - px) / (111_200 * math.cos(math.radians(la)))
+        return la, lo
+
+    def kml(rings):
+        def coords(pts):
+            return " ".join(f"{lo},{la},0" for la, lo in (to_wgs(x, y) for x, y in pts))
+        polys = "".join(f"<Polygon><outerBoundaryIs><LinearRing><coordinates>{coords(outer)}</coordinates></LinearRing>"
+                        f"</outerBoundaryIs>" + "".join(f"<innerBoundaryIs><LinearRing><coordinates>{coords(h)}"
+                                                        f"</coordinates></LinearRing></innerBoundaryIs>" for h in holes)
+                        + "</Polygon>" for outer, holes in rings)
+        return f'<?xml version="1.0"?><kml><Document><Placemark id="gp.1"><MultiGeometry>{polys}</MultiGeometry></Placemark></Document></kml>'
+
+    east_half = [(cx, cy - 1000), (cx + 1000, cy - 1000), (cx + 1000, cy + 1000), (cx, cy + 1000)]
+    hole = [(cx + 10, cy - 10), (cx + 30, cy - 10), (cx + 30, cy + 10), (cx + 10, cy + 10)]
+    west_strip = [(cx - 1000, cy - 1000), (cx - 50, cy - 1000), (cx - 50, cy + 1000), (cx - 1000, cy + 1000)]
 
     class Resp:
-        status_code = 200
-
-        def __init__(self, data):
-            self.data = data
+        def __init__(self, text=None, data=None):
+            self.status_code, self.text, self.data = 200, text or "", data
 
         def json(self):
             return self.data
@@ -243,23 +271,28 @@ def test_gp_around_queries_center_fully_and_ring_with_building_zone_layers_only(
         def raise_for_status(self):
             pass
 
-    inside = [{"catalogId": "1", "label": {"hr": "Građevinsko područje naselja"}, "items": [{"items": []}]}]
-
     class Session:
         def __init__(self):
-            self.bodies = []
+            self.wms = []
 
         def post(self, url, json=None, **kw):
-            self.bodies.append(json)
-            return Resp(inside if len(self.bodies) % 2 else [])        # svaka druga točka izvan
+            return Resp(data=[])
 
-    gp = {"id": "1", "hashIdentify": "a", "_path": "Građevinska područja > Građevinsko područje naselja"}
-    z = {"id": "326", "hashIdentify": "b", "_path": "Ministarstvo kulture > Zaštićena kulturna dobra"}
+        def get(self, url, params=None, **kw):
+            self.wms.append(params["LAYERS"])
+            return Resp(kml([(east_half, [hole])]) if params["LAYERS"] == "225" else kml([(west_strip, [])]))
+
+    gp = {"id": "132", "hashIdentify": "a", "serviceId": "10", "layers": "225", "hash": "h1",
+          "label": {"hr": "Građevinsko područje naselja"}, "_path": "Građevinska područja (rujan 2024.) > Građevinsko područje naselja"}
+    out = {"id": "134", "hashIdentify": "b", "serviceId": "10", "layers": "224", "hash": "h2",
+           "label": {"hr": "Građevinsko područje izvan naselja"}, "_path": "Građevinska područja (rujan 2024.) > Građevinsko područje izvan naselja"}
     s = Session()
     i = Ispu(session=s)
-    i._layers, i.retry_pause = [gp, z], 0
-    center, ring = i.gp_around(45.36, 14.29)
-    assert center.gp == "naselja" and len(ring) == RING_POINTS + 1 and ring.count("naselja") == 5
-    assert len(s.bodies[0]["layers"]) == 2 and all(len(b["layers"]) == 1 for b in s.bodies[1:])
-    xs = [round(b["x"]) for b in s.bodies]
-    assert max(xs) - min(xs) == 400                                     # krug od 200 m
+    i._layers, i.retry_pause = [gp, out], 0
+    _, shares = i.gp_share(lat, lon, 100)
+    full = math.pi * 100 ** 2
+    assert abs(shares["naselja"] - (full / 2 - 400) / full) < 0.003                  # pola kruga bez rupe 20×20 m
+    segment = 100 ** 2 * math.acos(0.5) - 50 * math.sqrt(100 ** 2 - 50 ** 2)          # odsječak iza x = -50 m
+    assert abs(shares["izvan naselja"] - segment / full) < 0.003
+    assert sorted(s.wms) == ["224", "225"]
+    assert clip_area([], (0, 0, 1, 1), [(0, 0), (1, 0), (0, 1)]) == 0.0

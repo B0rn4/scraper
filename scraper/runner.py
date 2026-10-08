@@ -15,7 +15,7 @@ from zoneinfo import ZoneInfo
 import yaml
 
 from . import dedupe, planwatch, report, risks, tenders, watch
-from .ispu import Ispu, check_land, gp_text, heritage_warning
+from .ispu import APPROX_RADIUS_M, Ispu, check_land, gp_text, heritage_warning
 from .plans import Plans
 from .prices import MAX_AGE_DAYS, PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
 from .db import State
@@ -832,7 +832,8 @@ class Runner:
             self._ispu = Ispu()
         try:
             result = check_land(self._ispu, f"{x.title}. {x.description}", x.extra.get("lat"), x.extra.get("lon"),
-                                bool(x.extra.get("priblizna_lokacija", True)), self._place_names, house=house)
+                                bool(x.extra.get("priblizna_lokacija", True)), self._place_names, house=house,
+                                radius=APPROX_RADIUS_M.get(x.source, APPROX_RADIUS_M["default"]))
         except Exception as exc:  # noqa: BLE001 – ISPU nije nužan za obavijest
             self.log(f"ISPU ({x.key}): {type(exc).__name__}: {exc}")
             x.extra["gp"] = "🗺 Građevinsko područje: nije provjereno (ISPU ne odgovara)"

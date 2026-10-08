@@ -18,9 +18,15 @@ from dataclasses import dataclass, field
 from .text import fmt_m2, fold
 
 API = "https://ispu.mgipu.hr/api/v1/"
-# Približna oznaka na karti oglasa (krug na portalu): provjera u središtu i u točkama na krugu oko nje.
-RING_M = 200
-RING_POINTS = 8
+# Približna oznaka na karti oglasa (krug na portalu): točan udio kruga u građevinskom području, iz
+# obrisa slojeva (GeoServer Ministarstva kroz ISPU-ov WMS posrednik, KML). Polumjer kruga portal
+# ne navodi u podacima oglasa – APPROX_RADIUS_M po izvoru (izmjereno s karte portala).
+APPROX_RADIUS_M = {"default": 300}
+_CIRCLE_SIDES = 256
+_PLACEMARK = re.compile(r"<Placemark[^>]*>(.*?)</Placemark>", re.S)
+_POLYGON = re.compile(r"<Polygon>(.*?)</Polygon>", re.S)
+_OUTER = re.compile(r"<outerBoundaryIs>.*?<coordinates>(.*?)</coordinates>", re.S)
+_INNER = re.compile(r"<innerBoundaryIs>.*?<coordinates>(.*?)</coordinates>", re.S)
 CP_WFS = "https://api.uredjenazemlja.hr/services/inspire/cp/wfs"   # DGU, katastarske čestice (INSPIRE)
 PGZ_OFFICES = {"rijeka", "krk", "crikvenica", "opatija", "delnice", "rab", "mali losinj", "cres", "cabar",
                "vrbovsko", "novi vinodolski"}
@@ -258,28 +264,52 @@ class Ispu:
     def point(self, lat: float, lon: float) -> PointInfo:
         return self.identify(*to_htrs(lat, lon))
 
-    def gp_around(self, lat: float, lon: float, radius: float = RING_M, n: int = RING_POINTS) -> tuple[PointInfo, list]:
-        """Približna oznaka: svi slojevi u središtu (blok PPV-a kaže naselje) i građevinsko
-        područje u središtu i u n točaka na krugu oko nje (samo ti slojevi – brže): "naselja",
-        "izvan naselja" ili None po točki."""
-        gp = [la for la in self.layers() if "Građevinska područja" in la["_path"]]
-        layers = [{k: v for k, v in la.items() if not k.startswith("_")} for la in gp]
+    def gp_share(self, lat: float, lon: float, radius: float) -> tuple[PointInfo, dict[str, float]]:
+        """Približna oznaka: svi slojevi u središtu (blok PPV-a kaže naselje) i točan udio kruga
+        polumjera radius u građevinskom području naselja i izvan naselja (0–1)."""
         cx, cy = to_htrs(lat, lon)
         center = self.identify(cx, cy)
-        points = [(cx + radius * math.cos(2 * math.pi * i / n), cy + radius * math.sin(2 * math.pi * i / n))
-                  for i in range(n)]
-        out = [center.gp]
-        for x, y in points:
-            for attempt in range(2):
-                if attempt:
-                    time.sleep(self.retry_pause)
-                r = self.session.post(API + "gis/identify", json={"x": x, "y": y, "scale": 2000, "layers": layers},
-                                      headers=HEADERS, timeout=self.timeout)
-                if r.status_code < 400 or attempt:
-                    r.raise_for_status()
-                    out.append(parse_identify(r.json()).gp)
-                    break
-        return center, out
+        circle = [(cx + radius * math.cos(2 * math.pi * i / _CIRCLE_SIDES),
+                   cy + radius * math.sin(2 * math.pi * i / _CIRCLE_SIDES)) for i in range(_CIRCLE_SIDES)]
+        box = (cx - radius - 20, cy - radius - 20, cx + radius + 20, cy + radius + 20)
+        full = math.pi * radius ** 2 * math.cos(math.pi / _CIRCLE_SIDES) * math.sin(math.pi / _CIRCLE_SIDES) \
+            / (math.pi / _CIRCLE_SIDES)                    # površina 256-kuta (≈ krug)
+        shares: dict[str, float] = {}
+        for la in self.layers():
+            if "Građevinska područja" not in la["_path"]:
+                continue
+            kind = "izvan naselja" if "izvan naselja" in la["label"].get("hr", "") else "naselja"
+            area = sum(clip_area(outer, box, circle) - sum(clip_area(h, box, circle) for h in holes)
+                       for outer, holes in self._polygons(la, box))
+            shares[kind] = min(1.0, shares.get(kind, 0.0) + max(0.0, area) / full)
+        return center, shares
+
+    def _polygons(self, layer: dict, box: tuple[float, float, float, float]) -> list[tuple[list, list[list]]]:
+        """Obrisi sloja koji sijeku pravokutnik (HTRS96/TM): [(vanjski prsten, [rupe])]."""
+        params = {"layerHash": layer["hash"], "serviceId": layer["serviceId"], "SERVICE": "WMS", "VERSION": "1.1.1",
+                  "REQUEST": "GetMap", "LAYERS": layer["layers"], "STYLES": "", "SRS": "EPSG:3765",
+                  "BBOX": ",".join(f"{v:.0f}" for v in box), "WIDTH": 512, "HEIGHT": 512,
+                  "FORMAT": "application/vnd.google-earth.kml+xml", "FORMAT_OPTIONS": "kmscore:100;kmattr:true"}
+        for attempt in range(2):
+            if attempt:
+                time.sleep(self.retry_pause)
+            r = self.session.get(API + "gis/wms", params=params, headers=HEADERS, timeout=self.timeout)
+            if r.status_code == 200 and "<kml" in r.text[:500]:
+                break
+        else:
+            raise RuntimeError(f"ISPU obrisi građevinskog područja: HTTP {r.status_code}")
+
+        def ring(coords: str) -> list[tuple[float, float]]:
+            pts = [c.split(",") for c in coords.split()]
+            return [to_htrs(float(p[1]), float(p[0])) for p in pts if len(p) >= 2]
+
+        out = []
+        for placemark in _PLACEMARK.findall(r.text):
+            for poly in _POLYGON.findall(placemark):
+                outer = _OUTER.search(poly)
+                if outer:
+                    out.append((ring(outer.group(1)), [ring(h) for h in _INNER.findall(poly)]))
+        return out
 
     def parcel(self, ko_name: str, kc: str, names: dict[str, str] | None = None) -> dict | None:
         """Točka unutar čestice (HTRS96) i površina: {"x", "y", "povrsina"} ili None.
@@ -406,7 +436,8 @@ def heritage_warning(items: list[Heritage], caveat: str = "", land: bool = False
 
 
 def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, approximate: bool,
-               names: dict[str, str] | None = None, house: bool = False) -> LandCheck:
+               names: dict[str, str] | None = None, house: bool = False,
+               radius: float = APPROX_RADIUS_M["default"]) -> LandCheck:
     """Je li zemljište (ili kuća) u građevinskom području: prvo po katastarskoj čestici iz
     teksta (točno), inače po oznaci na karti oglasa (ako portal kaže da nije približna)."""
     parcels = parcels_in_text(text)
@@ -423,8 +454,8 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
     if info is None:
         why = "čestica iz oglasa nije pronađena u katastru" if parcels else "oglas nema točnu lokaciju ni broj čestice"
         line, warning = f"🗺 Građevinsko područje: nije provjereno – {why}", ""
-        if lat and lon and approximate and not house and hasattr(ispu, "gp_around"):
-            line, warning = _ring_check(*ispu.gp_around(lat, lon))
+        if lat and lon and approximate and not house and hasattr(ispu, "gp_share"):
+            line, warning = _share_check(*ispu.gp_share(lat, lon, radius), radius)
         heritage = ""
         if lat and lon and OLD_CORE.search(fold(text)):
             # Približna oznaka + opis spominje staru jezgru: provjera samo za cjeline (ne pojedinačne građevine).
@@ -444,19 +475,46 @@ def check_land(ispu: "Ispu", text: str, lat: float | None, lon: float | None, ap
     return result
 
 
-def _ring_check(center: PointInfo, found: list[str | None]) -> tuple[str, str]:
-    """Redak i ⚠ za približnu oznaku: koliko je točaka oko nje u građevinskom području, i u kojem
-    je naselju središte oznake (prema bloku PPV-a, npr. "RUKAVAC - GRAĐEVINSKO PODRUČJE")."""
-    n, inside, other = len(found), found.count("naselja"), found.count("izvan naselja")
+def clip_area(ring: list[tuple[float, float]], box: tuple[float, float, float, float],
+              circle: list[tuple[float, float]]) -> float:
+    """Površina dijela prstena (poligona) unutar kruga (konveksni mnogokut, suprotno od kazaljke):
+    prvo odsijecanje pravokutnikom oko kruga (manje točaka), zatim krugom (Sutherland–Hodgman)."""
+    x0, y0, x1, y1 = box
+    for clip in ([(x0, y0), (x1, y0), (x1, y1), (x0, y1)], circle):
+        for i in range(len(clip)):
+            if not ring:
+                return 0.0
+            (ax, ay), (bx, by) = clip[i - 1], clip[i]
+            inside = [(bx - ax) * (py - ay) - (by - ay) * (px - ax) >= 0 for px, py in ring]
+            out = []
+            for j, (px, py) in enumerate(ring):
+                sx, sy = ring[j - 1]
+                if inside[j] != inside[j - 1]:       # brid prelazi granicu: sjecište
+                    dx, dy = px - sx, py - sy
+                    den = (bx - ax) * dy - (by - ay) * dx
+                    t = ((bx - ax) * (ay - sy) - (by - ay) * (ax - sx)) / den if den else 0.0
+                    out.append((sx + t * dx, sy + t * dy))
+                if inside[j]:
+                    out.append((px, py))
+            ring = out
+    return abs(sum(ax * by - bx * ay for (ax, ay), (bx, by) in zip(ring, ring[1:] + ring[:1]))) / 2
+
+
+def _share_check(center: PointInfo, shares: dict[str, float], radius: float) -> tuple[str, str]:
+    """Redak i ⚠ za približnu oznaku: koliko kruga oko nje je u građevinskom području (točno, iz
+    obrisa) i u kojem je naselju središte (prema bloku PPV-a, npr. "RUKAVAC - GRAĐEVINSKO PODRUČJE")."""
+    inside, other = round(shares.get("naselja", 0) * 100), round(shares.get("izvan naselja", 0) * 100)
     place = center.block.split(" - ")[0].strip().title() if center.block else ""
-    where = f"oko približne oznake na karti{f' ({place})' if place else ''} (krug {RING_M} m, {n} točaka)"
-    if inside == n:
-        return f"🗺 Vjerojatno u građevinskom području naselja – ISPU, cijelo područje {where}; točnu česticu provjeri", ""
+    where = f"krug {radius:.0f} m oko približne oznake na karti{f' ({place})' if place else ''}"
+    if inside >= 99:
+        return f"🗺 Vjerojatno u građevinskom području naselja – ISPU: cijeli {where}; točnu česticu provjeri", ""
     if inside == 0 and other == 0:
-        return (f"🗺 Vjerojatno NIJE u građevinskom području – ISPU, nigdje {where}",
+        return (f"🗺 Vjerojatno NIJE u građevinskom području – ISPU: ništa od {where[5:]}",
                 "prema ISPU-u oko približne oznake nema građevinskog područja – vjerojatno nije građevinsko, provjeri")
-    parts = [f"naselja {inside} od {n}"] + ([f"izvan naselja {other}"] if other else [])
-    return f"🗺 Granica građevinskog područja je blizu – ISPU, {where}: {', '.join(parts)}; točnu česticu provjeri", ""
+    parts = [f"{inside} % u građevinskom području naselja"] + ([f"{other} % izvan naselja"] if other else [])
+    line = f"🗺 {where[0].upper()}{where[1:]}: {', '.join(parts)}, ostatak izvan – ISPU; točnu česticu provjeri"
+    warning = "" if inside >= 50 else f"oko približne oznake samo {inside} % je u građevinskom području naselja – provjeri"
+    return line, warning
 
 
 def _gp_check(info: PointInfo, where: str, caveat: str, house: bool, use: str) -> LandCheck:
