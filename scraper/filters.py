@@ -46,6 +46,8 @@ _RENOVATION = re.compile(
 # zgrada uz kuću ne računa se. ("Zidine" ne: tako se zovu i gradske zidine Krka.)
 _RUIN = re.compile(r"\brusev(?:in|n|an)\w*|\bza rusenje|\bbez krova\b|\burus(?:en|i|av)\w*")
 _RUIN_DENIED = re.compile(r"\b(?:ne|nije|nisu|nikako|bez)\s+(?:\w+\s+){0,3}$")
+# Ruševina kao dodatak uz kuću ("dvije garsonijere u kući i kamena ruševina", "s ruševinom").
+_RUIN_EXTRA = re.compile(r"\b(?:i|te|uz|s|sa|plus|dodatno|kao i)\s+(?:\w+\s+){0,2}$")
 _OUTBUILDING = re.compile(r"gospodarsk|pomocn|\bstal[aeiu]\b|\bstaj[aeiu]\b|stalic|sjenik|spremist|drvarnic|pojat"
                           r"|susjed")
 _FOR_RENOVATION = re.compile(r"\b(?:za|potrebn\w*|moguc\w*|predviden\w*|idealn\w* za)\s+(?:\w+\s+){0,2}"
@@ -81,7 +83,8 @@ def ruin(listing: Listing) -> str:
     if _said(_FOR_RENOVATION, folded):
         return ""
     for m in _RUIN.finditer(folded):
-        if _RUIN_DENIED.search(folded[max(0, m.start() - 50):m.start()]) \
+        before = folded[max(0, m.start() - 50):m.start()]
+        if _RUIN_DENIED.search(before) or _RUIN_EXTRA.search(before) \
                 or _OUTBUILDING.search(folded[max(0, m.start() - 60):m.end() + 60]):
             continue
         sentence = next((s for s in risks.sentences(text) if m.group(0) in fold(s)), m.group(0))

@@ -382,6 +382,10 @@ def test_renovation_category_only_reset_by_full_description(ctx):
     ("Kuća je ruševna. Potrebna je kompletna rekonstrukcija.", False, True),
     ("Ruševna kuća, nije za obnovu.", True, True),
     ("Uz kuću je ruševna štala i vrt.", False, True),                         # ruševina nije kuća
+    # Stvarni oglas (index.hr 7445884): useljiva kuća, a uz nju i ruševina.
+    ("Tribalj, dvije garsonijere u kući i kamena ruševina.", False, True),
+    ("Kuća s okućnicom i ruševinom stare konobe.", False, True),
+    ("Ruševina na 500 m² zemljišta, pogled na more.", True, True),
     ("Kuća nije ruševna, potrebno je samo osvježenje.", False, False),
     ("Ne radi se o ruševini, kuća je useljiva.", False, False),
     ("Kuća u blizini starih gradskih zidina.", False, False),
