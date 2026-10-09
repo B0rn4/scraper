@@ -1060,3 +1060,11 @@ def test_njuskalo_detail_reads_approximate_circle_radius():
     y = Listing(source="njuskalo", source_id="2", url="u", title="Kuća", kind=HOUSE)
     parse_detail(page.replace('"isApproximateLocationOnMap":true', '"isApproximateLocationOnMap":false'), y)
     assert "krug_m" not in y.extra
+
+
+def test_strip_contacts_keeps_coordinates_prices_and_dates():
+    from scraper.text import strip_contacts
+    assert strip_contacts("Tel: 091/503-2253, +385 51 341 080. E-mail: ana.b@agencija.com") == \
+        "Tel: [telefon], [telefon]. E-mail: [e-adresa]"
+    kept = '"latitude":45.2969275,"longitude":14.2723701 · 1.250.000 € · 2026-10-09T07:01:06 · k.č. 1234/5 · ID 16439'
+    assert strip_contacts(kept) == kept

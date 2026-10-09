@@ -1,6 +1,17 @@
 """Pomoćne funkcije za tekst: normalizacija i čitanje brojeva."""
 
 import re
+
+_EMAIL = re.compile(r"[\w.%+-]+@[\w-]+(?:\.[\w-]+)+")
+# Telefon: 9+ znamenki u skupinama s razmacima, crticama ili kosim crtama ("091/503-2253",
+# "+385 51 341 080"); ne decimalni brojevi (koordinate) ni datumi (8 znamenki).
+_PHONE = re.compile(r"(?<![\w.])\+?\d{2,4}(?:[ /-]{0,2}\d{2,4}){2,4}(?!\w|\.\d)")
+
+
+def strip_contacts(text: str) -> str:
+    """Bez e-adresa i brojeva telefona (dijagnostika koja ide u javni repozitorij)."""
+    text = _EMAIL.sub("[e-adresa]", text or "")
+    return _PHONE.sub(lambda m: "[telefon]" if sum(c.isdigit() for c in m.group(0)) >= 9 else m.group(0), text)
 import unicodedata
 
 _FOLD = str.maketrans({"đ": "d", "Đ": "D"})

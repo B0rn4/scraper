@@ -70,7 +70,8 @@ def search_js(name: str, js: str) -> list[dict]:
 
 def save_page(http: Http, url: str, out_dir: Path) -> dict:
     """Cijela stranica oglasa (ima li kartu i koordinate?) i isječci oko koordinata."""
-    page = http.get(url).text
+    from scraper.text import strip_contacts
+    page = strip_contacts(http.get(url).text)      # javni repozitorij: bez kontakata
     name = re.sub(r"[^\w.-]+", "_", url.split("//", 1)[-1])[:80]
     (out_dir / f"stranica_{name}.html.gz").write_bytes(gzip.compress(page.encode("utf-8", "replace")))
     hits = [page[max(0, m.start() - 120): m.end() + 120] for m in re.finditer(
@@ -149,9 +150,6 @@ def index_ads(http: Http, codes: list[str]) -> list[dict]:
     return out
 
 
-_CONTACT = re.compile(r"\S+@\S+|\+?\d[\d /.-]{6,}\d|www\.\S+")
-
-
 def _condition(ad: dict) -> dict:
     """Stanje kuće prema pravilima scrapera (ruševina, za obnovu) – bez cijelog opisa: repozitorij je
     javan, a opis ima kontakt agenta. Rečenica koja je odlučila, bez e-adresa i brojeva telefona."""
@@ -160,7 +158,8 @@ def _condition(ad: dict) -> dict:
     from scraper.text import fold
     x = Listing("index_oglasi", "", "", ad.get("title") or "", HOUSE, description=ad.get("description") or "")
     broken = ruin(x)
-    return {"rusevina": _CONTACT.sub("…", broken),
+    from scraper.text import strip_contacts
+    return {"rusevina": strip_contacts(broken),
             "za_obnovu": needs_renovation(fold(f"{x.title} {x.description}"))}
 
 

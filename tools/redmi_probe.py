@@ -237,11 +237,20 @@ def _env_token() -> str:
     return ""
 
 
+def _public(name: str, data: bytes) -> bytes:
+    """Grana debug je javna: iz stranica se brišu e-adrese i brojevi telefona prodavatelja i agencija."""
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
+    from scraper.text import strip_contacts
+    if name.endswith(".html.gz"):
+        return gzip.compress(strip_contacts(gzip.decompress(data).decode("utf-8", "replace")).encode("utf-8"))
+    return strip_contacts(data.decode("utf-8", "replace")).encode("utf-8")
+
+
 def send() -> None:
     sent_log = OUT / ".poslano"
     sent = set(sent_log.read_text().split()) if sent_log.exists() else set()
-    files = {p.name: p.read_bytes() for p in sorted(OUT.glob("*sazetak*.json")) + sorted(OUT.glob("*.html.gz"))
-             if p.name not in sent}
+    files = {p.name: _public(p.name, p.read_bytes())
+             for p in sorted(OUT.glob("*sazetak*.json")) + sorted(OUT.glob("*.html.gz")) if p.name not in sent}
     if not files:
         print("Nema novih rezultata za slanje.")
         return
