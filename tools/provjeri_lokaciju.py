@@ -3,7 +3,12 @@
 Pokreće GitHub (radnja "Planovi", naredba "lokacija"), jer okruženje za razvoj ne dolazi do
 portala ni do ISPU-a; rezultat ide na granu debug (planovi/lokacije/).
 
-    python tools/provjeri_lokaciju.py IZLAZ ADRESA_OGLASA|LAT,LON|radijus:ADRESA|stranica:ADRESA|js:ADRESA [...]
+    python tools/provjeri_lokaciju.py IZLAZ ADRESA_OGLASA|LAT,LON|radijus:ADRESA|stranica:ADRESA|js:ADRESA
+                                         |index:BROJ[,BROJ…]|index-uzorak:N [...]
+
+index: podaci o lokaciji iz index.hr API-ja (koordinate, isPreciseLocation, sva polja s lokacijom);
+index-uzorak: N najnovijih oglasa kuća i zemljišta u PGŽ-u – dijele li neprecizni oglasi istog
+mjesta iste koordinate (središte mjesta) ili svaki ima svoje (približna lokacija oglasa).
 
 Za adresu oglasa koordinate i vrsta oznake ("marker": točna, "only_area": približna) čitaju se
 iz podataka stranice (nekretnine.hr, index.hr: __NEXT_DATA__ / JSON u stranici)."""
@@ -108,6 +113,70 @@ def outline_formats(ispu: Ispu, lat: float, lon: float, out_dir: Path) -> dict:
     return out
 
 
+_LOC_KEYS = re.compile(r"(?i)lat|lon|loc|precise|radius|circle|map|address|street|settlement|city|zoom")
+
+
+def index_ads(http: Http, codes: list[str]) -> list[dict]:
+    """Lokacija oglasa s index.hr API-ja (isti poziv kao scraper, api/aditem/single-ad)."""
+    from scraper.sources.index_oglasi import BASE, JSON_HEADERS
+    http.get(f"{BASE}/nekretnine/prodaja-kuca")             # kolačić
+    out = []
+    for code in codes:
+        try:
+            data = http.get(f"{BASE}/api/aditem/single-ad?code={code}&format=1", headers=JSON_HEADERS).json()
+        except Exception as exc:  # noqa: BLE001
+            out.append({"oglas": code, "greska": f"{type(exc).__name__}: {exc}"})
+            continue
+        ad = data.get("data")
+        ad = ad[0] if isinstance(ad, list) and ad else ad if isinstance(ad, dict) else {}
+
+        def walk(value, path=""):
+            if isinstance(value, dict):
+                for k, v in value.items():
+                    yield from walk(v, f"{path}.{k}" if path else k)
+            elif isinstance(value, list):
+                for i, v in enumerate(value[:5]):
+                    yield from walk(v, f"{path}[{i}]")
+            else:
+                yield path, value
+        fields = {k: v for k, v in walk(ad)
+                  if _LOC_KEYS.search(k.rsplit(".", 1)[-1]) and not (isinstance(v, str) and len(v) >= 120)}
+        out.append({"oglas": code, "naslov": (ad.get("title") or "")[:80], "lat": ad.get("latitude"),
+                    "lon": ad.get("longitude"), "isPreciseLocation": ad.get("isPreciseLocation"),
+                    "mjesto": ad.get("settlementName") or ad.get("cityName"), "polja": fields})
+        time.sleep(0.5)
+    return out
+
+
+def index_sample(http: Http, n: int) -> dict:
+    """N najnovijih oglasa (kuće i zemljišta, PGŽ): koordinate i preciznost; za neprecizne po
+    mjestu: koliko različitih točaka."""
+    from scraper.sources.index_oglasi import BASE, JSON_HEADERS, LOCATIONS
+    county = json.loads(LOCATIONS.read_text(encoding="utf-8"))["id"]
+    http.get(f"{BASE}/nekretnine/prodaja-kuca")
+    codes = []
+    for category in ("houses-for-sale", "lands-for-sale"):
+        found = []
+        for page in range(1, 6):
+            data = http.get(f"{BASE}/api/aditem?module=real-estate&category={category}&sortOption=4&itemPerPage=24"
+                            f"&page={page}&includeCountyIds={county}", headers=JSON_HEADERS).json()
+            found += [str(x.get("code") or x.get("id")) for x in data.get("data") or []]
+            if len(found) >= n or not data.get("nextPage"):
+                break
+        codes += found[:n]
+    ads = index_ads(http, list(dict.fromkeys(codes))[: 2 * n])
+    groups: dict[str, list] = {}
+    for a in ads:
+        if a.get("lat") is not None and not a.get("isPreciseLocation"):
+            groups.setdefault(a.get("mjesto") or "?", []).append((round(a["lat"], 5), round(a["lon"], 5)))
+    summary = {place: {"oglasa": len(pts), "razlicitih_tocaka": len(set(pts)), "tocke": sorted(set(pts))[:10]}
+               for place, pts in groups.items()}
+    return {"oglasa": len(ads), "preciznih": sum(1 for a in ads if a.get("isPreciseLocation")),
+            "nepreciznih": sum(1 for a in ads if a.get("lat") is not None and not a.get("isPreciseLocation")),
+            "bez_koordinata": sum(1 for a in ads if a.get("lat") is None),
+            "neprecizni_po_mjestu": summary, "oglasi": ads}
+
+
 def main() -> int:
     out_dir, args = Path(sys.argv[1]), sys.argv[2:]
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -143,6 +212,15 @@ def main() -> int:
             except Exception as exc:  # noqa: BLE001
                 item = {"ulaz": arg, "greska": f"{type(exc).__name__}: {exc}"}
             results.append(item)
+            continue
+        if arg.startswith(("index:", "index-uzorak:")):
+            kind, _, value = arg.partition(":")
+            try:
+                item = index_ads(http, value.split(",")) if kind == "index" else index_sample(http, int(value))
+            except Exception as exc:  # noqa: BLE001
+                item = {"ulaz": arg, "greska": f"{type(exc).__name__}: {exc}"}
+            print(json.dumps(item, ensure_ascii=False, indent=1)[:20000])
+            results.append({"ulaz": arg, "rezultat": item})
             continue
         if arg.startswith("radijus:"):
             try:
