@@ -294,7 +294,28 @@ def test_gp_share_exact_area_from_building_zone_outlines():
     _, shares = i.gp_share(lat, lon, 100)
     full = math.pi * 100 ** 2
     assert abs(shares["naselja"] - (full / 2 - 400) / full) < 0.003                  # pola kruga bez rupe 20×20 m
+    assert "kopno" not in shares                                                      # bez sloja općina: cijeli krug
+    # Maska kopna (sloj "Granice gradova i općina"): istočna polovica je kopno, zapad more – udio je
+    # od kopna (polovica kruga bez rupe → ~100 %), a "kopno" kaže koliko kruga je kopno.
+    land = {"id": "12", "serviceId": "5", "layers": "12", "hash": "h3", "label": {"hr": "Granice gradova i općina"},
+            "_path": "Granice gradova i općina"}
+    s2 = Session()
+    s2.get = lambda url, params=None, **kw: Resp(kml([(east_half, [])]) if params["LAYERS"] in ("225", "12")
+                                                 else kml([]))
+    i2 = Ispu(session=s2)
+    i2._layers, i2._land, i2.retry_pause = [gp, out], land, 0
+    _, on_coast = i2.gp_share(lat, lon, 100)
+    assert abs(on_coast["kopno"] - 0.5) < 0.003 and on_coast["naselja"] > 0.99 and not on_coast.get("izvan naselja")
     segment = 100 ** 2 * math.acos(0.5) - 50 * math.sqrt(100 ** 2 - 50 ** 2)          # odsječak iza x = -50 m
     assert abs(shares["izvan naselja"] - segment / full) < 0.003
     assert sorted(s.wms) == ["224", "225"]
     assert clip_area([], (0, 0, 1, 1), [(0, 0), (1, 0), (0, 1)]) == 0.0
+
+
+def test_share_on_coast_counts_only_land():
+    """13. runda: krug uz obalu – more nije "izvan građevinskog područja"; udio je od kopna."""
+    r = check_land(ShareIspu({"naselja": 1.0, "kopno": 0.63}), "Zemljište", 45.12, 14.52, True, radius=500)
+    assert r.line == ("🗺 Krug 500 m oko približne oznake na karti (Rukavac): 100 % u građevinskom području naselja "
+                      "(od kopna; 37 % kruga je more) – ISPU; točnu česticu provjeri")
+    r = check_land(ShareIspu({"naselja": 0.5, "kopno": 0.99}), "Zemljište", 45.12, 14.52, True, radius=500)
+    assert "more" not in r.line and "50 % u građevinskom području naselja, ostatak izvan" in r.line

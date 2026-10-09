@@ -1919,3 +1919,31 @@ def test_interrupt_during_processing_keeps_price_drop(tmp_path, monkeypatch):
     sent = _runs(tmp_path, monkeypatch, [[listing(sid="1")], [listing(sid="1")], [listing(280_000, "1")],
                                          [listing(280_000, "1")]])
     assert sent[2] == [] and sent[3] and sent[3][0][1].startswith("📉 Snižena cijena")
+
+
+def test_sent_listing_does_not_become_ruin_from_list_snippet(tmp_path, monkeypatch):
+    """13. runda: poslan prema punom opisu ("u ruševnom stanju … idealna za obnovu"); kasnije samo
+    isječak s popisa bez "za obnovu" – oglas ne postaje "ruševina", sniženje stiže."""
+    a = listing(sid="1", title="Kamena kuća Punat")
+    a.description = "Kamena kuća u ruševnom stanju. Kuća je idealna za obnovu, izrađen je projekt."
+    b = listing(250_000, sid="1", title="Kamena kuća Punat")
+    b.description, b.extra["opis_skracen"] = "Kamena kuća u ruševnom stanju…", True
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [a], [b]])
+    assert sent[1] == [("t:1", "")]
+    assert len(sent[2]) == 1 and sent[2][0][1].startswith("📉 Snižena cijena")
+
+
+def test_interrupt_after_listings_keeps_records_of_sent_messages(tmp_path, monkeypatch):
+    """13. runda F-C: prekid (otkazan posao) nakon obrade oglasa ne briše zapis o već poslanim
+    natječajima, dopunama, upozorenjima – inače bi ih sljedeće pokretanje poslalo ponovno."""
+    def configure(r, i):
+        if i == 1:
+            def tenders(state, prices=None):
+                state.meta_set("natjecaj:poslan", "da")          # npr. tender_add nakon slanja
+                raise Killed()
+            r._tenders = tenders
+
+    _runs(tmp_path, monkeypatch, [[listing(sid="0", area=60)], [listing(sid="1")]], configure)
+    state = State(tmp_path / "s.db")
+    assert state.meta_get("natjecaj:poslan") == "da" and state.get("t:1")["notified_at"]
+    state.close()

@@ -203,7 +203,11 @@ def lots(text: str, limit: int = 20) -> list[Lot]:
         if _HOUSE.search(plain[max(0, m.start - 150):min(stop, m.start + 500)]):
             lot.house = True
         if not lot.context:
-            lot.context = text[max(0, m.start - 120):m.end + 120]
+            # Tekst oko čestice, bez susjednih čestica (njihov k.o. i naselje nisu ove čestice):
+            # od kraja prethodnog spomena (i početka retka) do početka sljedećeg.
+            lo = max(0, m.start - 120, mentions[i - 1].end if i else 0)
+            lo = max(lo, text.rfind("\n", lo, m.start) + 1)
+            lot.context = text[lo:min(m.end + 120, stop)]
     for key, lot in by_key.items():
         totals = {v for _, v, per in prices.get(key, []) if not per}
         per_m2 = {v for _, v, per in prices.get(key, []) if per}

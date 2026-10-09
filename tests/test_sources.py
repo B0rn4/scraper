@@ -1068,3 +1068,11 @@ def test_strip_contacts_keeps_coordinates_prices_and_dates():
         "Tel: [telefon], [telefon]. E-mail: [e-adresa]"
     kept = '"latitude":45.2969275,"longitude":14.2723701 · 1.250.000 € · 2026-10-09T07:01:06 · k.č. 1234/5 · ID 16439'
     assert strip_contacts(kept) == kept
+
+
+def test_strip_contacts_croatian_formats():
+    from scraper.text import strip_contacts
+    for phone in ("091.503.2253", "(051) 341-080", "+385 (0)91 5032253", "0915032253", "051 341 080"):
+        assert strip_contacts(f"Tel {phone}.") == "Tel [telefon].", phone
+    assert strip_contacts("ivan(at)gmail.com, ivan.horvat [at] gmail.com") == "[e-adresa], [e-adresa]"
+    assert strip_contacts("k.č. 2345/12 2345/13 k.o. Vrh, 0.523, 09.10.2026.") == "k.č. 2345/12 2345/13 k.o. Vrh, 0.523, 09.10.2026."

@@ -54,7 +54,8 @@ Primjer (zemljište u Matuljima):
   izračuna koliki je dio kruga u građevinskom području (iz obrisa područja Ministarstva):
   „Krug 250 m oko približne oznake na karti (Rukavac): 52 % u građevinskom području
   naselja, ostatak izvan”. Ako je zemljište bilo gdje u krugu jednako vjerojatno, to je i
-  vjerojatnost da je u građevinskom području (samo postotak, bez ⚠). U zagradi je naselje u
+  vjerojatnost da je u građevinskom području (samo postotak, bez ⚠). Uz obalu se računa samo
+  kopno: „… 100 % u građevinskom području naselja (od kopna; 37 % kruga je more)”. U zagradi je naselje u
   kojem je središte oznake, što pomaže kad oglas navodi samo općinu. Za kuće se oko
   približne oznake ne provjerava. index.hr za približnu lokaciju ne daje lokaciju kuće ni
   zemljišta: krug na njegovoj karti stoji na referentnoj točki naselja (u Lovranu ~600 m od

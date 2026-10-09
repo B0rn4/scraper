@@ -18,6 +18,7 @@ realestatecroatia) ili je uvijek ima točnu (vender)."""
 
 import html
 import json
+import re
 
 from .ispu import APPROX_RADIUS_M, parcels_in_text
 from .models import HOUSE, LAND, Decision, Listing
@@ -67,11 +68,16 @@ def unchecked(x: Listing) -> bool:
 
 
 def warning_key(w: str) -> str:
-    """Isto upozorenje s drugog portala može citirati drugu rečenicu: uspoređuje se oznaka."""
+    """Isto upozorenje ili razlog s drugog portala može citirati drugu rečenicu ili drugi izvor
+    ("nije građevinsko (Poljoprivredno zemljište)" / "(naslov)", "ruševina: „…”"): uspoređuje se
+    oznaka – bez citata i bez zagrade na kraju."""
     for rule in risks.RULES:
         if w.startswith(f"{rule.label}:"):
             return rule.label
-    return "parking: citat" if w.startswith("parking: „") else w
+    if w.startswith("parking: „"):
+        return "parking: citat"
+    w = re.sub(r":\s*„.*$", "", w)
+    return re.sub(r"\s*\([^()]*\)$", "", w).strip() or w
 
 
 def place_line(x: Listing, d: Decision) -> str:
@@ -157,7 +163,7 @@ def news(old: dict, new: dict, x: Listing, d: Decision, rejected: bool = False,
     """Retci dopune (bez HTML-a): samo ono što prva poruka (i ranije dopune) nisu rekle."""
     lines = []
     if rejected:
-        known = set(old.get("razlozi") or [])
+        known = {warning_key(k) for k in old.get("razlozi") or []}
         lines += [f"⚠ prema ovom oglasu ne odgovara kriterijima: {r}" for r in new_reasons(d)
                   if warning_key(r) not in known]
     if _missing(old, new, "naselje"):
@@ -182,7 +188,7 @@ def news(old: dict, new: dict, x: Listing, d: Decision, rejected: bool = False,
         facts.append("vlasnički list ✔")
     if facts:
         lines.append("🏗 " + " · ".join(facts))
-    if _missing(old, new, "za_obnovu"):
+    if _missing(old, new, "za_obnovu") and not rejected:    # odbijena ruševina nije "za obnovu"
         lines.append("🔨 za obnovu / starina (prema opisu)")
     if _missing(old, new, "parking"):
         lines.append(new["parking"])
@@ -190,7 +196,7 @@ def news(old: dict, new: dict, x: Listing, d: Decision, rejected: bool = False,
         lines.append(f"✂️ {new['parcelacija']}")
     noise = {d.location_evidence, x.extra.get("location_note")}
     if "upozorenja" in old:
-        known = set(old["upozorenja"])
+        known = {warning_key(k) for k in old["upozorenja"]}
         warnings = [w for w in d.warnings if warning_key(w) not in known]
     else:                                          # stara poruka: samo upozorenja s bolje lokacije
         warnings = list(location_warnings or []) if better else []

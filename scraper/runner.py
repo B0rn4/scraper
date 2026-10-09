@@ -27,7 +27,7 @@ from .notify import (DISLIKE, MUTE_PREFIX, SOURCE_LABELS, UNMUTE_PREFIX, Email, 
                      safe_url, summary_text, unmuted_markup)
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
-from .text import fmt_eur, fold, plural
+from .text import fmt_eur, fold, plural, strip_contact_block
 
 ROOT = Path(__file__).resolve().parent.parent
 LAND_CHECK_SECONDS = 120   # najdulje trajanje provjera građevinskog područja po pokretanju
@@ -56,6 +56,14 @@ NEW_LISTING_DAYS = {"njuskalo": 0.5, "index_oglasi": 2, "nekretnine_hr": 3, "ogl
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
     return yaml.safe_load(path.read_text(encoding="utf-8"))
+
+
+def _stored(x: Listing) -> dict:
+    """Oglas za red čekanja u bazi stanja (grane state/state-redmi su javne): opis bez bloka s
+    kontaktom, e-adresa i brojeva telefona prodavatelja i agencije."""
+    data = x.to_dict()
+    data["description"] = strip_contact_block(data.get("description") or "")
+    return data
 
 
 class Runner:
@@ -208,6 +216,7 @@ class Runner:
         to_notify: list[tuple[Listing, Decision, str]] = []
         baseline: list[tuple[object, list[tuple[Listing, Decision]], str]] = []
         today = self.now.date().isoformat()
+        reading = True                 # obrada oglasa po izvorima (prekid tada odbacuje nezapisano)
         try:
             for src in self.enabled_sources():
                 if src.daily and state.meta_get(f"daily:{src.name}") == today:
@@ -271,6 +280,8 @@ class Runner:
                         if prev and d.notify and partial and prev.get("status") == REJECT:
                             d = self._keep_text_reject(d, prev, effective_price(
                                 x.price, x.area, bool(x.extra.get("ukupna_cijena")), x.kind) is None)
+                        if prev and partial and d.status == REJECT and prev.get("status") != REJECT:
+                            d = self._drop_snippet_ruin(d, prev)
                         old = state.upsert(x, d, self.stamp)
                         decided.append((x, d))
                         if silent_baseline or (old is None and x.extra.get("stari_oglas")):
@@ -309,7 +320,7 @@ class Runner:
                         deferred.append(x)
                 if deferred or src.pending:
                     self.log(f"{src.label}: odgođeno za sljedeće pokretanje {len(deferred)} oglasa")
-                    state.meta_set(f"odgodjeno:{src.name}", json.dumps([x.to_dict() for x in deferred], ensure_ascii=False))
+                    state.meta_set(f"odgodjeno:{src.name}", json.dumps([_stored(x) for x in deferred], ensure_ascii=False))
                 if errors and len(errors) * 2 >= len(listings):
                     state.conn.commit()
                     self._source_failed(state, src, RuntimeError(
@@ -343,6 +354,7 @@ class Runner:
                 # vremena, prekid), sljedeće ih pošalje i kad ih portal više ne prikazuje.
                 self._remember_unsent(state, self._prev_unsent + to_notify)
 
+            reading = False
             if baseline:
                 self._send_baseline(state, baseline)
             to_notify += self._unsent(state, seen, {x.key for x, _, _ in to_notify})
@@ -385,9 +397,12 @@ class Runner:
             if self.device == "github":
                 self._export(state)
         except BaseException:
-            # Prekid (Ctrl+C, otkazan posao) usred obrade: nezapisano se odbacuje, kao kad proces
+            # Prekid (Ctrl+C, otkazan posao) usred obrade oglasa: nezapisano se odbacuje, kao kad proces
             # ubije sustav – inače bi nova cijena ostala zapisana, a obavijest o sniženju ne bi čekala.
-            state.conn.rollback()
+            # Nakon obrade (slanje dopuna, natječaja, banaka, upozorenja) zapis o poslanom ostaje
+            # (state.close ga sprema) – inače bi sljedeće pokretanje isto poslalo ponovno.
+            if reading:
+                state.conn.rollback()
             raise
         finally:
             state.close()
@@ -664,8 +679,11 @@ class Runner:
                 kind = action.removesuffix("_msg")
                 out.append((kind, key))
                 row = state.get(key) or (other.get(key) if other else None) or {}
-                links = {"reply_markup": {"inline_keyboard": [[{"text": "Otvori oglas", "url": safe_url(row["url"])}]]}} \
-                    if row.get("url") else {}
+                # Gumb kakav je bio (dopuna vodi na drugi portal), inače oglas iz baze.
+                url = state.message_url(int(message_id)) or (other.message_url(int(message_id)) if other else None) \
+                    or row.get("url")
+                links = {"reply_markup": {"inline_keyboard": [[{"text": "Otvori oglas", "url": safe_url(url)}]]}} \
+                    if url else {}
                 markup = muted_markup(links, key) if kind == "mute" else unmuted_markup(links, key)
                 try:
                     self.telegram.edit_markup(self.telegram.chat_id, int(message_id), markup)
@@ -755,6 +773,19 @@ class Runner:
                 or (r.startswith("nije građevinsko (") and not r.endswith("(naslov)")) or r.startswith("ruševina: „")
                 or (on_request and r.startswith("cijena na upit – luksuzna"))]
         return Decision(REJECT, kept, jls=d.jls, location_evidence=d.location_evidence) if kept else d
+
+    @staticmethod
+    def _drop_snippet_ruin(d: Decision, prev: dict) -> Decision:
+        """Poslan oglas (prošao s punim opisom, npr. "u ruševnom stanju … idealna za obnovu") ne postaje
+        "ruševina" kad ovaj put imamo samo isječak s popisa bez rečenice "za obnovu" – inače bi se
+        njegovo sniženje tiho izgubilo. Vrijedi za javljene oglase; ostali se ocjenjuju kao inače."""
+        mark = prev.get("notified_at") or ""
+        if not mark or mark.startswith("tiho:"):
+            return d
+        rest = [r for r in d.reasons if not r.startswith("ruševina: „")]
+        if len(rest) == len(d.reasons) or rest:
+            return d
+        return Decision(WARN if d.warnings else PASS, [], d.warnings, d.jls, d.location_evidence)
 
     def _load_seen(self, state: State) -> dedupe.Seen:
         """Već viđeni oglasi: ova baza, baza s Redmija (na GitHubu) i sažetak s GitHuba (na Redmiju)."""
@@ -968,6 +999,7 @@ class Runner:
             try:
                 self.telegram.send_text(text, url=t.url)
                 state.tender_add(t, self.stamp, self.stamp)
+                state.conn.commit()          # poslano je poslano, i ako pokretanje odmah stane (prekid)
                 sent += 1
             except Exception as exc:  # noqa: BLE001
                 self.log(f"Natječaj nije poslan ({t.url}): {exc}")
@@ -1018,6 +1050,7 @@ class Runner:
                     continue
                 self.log(f"{name}: novo s našim područjem ({len(found)})")
             state.meta_set(key, watch.dumps(hashes | known if len(known) < 5000 else hashes))
+            state.conn.commit()              # poruka je poslana: prekid ne smije izazvati ponovno slanje
         state.meta_set("daily:banke", today)
         state.conn.commit()
 
@@ -1131,7 +1164,7 @@ class Runner:
             if unit:
                 short[i] = [p for p in parts if p]
             if not lot.house and jls:
-                rules = self._tender_rules(t, lot, jls, settlement, point)
+                rules = self._tender_rules(t, lot, jls, settlement, point, single=len(found) == 1)
                 if rules:
                     lot.notes.insert(0, rules[0])
                     if rules[1]:
@@ -1143,10 +1176,12 @@ class Runner:
         return tenders.format_tender(t, info, found, summary, place, warnings)
 
     def _tender_rules(self, t: tenders.Tender, lot: tenders.Lot, jls: str, settlement: str,
-                      point) -> tuple[str, str] | None:
+                      point, single: bool = True) -> tuple[str, str] | None:
         """📏 uvjeti gradnje za česticu iz natječaja, kao za oglas zemljišta: naselje iz teksta oko
-        čestice (ili naslova), površina čestice, izgrađeni / neizgrađeni dio s ISPU-a."""
-        x = Listing("natjecaj", t.key, t.url, f"{t.title} {lot.context}", LAND, area=lot.size, settlement=settlement)
+        čestice (i naslova), površina čestice, izgrađeni / neizgrađeni dio s ISPU-a. Više čestica:
+        samo tekst oko čestice – naslov i naselje natječaja mogu biti o drugoj čestici."""
+        title, place = (f"{t.title} {lot.context}", settlement) if single else (lot.context, "")
+        x = Listing("natjecaj", t.key, t.url, title, LAND, area=lot.size, settlement=place)
         use = (point.use if point else "").upper()
         x.extra["gp_dio"] = "neizgrađeni dio" if "NEIZGRAĐENI" in use else "izgrađeni dio" if "IZGRAĐENI" in use else ""
         d = Decision(PASS, jls=jls)
@@ -1270,7 +1305,7 @@ class Runner:
                 message_ids = self.telegram.send_listing(x, d, headline)
                 state.mark_notified(x.key, x.price, self.stamp)
                 for message_id in message_ids or []:     # za reakciju 👎 (nosi samo broj poruke)
-                    state.remember_message(message_id, x.key, self.stamp)
+                    state.remember_message(message_id, x.key, self.stamp, x.url)
                 self._remember_info(state, x, d, (message_ids or [None])[0])
                 state.conn.commit()          # poslano je poslano, i ako pokretanje odmah stane
                 sent += 1
@@ -1307,7 +1342,7 @@ class Runner:
                for i in self._supplements):
             return
         try:                    # greška u dopuni ne smije zadržati obradu oglasa
-            item = {"oglas": x.to_dict(), "odluka": dataclasses.asdict(d), "za": target, "od": self.stamp,
+            item = {"oglas": _stored(x), "odluka": dataclasses.asdict(d), "za": target, "od": self.stamp,
                     "odbijen": rejected}
             state.meta_set("dopune", json.dumps(self._supplements + [item], ensure_ascii=False))
             self._supplements.append(item)
@@ -1378,7 +1413,8 @@ class Runner:
                 self.log(f"Dopuna ({x.key} → {root['key']}): ništa novo")
                 continue
             if not self.telegram or not hasattr(self.telegram, "send_reply"):
-                self.log(f"Dopuna ({x.key} → {root['key']}): {' | '.join(lines)}")
+                self.log(f"Dopuna ({x.key} → {root['key']}, Telegram nije postavljen – čeka): {' | '.join(lines)}")
+                keep.append(item)                 # kao neposlana obavijest: čeka (najviše SUPPLEMENT_DAYS)
                 continue
             reply = reply or root.get("poruka")
             text = dopuna.message(x, SOURCE_LABELS.get(x.source, x.source), lines, None if reply else root)
@@ -1395,8 +1431,9 @@ class Runner:
                 # dopuna s ⚠ ne stiže ponovno ni s drugog portala ni s Redmija.
                 state.mark_notified(x.key, x.price, f"dup:{root['key']}")
             if message_id:          # 👎 na dopunu = ne zanima me prvi oglas (i preko njega kopije)
-                state.remember_message(message_id, root["key"], self.stamp)
+                state.remember_message(message_id, root["key"], self.stamp, x.url)
             self._family_info[root["key"]] = dopuna.merge(old, new)
+            state.conn.commit()              # poslano je poslano (prekid ne šalje istu dopunu ponovno)
             sent += 1
             self.log(f"Dopuna poslana ({x.key} → {root['key']}): {len(lines)} redaka")
         self._supplements = keep
@@ -1435,7 +1472,7 @@ class Runner:
         for x, d, h in items:
             if x.key not in keys:
                 keys.add(x.key)
-                out.append({"oglas": x.to_dict(), "odluka": dataclasses.asdict(d), "naslov": h,
+                out.append({"oglas": _stored(x), "odluka": dataclasses.asdict(d), "naslov": h,
                             "od": self._unsent_since.get(x.key, self.stamp)})
         state.meta_set("neposlano", json.dumps(out, ensure_ascii=False))
         state.conn.commit()

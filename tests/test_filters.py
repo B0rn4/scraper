@@ -377,15 +377,25 @@ def test_renovation_category_only_reset_by_full_description(ctx):
     ("Prodaje se kuća u centru Rijeke, trenutno u ruševnom stanju, ali s idejnim rješenjem za gradnju "
      "poslovne zgrade. Zgrada se sastoji od prizemlja i prvog kata.", True, True),
     ("Kuća za rušenje, na lijepoj parceli.", True, True),
-    ("Krov se urušio prošle zime.", True, False),
+    ("Krov se urušio prošle zime.", False, False),            # "urušen" se ne broji (13. runda)
     ("Kamena kuća u ruševnom stanju, idealna za obnovu.", False, True),      # za obnovu: kategorija 🔨
     ("Kuća je ruševna. Potrebna je kompletna rekonstrukcija.", False, True),
     ("Ruševna kuća, nije za obnovu.", True, True),
-    ("Uz kuću je ruševna štala i vrt.", False, True),                         # ruševina nije kuća
+    ("Uz kuću je ruševna štala i vrt.", False, False),                        # ruševina nije kuća, ni 🔨
     # Stvarni oglas (index.hr 7445884): useljiva kuća, a uz nju i ruševina.
-    ("Tribalj, dvije garsonijere u kući i kamena ruševina.", False, True),
-    ("Kuća s okućnicom i ruševinom stare konobe.", False, True),
+    ("Tribalj, dvije garsonijere u kući i kamena ruševina.", False, False),
+    ("Kuća s okućnicom i ruševinom stare konobe.", False, False),
     ("Ruševina na 500 m² zemljišta, pogled na more.", True, True),
+    # 13. runda pregleda: ruševina koja nije sama kuća, ili kuća koja je useljiva / obnovljena.
+    ("Kamena kuća obnovljena iz ruševine 2019. godine. Useljiva odmah.", False, False),
+    ("Nova kuća sagrađena na mjestu stare ruševine.", False, False),
+    ("Useljiva kuća s vrtom. U blizini se nalaze ruševine srednjovjekovne utvrde.", False, False),
+    ("Novi krov je postavljen nakon što se stari djelomično urušio.", False, False),
+    ("Suhozid oko okućnice je mjestimično urušen.", False, False),
+    ("Parkirno mjesto bez krova za dva automobila.", False, False),
+    ("Useljiva obiteljska kuća, renovirana 2020. Uz kuću je ruševna štala i okućnica 600 m2.", False, False),
+    ("Novija kuća u odličnom stanju, useljiva odmah. Na okućnici se nalazi ruševni pomoćni objekt.", False, False),
+    ("Kuća u ruševnom stanju, nije useljiva.", True, True),
     ("Kuća nije ruševna, potrebno je samo osvježenje.", False, False),
     ("Ne radi se o ruševini, kuća je useljiva.", False, False),
     ("Kuća u blizini starih gradskih zidina.", False, False),

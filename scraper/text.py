@@ -1,18 +1,37 @@
 """Pomoćne funkcije za tekst: normalizacija i čitanje brojeva."""
 
 import re
+import unicodedata
 
-_EMAIL = re.compile(r"[\w.%+-]+@[\w-]+(?:\.[\w-]+)+")
+_EMAIL = re.compile(r"[\w.%+-]+\s*(?:@|\(at\)|\[at\]|\{at\})\s*[\w-]+(?:\.[\w-]+)+")
 # Telefon: 9+ znamenki u skupinama s razmacima, crticama ili kosim crtama ("091/503-2253",
 # "+385 51 341 080"); ne decimalni brojevi (koordinate) ni datumi (8 znamenki).
-_PHONE = re.compile(r"(?<![\w.])\+?\d{2,4}(?:[ /-]{0,2}\d{2,4}){2,4}(?!\w|\.\d)")
+_PHONE = re.compile(r"(?<![\w./])\+?\d{2,4}(?:[ -]{0,2}\d{2,4}){2,4}(?!\w|\.\d|/)")   # ne čestice (2345/12)
+# Hrvatski broj i s točkama ili zagradama ("091.503.2253", "(051) 341-080", "+385 (0)91 5032253"):
+# počinje s 0 ili 385, pa koordinate (45.29…), cijene (1.250.000) i datumi ne odgovaraju.
+_PHONE_HR = re.compile(r"(?<![\w.])(?:(?:\+|00)385[\s./-]*(?:\(0\)[\s./-]*)?\d{1,2}|\(0\d{1,2}\)|0\d{1,2})"
+                       r"[\s./-]*\d{3}[\s./-]*\d{3,4}(?!\w|\.\d)")
+
+
+# Blok s kontaktom na kraju opisa oglasa ("Kontakt: Ime Prezime…", "Agent s licencom", "Za sve
+# informacije…"): odrezuje se do kraja – tako odlaze i imena, koja se inače ne prepoznaju.
+_CONTACT_BLOCK = re.compile(r"(?im)(?:^|(?<=[.!?])[ \t]+)[\W_]*(?:kontakt|agent|agencija|preporuka agenta|id kod agencije"
+                            r"|za (?:sve |više |dodatne )?informacij|nazovite|javite se|tel\b|mob\b|e-?mail)")
+
+
+def strip_contact_block(text: str) -> str:
+    """Opis bez bloka s kontaktom (samo u zadnjih 70 % teksta: "Agencija X prodaje…" na početku nije kontakt)."""
+    text = text or ""
+    m = next((m for m in _CONTACT_BLOCK.finditer(text) if m.start() >= 0.3 * len(text)), None)
+    return strip_contacts(text[:m.start()].rstrip() if m else text)
 
 
 def strip_contacts(text: str) -> str:
-    """Bez e-adresa i brojeva telefona (dijagnostika koja ide u javni repozitorij)."""
+    """Bez e-adresa i brojeva telefona (opisi i stranice oglasa koji idu u javni repozitorij).
+    Imena se ne prepoznaju pouzdano i ostaju."""
     text = _EMAIL.sub("[e-adresa]", text or "")
+    text = _PHONE_HR.sub("[telefon]", text)
     return _PHONE.sub(lambda m: "[telefon]" if sum(c.isdigit() for c in m.group(0)) >= 9 else m.group(0), text)
-import unicodedata
 
 _FOLD = str.maketrans({"đ": "d", "Đ": "D"})
 _SAINT = re.compile(r"\b(?:sv|sveti|sveta|sveto|svetog|svetoga|svetom|svetoj|svete|svetu)\b\.?", re.I)

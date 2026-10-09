@@ -208,6 +208,7 @@ class Ispu:
         self.session = session
         self.timeout = timeout
         self._layers: list[dict] | None = None
+        self._land: dict | None = None          # sloj "Granice gradova i općina" (maska kopna)
         self.parcels_off = False         # DGU nije odgovorio: do kraja pokretanja bez traženja čestica
         self.last_miss = ""              # zašto čestica nije nađena: "ko", "kc" ili "off" (servis ne radi)
         self.retry_pause = 1.0           # razmak prije ponovnog upita (s)
@@ -222,6 +223,9 @@ class Ispu:
             ppv = [la for la in found if re.match(r"PPV 1\.1\.\d{4}\. – zemljišta", la["label"].get("hr", ""))]
             ppv.sort(key=lambda la: la["label"]["hr"], reverse=True)
             heritage = [la for la in found if "Nepokretna kulturna dobra po statusu zaštite" in la["_path"] and la["hashIdentify"]]
+            # Maska kopna za krug uz obalu: područja gradova i općina ne idu u more (izmjereno 9. 10.:
+            # Malinska 76 %, Matulji 100 %); katastarske općine ponegdje zahvaćaju i more (luke).
+            self._land = next((la for la in found if la["label"].get("hr") == "Granice gradova i općina"), None)
             self._layers = gp + ppv[:1] + heritage
         return self._layers
 
@@ -282,14 +286,28 @@ class Ispu:
         query = (cx - half, cy - half, cx + half, cy + half)
         full = math.pi * radius ** 2 * math.cos(math.pi / _CIRCLE_SIDES) * math.sin(math.pi / _CIRCLE_SIDES) \
             / (math.pi / _CIRCLE_SIDES)                    # površina 256-kuta (≈ krug)
-        shares: dict[str, float] = {}
+
+        def inside(la) -> float:
+            return max(0.0, sum(clip_area(outer, box, circle) - sum(clip_area(h, box, circle) for h in holes)
+                                for outer, holes in self._polygons(la, query)))
+        areas: dict[str, float] = {}
         for la in self.layers():
             if "Građevinska područja" not in la["_path"]:
                 continue
             kind = "izvan naselja" if "izvan naselja" in la["label"].get("hr", "") else "naselja"
-            area = sum(clip_area(outer, box, circle) - sum(clip_area(h, box, circle) for h in holes)
-                       for outer, holes in self._polygons(la, query))
-            shares[kind] = min(1.0, shares.get(kind, 0.0) + max(0.0, area) / full)
+            areas[kind] = areas.get(kind, 0.0) + inside(la)
+        # Zemljište ne može biti u moru: udjeli su od kopnenog dijela kruga (bez maske: od cijelog).
+        land = None
+        if self._land:
+            try:
+                land = inside(self._land)
+            except Exception:  # noqa: BLE001 – maska kopna nije nužna
+                land = None
+        on_land = bool(land and land > 0.05 * full)       # oznaka u moru: bez maske
+        base = land if on_land else full
+        shares = {k: min(1.0, v / base) for k, v in areas.items()}
+        if on_land:
+            shares["kopno"] = min(1.0, land / full)
         return center, shares
 
     def _polygons(self, layer: dict, box: tuple[float, float, float, float]) -> list[tuple[list, list[list]]]:
@@ -304,7 +322,9 @@ class Ispu:
                 time.sleep(self.retry_pause)
                 params.pop("FORMAT_OPTIONS", None)
             r = self.session.get(API + "gis/wms", params=params, headers=HEADERS, timeout=self.timeout)
-            if r.status_code == 200 and "<kml" in r.text[:2000]:
+            # Slika umjesto obrisa (GroundOverlay bez Placemarka) dala bi lažnih "0 %".
+            if r.status_code == 200 and "<kml" in r.text[:2000] \
+                    and not ("<GroundOverlay" in r.text and "<Placemark" not in r.text):
                 break
         else:
             raise RuntimeError(f"ISPU obrisi građevinskog područja: HTTP {r.status_code} "
@@ -525,8 +545,10 @@ def _share_check(center: PointInfo, shares: dict[str, float], radius: float) -> 
     parts = [f"{inside} % u građevinskom području naselja"] + ([f"{other} % izvan naselja"] if other else [])
     if inside + other < 100:
         parts.append("ostatak izvan građevinskog područja" if inside + other else "ostatak izvan")
+    sea = round((1 - shares["kopno"]) * 100) if "kopno" in shares else 0
+    sea_note = f" (od kopna; {sea} % kruga je more)" if sea >= 3 else ""
     return (f"🗺 Krug {radius:.0f} m oko približne oznake na karti{f' ({place})' if place else ''}: "
-            f"{', '.join(parts)} – ISPU; točnu česticu provjeri"), ""
+            f"{', '.join(parts)}{sea_note} – ISPU; točnu česticu provjeri"), ""
 
 
 def _gp_check(info: PointInfo, where: str, caveat: str, house: bool, use: str) -> LandCheck:

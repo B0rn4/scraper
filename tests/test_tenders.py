@@ -578,3 +578,21 @@ def test_bank_page_errors_counted_once_a_day_and_send_failure(tmp_path, monkeypa
     state.meta_set("daily:banke", "")
     runner._banks(state)
     assert len(sent) == 1 and "Njivicama" in sent[0]     # novi tekst nije zaboravljen
+
+
+def test_tender_parcel_rules_use_own_lot_text(tmp_path):
+    """13. runda F-E: 📏 za česticu iz plana njezina naselja, ne susjedne čestice u natječaju."""
+    from scraper import tenders
+    from scraper.runner import Runner
+    from scraper.tenders import Tender
+
+    text = ("Općina Omišalj raspisuje javni natječaj za prodaju građevinskog zemljišta.\n"
+            "1. k.č. 2210/4 k.o. Omišalj, površine 720 m², početna cijena 108.000,00 €\n"
+            "2. k.č. 1544/2 k.o. Njivice, u Njivicama, površine 480 m², početna cijena 86.400,00 €\n")
+    found = tenders.lots(text)
+    assert "Njivic" not in found[0].context and "Omišalj" not in found[1].context.split("k.o.")[0]
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    t = Tender("n3", "Općina Omišalj", "Omišalj", "Natječaj za prodaju zemljišta", "https://o.hr/n3", TODAY.isoformat(), text)
+    first = runner._tender_rules(t, found[0], "Omišalj", "Njivice", None, single=False)
+    second = runner._tender_rules(t, found[1], "Omišalj", "Njivice", None, single=False)
+    assert not first[0].startswith("📏 UPU Njivice") and second[0].startswith("📏 UPU Njivice")

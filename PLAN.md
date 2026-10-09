@@ -596,6 +596,33 @@ bez stotina poruka.
 - **Završni pregled i kraj pravila „stari oglas”** (7.7) i **pregled nakon 1–2 tjedna**
   (7.8) – nakon povratka korisnika.
 
+## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
+
+Svježa instanca, 11 potvrđenih nalaza (svaki reproduciran na pravom kodu), svi popravljeni:
+- F-A ruševina: odbijale se i useljive / obnovljene kuće („obnovljena iz ruševine”, „u blizini
+  ruševine utvrde”, „parkirno mjesto bez krova”, „suhozid urušen”) – sad samo kad je ruševina
+  sama kuća. Otvoreno: ruševina na građevinskoj čestici / s građevinskom dozvolom se i dalje
+  odbija (čeka odluku korisnika: da li kao zemljište).
+- F-B poslan oglas postajao je „ruševina” zbog skraćenog opisa s popisa (dnevno dublje
+  čitanje) – sniženje se gubilo.
+- F-C (regresija 12. runde) prekid pokretanja brisao je zapis o već poslanim dopunama,
+  natječajima, bankama – sljedeće pokretanje slalo bi ih ponovno. Sad se poništava samo
+  nedovršena obrada oglasa, a poslano se odmah sprema.
+- F-D ista ⚠ dopuna drugim riječima („nije građevinsko (naslov)”) stizala je ponovno.
+- F-E 📏 za česticu natječaja iz plana susjedne čestice (tekst oko čestice zahvaćao je sljedeću).
+- F-F krug uz obalu: more se brojalo kao „izvan građevinskog područja” (100 % kopna u GP-u
+  pokazivalo 63 %) – sad udio od kopna (maska: područja gradova i općina, izmjereno na
+  Malinskoj, Opatiji, Matuljima).
+- F-G ruševna štala uz useljivu kuću davala je 🔨 i kategoriju „za obnovu”.
+- F-H opis oglasa s kontaktom prodavatelja u redovima čekanja javne baze stanja – sad bez
+  bloka s kontaktom, telefona i e-adresa (dopune, neposlane, odgođene).
+- F-I brisanje kontakata nije hvatalo „091.503.2253”, „(051) 341-080”, „ime(at)…”.
+- F-J bez Telegrama dopuna se brisala (sad čeka kao obavijest).
+- F-K 👎 na dopunu mijenjao je njen gumb na prvi portal (sad se pamti gumb svake poruke).
+Nepotvrđeno, zapisano: dublje čitanje RC-a kad obje vrste traže više od 240 s; slika umjesto
+obrisa s GeoServera (dodana zaštita); utrka GitHub/Redmi za istu dopunu; dopuna na krivi
+original kad kopija odgovara dvama poslanim oglasima; dva 👎 od 7. 10. na poruke prije pamćenja.
+
 ## Zadaci za korisnika
 
 - Njuškalo: spremljene pretrage s obavijestima u aplikaciji.

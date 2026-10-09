@@ -32,9 +32,12 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
 - **Opasni izrazi u opisu** (suvlasništvo, ostavina, legalizacija, teret…): ⚠ s
   citiranom rečenicom; odbija se samo nedvosmisleno (prodaje se suvlasnički dio).
 - **Ruševina se odbija** (odluka 9. 10.): kuća „u ruševnom stanju”, „ruševina”, „za
-  rušenje”, „bez krova”, „urušena”, osim kad oglas kaže da je za obnovu, adaptaciju ili
-  rekonstrukciju – tada je u kategoriji za obnovu (🔨). Ruševna štala ili pomoćna zgrada uz
-  kuću ne računa se. Odbijene ne ulaze u medijan cijena.
+  rušenje”, osim kad oglas kaže da je za obnovu, adaptaciju ili rekonstrukciju, ili da je
+  useljiva / obnovljena – tada je u kategoriji za obnovu (🔨) ili ruševina nije o kući. Ne
+  računa se ruševina koja nije sama kuća: štala ili pomoćna zgrada uz kuću, dodatak („i
+  kamena ruševina”), nekadašnja („obnovljena iz ruševine”) ili u okolici („u blizini
+  ruševine utvrde”). Poslan oglas ne postaje „ruševina” zbog skraćenog opisa s popisa.
+  Odbijene ne ulaze u medijan cijena.
 - **Ostvarene cijene (🏛 PPV, samo zemljišta):** Plan približnih vrijednosti
   Ministarstva (ISPU) za naselje: medijan i raspon građevinskog zemljišta stambene i
   mješovite namjene (€/m²) iz svih cjenovnih blokova naselja, uz broj blokova, npr.
@@ -48,7 +51,8 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   preduga). Za zemljišta uz to PPV na samoj lokaciji. Zemljište s približnom oznakom (krug na
   karti portala: nekretnine.hr 250 m, Njuškalo 500 m; index.hr daje samo mjesto, pa se ne računa): točan udio kruga u građevinskom području naselja i
   izvan naselja, iz obrisa slojeva (GeoServer Ministarstva kroz ISPU, KML), te naselje iz
-  bloka PPV-a u središtu (samo postoci, bez ⚠).
+  bloka PPV-a u središtu (samo postoci, bez ⚠). Uz obalu udio je od kopnenog dijela kruga
+  (maska kopna: područja gradova i općina s ISPU-a), a redak kaže koliko je kruga more.
 - **Uvjeti gradnje (📏, zemljišta i čestice iz natječaja):** najmanja građevna čestica, kig i kis za
   samostojeću obiteljsku kuću iz UPU-a naselja (ako postoji), inače iz PPU-a grada/općine,
   s izračunom za površinu iz oglasa: „📏 UPU Njivice (2025): min. čest. 400 m² · kig 0,35

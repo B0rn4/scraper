@@ -308,3 +308,57 @@ def test_rejected_copy_warning_is_not_repeated_by_other_device(tmp_path, monkeyp
     seen.add_file(tmp_path / "seen.json.gz")           # drugi uređaj
     family = seen.family("oglasnik:1")
     assert [r["key"] for r in family] == ["burza:4"] and dopuna.load(family[0])["razlozi"]
+
+
+def test_same_rejection_in_other_words_is_not_repeated(tmp_path, monkeypatch):
+    """13. runda F-D: "nije građevinsko (Poljoprivredno zemljište)" i "(naslov)" su isti razlog."""
+    first = land("oglasnik", "1")
+    farm = land("burza", "4", subtype="Poljoprivredno zemljište", title="Zemljište Njivice")
+    farm2 = land("index_oglasi", "5", subtype="", title="Poljoprivredno zemljište Njivice")
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [first], [farm], [farm2]])
+    assert len(tg.replies) == 1 and "nije građevinsko (Poljoprivredno zemljište)" in tg.replies[0]["text"]
+    assert dopuna.warning_key("ruševina: „Kuća je ruševna.”") == dopuna.warning_key("ruševina: „Ruševina Punat.”")
+
+
+def test_supplement_waits_without_telegram_and_keeps_its_button_after_dislike(tmp_path, monkeypatch):
+    """F-J: bez Telegrama dopuna čeka (kao obavijest). F-K: nakon 👎 gumb dopune ostaje na novom portalu."""
+    import scraper.runner as runner_mod
+    first, precise = land("oglasnik", "1"), land("vender", "2", lat=45.16, lon=14.55, priblizna_lokacija=False)
+    batches = [[land("oglasnik", "0", area=100)], [first], [precise], []]
+
+    class Src:
+        name, label, daily = "fake", "fake", False
+
+        def __init__(self, *a, **k):
+            pass
+
+        def fetch(self, mode, known_ids):
+            return batches.pop(0) or [land("oglasnik", "0", area=100)]
+
+        def search_links(self):
+            return []
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", Src)
+    tg = Tg()
+    for i in range(4):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r._send_report = lambda *a, **k: None
+        r._banks = r._tenders = r._ppv_reminder = lambda *a, **k: None
+        r._ispu = FakeIspu()
+        r.telegram = None if i == 2 else tg
+        r.run(force=True)
+    assert len(tg.replies) == 1 and tg.replies[0]["url"] == "https://vender/2"
+    state = State(tmp_path / "s.db")
+    mid = max(m for (m,) in state.conn.execute("SELECT message_id FROM messages"))
+    assert state.message_key(mid) == "oglasnik:1" and state.message_url(mid) == "https://vender/2"
+    state.close()
+
+
+def test_queued_listing_description_has_no_contacts(tmp_path):
+    """F-H: red čekanja je u javnoj bazi stanja – opis bez bloka s kontaktom, telefona i e-adresa."""
+    from scraper.runner import _stored
+    x = land("vender", "2", description="Građevinsko zemljište 650 m2, k.č. 1234/5 k.o. Njivice. Pogled na more i "
+                                         "mirna lokacija.\nKontakt: Ivan Horvat, 091.503.2253, ivan.horvat@gmail.com")
+    text = json.dumps(_stored(x), ensure_ascii=False)
+    assert "Horvat" not in text and "2253" not in text and "gmail" not in text and "k.č. 1234/5" in text

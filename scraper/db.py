@@ -82,6 +82,8 @@ class State:
             self.conn.execute("ALTER TABLE listings ADD COLUMN settlement TEXT")
         if "category" not in columns:    # kuća za obnovu / nedovršena (usporedba cijena)
             self.conn.execute("ALTER TABLE listings ADD COLUMN category TEXT")
+        if "url" not in {r[1] for r in self.conn.execute("PRAGMA table_info(messages)")}:
+            self.conn.execute("ALTER TABLE messages ADD COLUMN url TEXT")   # gumb poruke (dopuna: drugi portal)
 
     def close(self) -> None:
         self.conn.commit()
@@ -197,9 +199,15 @@ class State:
     def mute(self, key: str, at: str, note: str = "") -> None:
         self.conn.execute("INSERT OR IGNORE INTO muted (key, at, note) VALUES (?, ?, ?)", (key, at, note))
 
-    def remember_message(self, message_id: int, key: str, at: str) -> None:
-        """Poruka s oglasom: reakcija 👎 nosi samo broj poruke, ne oglas."""
-        self.conn.execute("INSERT OR REPLACE INTO messages (message_id, key, at) VALUES (?, ?, ?)", (message_id, key, at))
+    def remember_message(self, message_id: int, key: str, at: str, url: str = "") -> None:
+        """Poruka s oglasom: reakcija 👎 nosi samo broj poruke, ne oglas. url: gumb poruke (kod dopune
+        to je oglas s drugog portala) – nakon 👎 gumb ostaje isti."""
+        self.conn.execute("INSERT OR REPLACE INTO messages (message_id, key, at, url) VALUES (?, ?, ?, ?)",
+                          (message_id, key, at, url or None))
+
+    def message_url(self, message_id: int) -> str | None:
+        row = self.conn.execute("SELECT url FROM messages WHERE message_id = ?", (message_id,)).fetchone()
+        return row[0] if row else None
 
     def set_info(self, key: str, info: dict, at: str) -> None:
         """Što je poslana poruka (ili dopuna) rekla o oglasu – za dopunu s drugog portala."""
