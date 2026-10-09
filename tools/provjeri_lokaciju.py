@@ -143,7 +143,8 @@ def index_ads(http: Http, codes: list[str]) -> list[dict]:
                   if _LOC_KEYS.search(k.rsplit(".", 1)[-1]) and not (isinstance(v, str) and len(v) >= 120)}
         out.append({"oglas": code, "naslov": (ad.get("title") or "")[:80], "lat": ad.get("latitude"),
                     "lon": ad.get("longitude"), "isPreciseLocation": ad.get("isPreciseLocation"),
-                    "mjesto": ad.get("settlementName") or ad.get("cityName"), "polja": fields})
+                    "mjesto": ad.get("settlementName") or ad.get("cityName"), "polja": fields,
+                    "opis": (ad.get("description") or "")[:6000] if len(codes) <= 5 else ""})
         time.sleep(0.5)
     return out
 
