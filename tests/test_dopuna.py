@@ -289,3 +289,22 @@ def test_send_reply_is_reply_with_button_and_quiet(monkeypatch):
     assert json.loads(data["reply_markup"])["inline_keyboard"][0][0] == {"text": "Otvori oglas", "url": "https://v/%C5%BE%202"}
     Telegram("t", "1").send_reply("x", None, "https://v/2", silent=False)
     assert "reply_parameters" not in calls[1] and calls[1]["disable_notification"] == "false"
+
+
+def test_rejected_copy_warning_is_not_repeated_by_other_device(tmp_path, monkeypatch):
+    """Ista ⚠ ("ne odgovara") s drugog portala ili s Redmija ne stiže dvaput (9. 10.: Rukavac je
+    stigao s index.hr i s Njuškala): odbijena kopija s dopunom ulazi među kopije prvog oglasa i
+    pamti razlog; drugi uređaj to vidi u sažetku viđenih oglasa."""
+    first = land("oglasnik", "1")
+    farm = land("burza", "4", subtype="Poljoprivredno zemljište", title="Zemljište Njivice")
+    farm2 = land("index_oglasi", "5", subtype="Poljoprivredno zemljište", title="Zemljište Njivice")
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [first], [farm], [farm2]])
+    assert len(tg.replies) == 1 and "nije građevinsko" in tg.replies[0]["text"]
+    state = State(tmp_path / "s.db")
+    assert state.get("burza:4")["notified_at"] == "dup:oglasnik:1"
+    dedupe.export(state, tmp_path / "seen.json.gz")
+    state.close()
+    seen = dedupe.Seen()
+    seen.add_file(tmp_path / "seen.json.gz")           # drugi uređaj
+    family = seen.family("oglasnik:1")
+    assert [r["key"] for r in family] == ["burza:4"] and dopuna.load(family[0])["razlozi"]

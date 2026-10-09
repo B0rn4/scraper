@@ -1390,6 +1390,10 @@ class Runner:
                 keep.append(item)
                 continue
             state.set_info(x.key, new, self.stamp)
+            if item.get("odbijen"):
+                # Odbijena kopija ulazi među kopije prvog oglasa (i u sažetak za drugi uređaj): ista
+                # dopuna s ⚠ ne stiže ponovno ni s drugog portala ni s Redmija.
+                state.mark_notified(x.key, x.price, f"dup:{root['key']}")
             if message_id:          # 👎 na dopunu = ne zanima me prvi oglas (i preko njega kopije)
                 state.remember_message(message_id, root["key"], self.stamp)
             self._family_info[root["key"]] = dopuna.merge(old, new)

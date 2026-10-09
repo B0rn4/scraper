@@ -111,6 +111,7 @@ def snapshot(x: Listing, d: Decision) -> dict:
         "parking": _parking(x),
         "parcelacija": x.extra.get("parcelacija") or "",
         "upozorenja": sorted({warning_key(w) for w in d.warnings}),
+        "razlozi": sorted({warning_key(r) for r in new_reasons(d)}),   # ⚠ "ne odgovara" već javljen
     }
 
 
@@ -156,7 +157,9 @@ def news(old: dict, new: dict, x: Listing, d: Decision, rejected: bool = False,
     """Retci dopune (bez HTML-a): samo ono što prva poruka (i ranije dopune) nisu rekle."""
     lines = []
     if rejected:
-        lines += [f"⚠ prema ovom oglasu ne odgovara kriterijima: {r}" for r in new_reasons(d)]
+        known = set(old.get("razlozi") or [])
+        lines += [f"⚠ prema ovom oglasu ne odgovara kriterijima: {r}" for r in new_reasons(d)
+                  if warning_key(r) not in known]
     if _missing(old, new, "naselje"):
         lines.append(f"📍 {new['naselje']}")
     better = old.get("lokacija") is not None and new["lokacija"] > old["lokacija"]
