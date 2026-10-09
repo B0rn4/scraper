@@ -38,12 +38,22 @@ _TEXT_WARN = [
     (re.compile(r"\b(polovic\w*|polovin\w*|pola) kuc|\betaz\w* kuc"), "opis spominje dio kuće ili etažu"),
 ]
 _RENOVATION = re.compile(
-    r"za obnov|za adaptacij|potrebn\w* (obnov|adaptacij|renovacij)|starin(?!\w* stil)|rusevin|za rusenje|zapust"
+    r"za obnov|za adaptacij|potrebn\w* (obnov|adaptacij|renovacij)|starin(?!\w* stil)|rusev(?:in|n|an)|za rusenje|zapust"
 )
+# Ruševina (odluka korisnika 9. 10.): kuća u ruševnom stanju, za rušenje ili bez krova se odbija –
+# nije ni za obnovu, a njezin €/m² kvari usporedbu cijena. Kad isti oglas kaže da je za obnovu
+# (adaptaciju, rekonstrukciju), ostaje u kategoriji "za obnovu" (🔨). Ruševna štala ili pomoćna
+# zgrada uz kuću ne računa se. ("Zidine" ne: tako se zovu i gradske zidine Krka.)
+_RUIN = re.compile(r"\brusev(?:in|n|an)\w*|\bza rusenje|\bbez krova\b|\burus(?:en|i|av)\w*")
+_RUIN_DENIED = re.compile(r"\b(?:ne|nije|nisu|nikako|bez)\s+(?:\w+\s+){0,3}$")
+_OUTBUILDING = re.compile(r"gospodarsk|pomocn|\bstal[aeiu]\b|\bstaj[aeiu]\b|stalic|sjenik|spremist|drvarnic|pojat"
+                          r"|susjed")
+_FOR_RENOVATION = re.compile(r"\b(?:za|potrebn\w*|moguc\w*|predviden\w*|idealn\w* za)\s+(?:\w+\s+){0,2}"
+                             r"(?:obnov|adaptacij|renovacij|rekonstrukcij)|\b(?:obnovit|renovirat|adaptirat|rekonstruirat)")
 # Nijekanje neposredno ispred ("nije potrebna obnova", "bez potrebe za obnovom", "nije
 # zapuštena"); "nije useljiva, potrebna obnova" nije nijekanje (riječ između nije s popisa).
 _NOT_READY_DENIED = re.compile(r"\b(?:ne|nije|nisu|bez|nema|nimalo)\s+"
-                               r"(?:(?:je|bila|bilo|uopce|nimalo|potreb\w*|nuzn\w*)\s+){0,2}$")
+                               r"(?:(?:je|bila|bilo|uopce|nimalo|potreb\w*|nuzn\w*)\s+){0,2}$|\bne radi se o\s+$")
 # "Cijena na upit": luksuzna nekretnina se prepoznaje po riječima u naslovu i procjeni
 # (površina × medijan traženih €/m²). Mjerenje 6. 10. na 12.378 oglasa s cijenom: od
 # kuća s takvim riječima i procjenom × 0,4 iznad granice 99 % je stvarno preskupo
@@ -62,6 +72,21 @@ _UNFINISHED = re.compile(r"rohbau|roh bau|zapocet\w* gradnj|nedovrsen\w*|siva fa
 def _said(pattern: re.Pattern, text: str) -> bool:
     """Izraz se spominje, a ne niječe."""
     return any(not _NOT_READY_DENIED.search(text[max(0, m.start() - 60):m.start()]) for m in pattern.finditer(text))
+
+
+def ruin(listing: Listing) -> str:
+    """Rečenica koja kaže da je kuća ruševina (izvorni tekst), ili "" – i kad oglas kaže da je za obnovu."""
+    text = f"{listing.title}. {listing.description}"
+    folded = fold(text)
+    if _said(_FOR_RENOVATION, folded):
+        return ""
+    for m in _RUIN.finditer(folded):
+        if _RUIN_DENIED.search(folded[max(0, m.start() - 50):m.start()]) \
+                or _OUTBUILDING.search(folded[max(0, m.start() - 60):m.end() + 60]):
+            continue
+        sentence = next((s for s in risks.sentences(text) if m.group(0) in fold(s)), m.group(0))
+        return sentence if len(sentence) <= 160 else sentence[:157] + "…"
+    return ""
 
 
 def needs_renovation(text: str) -> bool:
@@ -175,6 +200,10 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
                     if rx.search(text):
                         warnings.append(label)
                         break
+        broken = ruin(listing)
+        if broken:
+            reasons.append(f"ruševina: „{broken}”")
+            near_miss_only = False
         heading = f"{subtype} {title}"
         if _POOL.search(heading) and not _NO_POOL.search(heading):
             reasons.append("s bazenom (naslov)")

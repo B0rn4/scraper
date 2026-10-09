@@ -144,9 +144,24 @@ def index_ads(http: Http, codes: list[str]) -> list[dict]:
         out.append({"oglas": code, "naslov": (ad.get("title") or "")[:80], "lat": ad.get("latitude"),
                     "lon": ad.get("longitude"), "isPreciseLocation": ad.get("isPreciseLocation"),
                     "mjesto": ad.get("settlementName") or ad.get("cityName"), "polja": fields,
-                    "opis": (ad.get("description") or "")[:6000] if len(codes) <= 5 else ""})
+                    **_condition(ad)})
         time.sleep(0.5)
     return out
+
+
+_CONTACT = re.compile(r"\S+@\S+|\+?\d[\d /.-]{6,}\d|www\.\S+")
+
+
+def _condition(ad: dict) -> dict:
+    """Stanje kuće prema pravilima scrapera (ruševina, za obnovu) – bez cijelog opisa: repozitorij je
+    javan, a opis ima kontakt agenta. Rečenica koja je odlučila, bez e-adresa i brojeva telefona."""
+    from scraper.filters import needs_renovation, ruin
+    from scraper.models import HOUSE, Listing
+    from scraper.text import fold
+    x = Listing("index_oglasi", "", "", ad.get("title") or "", HOUSE, description=ad.get("description") or "")
+    broken = ruin(x)
+    return {"rusevina": _CONTACT.sub("…", broken),
+            "za_obnovu": needs_renovation(fold(f"{x.title} {x.description}"))}
 
 
 def index_sample(http: Http, n: int) -> dict:
@@ -158,21 +173,28 @@ def index_sample(http: Http, n: int) -> dict:
     codes = []
     for category in ("houses-for-sale", "lands-for-sale"):
         found = []
-        for page in range(1, 6):
+        for page in range(1, 12):
             data = http.get(f"{BASE}/api/aditem?module=real-estate&category={category}&sortOption=4&itemPerPage=24"
                             f"&page={page}&includeCountyIds={county}", headers=JSON_HEADERS).json()
             found += [str(x.get("code") or x.get("id")) for x in data.get("data") or []]
             if len(found) >= n or not data.get("nextPage"):
                 break
         codes += found[:n]
+        if category == "houses-for-sale":
+            house_codes = set(found[:n])
     ads = index_ads(http, list(dict.fromkeys(codes))[: 2 * n])
+    for a in ads:
+        a["kuca"] = a["oglas"] in house_codes
     groups: dict[str, list] = {}
     for a in ads:
         if a.get("lat") is not None and not a.get("isPreciseLocation"):
             groups.setdefault(a.get("mjesto") or "?", []).append((round(a["lat"], 5), round(a["lon"], 5)))
     summary = {place: {"oglasa": len(pts), "razlicitih_tocaka": len(set(pts)), "tocke": sorted(set(pts))[:10]}
                for place, pts in groups.items()}
-    return {"oglasa": len(ads), "preciznih": sum(1 for a in ads if a.get("isPreciseLocation")),
+    houses = [a for a in ads if a.get("kuca")]
+    return {"kuca": len(houses), "rusevina": [(a["oglas"], a["rusevina"]) for a in houses if a.get("rusevina")],
+            "za_obnovu_bez_rusevine": sum(1 for a in houses if a.get("za_obnovu") and not a.get("rusevina")),
+            "oglasa": len(ads), "preciznih": sum(1 for a in ads if a.get("isPreciseLocation")),
             "nepreciznih": sum(1 for a in ads if a.get("lat") is not None and not a.get("isPreciseLocation")),
             "bez_koordinata": sum(1 for a in ads if a.get("lat") is None),
             "neprecizni_po_mjestu": summary, "oglasi": ads}

@@ -370,3 +370,25 @@ def test_renovation_category_only_reset_by_full_description(ctx):
     x = house(description="Lijepa useljiva kuća.", extra={"samo_popis": True})
     evaluate(x, *ctx)
     assert "kategorija" not in x.extra            # samo popis: ranija oznaka iz baze ostaje
+
+
+@pytest.mark.parametrize("text,rejected,renovation", [
+    # Stvarni oglas (index.hr 7448324, 9. 10.): ruševina, nije ni za obnovu → odbija se.
+    ("Prodaje se kuća u centru Rijeke, trenutno u ruševnom stanju, ali s idejnim rješenjem za gradnju "
+     "poslovne zgrade. Zgrada se sastoji od prizemlja i prvog kata.", True, True),
+    ("Kuća za rušenje, na lijepoj parceli.", True, True),
+    ("Krov se urušio prošle zime.", True, False),
+    ("Kamena kuća u ruševnom stanju, idealna za obnovu.", False, True),      # za obnovu: kategorija 🔨
+    ("Kuća je ruševna. Potrebna je kompletna rekonstrukcija.", False, True),
+    ("Ruševna kuća, nije za obnovu.", True, True),
+    ("Uz kuću je ruševna štala i vrt.", False, True),                         # ruševina nije kuća
+    ("Kuća nije ruševna, potrebno je samo osvježenje.", False, False),
+    ("Ne radi se o ruševini, kuća je useljiva.", False, False),
+    ("Kuća u blizini starih gradskih zidina.", False, False),
+])
+def test_ruin_is_rejected_unless_for_renovation(ctx, text, rejected, renovation):
+    x = house(description=text)
+    d = evaluate(x, *ctx)
+    assert any(r.startswith("ruševina: „") for r in d.reasons) is rejected
+    if not rejected:
+        assert bool(x.extra.get("za_obnovu")) is renovation

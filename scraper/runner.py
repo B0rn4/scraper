@@ -752,7 +752,7 @@ class Runner:
         labels = tuple(r.label for r in risks.RULES if r.reject)
         kept = [r for r in json.loads(prev.get("reasons") or "[]")
                 if r.startswith(labels) or "(vrsta: " in r
-                or (r.startswith("nije građevinsko (") and not r.endswith("(naslov)"))
+                or (r.startswith("nije građevinsko (") and not r.endswith("(naslov)")) or r.startswith("ruševina: „")
                 or (on_request and r.startswith("cijena na upit – luksuzna"))]
         return Decision(REJECT, kept, jls=d.jls, location_evidence=d.location_evidence) if kept else d
 
