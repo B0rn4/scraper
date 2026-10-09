@@ -96,7 +96,9 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   oglasa jeftinija, polovica skuplja; isti pokazatelj za područje i naselje), koliko je
   oglas iznad ili ispod, i **od koliko posto tih oglasa je skuplji** (točno prebrojano,
   jednaki se broje upola). Područje treba barem 10 oglasa, naselje 8; kad naselje nema
-  dovoljno, gleda se cijeli grad/općina. Bez dovoljno oglasa po kriterijima ostaje stara
+  dovoljno, gleda se cijeli grad/općina. Kad ni grad/općina nema 8, a ima barem 3 oglasa:
+  raspon i broj umjesto medijana („🏘 Vrbnik – cijela općina, kuće 170–249 m² (5, premalo za
+  medijan): 1.150–2.300 €/m² – ovaj u rasponu”; odluka 9. 10.). Bez dovoljno oglasa po kriterijima ostaje stara
   usporedba s medijanom svih oglasa u naselju (💰/💸/📊), osim za kuće za obnovu.
 - **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, vlasnički list.
 - **Parking (🚗, kuće):** parkirno mjesto ili garaža iz oglasa, ili okućnica od barem

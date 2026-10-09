@@ -228,3 +228,17 @@ def test_market_without_agricultural_land_with_warning(loc):
                    price=126_000, area=600)
     assert prices.market_notes(plot, "Omišalj")[0].startswith("📐 Područje, zemljišta 300–799 m² (12): medijan 200 €/m²")
     assert prices.groups[f"{LAND}|Omišalj|"]["n"] == 12
+
+
+def test_market_range_when_too_few_for_median(loc):
+    """Manje od 8 usporedivih oglasa (a barem 3): raspon i broj umjesto medijana (odluka 9. 10.)."""
+    data = area_rows(12, 2500, 110) + [dict(r, jls="Vrbnik", title="Kuća Vrbnik", key=f"v{i}", signature=f"v{i}",
+                                            price=110 * p) for i, (r, p) in enumerate(zip(area_rows(5, 2000, 110),
+                                                                                   (1500, 1800, 2000, 2300, 2600)))]
+    prices = AskingPrices.from_rows(data, loc, NOW, CRITERIA)
+    x = Listing(source="t", source_id="z", url="u", title="Kuća Vrbnik", kind=HOUSE, price=110 * 2100, area=110)
+    place = prices.market_notes(x, "Vrbnik")[-1]
+    assert place == "🏘 Vrbnik – cijela općina, kuće 100–129 m² (5, premalo za medijan): 1.500–2.600 €/m² – ovaj u rasponu"
+    cheap = Listing(source="t", source_id="y", url="u", title="Kuća Vrbnik", kind=HOUSE, price=110 * 1200, area=110)
+    assert prices.market_notes(cheap, "Vrbnik")[-1].endswith("ovaj ispod najjeftinijeg")
+    assert "mjesta" not in prices.market_short(x, "Vrbnik")                        # sažetak: samo područje

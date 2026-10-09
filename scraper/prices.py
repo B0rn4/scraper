@@ -42,6 +42,7 @@ def _ppv_year(path: Path = PPV_FILE) -> int:
 
 PPV_YEAR = _ppv_year()
 MIN_N = 8
+RANGE_MIN_N = 3      # manje od MIN_N, a barem toliko: umjesto medijana raspon i broj (odluka korisnika 9. 10.)
 MAX_AGE_DAYS = 365
 # Što je očito pogrešno upisano (cijena najma, površina u arima…) ne ulazi u medijan.
 PLAUSIBLE = {HOUSE: ((30, 1500), (300, 20_000)), LAND: ((100, 100_000), (5, 3_000))}
@@ -352,16 +353,21 @@ class AskingPrices:
         own = {listing.key, *listing.extra.get("blizanci", [])}     # i ista kuća prije sniženja
         same = [m for m in self.market if m[1] == listing.kind and m[2] == cat and band(m[1], m[3], cat) == found
                 and m[6] != sig and not own.intersection(m[7])]
-        out = {"band": found, "cat": cat, "podrucje": [m[0] for m in same], "mjesto": None}
+        out = {"band": found, "cat": cat, "podrucje": [m[0] for m in same], "mjesto": None, "raspon": None}
         if jls:
             place = place_of(self.locator, jls, listing.title, listing.settlement)
             local = [m[0] for m in same if m[4] == jls and m[5] == place] if place else []
+            town = [m[0] for m in same if m[4] == jls]
+            here = (self.names.get(place, place.title()), local) if place else None
+            whole = (_whole(self.locator, jls), town)
             if len(local) >= MIN_N:
-                out["mjesto"] = (self.names.get(place, place.title()), local)
-            else:
-                town = [m[0] for m in same if m[4] == jls]
-                if len(town) >= MIN_N:
-                    out["mjesto"] = (_whole(self.locator, jls), town)
+                out["mjesto"] = here
+            elif len(town) >= MIN_N:
+                out["mjesto"] = whole
+            elif len(local) >= RANGE_MIN_N:      # premalo za medijan: raspon (naselje, inače grad/općina)
+                out["raspon"] = here
+            elif len(town) >= RANGE_MIN_N:
+                out["raspon"] = whole
         return out
 
     def market_notes(self, listing: Listing, jls: str) -> list[str]:
@@ -384,6 +390,12 @@ class AskingPrices:
             med = statistics.median(values)
             lines.append(f"🏘 {where}, {label} ({len(values)}): medijan {fmt_eur(round(med))}/m² – "
                          f"{_rel(ppm, med)} · skuplji od {share_below(values, round(ppm))} %")
+        elif peers["raspon"]:
+            where, values = peers["raspon"]
+            low, high = min(values), max(values)
+            pos = "ispod najjeftinijeg" if ppm < low else "iznad najskupljeg" if ppm > high else "u rasponu"
+            lines.append(f"🏘 {where}, {label} ({len(values)}, premalo za medijan): "
+                         f"{fmt_eur(round(low)).removesuffix(' €')}–{fmt_eur(round(high))}/m² – ovaj {pos}")
         return lines
 
     def market_short(self, listing: Listing, jls: str) -> str | None:

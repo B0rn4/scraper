@@ -594,7 +594,13 @@ bez stotina poruka.
 - **Brisanje starih oglasa iz usporedbe cijena:** novogodišnja poruka podsjeća; korisnik
   će o tome razmisliti kad stigne podsjetnik (oko 2028.).
 - **Završni pregled i kraj pravila „stari oglas”** (7.7) i **pregled nakon 1–2 tjedna**
-  (7.8) – nakon povratka korisnika.
+  (7.8) – nakon povratka korisnika. Uvjet korisnika (9. 10.): ono na što je stavio 👎 ne smije
+  stići ni nakon resetiranja oglasa – tablica `muted` i retci utišanih oglasa (za prepoznavanje
+  kopija na drugim portalima) ostaju, završni pregled ih izostavlja (i njihove kopije). Dva 👎
+  od 7. 10. (poruke 81 i 87, prije pamćenja brojeva poruka) nisu primijenjena – pitati korisnika
+  za te oglase prije resetiranja.
+- **(gotovo 9. 10.) Raspon za malo oglasa:** s 3–7 usporedivih oglasa (naselje, inače
+  grad/općina) redak 🏘 kaže raspon i broj umjesto medijana.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

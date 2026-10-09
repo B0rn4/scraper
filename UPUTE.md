@@ -40,7 +40,7 @@ Primjer (zemljište u Matuljima):
 | 🗺 | građevinsko područje prema ISPU-u (vidi niže) |
 | 📏 | uvjeti gradnje iz prostornog plana: najmanja čestica, kig, kis (zemljišta i čestice iz natječaja) |
 | 🏛 | PPV: ostvarene cijene građevinskog zemljišta (Ministarstvo), na lokaciji ili za naselje |
-| 📐 / 🏘 | usporedba s drugim oglasima iste vrste i veličine: cijelo područje / naselje |
+| 📐 / 🏘 | usporedba s drugim oglasima iste vrste i veličine: cijelo područje / naselje (medijan od 8 oglasa; s 3–7 oglasa samo raspon i broj) |
 | ✂️ | oglas spominje parcelaciju – stiže neovisno o cijeni i površini |
 | ⚠ | nešto treba provjeriti (oglas je ipak stigao) |
 | 📉 | snižena cijena (u naslovu poruke: stara → nova) |
