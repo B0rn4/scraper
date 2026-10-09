@@ -37,7 +37,12 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   računa se ruševina koja nije sama kuća: štala ili pomoćna zgrada uz kuću, dodatak („i
   kamena ruševina”), nekadašnja („obnovljena iz ruševine”) ili u okolici („u blizini
   ruševine utvrde”). Poslan oglas ne postaje „ruševina” zbog skraćenog opisa s popisa.
-  Odbijene ne ulaze u medijan cijena.
+  Odbijene ne ulaze u medijan cijena. **Ruševina na kojoj se može graditi** (građevinska ili
+  lokacijska dozvola, idejno rješenje / projekt za kuću, građevinska čestica, zemljište, teren
+  ili zona) stiže **kao zemljište s ⚠** (odluka 10. 10.): površina je okućnica, vrijede
+  granice i usporedba zemljišta, uz 🗺 i 📏. Ne vrijedi kod nijekanja („nema dozvole”),
+  „u postupku” ni za projekt poslovne zgrade ili hotela. Stranica oglasa otvara se i kad je
+  isječak odbijen samo kao ruševina (pun opis može reći „za obnovu” ili „dozvola”).
 - **Ostvarene cijene (🏛 PPV, samo zemljišta):** Plan približnih vrijednosti
   Ministarstva (ISPU) za naselje: medijan i raspon građevinskog zemljišta stambene i
   mješovite namjene (€/m²) iz svih cjenovnih blokova naselja, uz broj blokova, npr.

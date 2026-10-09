@@ -1,5 +1,6 @@
 """Zajednička sučelja izvora."""
 
+import copy
 import time
 from datetime import datetime, timedelta
 
@@ -119,10 +120,16 @@ class Source:
         """Stranica oglasa otvara se kad bi oglas mogao proći – i za zemljište na prihvatljivom
         mjestu kojem ne odgovaraju samo cijena ili površina: opis može spominjati parcelaciju,
         a tada stiže neovisno o njima."""
-        d = evaluate(x, self.criteria, self.locator)
+        # Na kopiji: ocjena mijenja oglas (ruševina na građevinskom zemljištu postaje zemljište), a
+        # stranica oglasa tek treba upisati površinu i okućnicu.
+        d = evaluate(copy.deepcopy(x), self.criteria, self.locator)
         if d.status != REJECT or d.near_miss:
             return True
-        return x.kind == LAND and evaluate(x, self.criteria, self.locator, ignore_limits=True).status != REJECT
+        # Odbijen samo kao ruševina: "za obnovu" ili građevinska dozvola često su tek u punom opisu.
+        if x.kind == HOUSE and all(r.startswith("ruševina: „") for r in d.reasons):
+            return True
+        return x.kind == LAND and evaluate(copy.deepcopy(x), self.criteria, self.locator,
+                                           ignore_limits=True).status != REJECT
 
     def search_links(self) -> list[tuple[str, str]]:
         """Poveznice na iste pretrage na portalu, za usporedbu u izvještaju i ručni pregled

@@ -601,8 +601,8 @@ bez stotina poruka.
 Svježa instanca, 11 potvrđenih nalaza (svaki reproduciran na pravom kodu), svi popravljeni:
 - F-A ruševina: odbijale se i useljive / obnovljene kuće („obnovljena iz ruševine”, „u blizini
   ruševine utvrde”, „parkirno mjesto bez krova”, „suhozid urušen”) – sad samo kad je ruševina
-  sama kuća. Otvoreno: ruševina na građevinskoj čestici / s građevinskom dozvolom se i dalje
-  odbija (čeka odluku korisnika: da li kao zemljište).
+  sama kuća. Ruševina na građevinskoj čestici / s građevinskom dozvolom: (gotovo, odluka
+  korisnika) stiže kao zemljište s ⚠ – površina je okućnica, granice i usporedba zemljišta.
 - F-B poslan oglas postajao je „ruševina” zbog skraćenog opisa s popisa (dnevno dublje
   čitanje) – sniženje se gubilo.
 - F-C (regresija 12. runde) prekid pokretanja brisao je zapis o već poslanim dopunama,

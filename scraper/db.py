@@ -146,11 +146,11 @@ class State:
                 # površine zemljišta, a stranica oglasa otvorena je samo prvi put).
                 # Kategorija (za obnovu) ostaje kad je ovaj put samo popis bez opisa; "" (cijeli
                 # opis, useljiva) je briše.
-                """UPDATE listings SET last_seen = ?, title = ?, url = ?, price = ?, area = COALESCE(?, area),
+                """UPDATE listings SET last_seen = ?, title = ?, url = ?, kind = ?, price = ?, area = COALESCE(?, area),
                    jls = ?, status = ?, reasons = ?, near_miss = ?, settlement = COALESCE(NULLIF(?, ''), settlement),
                    category = COALESCE(?, category)
                    WHERE key = ?""",
-                (now, listing.title, listing.url, listing.price, listing.area, decision.jls,
+                (now, listing.title, listing.url, listing.kind, listing.price, listing.area, decision.jls,
                  decision.status, reasons, int(decision.near_miss), listing.settlement,
                  listing.extra.get("kategorija"), listing.key),
             )

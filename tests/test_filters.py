@@ -406,3 +406,37 @@ def test_ruin_is_rejected_unless_for_renovation(ctx, text, rejected, renovation)
     assert any(r.startswith("ruševina: „") for r in d.reasons) is rejected
     if not rejected:
         assert bool(x.extra.get("za_obnovu")) is renovation
+
+
+@pytest.mark.parametrize("title,text,area,plot,as_land", [
+    # Stvarni oglasi (realestatecroatia, 9. 10.): ruševina na kojoj se može graditi → zemljište s ⚠.
+    ("Građevinsko zemljište sa starinom, 560 m2", "Dramalj, Crikvenica, nalazi se GRAĐEVINSKA ČESTICA na kojoj se "
+     "nalazi kuća-kamena ruševina.", 60, None, 560),
+    ("OPATIJA, PUŽI - Starina s građevinskom dozvolom", "Prodaje se starina za rušenje s novoizrađenom građevinskom "
+     "dozvolom za izgradnju obiteljske kuće.", 160, 420, 420),
+    ("Hreljin, ruševina", "Ucrtana ruševina od 60 m2 tlocrtne površine na parceli od 1664 m2. Idejno rješenje "
+     "za novu kuću.", 60, None, 1664),
+    # Bez znaka gradnje, nijekanje ili "u postupku": ostaje odbijena ruševina.
+    ("Ruševina s pogledom na more", "Kamena ruševina na mirnoj lokaciji.", 80, 400, None),
+    ("Ruševina", "Ruševina, nema građevinske dozvole.", 80, 400, None),
+    ("Ruševina", "Ruševna kuća, građevinska dozvola je u postupku.", 80, 400, None),
+])
+def test_ruin_with_building_signal_arrives_as_land(ctx, title, text, area, plot, as_land):
+    x = house(title=title, description=text, area=area, plot_area=plot, price=120_000)
+    d = evaluate(x, *ctx)
+    if as_land:
+        assert x.kind == LAND and x.area == as_land and d.notify
+        assert any(w.startswith("ruševina") and "stiže kao zemljište" in w for w in d.warnings)
+    else:
+        assert x.kind != LAND and any(r.startswith("ruševina: „") for r in d.reasons)
+
+
+def test_ruin_only_rejection_opens_listing_page(ctx):
+    """Isječak kaže "ruševina": stranica oglasa se otvara (pun opis može reći "za obnovu" ili dozvolu),
+    a ocjena na popisu ne mijenja oglas prije nego stranica upiše površinu."""
+    from scraper.sources.base import Source
+    src = Source(None, ctx[1], ctx[0])
+    x = house(title="Kamena ruševina, Punat", description="Kamena ruševina…", area=100)
+    assert src.worth_detail(x) and x.kind != LAND
+    y = house(title="Ruševina s građevinskom dozvolom", description="Ruševina, građevinska dozvola, okućnica 500 m2.", area=60)
+    assert src.worth_detail(y) and y.kind != LAND and y.area == 60

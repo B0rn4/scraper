@@ -6,7 +6,7 @@ import unicodedata
 from . import parking, risks
 from .locations import LocationResult, Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
-from .text import fmt_eur, fmt_m2, fold
+from .text import areas_in_text, fmt_eur, fmt_m2, fold
 
 # Vrste s portala (normalizirane) koje sigurno nisu cijela samostojeća kuća.
 _HOUSE_SUBTYPE_REJECT = [
@@ -105,6 +105,51 @@ def ruin(listing: Listing) -> str:
     return ""
 
 
+# Ruševina na kojoj se može graditi (odluka korisnika 9. 10.): građevinska / lokacijska dozvola,
+# projekt, građevinska čestica ili zemljište – stiže kao zemljište (okućnica, granice i usporedba
+# zemljišta) s ⚠, a ne odbija se kao ruševina. Nijekanje ("nema građevinske dozvole") i "u postupku"
+# se ne broje.
+_BUILDABLE = re.compile(
+    r"\b(?:gradevinsk|lokacijsk)\w* dozvol\w*|\bdozvol\w* za (?:gradnj|izgradnj|rekonstrukcij)"
+    r"|\bidejn\w* (?:rjesenj|projekt)|\bglavn\w* projekt|\bprojekt\w* za (?:gradnj|izgradnj|rekonstrukcij|nov)"
+    r"|\bgradevinsk\w* (?:cestic|zemljist|teren|parcel|zon|podrucj)|\bmogucnost\w* (?:gradnj|izgradnj)"
+    r"|\bizgradnj\w* nov")
+_PENDING = re.compile(r"^.{0,40}\bu postupku|u postupku (?:ishodenj|izdavanj|dobivanj)\w*\s+(?:\w+\s+)?$")
+# Gradnja koja nije kuća ("idejno rješenje za gradnju poslovne zgrade", "projekt hotela").
+_NOT_A_HOUSE = re.compile(r"poslovn|hotel|zgrad|turistick|apartmansk\w* (?:objekt|kompleks)|stambeno.poslovn")
+_PLOT_AREA = re.compile(r"\b(?:okucnic|dvorist|zemljist|parcel|cestic|teren|plac)\w*\b[^.]{0,40}?(\d[\d.,]*\s*(?:m2|m²|m 2))")
+
+
+def _buildable(folded: str) -> bool:
+    for m in _BUILDABLE.finditer(folded):
+        if _NOT_READY_DENIED.search(folded[max(0, m.start() - 60):m.start()]) \
+                or _PENDING.search(folded[m.end():m.end() + 60]) or _PENDING.search(folded[max(0, m.start() - 60):m.start()]) \
+                or _NOT_A_HOUSE.search(folded[m.end():m.end() + 60]):
+            continue
+        return True
+    return False
+
+
+def ruin_as_land(listing: Listing) -> None:
+    """Kuća-ruševina na kojoj se može graditi postaje zemljište: površina je okućnica (iz polja
+    ili teksta), vrsta "ruševina na građevinskom zemljištu"; ruševina se pamti za ⚠."""
+    if listing.kind != HOUSE:
+        return
+    broken = ruin(listing)
+    text = f"{listing.title}. {listing.description}"
+    if not broken or not _buildable(fold(text)):
+        return
+    plot = listing.plot_area or listing.extra.get("okucnica_ranije")   # ranije: stranica oglasa
+    if not plot:
+        m = _PLOT_AREA.search(fold(text))
+        found = areas_in_text(m.group(1)) if m else []
+        plot = found[0] if found else None
+    listing.extra["rusevina_kao_zemljiste"] = {"m2": listing.area, "recenica": broken}
+    listing.kind, listing.subtype = LAND, "ruševina na građevinskom zemljištu"
+    listing.area, listing.plot_area = plot, None
+    listing.extra.pop("povrsina_iz_teksta", None)
+
+
 def needs_renovation(text: str) -> bool:
     """Za obnovu, starina, zapuštena – i ruševina, ako je to sama kuća (ruševna štala uz useljivu
     kuću ne čini kuću "za obnovu")."""
@@ -186,9 +231,15 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
     """prices (medijani traženih, scraper/prices.py): za procjenu kod "cijene na upit".
     ignore_limits: cijena i površina ne odbijaju (izvori: vrijedi li otvoriti stranicu oglasa
     zemljišta – opis može spominjati parcelaciju)."""
+    ruin_as_land(listing)
     reasons: list[str] = []
     warnings: list[str] = list(listing.extra.get("warnings", []))
     reasons.extend(listing.extra.get("reject", []))
+    if listing.extra.get("rusevina_kao_zemljiste"):
+        broken = listing.extra["rusevina_kao_zemljiste"]
+        size = f" ({fmt_m2(broken['m2'])})" if broken.get("m2") else ""
+        warnings.append(f"ruševina{size} na građevinskom zemljištu ili s dozvolom – stiže kao zemljište "
+                        f"(površina je okućnica), provjeri: „{broken['recenica']}”")
     near_miss_only = not reasons
     pct = criteria.get("za_dlaku_posto", 15) / 100
 

@@ -271,6 +271,8 @@ class Runner:
                             if not x.settlement and prev.get("settlement"):
                                 x.settlement = prev["settlement"]
                                 x.location_text = x.location_text or x.settlement
+                        if prev and prev.get("kind") == LAND and x.kind == HOUSE and prev.get("area"):
+                            x.extra["okucnica_ranije"] = prev["area"]   # ruševina kao zemljište (okućnica)
                         partial = x.extra.get("opis_skracen") or x.extra.get("samo_popis")
                         if prev and partial and "spominje parcelaciju" in (prev.get("reasons") or ""):
                             x.extra["parcelacija_ranije"] = True     # opis je bio na stranici oglasa
