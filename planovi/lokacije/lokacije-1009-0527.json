@@ -1,0 +1,3308 @@
+[
+ {
+  "ulaz": "index:7448309",
+  "rezultat": [
+   {
+    "oglas": "7448309",
+    "naslov": "LOVRAN -KUĆA SA VELIKOM OKUĆNICOM I OTVORENIM POGLEDOM NA MO",
+    "lat": 45.2969275,
+    "lon": 14.2723701,
+    "isPreciseLocation": false,
+    "mjesto": "Lovran",
+    "polja": {
+     "cityId": "27d87653-402b-464e-844d-5c4bd9c1e4c3",
+     "settlementId": "a2eed01c-78c2-4cd6-8782-947c3548ff18",
+     "latitude": 45.2969275,
+     "longitude": 14.2723701,
+     "isPreciseLocation": false,
+     "cityName": "Lovran",
+     "settlementName": "Lovran",
+     "locationName": "Lovran",
+     "settlementLatitude": 45.2969275,
+     "settlementLongitude": 14.2723701,
+     "permutiveData.location[0]": "HRVATSKA",
+     "permutiveData.location[1]": "Primorsko-goranska",
+     "permutiveData.location[2]": "Lovran",
+     "permutiveData.location[3]": "Lovran"
+    }
+   }
+  ]
+ },
+ {
+  "ulaz": "index-uzorak:40",
+  "rezultat": {
+   "oglasa": 80,
+   "preciznih": 0,
+   "nepreciznih": 79,
+   "bez_koordinata": 1,
+   "neprecizni_po_mjestu": {
+    "Vele Srakane": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       44.5757,
+       14.31628
+      ]
+     ]
+    },
+    "Crikvenica": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.17358,
+       14.6915
+      ]
+     ]
+    },
+    "Bregi": {
+     "oglasa": 4,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.34915,
+       14.29876
+      ]
+     ]
+    },
+    "Grižane-Belgrad": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 2,
+     "tocke": [
+      [
+       45.19778,
+       14.71109
+      ],
+      [
+       45.20261,
+       14.71841
+      ]
+     ]
+    },
+    "Malinska": {
+     "oglasa": 5,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.12506,
+       14.52882
+      ]
+     ]
+    },
+    "Marčelji": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.39699,
+       14.39261
+      ]
+     ]
+    },
+    "Mihotići": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.36131,
+       14.30541
+      ]
+     ]
+    },
+    "Vrbnik": {
+     "oglasa": 4,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.07573,
+       14.67525
+      ]
+     ]
+    },
+    "Krk": {
+     "oglasa": 7,
+     "razlicitih_tocaka": 3,
+     "tocke": [
+      [
+       45.02531,
+       14.57368
+      ],
+      [
+       45.0279,
+       14.57521
+      ],
+      [
+       45.03987,
+       14.62629
+      ]
+     ]
+    },
+    "Benkovac Fužinski": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.30936,
+       14.68032
+      ]
+     ]
+    },
+    "Lovran": {
+     "oglasa": 3,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.29693,
+       14.27237
+      ]
+     ]
+    },
+    "Mali Lošinj": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       44.53158,
+       14.47204
+      ]
+     ]
+    },
+    "Bribir": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.16206,
+       14.7597
+      ]
+     ]
+    },
+    "Jadranovo": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 2,
+     "tocke": [
+      [
+       45.22492,
+       14.61523
+      ],
+      [
+       45.22816,
+       14.61586
+      ]
+     ]
+    },
+    "Čavle": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.3569,
+       14.48809
+      ]
+     ]
+    },
+    "Lokve": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.35834,
+       14.75083
+      ]
+     ]
+    },
+    "Ljutići": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.1041,
+       14.5353
+      ]
+     ]
+    },
+    "Punat": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.02074,
+       14.6316
+      ]
+     ]
+    },
+    "Delnice": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.39873,
+       14.80161
+      ]
+     ]
+    },
+    "Donji Zagon": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.13852,
+       14.82034
+      ]
+     ]
+    },
+    "Urinj": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.29044,
+       14.527
+      ]
+     ]
+    },
+    "Medveja": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.26906,
+       14.26835
+      ]
+     ]
+    },
+    "Garica": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.08774,
+       14.61378
+      ]
+     ]
+    },
+    "Dobrinj": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.12949,
+       14.60436
+      ]
+     ]
+    },
+    "Viškovo": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.37569,
+       14.38397
+      ]
+     ]
+    },
+    "Šilo": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.1456,
+       14.66226
+      ]
+     ]
+    },
+    "Baška": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       44.97108,
+       14.75223
+      ]
+     ]
+    },
+    "Nerezine": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       44.65756,
+       14.39567
+      ]
+     ]
+    },
+    "Mošćenice": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.22631,
+       14.24751
+      ]
+     ]
+    },
+    "Breza": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.42227,
+       14.34513
+      ]
+     ]
+    },
+    "Linardići": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.07381,
+       14.46595
+      ]
+     ]
+    },
+    "Dobreć": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 2,
+     "tocke": [
+      [
+       45.30498,
+       14.26524
+      ],
+      [
+       45.30499,
+       14.26524
+      ]
+     ]
+    },
+    "Draga Lukovdolska": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.41881,
+       15.14418
+      ]
+     ]
+    },
+    "Hlevci": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.39572,
+       14.92888
+      ]
+     ]
+    },
+    "Krasica": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.3106,
+       14.5539
+      ]
+     ]
+    },
+    "Lič": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.278,
+       14.71818
+      ]
+     ]
+    },
+    "Paveki": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.29496,
+       14.51104
+      ]
+     ]
+    },
+    "Kostrena": {
+     "oglasa": 4,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.29926,
+       14.51013
+      ]
+     ]
+    },
+    "Vrbovsko": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.37475,
+       15.07805
+      ]
+     ]
+    },
+    "Rukavac": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.36546,
+       14.29996
+      ]
+     ]
+    },
+    "Kastav": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 2,
+     "tocke": [
+      [
+       45.36826,
+       14.34836
+      ],
+      [
+       45.37158,
+       14.35042
+      ]
+     ]
+    },
+    "Mošćenička Draga": {
+     "oglasa": 3,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.23923,
+       14.25337
+      ]
+     ]
+    },
+    "Veprinac": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.33583,
+       14.27515
+      ]
+     ]
+    },
+    "Veli Brgud": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.42489,
+       14.26955
+      ]
+     ]
+    },
+    "Opatija - Centar": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.33582,
+       14.30886
+      ]
+     ]
+    },
+    "Obrš": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "tocke": [
+      [
+       45.25047,
+       14.25153
+      ]
+     ]
+    }
+   },
+   "oglasi": [
+    {
+     "oglas": "7521082",
+     "naslov": "PLATAK – VAŠA MALA OAZA U ŠUMI",
+     "lat": null,
+     "lon": null,
+     "isPreciseLocation": false,
+     "mjesto": "Čavle",
+     "polja": {
+      "cityId": "75529031-239f-4ac6-8e08-645bb777ce70",
+      "settlementId": "9bf09335-2e2a-4b31-a866-aad398c4fc47",
+      "latitude": null,
+      "longitude": null,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Čavle",
+      "settlementName": "Čavle",
+      "locationName": "Čavle",
+      "settlementLatitude": 45.3569043,
+      "settlementLongitude": 14.4880867,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Čavle",
+      "permutiveData.location[3]": "Čavle"
+     }
+    },
+    {
+     "oglas": "6193513",
+     "naslov": "Vele Srakane, kuća prvi red do mora 163 m2 + 2.2 ha zemljišta",
+     "lat": 44.5757045,
+     "lon": 14.3162764,
+     "isPreciseLocation": false,
+     "mjesto": "Vele Srakane",
+     "polja": {
+      "cityId": "21a57a53-5e8a-4640-baa1-2428432f253f",
+      "settlementId": "a213ab6c-94ea-4217-b442-bf8eca2caa25",
+      "latitude": 44.5757045,
+      "longitude": 14.3162764,
+      "isPreciseLocation": false,
+      "cityName": "Mali Lošinj",
+      "settlementName": "Vele Srakane",
+      "locationName": "Mali Lošinj",
+      "settlementLatitude": 44.5757045,
+      "settlementLongitude": 14.3162764,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Mali Lošinj",
+      "permutiveData.location[3]": "Vele Srakane"
+     }
+    },
+    {
+     "oglas": "7449431",
+     "naslov": "Crikvenica, Dvojna vila, 228 m2, novogradnja, panoramski pog",
+     "lat": 45.173583,
+     "lon": 14.6915049,
+     "isPreciseLocation": false,
+     "mjesto": "Crikvenica",
+     "polja": {
+      "cityId": "d176f157-39a6-48a0-af0f-dbdffa2a1bb6",
+      "settlementId": "89a0f24e-c506-4c16-9587-1b0552f568cd",
+      "latitude": 45.173583,
+      "longitude": 14.6915049,
+      "isPreciseLocation": false,
+      "cityName": "Crikvenica",
+      "settlementName": "Crikvenica",
+      "locationName": "Crikvenica",
+      "settlementLatitude": 45.1734979,
+      "settlementLongitude": 14.6913884,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Crikvenica",
+      "permutiveData.location[3]": "Crikvenica"
+     }
+    },
+    {
+     "oglas": "7449411",
+     "naslov": "Bregi – Vila s panoramskim pogledom na Kverner",
+     "lat": 45.3491453,
+     "lon": 14.2987629,
+     "isPreciseLocation": false,
+     "mjesto": "Bregi",
+     "polja": {
+      "cityId": "762fcd90-c987-4e62-8cf3-f23b8bb1c886",
+      "settlementId": "c1e32569-7ff0-48e7-9032-597bde447702",
+      "latitude": 45.3491453,
+      "longitude": 14.2987629,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Matulji",
+      "settlementName": "Bregi",
+      "locationName": "Matulji",
+      "settlementLatitude": 45.348531,
+      "settlementLongitude": 14.2985138,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Matulji",
+      "permutiveData.location[3]": "Bregi"
+     }
+    },
+    {
+     "oglas": "7566368",
+     "naslov": "Kamena kuća s bazenom u potpunom miru, zaleđe Crikvenice, 270m² (prodaja)",
+     "lat": 45.197775043744116,
+     "lon": 14.71109343269087,
+     "isPreciseLocation": false,
+     "mjesto": "Grižane-Belgrad",
+     "polja": {
+      "cityId": "dd63ce70-6c7f-476d-be41-f96e5d1a5e9c",
+      "settlementId": "40ecbb36-fc63-4c53-876e-99d73607181b",
+      "latitude": 45.197775043744116,
+      "longitude": 14.71109343269087,
+      "isPreciseLocation": false,
+      "cityName": "Vinodolska Općina",
+      "settlementName": "Grižane-Belgrad",
+      "locationName": "Vinodolska Općina",
+      "settlementLatitude": 45.2026088,
+      "settlementLongitude": 14.7184124,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vinodolska Općina",
+      "permutiveData.location[3]": "Grižane-Belgrad"
+     }
+    },
+    {
+     "oglas": "7627644",
+     "naslov": "Malinska, nova dvojna kuća s bazenom i pogledom na more",
+     "lat": 45.1250642,
+     "lon": 14.5288239,
+     "isPreciseLocation": false,
+     "mjesto": "Malinska",
+     "polja": {
+      "cityId": "e9c26dc0-6ddb-4e0e-b71c-690df71b3010",
+      "settlementId": "462c0c7e-f5bd-46c7-a9c3-b16c6cb0504f",
+      "latitude": 45.1250642,
+      "longitude": 14.5288239,
+      "isPreciseLocation": false,
+      "citySewerage": true,
+      "cityName": "Malinska-Dubašnica",
+      "settlementName": "Malinska",
+      "locationName": "Malinska-Dubašnica",
+      "settlementLatitude": 45.1250642,
+      "settlementLongitude": 14.5288239,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Malinska-Dubašnica",
+      "permutiveData.location[3]": "Malinska"
+     }
+    },
+    {
+     "oglas": "7627643",
+     "naslov": "Malinska, nova dvojna kuća s bazenom i pogledom na more",
+     "lat": 45.1250642,
+     "lon": 14.5288239,
+     "isPreciseLocation": false,
+     "mjesto": "Malinska",
+     "polja": {
+      "cityId": "e9c26dc0-6ddb-4e0e-b71c-690df71b3010",
+      "settlementId": "462c0c7e-f5bd-46c7-a9c3-b16c6cb0504f",
+      "latitude": 45.1250642,
+      "longitude": 14.5288239,
+      "isPreciseLocation": false,
+      "citySewerage": true,
+      "cityName": "Malinska-Dubašnica",
+      "settlementName": "Malinska",
+      "locationName": "Malinska-Dubašnica",
+      "settlementLatitude": 45.1250642,
+      "settlementLongitude": 14.5288239,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Malinska-Dubašnica",
+      "permutiveData.location[3]": "Malinska"
+     }
+    },
+    {
+     "oglas": "7627631",
+     "naslov": "MARČELJI, dva objekta s započetom adaptacijom",
+     "lat": 45.3969917,
+     "lon": 14.392612,
+     "isPreciseLocation": false,
+     "mjesto": "Marčelji",
+     "polja": {
+      "cityId": "c18873e8-9f93-4638-b312-07908e7c7dc4",
+      "settlementId": "bc1d076b-1a15-42c3-a937-204cdd9df392",
+      "latitude": 45.3969917,
+      "longitude": 14.392612,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Viškovo",
+      "settlementName": "Marčelji",
+      "locationName": "Viškovo",
+      "settlementLatitude": 45.39729579999999,
+      "settlementLongitude": 14.3891577,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Viškovo",
+      "permutiveData.location[3]": "Marčelji"
+     }
+    },
+    {
+     "oglas": "7627628",
+     "naslov": "MATULJI, moderna vila s panoramskim pogledom na more",
+     "lat": 45.3613096,
+     "lon": 14.3054103,
+     "isPreciseLocation": false,
+     "mjesto": "Mihotići",
+     "polja": {
+      "cityId": "762fcd90-c987-4e62-8cf3-f23b8bb1c886",
+      "settlementId": "8c291d9b-6508-4e67-912b-9a968a378ea9",
+      "latitude": 45.3613096,
+      "longitude": 14.3054103,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Matulji",
+      "settlementName": "Mihotići",
+      "locationName": "Matulji",
+      "settlementLatitude": 45.3613096,
+      "settlementLongitude": 14.3054103,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Matulji",
+      "permutiveData.location[3]": "Mihotići"
+     }
+    },
+    {
+     "oglas": "7627606",
+     "naslov": "VRBNIK – MODERNA KUĆA S BAZENOM I PANORAMSKIM POGLEDOM NA MO",
+     "lat": 45.0757288,
+     "lon": 14.6752504,
+     "isPreciseLocation": false,
+     "mjesto": "Vrbnik",
+     "polja": {
+      "cityId": "daf4061c-d5c5-4607-8003-6d8a0fab414c",
+      "settlementId": "6b5622b9-37b1-4cbd-8c40-4219c4359ab3",
+      "latitude": 45.0757288,
+      "longitude": 14.6752504,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Vrbnik",
+      "settlementName": "Vrbnik",
+      "locationName": "Vrbnik",
+      "settlementLatitude": 45.0756694,
+      "settlementLongitude": 14.6743573,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vrbnik",
+      "permutiveData.location[3]": "Vrbnik"
+     }
+    },
+    {
+     "oglas": "7627605",
+     "naslov": "MODERNA KUĆA S BAZENOM I PANORAMSKIM POGLEDOM NA MORE",
+     "lat": 45.0757288,
+     "lon": 14.6752504,
+     "isPreciseLocation": false,
+     "mjesto": "Vrbnik",
+     "polja": {
+      "cityId": "daf4061c-d5c5-4607-8003-6d8a0fab414c",
+      "settlementId": "6b5622b9-37b1-4cbd-8c40-4219c4359ab3",
+      "latitude": 45.0757288,
+      "longitude": 14.6752504,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Vrbnik",
+      "settlementName": "Vrbnik",
+      "locationName": "Vrbnik",
+      "settlementLatitude": 45.0756694,
+      "settlementLongitude": 14.6743573,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vrbnik",
+      "permutiveData.location[3]": "Vrbnik"
+     }
+    },
+    {
+     "oglas": "7626159",
+     "naslov": "OTOK KRK, VILA ZA ODMOR SA BAZENOM, SAUNOM I TERETANOM",
+     "lat": 45.0278995,
+     "lon": 14.5752114,
+     "isPreciseLocation": false,
+     "mjesto": "Krk",
+     "polja": {
+      "cityId": "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+      "settlementId": "d25ac76a-fb3d-4dfb-b26e-6fdc56057f5b",
+      "latitude": 45.0278995,
+      "longitude": 14.5752114,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Krk",
+      "settlementName": "Krk",
+      "locationName": "Krk",
+      "settlementLatitude": 45.0259957,
+      "settlementLongitude": 14.5734276,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Krk",
+      "permutiveData.location[3]": "Krk"
+     }
+    },
+    {
+     "oglas": "7626153",
+     "naslov": "FUŽINE – SAMOSTOJEĆA KUĆA – PRILIKA ZA UREĐENJE PO VLASTITOJ",
+     "lat": 45.3093588,
+     "lon": 14.6803247,
+     "isPreciseLocation": false,
+     "mjesto": "Benkovac Fužinski",
+     "polja": {
+      "cityId": "7fdc782e-ae70-4cfb-861d-6c5911f70293",
+      "settlementId": "1384cc59-3ad0-454e-add9-b09b8ef6f0a3",
+      "latitude": 45.3093588,
+      "longitude": 14.6803247,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Fužine",
+      "settlementName": "Benkovac Fužinski",
+      "locationName": "Fužine",
+      "settlementLatitude": 45.3093588,
+      "settlementLongitude": 14.6803247,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Fužine",
+      "permutiveData.location[3]": "Benkovac Fužinski"
+     }
+    },
+    {
+     "oglas": "7626148",
+     "naslov": "LOVRAN – VILA S BAZENOM - DOM ILI PROVJERENA TURISTIČKA INVE",
+     "lat": 45.2969275,
+     "lon": 14.2723701,
+     "isPreciseLocation": false,
+     "mjesto": "Lovran",
+     "polja": {
+      "cityId": "27d87653-402b-464e-844d-5c4bd9c1e4c3",
+      "settlementId": "a2eed01c-78c2-4cd6-8782-947c3548ff18",
+      "latitude": 45.2969275,
+      "longitude": 14.2723701,
+      "isPreciseLocation": false,
+      "cityName": "Lovran",
+      "settlementName": "Lovran",
+      "locationName": "Lovran",
+      "settlementLatitude": 45.2969275,
+      "settlementLongitude": 14.2723701,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Lovran",
+      "permutiveData.location[3]": "Lovran"
+     }
+    },
+    {
+     "oglas": "7626112",
+     "naslov": "Stan i Restoran u Srcu Malog Lošinja – Rijetka Prilika",
+     "lat": 44.5315814,
+     "lon": 14.4720423,
+     "isPreciseLocation": false,
+     "mjesto": "Mali Lošinj",
+     "polja": {
+      "cityId": "21a57a53-5e8a-4640-baa1-2428432f253f",
+      "settlementId": "4a42380a-ad02-49c9-b0ac-c9567e1b8167",
+      "latitude": 44.5315814,
+      "longitude": 14.4720423,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Mali Lošinj",
+      "settlementName": "Mali Lošinj",
+      "locationName": "Mali Lošinj",
+      "settlementLatitude": 44.5315814,
+      "settlementLongitude": 14.4720423,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Mali Lošinj",
+      "permutiveData.location[3]": "Mali Lošinj"
+     }
+    },
+    {
+     "oglas": "7626111",
+     "naslov": "Vila okružena prirodom - Bribir",
+     "lat": 45.1620629,
+     "lon": 14.7596983,
+     "isPreciseLocation": false,
+     "mjesto": "Bribir",
+     "polja": {
+      "cityId": "dd63ce70-6c7f-476d-be41-f96e5d1a5e9c",
+      "settlementId": "e38d199a-31cf-4dfb-a64f-a7917bc6e842",
+      "latitude": 45.1620629,
+      "longitude": 14.7596983,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Vinodolska Općina",
+      "settlementName": "Bribir",
+      "locationName": "Vinodolska Općina",
+      "settlementLatitude": 45.1620629,
+      "settlementLongitude": 14.7596983,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vinodolska Općina",
+      "permutiveData.location[3]": "Bribir"
+     }
+    },
+    {
+     "oglas": "7449353",
+     "naslov": "Renovirana kamena kuća u nizu, okolica Krka",
+     "lat": 45.0253095,
+     "lon": 14.5736818,
+     "isPreciseLocation": false,
+     "mjesto": "Krk",
+     "polja": {
+      "cityId": "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+      "settlementId": "d25ac76a-fb3d-4dfb-b26e-6fdc56057f5b",
+      "latitude": 45.0253095,
+      "longitude": 14.5736818,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Krk",
+      "settlementName": "Krk",
+      "locationName": "Krk",
+      "settlementLatitude": 45.0259957,
+      "settlementLongitude": 14.5734276,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Krk",
+      "permutiveData.location[3]": "Krk"
+     }
+    },
+    {
+     "oglas": "7449349",
+     "naslov": "JADRANOVO, SAMOSTOJEĆA KUĆA S DVA STANA I PROSTRANOM OKUĆNIC",
+     "lat": 45.228155,
+     "lon": 14.6158621,
+     "isPreciseLocation": false,
+     "mjesto": "Jadranovo",
+     "polja": {
+      "cityId": "d176f157-39a6-48a0-af0f-dbdffa2a1bb6",
+      "settlementId": "c7490702-0316-495a-896c-977a82498f44",
+      "latitude": 45.228155,
+      "longitude": 14.6158621,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Crikvenica",
+      "settlementName": "Jadranovo",
+      "locationName": "Crikvenica",
+      "settlementLatitude": 45.228155,
+      "settlementLongitude": 14.6158621,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Crikvenica",
+      "permutiveData.location[3]": "Jadranovo"
+     }
+    },
+    {
+     "oglas": "7449340",
+     "naslov": "ČAVLE, SAMOSTOJEĆA KUĆA SA BAZENOM",
+     "lat": 45.3569043,
+     "lon": 14.4880867,
+     "isPreciseLocation": false,
+     "mjesto": "Čavle",
+     "polja": {
+      "cityId": "75529031-239f-4ac6-8e08-645bb777ce70",
+      "settlementId": "9bf09335-2e2a-4b31-a866-aad398c4fc47",
+      "latitude": 45.3569043,
+      "longitude": 14.4880867,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Čavle",
+      "settlementName": "Čavle",
+      "locationName": "Čavle",
+      "settlementLatitude": 45.3569043,
+      "settlementLongitude": 14.4880867,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Čavle",
+      "permutiveData.location[3]": "Čavle"
+     }
+    },
+    {
+     "oglas": "7449336",
+     "naslov": "LOKVE, KUĆA ZA ADAPTACIJU",
+     "lat": 45.3583412,
+     "lon": 14.7508278,
+     "isPreciseLocation": false,
+     "mjesto": "Lokve",
+     "polja": {
+      "cityId": "2dd2d200-3372-4a83-8f73-7266c678d8d6",
+      "settlementId": "42087ef0-dc06-42a5-b7f5-4d91763c8ae9",
+      "latitude": 45.3583412,
+      "longitude": 14.7508278,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Lokve",
+      "settlementName": "Lokve",
+      "locationName": "Lokve",
+      "settlementLatitude": 45.3583412,
+      "settlementLongitude": 14.7508278,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Lokve",
+      "permutiveData.location[3]": "Lokve"
+     }
+    },
+    {
+     "oglas": "7626066",
+     "naslov": "Ekskluzivno! Nova kamena kuća s bazenom u mirnom okruženju – okolica Malinske",
+     "lat": 45.1041,
+     "lon": 14.5353,
+     "isPreciseLocation": false,
+     "mjesto": "Ljutići",
+     "polja": {
+      "cityId": "e9c26dc0-6ddb-4e0e-b71c-690df71b3010",
+      "settlementId": "34560d64-338b-4639-8335-9cb2e5f89661",
+      "latitude": 45.1041,
+      "longitude": 14.5353,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Malinska-Dubašnica",
+      "settlementName": "Ljutići",
+      "locationName": "Malinska-Dubašnica",
+      "settlementLatitude": 45.1040997,
+      "settlementLongitude": 14.5326984,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Malinska-Dubašnica",
+      "permutiveData.location[3]": "Ljutići"
+     }
+    },
+    {
+     "oglas": "7626057",
+     "naslov": "Vrbnik, otok Krk - kuća s pogledom na more",
+     "lat": 45.0757288,
+     "lon": 14.6752504,
+     "isPreciseLocation": false,
+     "mjesto": "Vrbnik",
+     "polja": {
+      "cityId": "daf4061c-d5c5-4607-8003-6d8a0fab414c",
+      "settlementId": "6b5622b9-37b1-4cbd-8c40-4219c4359ab3",
+      "latitude": 45.0757288,
+      "longitude": 14.6752504,
+      "isPreciseLocation": false,
+      "cityName": "Vrbnik",
+      "settlementName": "Vrbnik",
+      "locationName": "Vrbnik",
+      "settlementLatitude": 45.0756694,
+      "settlementLongitude": 14.6743573,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vrbnik",
+      "permutiveData.location[3]": "Vrbnik"
+     }
+    },
+    {
+     "oglas": "7625854",
+     "naslov": "Punat, kuća, 2 stana, 200 m2 + okućnica 827 m2",
+     "lat": 45.020739,
+     "lon": 14.6315962,
+     "isPreciseLocation": false,
+     "mjesto": "Punat",
+     "polja": {
+      "cityId": "049ed303-4b28-4235-93a4-ac1ba0a116ac",
+      "settlementId": "bd456b64-4a8a-4c16-8d50-396fa2419bda",
+      "latitude": 45.020739,
+      "longitude": 14.6315962,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Punat",
+      "settlementName": "Punat",
+      "locationName": "Punat",
+      "settlementLatitude": 45.02069789999999,
+      "settlementLongitude": 14.6311582,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Punat",
+      "permutiveData.location[3]": "Punat"
+     }
+    },
+    {
+     "oglas": "7625844",
+     "naslov": "Delnice, Obiteljska kuća s okućnicom i lokalnom 110 m2 + 900",
+     "lat": 45.3987305,
+     "lon": 14.8016108,
+     "isPreciseLocation": false,
+     "mjesto": "Delnice",
+     "polja": {
+      "cityId": "957a4129-4077-43f4-a4e5-d07a322a5cb9",
+      "settlementId": "cd901f7a-5098-4c3c-95fe-237087305db9",
+      "latitude": 45.3987305,
+      "longitude": 14.8016108,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Delnice",
+      "settlementName": "Delnice",
+      "locationName": "Delnice",
+      "settlementLatitude": 45.39812240000001,
+      "settlementLongitude": 14.800926,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Delnice",
+      "permutiveData.location[3]": "Delnice"
+     }
+    },
+    {
+     "oglas": "7625805",
+     "naslov": "Novi Vindolski, kuća u zaleđu",
+     "lat": 45.1385187,
+     "lon": 14.8203385,
+     "isPreciseLocation": false,
+     "mjesto": "Donji Zagon",
+     "polja": {
+      "cityId": "6a64a40a-36c1-4135-bd3a-537ba3bb2486",
+      "settlementId": "f507cbea-4faa-4d8e-9418-a2e61956414e",
+      "latitude": 45.1385187,
+      "longitude": 14.8203385,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Novi Vinodolski",
+      "settlementName": "Donji Zagon",
+      "locationName": "Novi Vinodolski",
+      "settlementLatitude": 45.1385187,
+      "settlementLongitude": 14.8203385,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Novi Vinodolski",
+      "permutiveData.location[3]": "Donji Zagon"
+     }
+    },
+    {
+     "oglas": "7449273",
+     "naslov": "Kostrena, kamena primorska kamena kuća s započetom adaptacijom",
+     "lat": 45.2904395,
+     "lon": 14.5270014,
+     "isPreciseLocation": false,
+     "mjesto": "Urinj",
+     "polja": {
+      "cityId": "d0a44061-2065-4062-90be-aac95217c288",
+      "settlementId": "4650c7e4-7047-42d0-af8b-f1d7ebe4cb4a",
+      "latitude": 45.2904395,
+      "longitude": 14.5270014,
+      "isPreciseLocation": false,
+      "cityName": "Kostrena",
+      "settlementName": "Urinj",
+      "locationName": "Kostrena",
+      "settlementLatitude": 45.2904395,
+      "settlementLongitude": 14.5270014,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Kostrena",
+      "permutiveData.location[3]": "Urinj"
+     }
+    },
+    {
+     "oglas": "7625794",
+     "naslov": "Opatija, Medveja, stara kuća 250m2, zemljište 6100m2, pogled",
+     "lat": 45.2690624,
+     "lon": 14.268346,
+     "isPreciseLocation": false,
+     "mjesto": "Medveja",
+     "polja": {
+      "cityId": "27d87653-402b-464e-844d-5c4bd9c1e4c3",
+      "settlementId": "8052797b-7419-40ce-ab88-75bf12ca4d52",
+      "latitude": 45.2690624,
+      "longitude": 14.268346,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Lovran",
+      "settlementName": "Medveja",
+      "locationName": "Lovran",
+      "settlementLatitude": 45.2690624,
+      "settlementLongitude": 14.268346,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Lovran",
+      "permutiveData.location[3]": "Medveja"
+     }
+    },
+    {
+     "oglas": "7625758",
+     "naslov": "Otok Krk, Vrbnik - okolica, dvojna kamena kuća",
+     "lat": 45.087736,
+     "lon": 14.6137761,
+     "isPreciseLocation": false,
+     "mjesto": "Garica",
+     "polja": {
+      "cityId": "daf4061c-d5c5-4607-8003-6d8a0fab414c",
+      "settlementId": "d7ea3d5f-6a99-4966-b35c-0cee7e7934c7",
+      "latitude": 45.087736,
+      "longitude": 14.6137761,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Vrbnik",
+      "settlementName": "Garica",
+      "locationName": "Vrbnik",
+      "settlementLatitude": 45.087736,
+      "settlementLongitude": 14.6137761,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vrbnik",
+      "permutiveData.location[3]": "Garica"
+     }
+    },
+    {
+     "oglas": "7625705",
+     "naslov": "Otok Krk - samostojeća kamena kuća s potencijalom za uređenj",
+     "lat": 45.1294898,
+     "lon": 14.6043626,
+     "isPreciseLocation": false,
+     "mjesto": "Dobrinj",
+     "polja": {
+      "cityId": "84408878-6c27-41b9-9acc-d6c6511512b6",
+      "settlementId": "e89956cd-553f-42e5-9eb9-78dcc6367468",
+      "latitude": 45.1294898,
+      "longitude": 14.6043626,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Dobrinj",
+      "settlementName": "Dobrinj",
+      "locationName": "Dobrinj",
+      "settlementLatitude": 45.12948979999999,
+      "settlementLongitude": 14.6043626,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Dobrinj",
+      "permutiveData.location[3]": "Dobrinj"
+     }
+    },
+    {
+     "oglas": "7625684",
+     "naslov": "VINODOLSKA OPĆINA, GRIŽANE, KUĆA S DVA UREĐENA APARTMANA I S",
+     "lat": 45.2026088,
+     "lon": 14.7184124,
+     "isPreciseLocation": false,
+     "mjesto": "Grižane-Belgrad",
+     "polja": {
+      "cityId": "dd63ce70-6c7f-476d-be41-f96e5d1a5e9c",
+      "settlementId": "40ecbb36-fc63-4c53-876e-99d73607181b",
+      "latitude": 45.2026088,
+      "longitude": 14.7184124,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Vinodolska Općina",
+      "settlementName": "Grižane-Belgrad",
+      "locationName": "Vinodolska Općina",
+      "settlementLatitude": 45.2026088,
+      "settlementLongitude": 14.7184124,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vinodolska Općina",
+      "permutiveData.location[3]": "Grižane-Belgrad"
+     }
+    },
+    {
+     "oglas": "7625677",
+     "naslov": "Jadranovo, Crikvenica, adaptirana kamena kuća, pogled, okućnica, 70m od mora, te",
+     "lat": 45.22492,
+     "lon": 14.61523,
+     "isPreciseLocation": false,
+     "mjesto": "Jadranovo",
+     "polja": {
+      "cityId": "d176f157-39a6-48a0-af0f-dbdffa2a1bb6",
+      "settlementId": "c7490702-0316-495a-896c-977a82498f44",
+      "latitude": 45.22492,
+      "longitude": 14.61523,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Crikvenica",
+      "settlementName": "Jadranovo",
+      "locationName": "Crikvenica",
+      "settlementLatitude": 45.228155,
+      "settlementLongitude": 14.6158621,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Crikvenica",
+      "permutiveData.location[3]": "Jadranovo"
+     }
+    },
+    {
+     "oglas": "7625630",
+     "naslov": "GRAD KRK - SAMOSTOJEĆA KUĆA SA VELIKOM OKUĆNICOM!",
+     "lat": 45.0278995,
+     "lon": 14.5752114,
+     "isPreciseLocation": false,
+     "mjesto": "Krk",
+     "polja": {
+      "cityId": "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+      "settlementId": "d25ac76a-fb3d-4dfb-b26e-6fdc56057f5b",
+      "latitude": 45.0278995,
+      "longitude": 14.5752114,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Krk",
+      "settlementName": "Krk",
+      "locationName": "Krk",
+      "settlementLatitude": 45.0259957,
+      "settlementLongitude": 14.5734276,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Krk",
+      "permutiveData.location[3]": "Krk"
+     }
+    },
+    {
+     "oglas": "7625629",
+     "naslov": "INVESTICIJA U MALINSKOJ – VIŠESTAMBENA KUĆA 800 M OD MORA",
+     "lat": 45.1250642,
+     "lon": 14.5288239,
+     "isPreciseLocation": false,
+     "mjesto": "Malinska",
+     "polja": {
+      "cityId": "e9c26dc0-6ddb-4e0e-b71c-690df71b3010",
+      "settlementId": "462c0c7e-f5bd-46c7-a9c3-b16c6cb0504f",
+      "latitude": 45.1250642,
+      "longitude": 14.5288239,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Malinska-Dubašnica",
+      "settlementName": "Malinska",
+      "locationName": "Malinska-Dubašnica",
+      "settlementLatitude": 45.1250642,
+      "settlementLongitude": 14.5288239,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Malinska-Dubašnica",
+      "permutiveData.location[3]": "Malinska"
+     }
+    },
+    {
+     "oglas": "7625628",
+     "naslov": "MALINSKA, KUĆA SA 5 APARTMANA",
+     "lat": 45.1250642,
+     "lon": 14.5288239,
+     "isPreciseLocation": false,
+     "mjesto": "Malinska",
+     "polja": {
+      "cityId": "e9c26dc0-6ddb-4e0e-b71c-690df71b3010",
+      "settlementId": "462c0c7e-f5bd-46c7-a9c3-b16c6cb0504f",
+      "latitude": 45.1250642,
+      "longitude": 14.5288239,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Malinska-Dubašnica",
+      "settlementName": "Malinska",
+      "locationName": "Malinska-Dubašnica",
+      "settlementLatitude": 45.1250642,
+      "settlementLongitude": 14.5288239,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Malinska-Dubašnica",
+      "permutiveData.location[3]": "Malinska"
+     }
+    },
+    {
+     "oglas": "7625626",
+     "naslov": "PREDIVNA KAMENA KUĆA NA MIRNOJ LOKACIJI!",
+     "lat": 45.1250642,
+     "lon": 14.5288239,
+     "isPreciseLocation": false,
+     "mjesto": "Malinska",
+     "polja": {
+      "cityId": "e9c26dc0-6ddb-4e0e-b71c-690df71b3010",
+      "settlementId": "462c0c7e-f5bd-46c7-a9c3-b16c6cb0504f",
+      "latitude": 45.1250642,
+      "longitude": 14.5288239,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Malinska-Dubašnica",
+      "settlementName": "Malinska",
+      "locationName": "Malinska-Dubašnica",
+      "settlementLatitude": 45.1250642,
+      "settlementLongitude": 14.5288239,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Malinska-Dubašnica",
+      "permutiveData.location[3]": "Malinska"
+     }
+    },
+    {
+     "oglas": "7625625",
+     "naslov": "ODLIČNA LOKACIJA, KUĆA SA 3 STANA!",
+     "lat": 45.0278995,
+     "lon": 14.5752114,
+     "isPreciseLocation": false,
+     "mjesto": "Krk",
+     "polja": {
+      "cityId": "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+      "settlementId": "d25ac76a-fb3d-4dfb-b26e-6fdc56057f5b",
+      "latitude": 45.0278995,
+      "longitude": 14.5752114,
+      "isPreciseLocation": false,
+      "cityName": "Krk",
+      "settlementName": "Krk",
+      "locationName": "Krk",
+      "settlementLatitude": 45.0259957,
+      "settlementLongitude": 14.5734276,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Krk",
+      "permutiveData.location[3]": "Krk"
+     }
+    },
+    {
+     "oglas": "7625624",
+     "naslov": "VRHUNSKA KAMENA KUĆA U VRBNIKU",
+     "lat": 45.0757288,
+     "lon": 14.6752504,
+     "isPreciseLocation": false,
+     "mjesto": "Vrbnik",
+     "polja": {
+      "cityId": "daf4061c-d5c5-4607-8003-6d8a0fab414c",
+      "settlementId": "6b5622b9-37b1-4cbd-8c40-4219c4359ab3",
+      "latitude": 45.0757288,
+      "longitude": 14.6752504,
+      "isPreciseLocation": false,
+      "cityName": "Vrbnik",
+      "settlementName": "Vrbnik",
+      "locationName": "Vrbnik",
+      "settlementLatitude": 45.0756694,
+      "settlementLongitude": 14.6743573,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vrbnik",
+      "permutiveData.location[3]": "Vrbnik"
+     }
+    },
+    {
+     "oglas": "7625613",
+     "naslov": "STARINA NA MIRNOJ LOKACIJI!",
+     "lat": 45.3756926,
+     "lon": 14.3839655,
+     "isPreciseLocation": false,
+     "mjesto": "Viškovo",
+     "polja": {
+      "cityId": "c18873e8-9f93-4638-b312-07908e7c7dc4",
+      "settlementId": "962efc0b-06e1-4cf9-8afd-e35c5a6a7a22",
+      "latitude": 45.3756926,
+      "longitude": 14.3839655,
+      "isPreciseLocation": false,
+      "cityName": "Viškovo",
+      "settlementName": "Viškovo",
+      "locationName": "Viškovo",
+      "settlementLatitude": 45.3776425,
+      "settlementLongitude": 14.3858617,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Viškovo",
+      "permutiveData.location[3]": "Viškovo"
+     }
+    },
+    {
+     "oglas": "7625611",
+     "naslov": "SAMOSTOJEĆA KUĆA IDEALNA ZA INVESTICIJU!",
+     "lat": 45.1456036,
+     "lon": 14.6622562,
+     "isPreciseLocation": false,
+     "mjesto": "Šilo",
+     "polja": {
+      "cityId": "84408878-6c27-41b9-9acc-d6c6511512b6",
+      "settlementId": "67aca848-b363-43ca-9205-25da87cd240d",
+      "latitude": 45.1456036,
+      "longitude": 14.6622562,
+      "isPreciseLocation": false,
+      "cityName": "Dobrinj",
+      "settlementName": "Šilo",
+      "locationName": "Dobrinj",
+      "settlementLatitude": 45.1456036,
+      "settlementLongitude": 14.6622562,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Dobrinj",
+      "permutiveData.location[3]": "Šilo"
+     }
+    },
+    {
+     "oglas": "7625606",
+     "naslov": "BAŠKA-DVOJNA KUĆA S 4 APP POGLED NA MORE",
+     "lat": 44.9710827,
+     "lon": 14.7522269,
+     "isPreciseLocation": false,
+     "mjesto": "Baška",
+     "polja": {
+      "cityId": "be39bb7d-f9bf-4b80-b807-8f90f8bd2821",
+      "settlementId": "f800df25-013c-4142-8673-07d95bcca4d5",
+      "latitude": 44.9710827,
+      "longitude": 14.7522269,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Baška",
+      "settlementName": "Baška",
+      "locationName": "Baška",
+      "settlementLatitude": 44.9700771,
+      "settlementLongitude": 14.751627,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Baška",
+      "permutiveData.location[3]": "Baška"
+     }
+    },
+    {
+     "oglas": "4050720",
+     "naslov": "Zemljište Mali Lošinj Nerezine",
+     "lat": 44.65755846620539,
+     "lon": 14.395669817324466,
+     "isPreciseLocation": false,
+     "mjesto": "Nerezine",
+     "polja": {
+      "cityId": "21a57a53-5e8a-4640-baa1-2428432f253f",
+      "settlementId": "8c0e989d-7197-433e-b550-84f5e37ca74a",
+      "latitude": 44.65755846620539,
+      "longitude": 14.395669817324466,
+      "isPreciseLocation": false,
+      "cityName": "Mali Lošinj",
+      "settlementName": "Nerezine",
+      "locationName": "Mali Lošinj",
+      "settlementLatitude": 44.65755846620539,
+      "settlementLongitude": 14.395669817324466,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Mali Lošinj",
+      "permutiveData.location[3]": "Nerezine"
+     }
+    },
+    {
+     "oglas": "7627625",
+     "naslov": "MOŠĆENICE, zemljište s građevinskom dozvolom i panoramskim p",
+     "lat": 45.2263109,
+     "lon": 14.2475087,
+     "isPreciseLocation": false,
+     "mjesto": "Mošćenice",
+     "polja": {
+      "cityId": "7276d1fa-f644-405c-8116-a09473701697",
+      "settlementId": "ec3faba7-3809-43e1-9bcc-0a8f8a1ca1db",
+      "latitude": 45.2263109,
+      "longitude": 14.2475087,
+      "isPreciseLocation": false,
+      "cityName": "Mošćenička Draga",
+      "settlementName": "Mošćenice",
+      "locationName": "Mošćenička Draga",
+      "settlementLatitude": 45.2263109,
+      "settlementLongitude": 14.2475087,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Mošćenička Draga",
+      "permutiveData.location[3]": "Mošćenice"
+     }
+    },
+    {
+     "oglas": "7627526",
+     "naslov": "Zemljište Klana, 1.250m2",
+     "lat": 45.4222677,
+     "lon": 14.3451339,
+     "isPreciseLocation": false,
+     "mjesto": "Breza",
+     "polja": {
+      "cityId": "68aae8ff-b1c8-44bc-8c42-69916762da8e",
+      "settlementId": "5f47d780-a8ab-4b91-a51c-064c8d908858",
+      "latitude": 45.4222677,
+      "longitude": 14.3451339,
+      "isPreciseLocation": false,
+      "cityName": "Klana",
+      "settlementName": "Breza",
+      "locationName": "Klana",
+      "settlementLatitude": 45.4222677,
+      "settlementLongitude": 14.3451339,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Klana",
+      "permutiveData.location[3]": "Breza"
+     }
+    },
+    {
+     "oglas": "7627503",
+     "naslov": "KLANA, BREZA - GRAĐEVINSKI TEREN NA DOBROJ LOKACIJI",
+     "lat": 45.4222677,
+     "lon": 14.3451339,
+     "isPreciseLocation": false,
+     "mjesto": "Breza",
+     "polja": {
+      "cityId": "68aae8ff-b1c8-44bc-8c42-69916762da8e",
+      "settlementId": "5f47d780-a8ab-4b91-a51c-064c8d908858",
+      "latitude": 45.4222677,
+      "longitude": 14.3451339,
+      "isPreciseLocation": false,
+      "cityName": "Klana",
+      "settlementName": "Breza",
+      "locationName": "Klana",
+      "settlementLatitude": 45.4222677,
+      "settlementLongitude": 14.3451339,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Klana",
+      "permutiveData.location[3]": "Breza"
+     }
+    },
+    {
+     "oglas": "7626160",
+     "naslov": "ATRAKTIVNO GRAĐEVINSKO ZEMLJIŠTE S GRAĐEVINSKOM DOZVOLOM I P",
+     "lat": 45.0738088,
+     "lon": 14.4659526,
+     "isPreciseLocation": false,
+     "mjesto": "Linardići",
+     "polja": {
+      "cityId": "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+      "settlementId": "bc6713bd-385b-4a7a-84fb-f528ce3e4cf2",
+      "latitude": 45.0738088,
+      "longitude": 14.4659526,
+      "isPreciseLocation": false,
+      "cityName": "Krk",
+      "settlementName": "Linardići",
+      "locationName": "Krk",
+      "settlementLatitude": 45.07380879999999,
+      "settlementLongitude": 14.4659526,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Krk",
+      "permutiveData.location[3]": "Linardići"
+     }
+    },
+    {
+     "oglas": "7449346",
+     "naslov": "LOVRAN, GRAĐEVNSKO ZEMLJIŠTE STAMBENE NAMJENE, POGLED NA MOR",
+     "lat": 45.2969275,
+     "lon": 14.2723701,
+     "isPreciseLocation": false,
+     "mjesto": "Lovran",
+     "polja": {
+      "cityId": "27d87653-402b-464e-844d-5c4bd9c1e4c3",
+      "settlementId": "a2eed01c-78c2-4cd6-8782-947c3548ff18",
+      "latitude": 45.2969275,
+      "longitude": 14.2723701,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Lovran",
+      "settlementName": "Lovran",
+      "locationName": "Lovran",
+      "settlementLatitude": 45.2969275,
+      "settlementLongitude": 14.2723701,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Lovran",
+      "permutiveData.location[3]": "Lovran"
+     }
+    },
+    {
+     "oglas": "7449317",
+     "naslov": "Lovran - Dobreć građevinsko zemljište 1417 m2",
+     "lat": 45.304985,
+     "lon": 14.265236,
+     "isPreciseLocation": false,
+     "mjesto": "Dobreć",
+     "polja": {
+      "cityId": "98f82c8b-1ecb-429a-b8af-dbaebb69d7ea",
+      "settlementId": "b27d73fc-c8e2-40d3-bf7d-a9126ed43f57",
+      "latitude": 45.304985,
+      "longitude": 14.265236,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Opatija - Okolica",
+      "settlementName": "Dobreć",
+      "locationName": "Opatija - Okolica",
+      "settlementLatitude": 45.30498499999999,
+      "settlementLongitude": 14.265236,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Opatija - Okolica",
+      "permutiveData.location[3]": "Dobreć"
+     }
+    },
+    {
+     "oglas": "7625847",
+     "naslov": "Građevinsko zemljište, Lukovdol, 3.651 m2",
+     "lat": 45.4188074,
+     "lon": 15.1441839,
+     "isPreciseLocation": false,
+     "mjesto": "Draga Lukovdolska",
+     "polja": {
+      "cityId": "68714b3e-3c95-411d-a763-716e76452956",
+      "settlementId": "94235e35-b56d-4d64-9b46-5c9f0e82d6ed",
+      "latitude": 45.4188074,
+      "longitude": 15.1441839,
+      "isPreciseLocation": false,
+      "cityName": "Vrbovsko",
+      "settlementName": "Draga Lukovdolska",
+      "locationName": "Vrbovsko",
+      "settlementLatitude": 45.4188074,
+      "settlementLongitude": 15.1441839,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vrbovsko",
+      "permutiveData.location[3]": "Draga Lukovdolska"
+     }
+    },
+    {
+     "oglas": "7625806",
+     "naslov": "Građevinsko zemljište 1.071 m² s pogledom na Kvarnerski zalj",
+     "lat": 45.3491453,
+     "lon": 14.2987629,
+     "isPreciseLocation": false,
+     "mjesto": "Bregi",
+     "polja": {
+      "cityId": "762fcd90-c987-4e62-8cf3-f23b8bb1c886",
+      "settlementId": "c1e32569-7ff0-48e7-9032-597bde447702",
+      "latitude": 45.3491453,
+      "longitude": 14.2987629,
+      "isPreciseLocation": false,
+      "cityName": "Matulji",
+      "settlementName": "Bregi",
+      "locationName": "Matulji",
+      "settlementLatitude": 45.348531,
+      "settlementLongitude": 14.2985138,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Matulji",
+      "permutiveData.location[3]": "Bregi"
+     }
+    },
+    {
+     "oglas": "7625798",
+     "naslov": "Gorski Kotar, Hlevci, pravokutna parcela, 4.780 m2",
+     "lat": 45.3957216,
+     "lon": 14.9288774,
+     "isPreciseLocation": false,
+     "mjesto": "Hlevci",
+     "polja": {
+      "cityId": "1ac164f4-80a8-4e66-a83f-45019607a225",
+      "settlementId": "e041c237-f4e9-40ba-9d81-385e7de08285",
+      "latitude": 45.3957216,
+      "longitude": 14.9288774,
+      "isPreciseLocation": false,
+      "cityName": "Skrad",
+      "settlementName": "Hlevci",
+      "locationName": "Skrad",
+      "settlementLatitude": 45.39572159999999,
+      "settlementLongitude": 14.9288774,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Skrad",
+      "permutiveData.location[3]": "Hlevci"
+     }
+    },
+    {
+     "oglas": "7625796",
+     "naslov": "Opatija, Medveja, građevinsko zemljište 6100m2, stara kuća 2",
+     "lat": 45.2690624,
+     "lon": 14.268346,
+     "isPreciseLocation": false,
+     "mjesto": "Medveja",
+     "polja": {
+      "cityId": "27d87653-402b-464e-844d-5c4bd9c1e4c3",
+      "settlementId": "8052797b-7419-40ce-ab88-75bf12ca4d52",
+      "latitude": 45.2690624,
+      "longitude": 14.268346,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Lovran",
+      "settlementName": "Medveja",
+      "locationName": "Lovran",
+      "settlementLatitude": 45.2690624,
+      "settlementLongitude": 14.268346,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Lovran",
+      "permutiveData.location[3]": "Medveja"
+     }
+    },
+    {
+     "oglas": "7625789",
+     "naslov": "Rijeka, Krasica, građevinski teren, 1050 m2, dozvola i plaće",
+     "lat": 45.310599,
+     "lon": 14.553903,
+     "isPreciseLocation": false,
+     "mjesto": "Krasica",
+     "polja": {
+      "cityId": "7c09b091-82bc-4d6a-90f0-456968312871",
+      "settlementId": "139fa2b6-f0ce-49af-91cb-a8afb44187c3",
+      "latitude": 45.310599,
+      "longitude": 14.553903,
+      "isPreciseLocation": false,
+      "citySewerage": true,
+      "cityName": "Bakar",
+      "settlementName": "Krasica",
+      "locationName": "Bakar",
+      "settlementLatitude": 45.310039,
+      "settlementLongitude": 14.554181,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Bakar",
+      "permutiveData.location[3]": "Krasica"
+     }
+    },
+    {
+     "oglas": "7625761",
+     "naslov": "Gorski kotar, Lič, građevinsko zemljište, 2.539 m2",
+     "lat": 45.2779969,
+     "lon": 14.7181764,
+     "isPreciseLocation": false,
+     "mjesto": "Lič",
+     "polja": {
+      "cityId": "7fdc782e-ae70-4cfb-861d-6c5911f70293",
+      "settlementId": "5cc88da8-a097-4a1d-89af-eb3140d71127",
+      "latitude": 45.2779969,
+      "longitude": 14.7181764,
+      "isPreciseLocation": false,
+      "cityName": "Fužine",
+      "settlementName": "Lič",
+      "locationName": "Fužine",
+      "settlementLatitude": 45.2779969,
+      "settlementLongitude": 14.7181764,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Fužine",
+      "permutiveData.location[3]": "Lič"
+     }
+    },
+    {
+     "oglas": "7625706",
+     "naslov": "Građevinsko zemljište Viškovo - odlična pozicija!",
+     "lat": 45.3756926,
+     "lon": 14.3839655,
+     "isPreciseLocation": false,
+     "mjesto": "Viškovo",
+     "polja": {
+      "cityId": "c18873e8-9f93-4638-b312-07908e7c7dc4",
+      "settlementId": "962efc0b-06e1-4cf9-8afd-e35c5a6a7a22",
+      "latitude": 45.3756926,
+      "longitude": 14.3839655,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Viškovo",
+      "settlementName": "Viškovo",
+      "locationName": "Viškovo",
+      "settlementLatitude": 45.3776425,
+      "settlementLongitude": 14.3858617,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Viškovo",
+      "permutiveData.location[3]": "Viškovo"
+     }
+    },
+    {
+     "oglas": "7625633",
+     "naslov": "GRAĐEVINSKI TEREN GRAD KRK PANORAMSKI POGLED",
+     "lat": 45.0278995,
+     "lon": 14.5752114,
+     "isPreciseLocation": false,
+     "mjesto": "Krk",
+     "polja": {
+      "cityId": "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+      "settlementId": "d25ac76a-fb3d-4dfb-b26e-6fdc56057f5b",
+      "latitude": 45.0278995,
+      "longitude": 14.5752114,
+      "isPreciseLocation": false,
+      "cityName": "Krk",
+      "settlementName": "Krk",
+      "locationName": "Krk",
+      "settlementLatitude": 45.0259957,
+      "settlementLongitude": 14.5734276,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Krk",
+      "permutiveData.location[3]": "Krk"
+     }
+    },
+    {
+     "oglas": "7625589",
+     "naslov": "KOSTRENA GRAĐEVINSKO ZEMLJIŠTE",
+     "lat": 45.2949552,
+     "lon": 14.5110369,
+     "isPreciseLocation": false,
+     "mjesto": "Paveki",
+     "polja": {
+      "cityId": "d0a44061-2065-4062-90be-aac95217c288",
+      "settlementId": "9187e62d-b51a-45ea-9561-f5cd86f68a89",
+      "latitude": 45.2949552,
+      "longitude": 14.5110369,
+      "isPreciseLocation": false,
+      "cityName": "Kostrena",
+      "settlementName": "Paveki",
+      "locationName": "Kostrena",
+      "settlementLatitude": 45.2946101,
+      "settlementLongitude": 14.5091072,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Kostrena",
+      "permutiveData.location[3]": "Paveki"
+     }
+    },
+    {
+     "oglas": "7625588",
+     "naslov": "GRAĐEVINSKO ZEMLJIŠTE KOSTRENA",
+     "lat": 45.2992599,
+     "lon": 14.510126,
+     "isPreciseLocation": false,
+     "mjesto": "Kostrena",
+     "polja": {
+      "cityId": "d0a44061-2065-4062-90be-aac95217c288",
+      "settlementId": "901a6ccf-c0c8-42b0-ad24-1a00d6617cfb",
+      "latitude": 45.2992599,
+      "longitude": 14.510126,
+      "isPreciseLocation": false,
+      "cityName": "Kostrena",
+      "settlementName": "Kostrena",
+      "locationName": "Kostrena",
+      "settlementLatitude": 45.3097736,
+      "settlementLongitude": 14.488711,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Kostrena",
+      "permutiveData.location[3]": "Kostrena"
+     }
+    },
+    {
+     "oglas": "7625587",
+     "naslov": "GRAĐEVINSKO ZEMLJIŠTE KOSTRENA",
+     "lat": 45.2992599,
+     "lon": 14.510126,
+     "isPreciseLocation": false,
+     "mjesto": "Kostrena",
+     "polja": {
+      "cityId": "d0a44061-2065-4062-90be-aac95217c288",
+      "settlementId": "901a6ccf-c0c8-42b0-ad24-1a00d6617cfb",
+      "latitude": 45.2992599,
+      "longitude": 14.510126,
+      "isPreciseLocation": false,
+      "cityName": "Kostrena",
+      "settlementName": "Kostrena",
+      "locationName": "Kostrena",
+      "settlementLatitude": 45.3097736,
+      "settlementLongitude": 14.488711,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Kostrena",
+      "permutiveData.location[3]": "Kostrena"
+     }
+    },
+    {
+     "oglas": "7625586",
+     "naslov": "KOSTRENA GRAĐEVINSKO ZEMLJIŠTE S IDEJNIM PROJEKTOM",
+     "lat": 45.2992599,
+     "lon": 14.510126,
+     "isPreciseLocation": false,
+     "mjesto": "Kostrena",
+     "polja": {
+      "cityId": "d0a44061-2065-4062-90be-aac95217c288",
+      "settlementId": "901a6ccf-c0c8-42b0-ad24-1a00d6617cfb",
+      "latitude": 45.2992599,
+      "longitude": 14.510126,
+      "isPreciseLocation": false,
+      "cityName": "Kostrena",
+      "settlementName": "Kostrena",
+      "locationName": "Kostrena",
+      "settlementLatitude": 45.3097736,
+      "settlementLongitude": 14.488711,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Kostrena",
+      "permutiveData.location[3]": "Kostrena"
+     }
+    },
+    {
+     "oglas": "7625585",
+     "naslov": "KOSTRENA GRAĐEVINSKO ZEMLJIŠTE",
+     "lat": 45.2992599,
+     "lon": 14.510126,
+     "isPreciseLocation": false,
+     "mjesto": "Kostrena",
+     "polja": {
+      "cityId": "d0a44061-2065-4062-90be-aac95217c288",
+      "settlementId": "901a6ccf-c0c8-42b0-ad24-1a00d6617cfb",
+      "latitude": 45.2992599,
+      "longitude": 14.510126,
+      "isPreciseLocation": false,
+      "cityName": "Kostrena",
+      "settlementName": "Kostrena",
+      "locationName": "Kostrena",
+      "settlementLatitude": 45.3097736,
+      "settlementLongitude": 14.488711,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Kostrena",
+      "permutiveData.location[3]": "Kostrena"
+     }
+    },
+    {
+     "oglas": "7625584",
+     "naslov": "KRK GRAĐEVINSKO ZEMLJIŠTE",
+     "lat": 45.0278995,
+     "lon": 14.5752114,
+     "isPreciseLocation": false,
+     "mjesto": "Krk",
+     "polja": {
+      "cityId": "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+      "settlementId": "d25ac76a-fb3d-4dfb-b26e-6fdc56057f5b",
+      "latitude": 45.0278995,
+      "longitude": 14.5752114,
+      "isPreciseLocation": false,
+      "cityName": "Krk",
+      "settlementName": "Krk",
+      "locationName": "Krk",
+      "settlementLatitude": 45.0259957,
+      "settlementLongitude": 14.5734276,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Krk",
+      "permutiveData.location[3]": "Krk"
+     }
+    },
+    {
+     "oglas": "7625460",
+     "naslov": "Građevinsko zemljište u središtu Vrbovskog",
+     "lat": 45.3747493,
+     "lon": 15.078054,
+     "isPreciseLocation": false,
+     "mjesto": "Vrbovsko",
+     "polja": {
+      "cityId": "68714b3e-3c95-411d-a763-716e76452956",
+      "settlementId": "ecfc13aa-4e5f-4588-8526-1679c067b031",
+      "latitude": 45.3747493,
+      "longitude": 15.078054,
+      "isPreciseLocation": false,
+      "cityName": "Vrbovsko",
+      "settlementName": "Vrbovsko",
+      "locationName": "Vrbovsko",
+      "settlementLatitude": 45.3740414,
+      "settlementLongitude": 15.0782512,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Vrbovsko",
+      "permutiveData.location[3]": "Vrbovsko"
+     }
+    },
+    {
+     "oglas": "7625431",
+     "naslov": "Rukavac - građevinsko zemljište 1396 m²",
+     "lat": 45.36546,
+     "lon": 14.29996,
+     "isPreciseLocation": false,
+     "mjesto": "Rukavac",
+     "polja": {
+      "cityId": "762fcd90-c987-4e62-8cf3-f23b8bb1c886",
+      "settlementId": "00f298d8-c50d-4a2c-a600-22e0f549354f",
+      "latitude": 45.36546,
+      "longitude": 14.29996,
+      "isPreciseLocation": false,
+      "cityName": "Matulji",
+      "settlementName": "Rukavac",
+      "locationName": "Matulji",
+      "settlementLatitude": 45.3654646,
+      "settlementLongitude": 14.2999549,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Matulji",
+      "permutiveData.location[3]": "Rukavac"
+     }
+    },
+    {
+     "oglas": "7625428",
+     "naslov": "Kastav - građevinsko zemljište, 1347m2, Prodaja!",
+     "lat": 45.36826,
+     "lon": 14.34836,
+     "isPreciseLocation": false,
+     "mjesto": "Kastav",
+     "polja": {
+      "cityId": "1fe788b7-013d-4282-b6c3-4986be8e77cb",
+      "settlementId": "7ef1d067-04d3-478d-a715-0459dc76fa91",
+      "latitude": 45.36826,
+      "longitude": 14.34836,
+      "isPreciseLocation": false,
+      "cityName": "Kastav",
+      "settlementName": "Kastav",
+      "locationName": "Kastav",
+      "settlementLatitude": 45.3682585,
+      "settlementLongitude": 14.352017,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Kastav",
+      "permutiveData.location[3]": "Kastav"
+     }
+    },
+    {
+     "oglas": "7449249",
+     "naslov": "Otok Krk, Šilo, 9.700m2 poljoprivrednog zemljišta",
+     "lat": 45.1456036,
+     "lon": 14.6622562,
+     "isPreciseLocation": false,
+     "mjesto": "Šilo",
+     "polja": {
+      "cityId": "84408878-6c27-41b9-9acc-d6c6511512b6",
+      "settlementId": "67aca848-b363-43ca-9205-25da87cd240d",
+      "latitude": 45.1456036,
+      "longitude": 14.6622562,
+      "isPreciseLocation": false,
+      "cityName": "Dobrinj",
+      "settlementName": "Šilo",
+      "locationName": "Dobrinj",
+      "settlementLatitude": 45.1456036,
+      "settlementLongitude": 14.6622562,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Dobrinj",
+      "permutiveData.location[3]": "Šilo"
+     }
+    },
+    {
+     "oglas": "7448333",
+     "naslov": "ZEMLJIŠTE VIŠKOVO ZA GRADNJU 31 STAMBENE JEDINICE",
+     "lat": 45.3969917,
+     "lon": 14.392612,
+     "isPreciseLocation": false,
+     "mjesto": "Marčelji",
+     "polja": {
+      "cityId": "c18873e8-9f93-4638-b312-07908e7c7dc4",
+      "settlementId": "bc1d076b-1a15-42c3-a937-204cdd9df392",
+      "latitude": 45.3969917,
+      "longitude": 14.392612,
+      "isPreciseLocation": false,
+      "cityName": "Viškovo",
+      "settlementName": "Marčelji",
+      "locationName": "Viškovo",
+      "settlementLatitude": 45.39729579999999,
+      "settlementLongitude": 14.3891577,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Viškovo",
+      "permutiveData.location[3]": "Marčelji"
+     }
+    },
+    {
+     "oglas": "7448328",
+     "naslov": "MOŠĆENIČKA DRAGA ZEMLJIŠTE SA DOZVOLOM ZA VILU",
+     "lat": 45.2392298,
+     "lon": 14.2533736,
+     "isPreciseLocation": false,
+     "mjesto": "Mošćenička Draga",
+     "polja": {
+      "cityId": "7276d1fa-f644-405c-8116-a09473701697",
+      "settlementId": "c10eec4d-9f2a-4f80-af05-f78619636e1b",
+      "latitude": 45.2392298,
+      "longitude": 14.2533736,
+      "isPreciseLocation": false,
+      "cityName": "Mošćenička Draga",
+      "settlementName": "Mošćenička Draga",
+      "locationName": "Mošćenička Draga",
+      "settlementLatitude": 45.2392298,
+      "settlementLongitude": 14.2533736,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Mošćenička Draga",
+      "permutiveData.location[3]": "Mošćenička Draga"
+     }
+    },
+    {
+     "oglas": "7448327",
+     "naslov": "MOŠĆENIČKA DRAGA ZEMLJIŠTE SA DOZVOLOM ZA VILU",
+     "lat": 45.2392298,
+     "lon": 14.2533736,
+     "isPreciseLocation": false,
+     "mjesto": "Mošćenička Draga",
+     "polja": {
+      "cityId": "7276d1fa-f644-405c-8116-a09473701697",
+      "settlementId": "c10eec4d-9f2a-4f80-af05-f78619636e1b",
+      "latitude": 45.2392298,
+      "longitude": 14.2533736,
+      "isPreciseLocation": false,
+      "cityName": "Mošćenička Draga",
+      "settlementName": "Mošćenička Draga",
+      "locationName": "Mošćenička Draga",
+      "settlementLatitude": 45.2392298,
+      "settlementLongitude": 14.2533736,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Mošćenička Draga",
+      "permutiveData.location[3]": "Mošćenička Draga"
+     }
+    },
+    {
+     "oglas": "7448325",
+     "naslov": "OPATIJA,VEPRINAC-Mirna lokacija sa predivnim pogledom na mor",
+     "lat": 45.3358254,
+     "lon": 14.2751518,
+     "isPreciseLocation": false,
+     "mjesto": "Veprinac",
+     "polja": {
+      "cityId": "98f82c8b-1ecb-429a-b8af-dbaebb69d7ea",
+      "settlementId": "504b6c3e-d917-4a23-8ee9-3b1094c3c3d1",
+      "latitude": 45.3358254,
+      "longitude": 14.2751518,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Opatija - Okolica",
+      "settlementName": "Veprinac",
+      "locationName": "Opatija - Okolica",
+      "settlementLatitude": 45.3358032,
+      "settlementLongitude": 14.2743616,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Opatija - Okolica",
+      "permutiveData.location[3]": "Veprinac"
+     }
+    },
+    {
+     "oglas": "7448305",
+     "naslov": "MOŠĆENIČKA DRAGA ZEMLJIŠTE SA DOZVOLOM ZA VILU",
+     "lat": 45.2392298,
+     "lon": 14.2533736,
+     "isPreciseLocation": false,
+     "mjesto": "Mošćenička Draga",
+     "polja": {
+      "cityId": "7276d1fa-f644-405c-8116-a09473701697",
+      "settlementId": "c10eec4d-9f2a-4f80-af05-f78619636e1b",
+      "latitude": 45.2392298,
+      "longitude": 14.2533736,
+      "isPreciseLocation": false,
+      "cityName": "Mošćenička Draga",
+      "settlementName": "Mošćenička Draga",
+      "locationName": "Mošćenička Draga",
+      "settlementLatitude": 45.2392298,
+      "settlementLongitude": 14.2533736,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Mošćenička Draga",
+      "permutiveData.location[3]": "Mošćenička Draga"
+     }
+    },
+    {
+     "oglas": "7448301",
+     "naslov": "KASTAV GRAĐEVINSKI TEREN 800m2 PRODAJA",
+     "lat": 45.3715797,
+     "lon": 14.3504236,
+     "isPreciseLocation": false,
+     "mjesto": "Kastav",
+     "polja": {
+      "cityId": "1fe788b7-013d-4282-b6c3-4986be8e77cb",
+      "settlementId": "7ef1d067-04d3-478d-a715-0459dc76fa91",
+      "latitude": 45.3715797,
+      "longitude": 14.3504236,
+      "isPreciseLocation": false,
+      "cityName": "Kastav",
+      "settlementName": "Kastav",
+      "locationName": "Kastav",
+      "settlementLatitude": 45.3682585,
+      "settlementLongitude": 14.352017,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Kastav",
+      "permutiveData.location[3]": "Kastav"
+     }
+    },
+    {
+     "oglas": "7448286",
+     "naslov": "MOŠENIČKA DRAGA GRAĐEVINSKI TEREN 150M DO MORA",
+     "lat": 45.2263109,
+     "lon": 14.2475087,
+     "isPreciseLocation": false,
+     "mjesto": "Mošćenice",
+     "polja": {
+      "cityId": "7276d1fa-f644-405c-8116-a09473701697",
+      "settlementId": "ec3faba7-3809-43e1-9bcc-0a8f8a1ca1db",
+      "latitude": 45.2263109,
+      "longitude": 14.2475087,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Mošćenička Draga",
+      "settlementName": "Mošćenice",
+      "locationName": "Mošćenička Draga",
+      "settlementLatitude": 45.2263109,
+      "settlementLongitude": 14.2475087,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Mošćenička Draga",
+      "permutiveData.location[3]": "Mošćenice"
+     }
+    },
+    {
+     "oglas": "7448276",
+     "naslov": "BREGI ATRAKTIVAN TEREN SA PANORAMSKIM POGLEDOM",
+     "lat": 45.3491453,
+     "lon": 14.2987629,
+     "isPreciseLocation": false,
+     "mjesto": "Bregi",
+     "polja": {
+      "cityId": "762fcd90-c987-4e62-8cf3-f23b8bb1c886",
+      "settlementId": "c1e32569-7ff0-48e7-9032-597bde447702",
+      "latitude": 45.3491453,
+      "longitude": 14.2987629,
+      "isPreciseLocation": false,
+      "cityName": "Matulji",
+      "settlementName": "Bregi",
+      "locationName": "Matulji",
+      "settlementLatitude": 45.348531,
+      "settlementLongitude": 14.2985138,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Matulji",
+      "permutiveData.location[3]": "Bregi"
+     }
+    },
+    {
+     "oglas": "7448264",
+     "naslov": "MATULJI BRGUD GRAĐEVINSKI TEREN",
+     "lat": 45.4248901,
+     "lon": 14.2695546,
+     "isPreciseLocation": false,
+     "mjesto": "Veli Brgud",
+     "polja": {
+      "cityId": "762fcd90-c987-4e62-8cf3-f23b8bb1c886",
+      "settlementId": "f0680f14-f34a-4bb8-92b7-8a7a5df7d95a",
+      "latitude": 45.4248901,
+      "longitude": 14.2695546,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "cityName": "Matulji",
+      "settlementName": "Veli Brgud",
+      "locationName": "Matulji",
+      "settlementLatitude": 45.4248901,
+      "settlementLongitude": 14.2695546,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Matulji",
+      "permutiveData.location[3]": "Veli Brgud"
+     }
+    },
+    {
+     "oglas": "7448263",
+     "naslov": "OPATIJA -građevinsko zemljište s pogledom na more!",
+     "lat": 45.335817,
+     "lon": 14.3088627,
+     "isPreciseLocation": false,
+     "mjesto": "Opatija - Centar",
+     "polja": {
+      "cityId": "7b2c1ce8-a44a-4c69-a005-b6d44341c1b2",
+      "settlementId": "eb58ff63-a2b5-4dcc-8d8c-1c9d57a497e7",
+      "latitude": 45.335817,
+      "longitude": 14.3088627,
+      "isPreciseLocation": false,
+      "cityName": "Opatija",
+      "settlementName": "Opatija - Centar",
+      "locationName": "Opatija",
+      "settlementLatitude": 45.3377692,
+      "settlementLongitude": 14.305187,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Opatija",
+      "permutiveData.location[3]": "Opatija - Centar"
+     }
+    },
+    {
+     "oglas": "7448188",
+     "naslov": "KRK MALINSKA GRAĐEVINSKI TEREN NA ODLIČNOJ LOKACIJI",
+     "lat": 45.0398702,
+     "lon": 14.6262932,
+     "isPreciseLocation": false,
+     "mjesto": "Krk",
+     "polja": {
+      "cityId": "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+      "settlementId": "d25ac76a-fb3d-4dfb-b26e-6fdc56057f5b",
+      "latitude": 45.0398702,
+      "longitude": 14.6262932,
+      "isPreciseLocation": false,
+      "cityName": "Krk",
+      "settlementName": "Krk",
+      "locationName": "Krk",
+      "settlementLatitude": 45.0259957,
+      "settlementLongitude": 14.5734276,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Krk",
+      "permutiveData.location[3]": "Krk"
+     }
+    },
+    {
+     "oglas": "6656301",
+     "naslov": "Poljoprivredno zemljište, Lovran (Lovran), 1000m2",
+     "lat": 45.2969275,
+     "lon": 14.2723701,
+     "isPreciseLocation": false,
+     "mjesto": "Lovran",
+     "polja": {
+      "cityId": "27d87653-402b-464e-844d-5c4bd9c1e4c3",
+      "settlementId": "a2eed01c-78c2-4cd6-8782-947c3548ff18",
+      "latitude": 45.2969275,
+      "longitude": 14.2723701,
+      "isPreciseLocation": false,
+      "citySewerage": true,
+      "cityWaterSupply": true,
+      "cityName": "Lovran",
+      "settlementName": "Lovran",
+      "locationName": "Lovran",
+      "settlementLatitude": 45.2969275,
+      "settlementLongitude": 14.2723701,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Lovran",
+      "permutiveData.location[3]": "Lovran"
+     }
+    },
+    {
+     "oglas": "3218716",
+     "naslov": "Zemljište Opatija - Okolica Dobreć",
+     "lat": 45.30498499999999,
+     "lon": 14.265236,
+     "isPreciseLocation": false,
+     "mjesto": "Dobreć",
+     "polja": {
+      "cityId": "98f82c8b-1ecb-429a-b8af-dbaebb69d7ea",
+      "settlementId": "b27d73fc-c8e2-40d3-bf7d-a9126ed43f57",
+      "latitude": 45.30498499999999,
+      "longitude": 14.265236,
+      "isPreciseLocation": false,
+      "cityName": "Opatija - Okolica",
+      "settlementName": "Dobreć",
+      "locationName": "Opatija - Okolica",
+      "settlementLatitude": 45.30498499999999,
+      "settlementLongitude": 14.265236,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Opatija - Okolica",
+      "permutiveData.location[3]": "Dobreć"
+     }
+    },
+    {
+     "oglas": "7447999",
+     "naslov": "Opatija - Bregi - Građevinski teren 665 m2",
+     "lat": 45.3491453,
+     "lon": 14.2987629,
+     "isPreciseLocation": false,
+     "mjesto": "Bregi",
+     "polja": {
+      "cityId": "762fcd90-c987-4e62-8cf3-f23b8bb1c886",
+      "settlementId": "c1e32569-7ff0-48e7-9032-597bde447702",
+      "latitude": 45.3491453,
+      "longitude": 14.2987629,
+      "isPreciseLocation": false,
+      "cityWaterSupply": true,
+      "citySewerage": true,
+      "cityName": "Matulji",
+      "settlementName": "Bregi",
+      "locationName": "Matulji",
+      "settlementLatitude": 45.348531,
+      "settlementLongitude": 14.2985138,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Matulji",
+      "permutiveData.location[3]": "Bregi"
+     }
+    },
+    {
+     "oglas": "7447995",
+     "naslov": "Mošćenička Draga - Obrš - Građevinski teren",
+     "lat": 45.2504732,
+     "lon": 14.2515339,
+     "isPreciseLocation": false,
+     "mjesto": "Obrš",
+     "polja": {
+      "cityId": "7276d1fa-f644-405c-8116-a09473701697",
+      "settlementId": "a70830f7-57b7-4f06-ac1a-b75811fea838",
+      "latitude": 45.2504732,
+      "longitude": 14.2515339,
+      "isPreciseLocation": false,
+      "cityName": "Mošćenička Draga",
+      "settlementName": "Obrš",
+      "locationName": "Mošćenička Draga",
+      "settlementLatitude": 45.25047319999999,
+      "settlementLongitude": 14.2515339,
+      "permutiveData.location[0]": "HRVATSKA",
+      "permutiveData.location[1]": "Primorsko-goranska",
+      "permutiveData.location[2]": "Mošćenička Draga",
+      "permutiveData.location[3]": "Obrš"
+     }
+    }
+   ]
+  }
+ },
+ {
+  "ulaz": "https://www.index.hr/oglasi/nekretnine/prodaja-kuca/oglas/lovran-kuca-sa-velikom-okucnicom-i-otvorenim-pogledom-na-mo/7448309",
+  "skripti": 6,
+  "isjecci": [
+   {
+    "skripta": "b4d7f9ad-9746-4daa-b552-8205ef41f49d-web.js",
+    "isjecak": "g(){}warn(){}error(){}withPrefix(){return this}}function I(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:\"#0469d0\";const r=[`background-color: ${t}`,\"color:white\",`border:1px solid ${t}`,\"padding: 0px 2px\",\"margin: 0px 1px\",\"border-radius: 2px\"].join(\";\");return[\"%c%s\",[r,e]]}const S=\"[MESSAGES]\";class E{logger;messageListenerMap={};replayQueue={};onceTracker={};defaultMessageOptions={withReplay:!1,once:!1};constructor(e){this.logger=e}on(e,t,r){const n=this.mergeMessageOptions(r);n."
+   },
+   {
+    "skripta": "b4d7f9ad-9746-4daa-b552-8205ef41f49d-web.js",
+    "isjecak": "g(){}warn(){}error(){}withPrefix(){return this}}function L(e){let t=arguments.length>1&&void 0!==arguments[1]?arguments[1]:\"#0469d0\";const r=[`background-color: ${t}`,\"color:white\",`border:1px solid ${t}`,\"padding: 0px 2px\",\"margin: 0px 1px\",\"border-radius: 2px\"].join(\";\");return[\"%c%s\",[r,e]]}class F{crypto=(()=>self.crypto||self.msCrypto)();ALG_NAME=\"AES-GCM\";isAvailable(){return!!this.crypto?.subtle}generateKey(){let t=arguments.length>0&&void 0!==arguments[0]&&arguments[0];return(0,e.t_)(this.cryp"
+   },
+   {
+    "skripta": "sdk.js#xfbml=1&version=v13.0",
+    "isjecak": "eyframes fb_transform{0\\u0025{opacity:0;transform:scale(.95)}to{opacity:1;transform:scale(1)}}.fb_animate{animation:fb_transform .3s forwards}\\n\\n.fb_dialog{background:#525252b3;position:absolute;top:-10000px;z-index:10001}.fb_dialog_advanced{border-radius:8px;padding:10px}.fb_dialog_content{background:#fff;color:#373737}.fb_dialog_close_icon{background:url(https:\\/\\/connect.facebook.net\\/rsrc.php\\/v4\\/yq\\/r\\/IE9JII6Z1Ys.png) no-repeat scroll 0 0 transparent;cursor:pointer;display:block;height:15px;po"
+   },
+   {
+    "skripta": "sdk.js#xfbml=1&version=v13.0",
+    "isjecak": "t .dialog_header td.header_right{font-size:12px;padding-right:5px;vertical-align:middle;width:60px}.fb_dialog_content .touchable_button{background:linear-gradient(from(#4267B2),to(#2a4887));background-clip:padding-box;border:1px solid #29487d;border-radius:3px;display:inline-block;line-height:18px;margin-top:3px;max-width:85px;padding:4px 12px;position:relative}.fb_dialog_content .dialog_header .touchable_button input{background:none;border:none;color:#fff;font:700 12px Helvetica,sans-serif;margin:2px"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "Tag=t.getShallow(\"tag\"),o&&r.disableBox||(e.textBackgroundColor=oe(t.getShallow(\"backgroundColor\"),r),e.textPadding=t.getShallow(\"padding\"),e.textBorderColor=oe(t.getShallow(\"borderColor\"),r),e.textBorderWidth=t.getShallow(\"borderWidth\"),e.textBorderRadius=t.getShallow(\"borderRadius\"),e.textBoxShadowColor=t.getShallow(\"shadowColor\"),e.textBoxShadowBlur=t.getShallow(\"shadowBlur\"),e.textBoxShadowOffsetX=t.getShallow(\"shadowOffsetX\"),e.textBoxShadowOffsetY=t.getShallow(\"shadowOffsetY\")),e.textShadowColor"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "r.disableBox||(e.textBackgroundColor=oe(t.getShallow(\"backgroundColor\"),r),e.textPadding=t.getShallow(\"padding\"),e.textBorderColor=oe(t.getShallow(\"borderColor\"),r),e.textBorderWidth=t.getShallow(\"borderWidth\"),e.textBorderRadius=t.getShallow(\"borderRadius\"),e.textBoxShadowColor=t.getShallow(\"shadowColor\"),e.textBoxShadowBlur=t.getShallow(\"shadowBlur\"),e.textBoxShadowOffsetX=t.getShallow(\"shadowOffsetX\"),e.textBoxShadowOffsetY=t.getShallow(\"shadowOffsetY\")),e.textShadowColor=t.getShallow(\"textShadowCo"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "e:t.price,priceTo:t.priceTo,priceM2:t.priceM2,averagePriceM2:t.averagePriceM2,lowerRangePriceM2:t.lowerRangePriceM2,higherRangePriceM2:t.higherRangePriceM2,latitude:t.latitude,rentPriceType:t.rentPriceType,priceType:t.priceType,longitude:t.longitude,isPreciseLocation:t.isPreciseLocation,hasPhones:t.hasPhones,previousPrice:t.previousPrice,priceReductionPercentage:t.priceReductionPercentage,featuredProperty:t.featuredProperty,videoUrl:t.videoUrl,viewCount:t.viewCount,searchedViewCount:t.searchedViewCount,favoriteC"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "priceTo,priceM2:t.priceM2,averagePriceM2:t.averagePriceM2,lowerRangePriceM2:t.lowerRangePriceM2,higherRangePriceM2:t.higherRangePriceM2,latitude:t.latitude,rentPriceType:t.rentPriceType,priceType:t.priceType,longitude:t.longitude,isPreciseLocation:t.isPreciseLocation,hasPhones:t.hasPhones,previousPrice:t.previousPrice,priceReductionPercentage:t.priceReductionPercentage,featuredProperty:t.featuredProperty,videoUrl:t.videoUrl,viewCount:t.viewCount,searchedViewCount:t.searchedViewCount,favoriteCount:t.favoriteCount"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "idth\",\"height\",\"lineHeight\",\"align\",\"verticalAlign\",\"baseline\",\"shadowColor\",\"shadowBlur\",\"shadowOffsetX\",\"shadowOffsetY\",\"textShadowColor\",\"textShadowBlur\",\"textShadowOffsetX\",\"textShadowOffsetY\",\"backgroundColor\",\"borderColor\",\"borderWidth\",\"borderRadius\",\"padding\"],t.getDataItemValue=function(e){return!o(e)||c(e)||e instanceof Date?e:e.value},t.isDataItemOption=function(e){return o(e)&&!(e instanceof Array)},t.mappingToExists=function(e,t){t=(t||[]).slice();var n=a.map(e||[],function(e,t){return{ex"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "isString(e)?{color:e,extraCssText:t}:e||{}).color,r=e.type,i=(t=e.extraCssText,e.renderMode||\"html\"),o=e.markerId||\"X\";return n?\"html\"===i?\"subItem\"===r?'<span style=\"display:inline-block;vertical-align:middle;margin-right:8px;margin-left:3px;border-radius:4px;width:4px;height:4px;background-color:'+l(n)+\";\"+(t||\"\")+'\"></span>':'<span style=\"display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:'+l(n)+\";\"+(t||\"\")+'\"></span>':{renderMode:i,content:\"{marker\"+o+"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "\"subItem\"===r?'<span style=\"display:inline-block;vertical-align:middle;margin-right:8px;margin-left:3px;border-radius:4px;width:4px;height:4px;background-color:'+l(n)+\";\"+(t||\"\")+'\"></span>':'<span style=\"display:inline-block;margin-right:5px;border-radius:10px;width:10px;height:10px;background-color:'+l(n)+\";\"+(t||\"\")+'\"></span>':{renderMode:i,content:\"{marker\"+o+\"|}  \",style:{color:n}}:\"\"},t.formatTime=function(e,t,n){\"week\"!==e&&\"month\"!==e&&\"quarter\"!==e&&\"half-year\"!==e&&\"year\"!==e||(e=\"MM-dd\\nyy"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "n i)i.hasOwnProperty(o)&&(n[o]=i[o])}return n};var r=\"function\"===typeof Object.values?Object.values:function(e){var t=[];for(var n in e)t.push(e[n]);return t}},function(e,t,n){\"use strict\";t.a=function(e){var t=function(t){var n=t.bgStyle,a=t.borderRadius,c=t.iconFillColor,s=t.round,l=t.size,u=o(t,[\"bgStyle\",\"borderRadius\",\"iconFillColor\",\"round\",\"size\"]);return r.a.createElement(\"svg\",i({viewBox:\"0 0 64 64\",width:l,height:l},u),s?r.a.createElement(\"circle\",{cx:\"32\",cy:\"32\",r:\"31\",fill:e.color,style:"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "peof Object.values?Object.values:function(e){var t=[];for(var n in e)t.push(e[n]);return t}},function(e,t,n){\"use strict\";t.a=function(e){var t=function(t){var n=t.bgStyle,a=t.borderRadius,c=t.iconFillColor,s=t.round,l=t.size,u=o(t,[\"bgStyle\",\"borderRadius\",\"iconFillColor\",\"round\",\"size\"]);return r.a.createElement(\"svg\",i({viewBox:\"0 0 64 64\",width:l,height:l},u),s?r.a.createElement(\"circle\",{cx:\"32\",cy:\"32\",r:\"31\",fill:e.color,style:n}):r.a.createElement(\"rect\",{width:\"64\",height:\"64\",rx:a,ry:a,fill:"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "l},u),s?r.a.createElement(\"circle\",{cx:\"32\",cy:\"32\",r:\"31\",fill:e.color,style:n}):r.a.createElement(\"rect\",{width:\"64\",height:\"64\",rx:a,ry:a,fill:e.color,style:n}),r.a.createElement(\"path\",{d:e.path,fill:c}))};return t.defaultProps={bgStyle:{},borderRadius:0,iconFillColor:\"white\",size:64},t};var a=n(0),r=n.n(a),i=this&&this.__assign||function(){return(i=Object.assign||function(e){for(var t,n=1,a=arguments.length;n<a;n++)for(var r in t=arguments[n])Object.prototype.hasOwnProperty.call(t,r)&&(e[r]=t[r])"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ngth&&(r[e.field]=i);break;case s.t.multiLevel:if(n&&\"location\"===e.dataSource&&!C.includes(Object(d.d)(a)))r.countryId=n.countryId,r.countyId=n.countyId,r.cityId=n.cityId,r.settlementId=n.settlementId,r.latitude=n.latitude,r.longitude=n.longitude,r.isPreciseLocation=!1;else{var o=[];Object(c.y)(e.child,o),o.forEach(function(e){t[e]&&(r[e]=t[e])})}break;case s.t.multiFieldSelectorCb:case s.t.multiFieldSelector:e.options.forEach(function(e){Object(c.H)(t[e.field])&&(r[e.field]=t[e.field])});break;case s.t.tyres:O"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ay?Array:Uint16Array;function y(e){return e._rawCount>65535?_:v}var b=[\"hasItemOption\",\"_nameList\",\"_idList\",\"_invertedIndicesMap\",\"_rawData\",\"_chunkSize\",\"_chunkCount\",\"_dimValueGetter\",\"_count\",\"_rawCount\",\"_nameDimIdx\",\"_idDimIdx\"],x=[\"_extent\",\"_approximateExtent\",\"_rawExtent\"];function w(e,t){a.each(b.concat(t.__wrappedMethods||[]),function(n){t.hasOwnProperty(n)&&(e[n]=t[n])}),e.__wrappedMethods=t.__wrappedMethods,a.each(x,function(n){e[n]=a.clone(t[n])}),e._calculationInfo=a.extend(t._calculationInf"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "],this._idList=[],this._optionModels=[],this._visual={},this._layout={},this._itemVisuals=[],this.hasItemVisual={},this._itemLayouts=[],this._graphicEls=[],this._chunkSize=1e5,this._chunkCount=0,this._rawData,this._rawExtent={},this._extent={},this._approximateExtent={},this._dimensionsSummary=u(this),this._invertedIndicesMap=i,this._calculationInfo={},this.userOutput=this._dimensionsSummary.userOutput},k=O.prototype;function j(e,t,n,a,r){var i=m[t.type],o=a-1,c=t.name,s=e[c][o];if(s&&s.length<n){for(var l"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "r=this.count();if(!this._indices)return this._rawExtent[e].slice();if(a=this._extent[e])return a.slice();for(var i=(a=n)[0],o=a[1],c=0;c<r;c++){var s=this._getFast(e,this.getRawIndex(c));s<i&&(i=s),s>o&&(o=s)}return a=[i,o],this._extent[e]=a,a},k.getApproximateExtent=function(e){return e=this.getDimension(e),this._approximateExtent[e]||this.getDataExtent(e)},k.setApproximateExtent=function(e,t){t=this.getDimension(t),this._approximateExtent[t]=e.slice()},k.getCalculationInfo=function(e){return this._calcul"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ";if(a=this._extent[e])return a.slice();for(var i=(a=n)[0],o=a[1],c=0;c<r;c++){var s=this._getFast(e,this.getRawIndex(c));s<i&&(i=s),s>o&&(o=s)}return a=[i,o],this._extent[e]=a,a},k.getApproximateExtent=function(e){return e=this.getDimension(e),this._approximateExtent[e]||this.getDataExtent(e)},k.setApproximateExtent=function(e,t){t=this.getDimension(t),this._approximateExtent[t]=e.slice()},k.getCalculationInfo=function(e){return this._calculationInfo[e]},k.setCalculationInfo=function(e,t){p(e)?a.extend(thi"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "a=n)[0],o=a[1],c=0;c<r;c++){var s=this._getFast(e,this.getRawIndex(c));s<i&&(i=s),s>o&&(o=s)}return a=[i,o],this._extent[e]=a,a},k.getApproximateExtent=function(e){return e=this.getDimension(e),this._approximateExtent[e]||this.getDataExtent(e)},k.setApproximateExtent=function(e,t){t=this.getDimension(t),this._approximateExtent[t]=e.slice()},k.getCalculationInfo=function(e){return this._calculationInfo[e]},k.setCalculationInfo=function(e,t){p(e)?a.extend(this._calculationInfo,e):this._calculationInfo[e]=t},"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "Index(c));s<i&&(i=s),s>o&&(o=s)}return a=[i,o],this._extent[e]=a,a},k.getApproximateExtent=function(e){return e=this.getDimension(e),this._approximateExtent[e]||this.getDataExtent(e)},k.setApproximateExtent=function(e,t){t=this.getDimension(t),this._approximateExtent[t]=e.slice()},k.getCalculationInfo=function(e){return this._calculationInfo[e]},k.setCalculationInfo=function(e,t){p(e)?a.extend(this._calculationInfo,e):this._calculationInfo[e]=t},k.getSum=function(e){var t=0;if(this._storage[e])for(var n=0,"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "nSubmit:r,isMobile:a,showPlaceholder:o,isSingleElement:!0,getPopupContainer:y})));default:return null}};_.defaultProps={isSearch:!1},t.a=_},function(e,t,n){\"use strict\";t.a=function(e,t){return e[0]+=+t[0],e[1]+=+t[1],e},t.b=function(e,t){var n=t.getRadius(),a=t.getCenter(),r=a[0],i=a[1],o=e[0],c=e[1],s=o-r,l=c-i;0===s&&0===l&&(s=1);var u=Math.sqrt(s*s+l*l);return[r+n*s/u,i+n*l/u]},t.c=r,t.e=function(e,t){for(var n=!0,a=e.length-1;a>=0;--a)if(e[a]!=t[a]){n=!1;break}return n},t.g=function(e,t){var n=Ma"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " new x(o,r.a.XY,[o.length])},t.b=function(e,t,n){for(var a=t||32,r=e.getStride(),i=e.getLayout(),o=e.getCenter(),c=r*(a+1),s=new Array(c),l=0;l<c;l+=r){s[l]=0,s[l+1]=0;for(var u=2;u<r;u++)s[l+u]=o[u]}var d=[s.length],p=new x(s,i,d);return w(p,o,e.getRadius(),n),p},t.d=w;var a,r=n(270),i=n(1159),o=n(185),c=n(164),s=n(390),l=n(47),u=n(230),d=n(81),p=n(1160),f=n(272),h=n(391),m=n(1162),_=n(692),g=n(491),v=n(78),y=n(330),b=(n(689),this&&this.__extends||(a=function(e,t){return(a=Object.setPrototypeOf||{__p"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "start\",\"startValue\"],[\"end\",\"endValue\"]],function(e,r){var i=null!=t[e[0]],o=null!=t[e[1]];i&&!o?n[r]=\"percent\":!i&&o?n[r]=\"value\":a?n[r]=a[r]:i&&(n[r]=\"percent\")})}var f=a.extendComponentModel({type:\"dataZoom\",dependencies:[\"xAxis\",\"yAxis\",\"zAxis\",\"radiusAxis\",\"angleAxis\",\"singleAxis\",\"series\"],defaultOption:{zlevel:0,z:4,orient:null,xAxisIndex:null,yAxisIndex:null,filterMode:\"filter\",throttle:null,start:0,end:100,startValue:null,endValue:null,minSpan:null,maxSpan:null,minValueSpan:null,maxValueSpan:"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "function n(){this.constructor=e}a(e,t),e.prototype=null===t?Object.create(t):(n.prototype=t.prototype,new n)}),l=function(e){function t(t,n,a){var r=e.call(this)||this;if(void 0!==a&&void 0===n)r.setFlatCoordinates(a,t);else{var i=n||0;r.setCenterAndRadius(t,i,a)}return r}return s(t,e),t.prototype.clone=function(){var e=new t(this.flatCoordinates.slice(),void 0,this.layout);return e.applyProperties(this),e},t.prototype.closestPointXY=function(e,t,n,a){var r=this.flatCoordinates,i=e-r[0],o=t-r[1],c=i*i"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "Coordinates.slice(),void 0,this.layout);return e.applyProperties(this),e},t.prototype.closestPointXY=function(e,t,n,a){var r=this.flatCoordinates,i=e-r[0],o=t-r[1],c=i*i+o*o;if(c<a){if(0===c)for(var s=0;s<this.stride;++s)n[s]=r[s];else{var l=this.getRadius()/Math.sqrt(c);n[0]=r[0]+l*i,n[1]=r[1]+l*o;for(s=2;s<this.stride;++s)n[s]=r[s]}return n.length=this.stride,c}return a},t.prototype.containsXY=function(e,t){var n=this.flatCoordinates,a=e-n[0],r=t-n[1];return a*a+r*r<=this.getRadiusSquared_()},t.prot"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "lse{var l=this.getRadius()/Math.sqrt(c);n[0]=r[0]+l*i,n[1]=r[1]+l*o;for(s=2;s<this.stride;++s)n[s]=r[s]}return n.length=this.stride,c}return a},t.prototype.containsXY=function(e,t){var n=this.flatCoordinates,a=e-n[0],r=t-n[1];return a*a+r*r<=this.getRadiusSquared_()},t.prototype.getCenter=function(){return this.flatCoordinates.slice(0,this.stride)},t.prototype.computeExtent=function(e){var t=this.flatCoordinates,n=t[this.stride]-t[0];return Object(i.k)(t[0]-n,t[1]-n,t[0]+n,t[1]+n,e)},t.prototype.getRa"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "usSquared_()},t.prototype.getCenter=function(){return this.flatCoordinates.slice(0,this.stride)},t.prototype.computeExtent=function(e){var t=this.flatCoordinates,n=t[this.stride]-t[0];return Object(i.k)(t[0]-n,t[1]-n,t[0]+n,t[1]+n,e)},t.prototype.getRadius=function(){return Math.sqrt(this.getRadiusSquared_())},t.prototype.getRadiusSquared_=function(){var e=this.flatCoordinates[this.stride]-this.flatCoordinates[0],t=this.flatCoordinates[this.stride+1]-this.flatCoordinates[1];return e*e+t*t},t.prototype"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "n(){return this.flatCoordinates.slice(0,this.stride)},t.prototype.computeExtent=function(e){var t=this.flatCoordinates,n=t[this.stride]-t[0];return Object(i.k)(t[0]-n,t[1]-n,t[0]+n,t[1]+n,e)},t.prototype.getRadius=function(){return Math.sqrt(this.getRadiusSquared_())},t.prototype.getRadiusSquared_=function(){var e=this.flatCoordinates[this.stride]-this.flatCoordinates[0],t=this.flatCoordinates[this.stride+1]-this.flatCoordinates[1];return e*e+t*t},t.prototype.getType=function(){return\"Circle\"},t.proto"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ice(0,this.stride)},t.prototype.computeExtent=function(e){var t=this.flatCoordinates,n=t[this.stride]-t[0];return Object(i.k)(t[0]-n,t[1]-n,t[0]+n,t[1]+n,e)},t.prototype.getRadius=function(){return Math.sqrt(this.getRadiusSquared_())},t.prototype.getRadiusSquared_=function(){var e=this.flatCoordinates[this.stride]-this.flatCoordinates[0],t=this.flatCoordinates[this.stride+1]-this.flatCoordinates[1];return e*e+t*t},t.prototype.getType=function(){return\"Circle\"},t.prototype.intersectsExtent=function(e){"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "))}return!1},t.prototype.setCenter=function(e){var t=this.stride,n=this.flatCoordinates[t]-this.flatCoordinates[0],a=e.slice();a[t]=a[0]+n;for(var r=1;r<t;++r)a[t+r]=e[r];this.setFlatCoordinates(this.layout,a),this.changed()},t.prototype.setCenterAndRadius=function(e,t,n){this.setLayout(n,e,0),this.flatCoordinates||(this.flatCoordinates=[]);var a=this.flatCoordinates,r=Object(o.a)(a,0,e,this.stride);a[r++]=a[0]+t;for(var i=1,c=this.stride;i<c;++i)a[r++]=a[i];a.length=r,this.changed()},t.prototype.getC"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "this.flatCoordinates,r=Object(o.a)(a,0,e,this.stride);a[r++]=a[0]+t;for(var i=1,c=this.stride;i<c;++i)a[r++]=a[i];a.length=r,this.changed()},t.prototype.getCoordinates=function(){return null},t.prototype.setCoordinates=function(e,t){},t.prototype.setRadius=function(e){this.flatCoordinates[this.stride]=this.flatCoordinates[0]+e,this.changed()},t.prototype.rotate=function(e,t){var n=this.getCenter(),a=this.getStride();this.setCenter(Object(c.a)(n,0,n.length,a,e,t,n)),this.changed()},t.prototype.translat"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "e{Object(o.a)(\"function\"===typeof e.getZIndex,41);var a=e;n=[a]}t=function(){return n}}return t},t.a=function(e,t){if(!s){var n=new r.a({color:\"rgba(255,255,255,0.4)\"}),o=new i.a({color:\"#3399CC\",width:1.25});s=[new c({image:new a.a({fill:n,stroke:o,radius:5}),fill:n,stroke:o})]}return s},t.b=function(){var e={},t=[255,255,255,1],n=[0,153,255,1];return e.Polygon=[new c({fill:new r.a({color:[255,255,255,.5]})})],e.MultiPolygon=e.Polygon,e.LineString=[new c({stroke:new i.a({color:t,width:5})}),new c({st"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "[255,255,255,.5]})})],e.MultiPolygon=e.Polygon,e.LineString=[new c({stroke:new i.a({color:t,width:5})}),new c({stroke:new i.a({color:n,width:3})})],e.MultiLineString=e.LineString,e.Circle=e.Polygon.concat(e.LineString),e.Point=[new c({image:new a.a({radius:6,fill:new r.a({color:n}),stroke:new i.a({color:t,width:1.5})}),zIndex:1/0})],e.MultiPoint=e.Point,e.GeometryCollection=e.Polygon.concat(e.LineString,e.Point),e};var a=n(1178),r=n(697),i=n(1180),o=n(105),c=function(){function e(e){var t=e||{};this.g"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "derColor,h=s(c);if(P(t,\"shadowBlur\",n.textBoxShadowBlur||0),P(t,\"shadowColor\",n.textBoxShadowColor||\"transparent\"),P(t,\"shadowOffsetX\",n.textBoxShadowOffsetX||0),P(t,\"shadowOffsetY\",n.textBoxShadowOffsetY||0),h||u&&f){t.beginPath();var m=n.textBorderRadius;m?d.buildPath(t,{x:a,y:r,width:i,height:o,r:m}):t.rect(a,r,i,o),t.closePath()}if(h)if(P(t,\"fillStyle\",c),null!=n.fillOpacity){var _=t.globalAlpha;t.globalAlpha=n.fillOpacity*n.opacity,t.fill(),t.globalAlpha=_}else t.fill();else if(l(c)){var g=c.imag"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "])},r.prototype.scale=function(e){var t=this._extent;return e*(t[1]-t[0])+t[0]},r.prototype.unionExtent=function(e){var t=this._extent;e[0]<t[0]&&(t[0]=e[0]),e[1]>t[1]&&(t[1]=e[1])},r.prototype.unionExtentFromData=function(e,t){this.unionExtent(e.getApproximateExtent(t))},r.prototype.getExtent=function(){return this._extent.slice()},r.prototype.setExtent=function(e,t){var n=this._extent;isNaN(e)||(n[0]=e),isNaN(t)||(n[1]=t)},r.prototype.isBlank=function(){return this._isBlank},r.prototype.setBlank=function"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "t();e[0]=Math.min(e[0]+t,r)-t,e[1]=Math.min(e[1]+n,i)-n,e[0]=Math.max(e[0],0),e[1]=Math.max(e[1],0)}(f,h,m,a);var v=s.get(\"backgroundColor\");v&&\"auto\"!==v||(v=t.get(\"axisLine.lineStyle.color\")),e.label={shape:{x:0,y:0,width:h,height:m,r:s.get(\"borderRadius\")},position:f.slice(),style:{text:c,textFont:u,textFill:s.getTextColor(),textPosition:\"inside\",textPadding:l,fill:v,stroke:s.get(\"borderColor\")||\"transparent\",lineWidth:s.get(\"borderWidth\")||0,shadowBlur:s.get(\"shadowBlur\"),shadowColor:s.get(\"shadow"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "-image-current\",{x:-1*S,y:-1*E,zoom:N}),A(\"prevSrc\",\"ril-image-prev ril__imagePrev\",{x:-1*P.width});var L={overlay:f({zIndex:1e3,backgroundColor:\"transparent\"},g.overlay),content:f({backgroundColor:\"transparent\",overflow:\"hidden\",border:\"none\",borderRadius:0,padding:0,top:0,left:0,right:0,bottom:0},g.content)};return r.a.createElement(s.a,p({isOpen:!0,onRequestClose:c?this.requestClose:void 0,onAfterOpen:function(){t.outerEl.current&&t.outerEl.current.focus(),b()},style:L,contentLabel:y(\"Lightbox\"),ap"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "e)},autoFocus:!0,style:{marginBottom:16}})),q&&h.a.createElement(h.a.Fragment,null,h.a.createElement(\"span\",{className:v.a.label},\"Opi\\u0161ite ukratko (minimalno 20 znakova)\"),h.a.createElement(_.a,{style:{width:\"100%\",minHeight:100,padding:8,borderRadius:4,border:\"1px solid #d9d9d9\",boxSizing:\"border-box\",marginBottom:16},autoFocus:!X,placeholder:\" Npr. \\u0161to se dogodilo ili \\u0161to biste \\u017eeljeli pobolj\\u0161ati\",value:C,onChange:function(e){return M(e.target.value)}})),h.a.createElement(\"d"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ffsetX:0,textShadowOffsetY:0,textBoxShadowColor:\"transparent\",textBoxShadowBlur:0,textBoxShadowOffsetX:0,textBoxShadowOffsetY:0,transformText:!1,textRotation:0,textOrigin:null,textBackgroundColor:null,textBorderColor:null,textBorderWidth:0,textBorderRadius:0,textPadding:null,rich:null,truncate:null,blend:null,bind:function(e,t,n){var o=n&&n.style,c=!o||e.__attrCachedBy!==r.STYLE_BIND;e.__attrCachedBy=r.STYLE_BIND;for(var s=0;s<i.length;s++){var l=i[s],u=l[0];(c||this[u]!==o[u])&&(e[u]=a(e,u,this[u]||l"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "lassExtend(p);var g=p;e.exports=g},function(e,t,n){n(58).__DEV__;var a=n(5),r=n(4463),i=n(43).parsePercent,o=n(160),c=o.createScaleByModel,s=o.niceScaleExtent,l=n(159),u=n(181).getStackedDimension;function d(e,t){var n=this,r=n.getAngleAxis(),i=n.getRadiusAxis();if(r.scale.setExtent(1/0,-1/0),i.scale.setExtent(1/0,-1/0),e.eachSeries(function(e){if(e.coordinateSystem===n){var t=e.getData();a.each(t.mapDimension(\"radius\",!0),function(e){i.scale.unionExtentFromData(t,u(t,e))}),a.each(t.mapDimension(\"angl"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "9),u=n(181).getStackedDimension;function d(e,t){var n=this,r=n.getAngleAxis(),i=n.getRadiusAxis();if(r.scale.setExtent(1/0,-1/0),i.scale.setExtent(1/0,-1/0),e.eachSeries(function(e){if(e.coordinateSystem===n){var t=e.getData();a.each(t.mapDimension(\"radius\",!0),function(e){i.scale.unionExtentFromData(t,u(t,e))}),a.each(t.mapDimension(\"angle\",!0),function(e){r.scale.unionExtentFromData(t,u(t,e))})}}),s(r.scale,r.model),s(i.scale,i.model),\"category\"===r.type&&!r.onBand){var o=r.getExtent(),c=360/r.scale"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ise\");var n=t.get(\"startAngle\");e.setExtent(n,n+(e.inverse?-360:360))}t.axis=e,e.model=t}n(4466);var f={dimensions:r.prototype.dimensions,create:function(e,t){var n=[];return e.eachComponent(\"polar\",function(e,o){var c=new r(o);c.update=d;var s=c.getRadiusAxis(),l=c.getAngleAxis(),u=e.findAxisModel(\"radiusAxis\"),f=e.findAxisModel(\"angleAxis\");p(s,u),p(l,f),function(e,t,n){var r=t.get(\"center\"),o=n.getWidth(),c=n.getHeight();e.cx=i(r[0],o),e.cy=i(r[1],c);var s=e.getRadiusAxis(),l=Math.min(o,c)/2,u=t.ge"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "inverse?-360:360))}t.axis=e,e.model=t}n(4466);var f={dimensions:r.prototype.dimensions,create:function(e,t){var n=[];return e.eachComponent(\"polar\",function(e,o){var c=new r(o);c.update=d;var s=c.getRadiusAxis(),l=c.getAngleAxis(),u=e.findAxisModel(\"radiusAxis\"),f=e.findAxisModel(\"angleAxis\");p(s,u),p(l,f),function(e,t,n){var r=t.get(\"center\"),o=n.getWidth(),c=n.getHeight();e.cx=i(r[0],o),e.cy=i(r[1],c);var s=e.getRadiusAxis(),l=Math.min(o,c)/2,u=t.get(\"radius\");null==u?u=[0,\"100%\"]:a.isArray(u)||(u=["
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "new r(o);c.update=d;var s=c.getRadiusAxis(),l=c.getAngleAxis(),u=e.findAxisModel(\"radiusAxis\"),f=e.findAxisModel(\"angleAxis\");p(s,u),p(l,f),function(e,t,n){var r=t.get(\"center\"),o=n.getWidth(),c=n.getHeight();e.cx=i(r[0],o),e.cy=i(r[1],c);var s=e.getRadiusAxis(),l=Math.min(o,c)/2,u=t.get(\"radius\");null==u?u=[0,\"100%\"]:a.isArray(u)||(u=[0,u]),u=[i(u[0],l),i(u[1],l)],s.inverse?s.setExtent(u[1],u[0]):s.setExtent(u[0],u[1])}(c,e,t),n.push(c),e.coordinateSystem=c,c.model=e}),e.eachSeries(function(t){if(\"po"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "s(),l=c.getAngleAxis(),u=e.findAxisModel(\"radiusAxis\"),f=e.findAxisModel(\"angleAxis\");p(s,u),p(l,f),function(e,t,n){var r=t.get(\"center\"),o=n.getWidth(),c=n.getHeight();e.cx=i(r[0],o),e.cy=i(r[1],c);var s=e.getRadiusAxis(),l=Math.min(o,c)/2,u=t.get(\"radius\");null==u?u=[0,\"100%\"]:a.isArray(u)||(u=[0,u]),u=[i(u[0],l),i(u[1],l)],s.inverse?s.setExtent(u[1],u[0]):s.setExtent(u[0],u[1])}(c,e,t),n.push(c),e.coordinateSystem=c,c.model=e}),e.eachSeries(function(t){if(\"polar\"===t.get(\"coordinateSystem\")){var n="
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ction o(e,t){e=e.slice();var n=a.map(e,r.capitalFirst);t=(t||[]).slice();var i=a.map(t,r.capitalFirst);return function(r,o){a.each(e,function(e,a){for(var c={name:e,capital:n[a]},s=0;s<t.length;s++)c[t[s]]=e+i[s];r.call(o,c)})}}var c=o([\"x\",\"y\",\"z\",\"radius\",\"angle\",\"single\"],[\"axisIndex\",\"axis\",\"index\",\"id\"]);t.isCoordSupported=function(e){return a.indexOf(i,e)>=0},t.createNameEach=o,t.eachAxisDim=c,t.createLinkedNodesFinder=function(e,t,n){return function(i){var o,c={nodes:[],records:{}};if(t(functio"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "=r.dimensions,c=u(t,n,r,e);if((t=a.clone(t)).type&&l[t.type]&&c.baseAxis&&c.valueAxis){var s=o(i,c.baseAxis.dim),p=o(i,c.valueAxis.dim),f=l[t.type](n,c.baseDataDim,c.valueDataDim,s,p);t.coord=f[0],t.value=f[1]}else{for(var h=[null!=t.xAxis?t.xAxis:t.radiusAxis,null!=t.yAxis?t.yAxis:t.angleAxis],m=0;m<2;m++)l[h[m]]&&(h[m]=d(n,n.mapDimension(i[m]),h[m]));t.coord=h}}return t},t.getAxisInfo=u,t.dataFilter=function(e,t){return!(e&&e.containData&&t.coord&&!function(e){return!(isNaN(parseFloat(e.x))&&isNaN(p"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "},e.prototype.setGetPointResolution=function(e){this.getPointResolutionFunc_=e},e.prototype.getPointResolutionFunc=function(){return this.getPointResolutionFunc_},e}();t.a=r},function(e,t,n){\"use strict\";t.a=i,t.b=function e(t,n){var a=n||{};var i=a.radius||r;var c=a.projection||\"EPSG:3857\";var s=t.getType();\"GeometryCollection\"!==s&&(t=t.clone().transform(c,\"EPSG:4326\"));var l=0;var u,d,p,f,h,m;switch(s){case\"Point\":case\"MultiPoint\":break;case\"LineString\":case\"LinearRing\":u=t.getCoordinates(),l=o(u,i"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "\"thumbnailImage\",width:140,render:function(e,t){return E.a.createElement(\"div\",null,E.a.createElement(\"span\",{className:N.a.adCode},t.code),E.a.createElement(\"img\",{alt:t.Name,src:Object(D.getImageLink)(e),style:{maxHeight:\"100px\",width:\"100%\",borderRadius:\"10px\"}}),E.a.createElement(\"span\",{className:N.a.price},t.price?Object(T.W)(t.price):null))}},{title:\"Naslov\",dataIndex:\"title\",key:\"title\",width:180,render:function(e,t){return E.a.createElement(M.a,{title:e,className:N.a.title,target:\"_blank\",to:"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "(t[0]=_(t[0],a[0])),n.__fixMax&&(t[1]=_(t[1],a[1])),t},unionExtent:function(e){this._originalScale.unionExtent(e);var t=this.base;e[0]=h(e[0])/h(t),e[1]=h(e[1])/h(t),c.unionExtent.call(this,e)},unionExtentFromData:function(e,t){this.unionExtent(e.getApproximateExtent(t))},niceTicks:function(e){e=e||10;var t=this._extent,n=t[1]-t[0];if(!(n===1/0||n<=0)){var a=i.quantity(n);for(e/n*a<=.5&&(a*=10);!isNaN(a)&&Math.abs(a)<1&&Math.abs(a)>0;)a*=10;var r=[i.round(p(t[0]/a)*a),i.round(d(t[1]/a)*a)];this._interval=a"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ion(e,t,n){var i,o=e.getBaseAxis(),c=e.getOtherAxis(o),s=function(e,t){var n=0,a=e.scale.getExtent();return\"start\"===t?n=a[0]:\"end\"===t?n=a[1]:a[0]>0?n=a[0]:a[1]<0&&(n=a[1]),n}(c,n),l=o.dim,u=c.dim,d=t.mapDimension(u),p=t.mapDimension(l),f=\"x\"===u||\"radius\"===u?1:0,h=r(e.dimensions,function(e){return t.mapDimension(e)}),m=t.getCalculationInfo(\"stackResultDimension\");return(i|=a(t,h[0]))&&(h[0]=m),(i|=a(t,h[1]))&&(h[1]=m),{dataDimsForPoint:h,valueStart:s,valueAxisDim:u,baseAxisDim:l,stacked:!!i,valueDi"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ground=function(e,t){var n=c.normalizeCssArray(t.get(\"padding\")),a=t.getItemStyle([\"color\",\"opacity\"]);return a.fill=t.get(\"backgroundColor\"),e=new s.Rect({shape:{x:e.x-n[3],y:e.y-n[0],width:e.width+n[1]+n[3],height:e.height+n[0]+n[2],r:t.get(\"borderRadius\")},style:a,silent:!0,z2:-1})}},function(e,t,n){n(58).__DEV__;var a=n(5),r=n(23),i=n(53),o=n(1070),c=a.each,s=a.indexOf,l=a.curry,u=[\"dataToPoint\",\"pointToData\"],d=[\"grid\",\"xAxis\",\"yAxis\",\"geo\",\"graph\",\"polar\",\"radiusAxis\",\"angleAxis\",\"bmap\"];functio"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ".height+n[0]+n[2],r:t.get(\"borderRadius\")},style:a,silent:!0,z2:-1})}},function(e,t,n){n(58).__DEV__;var a=n(5),r=n(23),i=n(53),o=n(1070),c=a.each,s=a.indexOf,l=a.curry,u=[\"dataToPoint\",\"pointToData\"],d=[\"grid\",\"xAxis\",\"yAxis\",\"geo\",\"graph\",\"polar\",\"radiusAxis\",\"angleAxis\",\"bmap\"];function p(e,t,n){var a=this._targetInfoList=[],r={},i=m(t,e);c(_,function(e,t){(!n||!n.include||s(n.include,t)>=0)&&e(i,a,r)})}var f=p.prototype;function h(e){return e[0]>e[1]&&e.reverse(),e}function m(e,t){return i.parseFi"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "function(){return\"vertical\"===this.get(\"orient\")?{index:1,name:\"vertical\"}:{index:0,name:\"horizontal\"}},defaultOption:{zlevel:0,z:4,show:!0,orient:\"horizontal\",left:\"center\",top:0,align:\"auto\",backgroundColor:\"rgba(0,0,0,0)\",borderColor:\"#ccc\",borderRadius:0,borderWidth:0,padding:5,itemGap:10,itemWidth:25,itemHeight:14,inactiveColor:\"#ccc\",inactiveBorderColor:\"#ccc\",itemStyle:{borderWidth:0},textStyle:{color:\"#333\"},selectedMode:!0,selector:!1,selectorLabel:{show:!0,borderRadius:10,padding:[3,5,3,5],f"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "rderColor:\"#ccc\",borderRadius:0,borderWidth:0,padding:5,itemGap:10,itemWidth:25,itemHeight:14,inactiveColor:\"#ccc\",inactiveBorderColor:\"#ccc\",itemStyle:{borderWidth:0},textStyle:{color:\"#333\"},selectedMode:!0,selector:!1,selectorLabel:{show:!0,borderRadius:10,padding:[3,5,3,5],fontSize:12,fontFamily:\" sans-serif\",color:\"#666\",borderWidth:1,borderColor:\"#666\"},emphasis:{selectorLabel:{show:!0,color:\"#eee\",backgroundColor:\"#666\"}},selectorPosition:\"auto\",selectorItemGap:7,selectorButtonGap:10,tooltip:{s"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ends value \"+String(t)+\" is not a constructor or null\");function n(){this.constructor=e}a(e,t),e.prototype=null===t?Object.create(t):(n.prototype=t.prototype,new n)}),o=function(e){function t(t){var n=t||{};return e.call(this,{points:1/0,fill:n.fill,radius:n.radius,stroke:n.stroke,scale:void 0!==n.scale?n.scale:1,rotation:void 0!==n.rotation?n.rotation:0,rotateWithView:void 0!==n.rotateWithView&&n.rotateWithView,displacement:void 0!==n.displacement?n.displacement:[0,0],declutterMode:n.declutterMode})|"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "e \"+String(t)+\" is not a constructor or null\");function n(){this.constructor=e}a(e,t),e.prototype=null===t?Object.create(t):(n.prototype=t.prototype,new n)}),o=function(e){function t(t){var n=t||{};return e.call(this,{points:1/0,fill:n.fill,radius:n.radius,stroke:n.stroke,scale:void 0!==n.scale?n.scale:1,rotation:void 0!==n.rotation?n.rotation:0,rotateWithView:void 0!==n.rotateWithView&&n.rotateWithView,displacement:void 0!==n.displacement?n.displacement:[0,0],declutterMode:n.declutterMode})||this}ret"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "splacement?n.displacement:[0,0],declutterMode:n.declutterMode})||this}return i(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill()?this.getFill().clone():void 0,stroke:this.getStroke()?this.getStroke().clone():void 0,radius:this.getRadius(),scale:Array.isArray(e)?e.slice():e,rotation:this.getRotation(),rotateWithView:this.getRotateWithView(),displacement:this.getDisplacement().slice(),declutterMode:this.getDeclutterMode()});return n.setOpacity(this.getOpacity()),n},t.p"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "splacement:[0,0],declutterMode:n.declutterMode})||this}return i(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill()?this.getFill().clone():void 0,stroke:this.getStroke()?this.getStroke().clone():void 0,radius:this.getRadius(),scale:Array.isArray(e)?e.slice():e,rotation:this.getRotation(),rotateWithView:this.getRotateWithView(),displacement:this.getDisplacement().slice(),declutterMode:this.getDeclutterMode()});return n.setOpacity(this.getOpacity()),n},t.prototype.setRad"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ius(),scale:Array.isArray(e)?e.slice():e,rotation:this.getRotation(),rotateWithView:this.getRotateWithView(),displacement:this.getDisplacement().slice(),declutterMode:this.getDeclutterMode()});return n.setOpacity(this.getOpacity()),n},t.prototype.setRadius=function(e){this.radius_=e,this.render()},t}(r.a);t.a=o},function(e,t,n){\"use strict\";var a,r=n(334),i=n(696),o=n(326),c=n(494),s=n(118),l=n(224),u=this&&this.__extends||(a=function(e,t){return(a=Object.setPrototypeOf||{__proto__:[]}instanceof Array"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "y(e)?e.slice():e,rotation:this.getRotation(),rotateWithView:this.getRotateWithView(),displacement:this.getDisplacement().slice(),declutterMode:this.getDeclutterMode()});return n.setOpacity(this.getOpacity()),n},t.prototype.setRadius=function(e){this.radius_=e,this.render()},t}(r.a);t.a=o},function(e,t,n){\"use strict\";var a,r=n(334),i=n(696),o=n(326),c=n(494),s=n(118),l=n(224),u=this&&this.__extends||(a=function(e,t){return(a=Object.setPrototypeOf||{__proto__:[]}instanceof Array&&function(e,t){e.__prot"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "on:0,scale:void 0!==t.scale?t.scale:1,displacement:void 0!==t.displacement?t.displacement:[0,0],declutterMode:t.declutterMode})||this).canvas_=void 0,n.hitDetectionCanvas_=null,n.fill_=void 0!==t.fill?t.fill:null,n.origin_=[0,0],n.points_=t.points,n.radius_=void 0!==t.radius?t.radius:t.radius1,n.radius2_=t.radius2,n.angle_=void 0!==t.angle?t.angle:0,n.stroke_=void 0!==t.stroke?t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale()"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "=t.scale?t.scale:1,displacement:void 0!==t.displacement?t.displacement:[0,0],declutterMode:t.declutterMode})||this).canvas_=void 0,n.hitDetectionCanvas_=null,n.fill_=void 0!==t.fill?t.fill:null,n.origin_=[0,0],n.points_=t.points,n.radius_=void 0!==t.radius?t.radius:t.radius1,n.radius2_=t.radius2,n.angle_=void 0!==t.angle?t.angle:0,n.stroke_=void 0!==t.stroke?t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "t.scale:1,displacement:void 0!==t.displacement?t.displacement:[0,0],declutterMode:t.declutterMode})||this).canvas_=void 0,n.hitDetectionCanvas_=null,n.fill_=void 0!==t.fill?t.fill:null,n.origin_=[0,0],n.points_=t.points,n.radius_=void 0!==t.radius?t.radius:t.radius1,n.radius2_=t.radius2,n.angle_=void 0!==t.angle?t.angle:0,n.stroke_=void 0!==t.stroke?t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill("
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ",displacement:void 0!==t.displacement?t.displacement:[0,0],declutterMode:t.declutterMode})||this).canvas_=void 0,n.hitDetectionCanvas_=null,n.fill_=void 0!==t.fill?t.fill:null,n.origin_=[0,0],n.points_=t.points,n.radius_=void 0!==t.radius?t.radius:t.radius1,n.radius2_=t.radius2,n.angle_=void 0!==t.angle?t.angle:0,n.stroke_=void 0!==t.stroke?t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill()?this.ge"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ent:void 0!==t.displacement?t.displacement:[0,0],declutterMode:t.declutterMode})||this).canvas_=void 0,n.hitDetectionCanvas_=null,n.fill_=void 0!==t.fill?t.fill:null,n.origin_=[0,0],n.points_=t.points,n.radius_=void 0!==t.radius?t.radius:t.radius1,n.radius2_=t.radius2,n.angle_=void 0!==t.angle?t.angle:0,n.stroke_=void 0!==t.stroke?t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill()?this.getFill().cl"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "==t.displacement?t.displacement:[0,0],declutterMode:t.declutterMode})||this).canvas_=void 0,n.hitDetectionCanvas_=null,n.fill_=void 0!==t.fill?t.fill:null,n.origin_=[0,0],n.points_=t.points,n.radius_=void 0!==t.radius?t.radius:t.radius1,n.radius2_=t.radius2,n.angle_=void 0!==t.angle?t.angle:0,n.stroke_=void 0!==t.stroke?t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill()?this.getFill().clone():void "
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "e?t.angle:0,n.stroke_=void 0!==t.stroke?t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill()?this.getFill().clone():void 0,points:this.getPoints(),radius:this.getRadius(),radius2:this.getRadius2(),angle:this.getAngle(),stroke:this.getStroke()?this.getStroke().clone():void 0,rotation:this.getRotation(),rotateWithView:this.getRotateWithView(),scale:Array.isArray(e)?e.slice():e,displacement:this.getDisp"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "troke_=void 0!==t.stroke?t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill()?this.getFill().clone():void 0,points:this.getPoints(),radius:this.getRadius(),radius2:this.getRadius2(),angle:this.getAngle(),stroke:this.getStroke()?this.getStroke().clone():void 0,rotation:this.getRotation(),rotateWithView:this.getRotateWithView(),scale:Array.isArray(e)?e.slice():e,displacement:this.getDisplacement().slic"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "id 0!==t.stroke?t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill()?this.getFill().clone():void 0,points:this.getPoints(),radius:this.getRadius(),radius2:this.getRadius2(),angle:this.getAngle(),stroke:this.getStroke()?this.getStroke().clone():void 0,rotation:this.getRotation(),rotateWithView:this.getRotateWithView(),scale:Array.isArray(e)?e.slice():e,displacement:this.getDisplacement().slice(),declu"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "t.stroke:null,n.size_=null,n.renderOptions_=null,n.render(),n}return u(t,e),t.prototype.clone=function(){var e=this.getScale(),n=new t({fill:this.getFill()?this.getFill().clone():void 0,points:this.getPoints(),radius:this.getRadius(),radius2:this.getRadius2(),angle:this.getAngle(),stroke:this.getStroke()?this.getStroke().clone():void 0,rotation:this.getRotation(),rotateWithView:this.getRotateWithView(),scale:Array.isArray(e)?e.slice():e,displacement:this.getDisplacement().slice(),declutterMode:this.ge"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "on(e){return e},t.prototype.getImageSize=function(){return this.size_},t.prototype.getImageState=function(){return r.a.LOADED},t.prototype.getOrigin=function(){return this.origin_},t.prototype.getPoints=function(){return this.points_},t.prototype.getRadius=function(){return this.radius_},t.prototype.getRadius2=function(){return this.radius2_},t.prototype.getSize=function(){return this.size_},t.prototype.getStroke=function(){return this.stroke_},t.prototype.setStroke=function(e){this.stroke_=e,this.ren"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "tImageSize=function(){return this.size_},t.prototype.getImageState=function(){return r.a.LOADED},t.prototype.getOrigin=function(){return this.origin_},t.prototype.getPoints=function(){return this.points_},t.prototype.getRadius=function(){return this.radius_},t.prototype.getRadius2=function(){return this.radius2_},t.prototype.getSize=function(){return this.size_},t.prototype.getStroke=function(){return this.stroke_},t.prototype.setStroke=function(e){this.stroke_=e,this.render()},t.prototype.listenImage"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "turn this.size_},t.prototype.getImageState=function(){return r.a.LOADED},t.prototype.getOrigin=function(){return this.origin_},t.prototype.getPoints=function(){return this.points_},t.prototype.getRadius=function(){return this.radius_},t.prototype.getRadius2=function(){return this.radius2_},t.prototype.getSize=function(){return this.size_},t.prototype.getStroke=function(){return this.stroke_},t.prototype.setStroke=function(e){this.stroke_=e,this.render()},t.prototype.listenImageChange=function(e){},t.p"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "tImageState=function(){return r.a.LOADED},t.prototype.getOrigin=function(){return this.origin_},t.prototype.getPoints=function(){return this.points_},t.prototype.getRadius=function(){return this.radius_},t.prototype.getRadius2=function(){return this.radius2_},t.prototype.getSize=function(){return this.size_},t.prototype.getStroke=function(){return this.stroke_},t.prototype.setStroke=function(e){this.stroke_=e,this.render()},t.prototype.listenImageChange=function(e){},t.prototype.load=function(){},t.pr"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "()},t.prototype.listenImageChange=function(e){},t.prototype.load=function(){},t.prototype.unlistenImageChange=function(e){},t.prototype.calculateLineJoinSize_=function(e,t,n){if(0===t||this.points_===1/0||\"bevel\"!==e&&\"miter\"!==e)return t;var a=this.radius_,r=void 0===this.radius2_?a:this.radius2_;if(a<r){var i=a;a=r,r=i}var o=void 0===this.radius2_?this.points_:2*this.points_,c=2*Math.PI/o,s=r*Math.sin(c),l=a-Math.sqrt(r*r-s*s),u=Math.sqrt(s*s+l*l),d=u/s;if(\"miter\"===e&&d<=n)return d*t;var p=t/2/d,f="
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ageChange=function(e){},t.prototype.load=function(){},t.prototype.unlistenImageChange=function(e){},t.prototype.calculateLineJoinSize_=function(e,t,n){if(0===t||this.points_===1/0||\"bevel\"!==e&&\"miter\"!==e)return t;var a=this.radius_,r=void 0===this.radius2_?a:this.radius2_;if(a<r){var i=a;a=r,r=i}var o=void 0===this.radius2_?this.points_:2*this.points_,c=2*Math.PI/o,s=r*Math.sin(c),l=a-Math.sqrt(r*r-s*s),u=Math.sqrt(s*s+l*l),d=u/s;if(\"miter\"===e&&d<=n)return d*t;var p=t/2/d,f=t/2*(l/u),h=Math.sqrt((a"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "on(e){},t.prototype.load=function(){},t.prototype.unlistenImageChange=function(e){},t.prototype.calculateLineJoinSize_=function(e,t,n){if(0===t||this.points_===1/0||\"bevel\"!==e&&\"miter\"!==e)return t;var a=this.radius_,r=void 0===this.radius2_?a:this.radius2_;if(a<r){var i=a;a=r,r=i}var o=void 0===this.radius2_?this.points_:2*this.points_,c=2*Math.PI/o,s=r*Math.sin(c),l=a-Math.sqrt(r*r-s*s),u=Math.sqrt(s*s+l*l),d=u/s;if(\"miter\"===e&&d<=n)return d*t;var p=t/2/d,f=t/2*(l/u),h=Math.sqrt((a+p)*(a+p)+f*f)-a"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "istenImageChange=function(e){},t.prototype.calculateLineJoinSize_=function(e,t,n){if(0===t||this.points_===1/0||\"bevel\"!==e&&\"miter\"!==e)return t;var a=this.radius_,r=void 0===this.radius2_?a:this.radius2_;if(a<r){var i=a;a=r,r=i}var o=void 0===this.radius2_?this.points_:2*this.points_,c=2*Math.PI/o,s=r*Math.sin(c),l=a-Math.sqrt(r*r-s*s),u=Math.sqrt(s*s+l*l),d=u/s;if(\"miter\"===e&&d<=n)return d*t;var p=t/2/d,f=t/2*(l/u),h=Math.sqrt((a+p)*(a+p)+f*f)-a;if(void 0===this.radius2_||\"bevel\"===e)return 2*h;va"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ";a=r,r=i}var o=void 0===this.radius2_?this.points_:2*this.points_,c=2*Math.PI/o,s=r*Math.sin(c),l=a-Math.sqrt(r*r-s*s),u=Math.sqrt(s*s+l*l),d=u/s;if(\"miter\"===e&&d<=n)return d*t;var p=t/2/d,f=t/2*(l/u),h=Math.sqrt((a+p)*(a+p)+f*f)-a;if(void 0===this.radius2_||\"bevel\"===e)return 2*h;var m=a*Math.sin(c),_=r-Math.sqrt(a*a-m*m),g=Math.sqrt(m*m+_*_)/m;if(g<=n){var v=g*t/2-r-a;return 2*Math.max(h,v)}return 2*h},t.prototype.createRenderOptions=function(){var e,t=l.g,n=0,a=null,r=0,i=0;this.stroke_&&(null===("
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "troke_.getWidth())&&(i=l.h),a=this.stroke_.getLineDash(),r=this.stroke_.getLineDashOffset(),void 0===(t=this.stroke_.getLineJoin())&&(t=l.g),void 0===(n=this.stroke_.getMiterLimit())&&(n=l.i));var o=this.calculateLineJoinSize_(t,i,n),s=Math.max(this.radius_,this.radius2_||0);return{strokeStyle:e,strokeWidth:i,size:Math.ceil(2*s+o),lineDash:a,lineDashOffset:r,lineJoin:t,miterLimit:n}},t.prototype.render=function(){this.renderOptions_=this.createRenderOptions();var e=this.renderOptions_.size;this.canvas"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "th())&&(i=l.h),a=this.stroke_.getLineDash(),r=this.stroke_.getLineDashOffset(),void 0===(t=this.stroke_.getLineJoin())&&(t=l.g),void 0===(n=this.stroke_.getMiterLimit())&&(n=l.i));var o=this.calculateLineJoinSize_(t,i,n),s=Math.max(this.radius_,this.radius2_||0);return{strokeStyle:e,strokeWidth:i,size:Math.ceil(2*s+o),lineDash:a,lineDashOffset:r,lineJoin:t,miterLimit:n}},t.prototype.render=function(){this.renderOptions_=this.createRenderOptions();var e=this.renderOptions_.size;this.canvas_={},this.siz"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "t[3]:1),0===n){var a=Object(s.a)(e.size,e.size);this.hitDetectionCanvas_=a.canvas,this.drawHitDetectionCanvas_(e,a)}}this.hitDetectionCanvas_||(this.hitDetectionCanvas_=this.getImage(1))},t.prototype.createPath_=function(e){var t=this.points_,n=this.radius_;if(t===1/0)e.arc(0,0,n,0,2*Math.PI);else{var a=void 0===this.radius2_?n:this.radius2_;void 0!==this.radius2_&&(t*=2);for(var r=this.angle_-Math.PI/2,i=2*Math.PI/t,o=0;o<t;o++){var c=r+o*i,s=o%2===0?n:a;e.lineTo(s*Math.cos(c),s*Math.sin(c))}e.closeP"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "as_=a.canvas,this.drawHitDetectionCanvas_(e,a)}}this.hitDetectionCanvas_||(this.hitDetectionCanvas_=this.getImage(1))},t.prototype.createPath_=function(e){var t=this.points_,n=this.radius_;if(t===1/0)e.arc(0,0,n,0,2*Math.PI);else{var a=void 0===this.radius2_?n:this.radius2_;void 0!==this.radius2_&&(t*=2);for(var r=this.angle_-Math.PI/2,i=2*Math.PI/t,o=0;o<t;o++){var c=r+o*i,s=o%2===0?n:a;e.lineTo(s*Math.cos(c),s*Math.sin(c))}e.closePath()}},t.prototype.drawHitDetectionCanvas_=function(e,t){t.translate"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "s.drawHitDetectionCanvas_(e,a)}}this.hitDetectionCanvas_||(this.hitDetectionCanvas_=this.getImage(1))},t.prototype.createPath_=function(e){var t=this.points_,n=this.radius_;if(t===1/0)e.arc(0,0,n,0,2*Math.PI);else{var a=void 0===this.radius2_?n:this.radius2_;void 0!==this.radius2_&&(t*=2);for(var r=this.angle_-Math.PI/2,i=2*Math.PI/t,o=0;o<t;o++){var c=r+o*i,s=o%2===0?n:a;e.lineTo(s*Math.cos(c),s*Math.sin(c))}e.closePath()}},t.prototype.drawHitDetectionCanvas_=function(e,t){t.translate(e.size/2,e.size"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "s_(e,a)}}this.hitDetectionCanvas_||(this.hitDetectionCanvas_=this.getImage(1))},t.prototype.createPath_=function(e){var t=this.points_,n=this.radius_;if(t===1/0)e.arc(0,0,n,0,2*Math.PI);else{var a=void 0===this.radius2_?n:this.radius2_;void 0!==this.radius2_&&(t*=2);for(var r=this.angle_-Math.PI/2,i=2*Math.PI/t,o=0;o<t;o++){var c=r+o*i,s=o%2===0?n:a;e.lineTo(s*Math.cos(c),s*Math.sin(c))}e.closePath()}},t.prototype.drawHitDetectionCanvas_=function(e,t){t.translate(e.size/2,e.size/2),this.createPath_(t)"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "._curve.lineStart()},lineEnd:function(){this._curve.lineEnd()},point:function(e,t){this._curve.point(t*Math.sin(e),t*-Math.cos(e))}}},function(e,t,n){\"use strict\";t.a=r;var a=n(1254);n(719);function r(e){var t=e.curve;return e.angle=e.x,delete e.x,e.radius=e.y,delete e.y,e.curve=function(e){return arguments.length?t(Object(a.b)(e)):t()._curve},e}},function(e,t,n){\"use strict\";t.a=function(e,t){return[(t=+t)*Math.cos(e-=Math.PI/2),t*Math.sin(e)]}},function(e,t,n){\"use strict\";var a=n(399);t.a={draw:fun"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "is._x0=this._x1=+e},${this._y0=this._y1=+t}`}closePath(){null!==this._x1&&(this._x1=this._x0,this._y1=this._y0,this._+=\"Z\")}lineTo(e,t){this._+=`L${this._x1=+e},${this._y1=+t}`}arc(e,t,n){const r=(e=+e)+(n=+n),i=t=+t;if(n<0)throw new Error(\"negative radius\");null===this._x1?this._+=`M${r},${i}`:(Math.abs(this._x1-r)>a||Math.abs(this._y1-i)>a)&&(this._+=\"L\"+r+\",\"+i),n&&(this._+=`A${n},${n},0,1,1,${e-n},${t}A${n},${n},0,1,1,${this._x1=r},${this._y1=i}`)}rect(e,t,n,a){this._+=`M${this._x0=this._x1=+e},${"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "e-page {\\n  padding-bottom: 54px; }\\n  .favorite-page .ant-card {\\n    width: 100%; }\\n\\n.page-search-bar div.ant-select-selection,\\n.page-search-bar .ant-calendar-picker input.ant-calendar-picker-input,\\n.page-search-bar input.ant-input {\\n  border-radius: 5px; }\\n\\n.page-search-bar .ant-calendar-picker span.ant-calendar-picker-icon:after {\\n  color: #000000; }\\n\\n.page-title {\\n  font-size: 32px;\\n  font-weight: 500;\\n  line-height: 48px;\\n  color: #000000;\\n  margin-bottom: 25px; }\\n  @media (max-w"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ion--single {\\n  box-shadow: none; }\\n\\n.sort-option.ant-select > div.ant-select-selection--single.ant-select-selection,\\n.sort-option.ant-select > div.ant-select-selection--single.ant-select-selection:focus {\\n  background-color: #F4F4F4;\\n  border-radius: 3px;\\n  font-weight: 500;\\n  border-radius: 5px;\\n  padding: 11px 22px 12px 17px;\\n  min-height: auto;\\n  height: auto; }\\n  .sort-option.ant-select > div.ant-select-selection--single.ant-select-selection > .ant-select-selection__rendered,\\n  .sort"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "t-option.ant-select > div.ant-select-selection--single.ant-select-selection,\\n.sort-option.ant-select > div.ant-select-selection--single.ant-select-selection:focus {\\n  background-color: #F4F4F4;\\n  border-radius: 3px;\\n  font-weight: 500;\\n  border-radius: 5px;\\n  padding: 11px 22px 12px 17px;\\n  min-height: auto;\\n  height: auto; }\\n  .sort-option.ant-select > div.ant-select-selection--single.ant-select-selection > .ant-select-selection__rendered,\\n  .sort-option.ant-select > div.ant-select-selectio"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "p .ant-select:not(.not-control).dropdown-black-placeholder .ant-select-selection:not(.ant-select-selection--multiple) .ant-select-selection__placeholder .single-photos-uploader .ant-upload.ant-upload-select.ant-upload-select-picture-card {\\n  border-radius: inherit;\\n  position: relative;\\n  padding: 0;\\n  display: inline-flex;\\n  background-color: #fff;\\n  margin: 0; }\\n  .ant-layout .ant-select:not(.not-control).dropdown-black-placeholder .ant-select-selection:not(.ant-select-selection--multiple) .a"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "brightness(0.9); }\\n\\n.ant-modal-wrap .ant-tag,\\n.ant-layout .ant-tag {\\n  height: 35px;\\n  background-color: #ffffff;\\n  border: none;\\n  color: #828282;\\n  padding: 10px;\\n  font-size: 14px;\\n  box-shadow: 0px 1px 0 0 rgba(0, 0, 0, 0.1);\\n  border-radius: 20px;\\n  line-height: 15px;\\n  padding-left: 15px;\\n  padding-right: 15px; }\\n  .ant-modal-wrap .ant-tag img, .ant-layout .ant-tag img {\\n    cursor: pointer;\\n    padding: 3px;\\n    border-radius: 50%;\\n    transition: 300ms; }\\n    .ant-modal-wra"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "x-shadow: 0px 1px 0 0 rgba(0, 0, 0, 0.1);\\n  border-radius: 20px;\\n  line-height: 15px;\\n  padding-left: 15px;\\n  padding-right: 15px; }\\n  .ant-modal-wrap .ant-tag img, .ant-layout .ant-tag img {\\n    cursor: pointer;\\n    padding: 3px;\\n    border-radius: 50%;\\n    transition: 300ms; }\\n    .ant-modal-wrap .ant-tag img:hover, .ant-layout .ant-tag img:hover {\\n      background-color: #828282; }\\n\\n.ant-modal-wrap .ant-select:not(.not-control) .ant-select-selection .ant-select-selection__placeholder,\\"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " -0.015em; }\\n\\ndiv.datepicker-modal {\\n  position: fixed;\\n  z-index: 1001; }\\n  div.datepicker-modal .datepicker.default {\\n    width: auto;\\n    left: 15px;\\n    right: 15px;\\n    top: auto;\\n    bottom: auto;\\n    padding: 10px 20px;\\n    border-radius: 3px;\\n    font-family: Poppins; }\\n    div.datepicker-modal .datepicker.default div.datepicker-header {\\n      text-align: left;\\n      font-size: 20px;\\n      font-weight: 500;\\n      line-height: 1.5;\\n      color: #292929;\\n      box-shadow: 0 1"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " div.datepicker-modal .datepicker.default .datepicker-navbar :first-child {\\n        margin-left: 15px;\\n        background-color: #f94144;\\n        color: white; }\\n    div.datepicker-modal .datepicker.default .datepicker-navbar-btn {\\n      border-radius: 5px;\\n      font-size: 14px;\\n      width: calc(50% - 8px);\\n      font-size: 15px;\\n      font-weight: 600;\\n      line-height: 23px;\\n      letter-spacing: -0.015em;\\n      height: auto;\\n      padding: 9px 25px; }\\n    div.datepicker-modal .date"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "layout .ant-select-auto-complete.ant-select-lg .ant-input,\\n.ant-layout .ant-select-auto-complete .ant-input {\\n  background-color: #F4F4F4;\\n  resize: none;\\n  color: #3f3f3f;\\n  font-size: 15px;\\n  font-weight: 600;\\n  line-height: 23px;\\n  border-radius: 5px;\\n  border: none; }\\n  .ant-modal-wrap .ant-select:not(.not-control) .ant-select-selection:focus,\\n  .ant-layout .ant-select:not(.not-control) .ant-select-selection:focus, .ant-modal-wrap .ant-calendar-picker .ant-calendar-picker-input:focus,\\n"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "put,\\n  .ant-modal-wrap .ant-input,\\n  .ant-layout div.ant-select-selection,\\n  .ant-layout .has-error .ant-input,\\n  .ant-layout .ant-input {\\n    color: #292929;\\n    background-color: #F4F4F4;\\n    border: none;\\n    font-weight: 600;\\n    border-radius: 5px;\\n    height: 54px; }\\n    .ant-modal-wrap div.ant-select-selection:focus,\\n    .ant-modal-wrap .has-error .ant-input:focus,\\n    .ant-modal-wrap .ant-input:focus,\\n    .ant-layout div.ant-select-selection:focus,\\n    .ant-layout .has-error .an"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "\\n    color: initial; }\\n    .ant-modal-wrap .ant-select-arrow:before,\\n    .ant-layout .ant-select-arrow:before {\\n      content: \"\";\\n      height: 7.5px;\\n      width: 7.5px;\\n      border-style: solid;\\n      border-color: #a5a5a5;\\n      border-radius: 0 0 1px 0px;\\n      border-width: 0px 2.4px 2.4px 0px;\\n      transform: rotate(45deg); }\\n  .ant-modal-wrap .ant-select-open .ant-select-arrow:before,\\n  .ant-layout .ant-select-open .ant-select-arrow:before {\\n    transform: rotate(225deg); }\\n  "
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "serif; }\\n  .ant-modal-wrap .ant-carousel .slick-dots,\\n  .ant-layout .ant-carousel .slick-dots {\\n    display: contents; }\\n  .ant-modal-wrap .ant-checkbox-inner,\\n  .ant-layout .ant-checkbox-inner {\\n    width: 20px;\\n    height: 20px;\\n    border-radius: 6px;\\n    border: 1px solid #bfbfbf; }\\n  .ant-modal-wrap .ant-checkbox-checked .ant-checkbox-inner,\\n  .ant-modal-wrap .ant-checkbox-indeterminate .ant-checkbox-inner,\\n  .ant-layout .ant-checkbox-checked .ant-checkbox-inner,\\n  .ant-layout .ant-c"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "  width: 24px;\\n      height: 24px;\\n      margin: 5px 0; }\\n      .ant-modal-wrap .ant-radio-wrapper .ant-radio-inner:after,\\n      .ant-layout .ant-radio-wrapper .ant-radio-inner:after {\\n        width: 16px;\\n        height: 16px;\\n        border-radius: 8px;\\n        left: 3px;\\n        top: 3px;\\n        transform: none; }\\n  .ant-modal-wrap .ant-avatar,\\n  .ant-layout .ant-avatar {\\n    background-color: #828282; }\\n  .ant-modal-wrap .ant-tag,\\n  .ant-layout .ant-tag {\\n    padding: 8px 16px;\\n "
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " }\\n  .ant-modal-wrap .ant-avatar,\\n  .ant-layout .ant-avatar {\\n    background-color: #828282; }\\n  .ant-modal-wrap .ant-tag,\\n  .ant-layout .ant-tag {\\n    padding: 8px 16px;\\n    border: 1px solid #e3e3e3;\\n    box-sizing: border-box;\\n    border-radius: 8px;\\n    height: auto;\\n    box-shadow: none; }\\n    .ant-modal-wrap .ant-tag > img,\\n    .ant-layout .ant-tag > img {\\n      margin-left: 8px; }\\n    .ant-modal-wrap .ant-tag > span,\\n    .ant-layout .ant-tag > span {\\n      font-size: 15px;\\n   "
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "-8V644h78v102c0 4.4 3.6 8 8 8h190c4.4 0 8-3.6 8-8V556c0-4.4-3.6-8-8-8zM746 832h-48c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8zm142 0h-48c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8z\")),t.RadiusBottomleftOutline=l(\"radius-bottomleft\",o,s(r,\"M712 824h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm2-696h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM136 374h56c4.4 0 8-3.6 8-8v-"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " 8h190c4.4 0 8-3.6 8-8V556c0-4.4-3.6-8-8-8zM746 832h-48c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8zm142 0h-48c-4.4 0-8 3.6-8 8v48c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-48c0-4.4-3.6-8-8-8z\")),t.RadiusBottomleftOutline=l(\"radius-bottomleft\",o,s(r,\"M712 824h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm2-696h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM136 374h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "-3.6-8-8-8zm-230 72h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm230 624H358c-87.3 0-158-70.7-158-158V484c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v182c0 127 103 230 230 230h182c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z\")),t.RadiusBottomrightOutline=l(\"radius-bottomright\",o,s(r,\"M368 824h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-58-624h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm578 102h-56c-4.4 0-8 3.6"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm230 624H358c-87.3 0-158-70.7-158-158V484c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v182c0 127 103 230 230 230h182c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z\")),t.RadiusBottomrightOutline=l(\"radius-bottomright\",o,s(r,\"M368 824h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-58-624h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm578 102h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "4.4 3.6 8 8 8zm174 0h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm230 276h-56c-4.4 0-8 3.6-8 8v182c0 87.3-70.7 158-158 158H484c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h182c127 0 230-103 230-230V484c0-4.4-3.6-8-8-8z\")),t.RadiusUpleftOutline=l(\"radius-upleft\",o,s(r,\"M656 200h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm58 624h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM192 650h-56c-4.4 0-8 3.6-8 8v56c0 4"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm230 276h-56c-4.4 0-8 3.6-8 8v182c0 87.3-70.7 158-158 158H484c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h182c127 0 230-103 230-230V484c0-4.4-3.6-8-8-8z\")),t.RadiusUpleftOutline=l(\"radius-upleft\",o,s(r,\"M656 200h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm58 624h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zM192 650h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "4.4-3.6-8-8-8zm-174 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm174-696H358c-127 0-230 103-230 230v182c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V358c0-87.3 70.7-158 158-158h182c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z\")),t.RadiusUprightOutline=l(\"radius-upright\",o,s(r,\"M368 128h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-2 696h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm522-174h-56c-4.4 0-8 3.6-8 8v56c0"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "6c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm174-696H358c-127 0-230 103-230 230v182c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V358c0-87.3 70.7-158 158-158h182c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z\")),t.RadiusUprightOutline=l(\"radius-upright\",o,s(r,\"M368 128h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-2 696h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm522-174h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 "
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "0-4.4-3.6-8-8-8zm174 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-48-696H484c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h182c87.3 0 158 70.7 158 158v182c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V358c0-127-103-230-230-230z\")),t.RadiusSettingOutline=l(\"radius-setting\",o,s(r,\"M396 140h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-44 684h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm524-204h-56c-4.4 0-8 3.6-8 8v56c"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-48-696H484c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h182c87.3 0 158 70.7 158 158v182c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V358c0-127-103-230-230-230z\")),t.RadiusSettingOutline=l(\"radius-setting\",o,s(r,\"M396 140h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-44 684h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm524-204h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ice-close'] {\\n    color: #3f3f3f;\\n    margin-top: 1px; }\\n\\n@media (max-width: 576px) {\\n  .notification__notification___1wT-q {\\n    position: fixed;\\n    bottom: 0;\\n    left: 0;\\n    margin-bottom: 0;\\n    background-color: #2b2b2b;\\n    border-radius: 0;\\n    width: 100%;\\n    padding-left: 15px;\\n    padding-top: 16px; }\\n    .notification__notification___1wT-q div[class='ant-notification-notice-message'] {\\n      color: #a5a5a5;\\n      margin-top: -2px; }\\n    .notification__notification___1wT"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "[e.i,a,\"\"]]);var r={hmr:!0,transform:void 0,insertInto:void 0};n(4)(a,r);a.locals&&(e.exports=a.locals)},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,\".mobileDropdownSelect__value___374lK {\\n  background-color: #f2f2f2;\\n  width: 100%;\\n  border-radius: 8px; }\\n\\n.mobileDropdownSelect__valueDisabled___2nUNA {\\n  width: 100%; }\\n  .mobileDropdownSelect__valueDisabled___2nUNA div div div {\\n    color: #ccc !important; }\\n\",\"\"]),t.locals={value:\"mobileDropdownSelect__value___374lK\",valueDisabled:\"mob"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "scrollbar-width: none; }\\n  .customTabs__customTabs___KDpq5::-webkit-scrollbar {\\n    display: none; }\\n\\n.customTabs__customTab___ms5vp {\\n  padding: 12px 16px;\\n  cursor: pointer;\\n  border: 1px solid transparent;\\n  border-bottom: none;\\n  border-radius: 4px 4px 0 0;\\n  margin-bottom: -1px;\\n  background: transparent;\\n  color: rgba(0, 0, 0, 0.65);\\n  font-size: 14px;\\n  white-space: nowrap; }\\n  .customTabs__customTab___ms5vp:hover {\\n    color: #f94144; }\\n\\n.customTabs__customTabActive___3sLTw {"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "r-right: 1px solid #e8e8e8;\\n  flex-shrink: 0;\\n  overflow-x: visible; }\\n\\n.customTabs__customTabVertical___2J3uK {\\n  text-align: right;\\n  font-size: 14px;\\n  color: rgba(0, 0, 0, 0.65);\\n  padding: 12px 36px 12px 16px;\\n  border: none;\\n  border-radius: 0;\\n  margin-bottom: 0;\\n  white-space: nowrap;\\n  border-right: 2px solid transparent;\\n  margin-right: -1px;\\n  cursor: pointer; }\\n  .customTabs__customTabVertical___2J3uK::after {\\n    content: attr(data-label);\\n    font-weight: 600;\\n    disp"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "5px;\\n  display: flex;\\n  align-items: center;\\n  gap: 10px;\\n  z-index: 2; }\\n\\n.indexCarousel__fullscreenIcon___2JIgB {\\n  position: absolute;\\n  top: 10px;\\n  right: 10px;\\n  padding: 0;\\n  z-index: 2;\\n  background: rgba(0, 0, 0, 0.5);\\n  border-radius: 4px;\\n  padding: 6px;\\n  cursor: pointer;\\n  display: flex;\\n  align-items: center;\\n  justify-content: center;\\n  color: #fff;\\n  font-size: 18px; }\\n  .indexCarousel__fullscreenIcon___2JIgB:hover {\\n    background: rgba(0, 0, 0, 0.7); }\\n\",\"\"]),t"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "[e.i,a,\"\"]]);var r={hmr:!0,transform:void 0,insertInto:void 0};n(4)(a,r);a.locals&&(e.exports=a.locals)},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,\".counter__counter___3Ykru {\\n  color: #ffffff;\\n  font-size: 14px;\\n  opacity: 0.63;\\n  border-radius: 17.5px;\\n  background-color: #141414;\\n  padding: 8.5px 17.5px; }\\n\",\"\"]),t.locals={counter:\"counter__counter___3Ykru\"}},function(e,t,n){\"use strict\";var a=n(2240);n.d(t,\"a\",function(){return a.a})},function(e,t,n){\"use strict\";var a=n(31),r=(n.n(a"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "top:0,left:0,right:0,bottom:0,backgroundColor:\"rgba(255, 255, 255, 0.75)\"},content:{position:\"absolute\",top:\"40px\",left:\"40px\",right:\"40px\",bottom:\"40px\",border:\"1px solid #ccc\",background:\"#fff\",overflow:\"auto\",WebkitOverflowScrolling:\"touch\",borderRadius:\"4px\",outline:\"none\",padding:\"20px\"}},(0,f.polyfill)(w),t.default=w},function(e,t,n){\"use strict\";var a=n(2244);function r(){}function i(){}i.resetWarningCache=r,e.exports=function(){function e(e,t,n,r,i,o){if(o!==a){var c=new Error(\"Calling PropTyp"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ate(-50%, -50%);\\n  z-index: 2000; }\\n  @media (max-width: 768px) {\\n    .indexGallery__galleryAdWrapper___3_JTo {\\n      max-width: 301px;\\n      overflow: hidden; } }\\n\\n.indexGallery__defaultImage___1khRP {\\n  height: 500px;\\n  border-bottom-left-radius: 8px;\\n  border-bottom-right-radius: 8px;\\n  position: relative; }\\n  @media (max-width: 576px) {\\n    .indexGallery__defaultImage___1khRP {\\n      height: 269px; } }\\n\\n.indexGallery__largeImage___19LJ3 {\\n  height: 500px;\\n  padding-right: 10px; }"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "\\n  @media (max-width: 768px) {\\n    .indexGallery__galleryAdWrapper___3_JTo {\\n      max-width: 301px;\\n      overflow: hidden; } }\\n\\n.indexGallery__defaultImage___1khRP {\\n  height: 500px;\\n  border-bottom-left-radius: 8px;\\n  border-bottom-right-radius: 8px;\\n  position: relative; }\\n  @media (max-width: 576px) {\\n    .indexGallery__defaultImage___1khRP {\\n      height: 269px; } }\\n\\n.indexGallery__largeImage___19LJ3 {\\n  height: 500px;\\n  padding-right: 10px; }\\n  .indexGallery__largeImage___19LJ"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "   .indexGallery__defaultImage___1khRP {\\n      height: 269px; } }\\n\\n.indexGallery__largeImage___19LJ3 {\\n  height: 500px;\\n  padding-right: 10px; }\\n  .indexGallery__largeImage___19LJ3 .indexGallery__carouselImage___3zNXH {\\n    border-bottom-left-radius: 8px; }\\n  @media (max-width: 768px) {\\n    .indexGallery__largeImage___19LJ3 {\\n      height: 269px; } }\\n  @media (max-width: 992px) {\\n    .indexGallery__largeImage___19LJ3 {\\n      padding-right: 0;\\n      width: 100%; } }\\n\\n.indexGallery__caro"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "allery__smallImage___3Jax0 {\\n      height: 120px; } }\\n  .indexGallery__smallImage___3Jax0:nth-child(4) {\\n    margin-bottom: 0; }\\n    .indexGallery__smallImage___3Jax0:nth-child(4) .indexGallery__carouselImage___3zNXH {\\n      border-bottom-right-radius: 8px; }\\n\\n@media (min-width: 566px) and (max-width: 992px) {\\n  .indexGallery__largeImage___19LJ3 .indexGallery__carouselImage___3zNXH {\\n    border-bottom-left-radius: 0; }\\n  .indexGallery__smallImage___3Jax0 {\\n    margin-top: 10px;\\n    margin-"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "0:nth-child(4) .indexGallery__carouselImage___3zNXH {\\n      border-bottom-right-radius: 8px; }\\n\\n@media (min-width: 566px) and (max-width: 992px) {\\n  .indexGallery__largeImage___19LJ3 .indexGallery__carouselImage___3zNXH {\\n    border-bottom-left-radius: 0; }\\n  .indexGallery__smallImage___3Jax0 {\\n    margin-top: 10px;\\n    margin-left: 10px;\\n    margin-bottom: 0;\\n    width: calc((100% - 20px)/ 3); }\\n    .indexGallery__smallImage___3Jax0:nth-child(2) {\\n      margin-left: 0; }\\n      .indexGall"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "-bottom: 0;\\n    width: calc((100% - 20px)/ 3); }\\n    .indexGallery__smallImage___3Jax0:nth-child(2) {\\n      margin-left: 0; }\\n      .indexGallery__smallImage___3Jax0:nth-child(2) .indexGallery__carouselImage___3zNXH {\\n        border-bottom-left-radius: 8px; } }\\n\\n.indexGallery__imageLink___12OuH {\\n  text-align: center;\\n  height: 100%;\\n  width: 100%;\\n  display: block;\\n  cursor: pointer; }\\n\\n.indexGallery__videoWrapper___Kd2bx {\\n  position: relative;\\n  height: calc(100vh - 100px);\\n  margi"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "%); }\\n\\n.indexGallery__imageCounter___2tfZB {\\n  position: absolute;\\n  left: 0;\\n  top: 0;\\n  color: #ffffff;\\n  font-size: 40px;\\n  font-weight: 300;\\n  background-color: rgba(0, 0, 0, 0.4);\\n  width: 100%;\\n  height: 100%;\\n  border-bottom-right-radius: 8px; }\\n  .indexGallery__imageCounter___2tfZB > span {\\n    position: absolute;\\n    top: 50%;\\n    transform: translate(-50%, -50%); }\\n\\n.indexGallery__badges___32Xmu {\\n  position: absolute;\\n  top: 25px;\\n  left: 25px;\\n  z-index: 2;\\n  z-index"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "Xmu {\\n      top: 10px;\\n      left: 10px; } }\\n\\n.indexGallery__featuredProperty___bUlKn {\\n  font-size: 13px;\\n  font-weight: 600;\\n  height: 30px;\\n  line-height: 30px;\\n  padding-inline: 12px;\\n  background: #E3F2EE;\\n  color: #43AA8B;\\n  border-radius: 4px; }\\n  @media (max-width: 768px) {\\n    .indexGallery__featuredProperty___bUlKn {\\n      padding-inline: 10px; } }\\n\\n.indexGallery__percentage___2tigl {\\n  font-size: 16px;\\n  height: 30px;\\n  line-height: 30px;\\n  background: #f94144;\\n  color"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " (max-width: 768px) {\\n    .indexGallery__featuredProperty___bUlKn {\\n      padding-inline: 10px; } }\\n\\n.indexGallery__percentage___2tigl {\\n  font-size: 16px;\\n  height: 30px;\\n  line-height: 30px;\\n  background: #f94144;\\n  color: #fff;\\n  border-radius: 4px;\\n  padding-inline: 12px; }\\n  @media (max-width: 768px) {\\n    .indexGallery__percentage___2tigl {\\n      padding-inline: 10px; } }\\n\\n.indexGallery__galleryNavigation___3sBRe {\\n  display: flex;\\n  align-items: center;\\n  gap: 10px;\\n  positi"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ation___3sBRe {\\n      position: static; } }\\n\\n.indexGallery__galleryNavButton___3bKKM {\\n  position: relative;\\n  width: 50px;\\n  height: 38px;\\n  padding: 0;\\n  margin: 0;\\n  background-color: #141414;\\n  opacity: 0.63;\\n  border: none;\\n  border-radius: 17.5px;\\n  cursor: pointer;\\n  transition: opacity 0.2s ease; }\\n  .indexGallery__galleryNavButton___3bKKM:hover {\\n    opacity: 0.85; }\\n  .indexGallery__galleryNavButton___3bKKM:focus {\\n    outline: none;\\n    opacity: 0.85; }\\n  .indexGallery__"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "\"offset\",\"operator\",\"opacity\",\"order\",\"orient\",\"orientation\",\"origin\",\"overflow\",\"paint-order\",\"path\",\"pathlength\",\"patterncontentunits\",\"patterntransform\",\"patternunits\",\"points\",\"preservealpha\",\"preserveaspectratio\",\"primitiveunits\",\"r\",\"rx\",\"ry\",\"radius\",\"refx\",\"refy\",\"repeatcount\",\"repeatdur\",\"restart\",\"result\",\"rotate\",\"scale\",\"seed\",\"shape-rendering\",\"specularconstant\",\"specularexponent\",\"spreadmethod\",\"stddeviation\",\"stitchtiles\",\"stop-color\",\"stop-opacity\",\"stroke-dasharray\",\"stroke-dashoffset"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "   justify-content: center;\\n    align-items: center;\\n    gap: 8px;\\n    background-color: transparent;\\n    border: 1px solid rgba(0, 0, 0, 0.5);\\n    font-weight: 700;\\n    font-size: 15px;\\n    line-height: 28px;\\n    color: #3f3f3f;\\n    border-radius: 12px;\\n    outline: none;\\n    cursor: pointer;\\n    transition: 300ms; }\\n    .ContactInfo__contactText___aQtdb .ContactInfo__helpButton___3hWAD:hover {\\n      background-color: #e8e8e8; }\\n    .ContactInfo__contactText___aQtdb .ContactInfo__helpB"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "\\n\\n.confirmDialog__confirmModal___1vMgH .confirmDialog__close___RTEDG {\\n  margin-left: 30px; }\\n  .confirmDialog__confirmModal___1vMgH .confirmDialog__close___RTEDG img {\\n    cursor: pointer;\\n    transition: 300ms;\\n    padding: 4px;\\n    border-radius: 50%; }\\n    .confirmDialog__confirmModal___1vMgH .confirmDialog__close___RTEDG img:hover {\\n      background: #f3f3f3; }\\n\\n.confirmDialog__confirmModal___1vMgH > div > button {\\n  display: none; }\\n\\n.confirmDialog__confirmModal___1vMgH > div > di"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "[e.i,a,\"\"]]);var r={hmr:!0,transform:void 0,insertInto:void 0};n(4)(a,r);a.locals&&(e.exports=a.locals)},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,\".mobileDropdownSelect__value___35uU8 {\\n  background-color: #f2f2f2;\\n  width: 100%;\\n  border-radius: 8px; }\\n\\n.mobileDropdownSelect__valueDisabled___1kMtB {\\n  width: 100%; }\\n  .mobileDropdownSelect__valueDisabled___1kMtB div div div {\\n    color: #ccc !important; }\\n\",\"\"]),t.locals={value:\"mobileDropdownSelect__value___35uU8\",valueDisabled:\"mob"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "iLevelSelect__selectedLevel___2DPFB, .groupMultiLevelSelect__excludeSelectedLevel___3A5pq {\\n  padding: 8px 16px;\\n  margin-right: 5px;\\n  display: inline-block;\\n  min-height: 30px;\\n  border: 1px solid #e3e3e3;\\n  box-sizing: border-box;\\n  border-radius: 5px;\\n  font-size: 15px;\\n  font-weight: 400;\\n  line-height: 22.5px; }\\n\\n.groupMultiLevelSelect__selectedLevelTagContainer___2xXfh {\\n  margin-bottom: 10px; }\\n  .groupMultiLevelSelect__selectedLevelTagContainer___2xXfh > span:not(last-child) {\\n"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "tedLevel___3A5pq {\\n  text-decoration: line-through;\\n  margin-bottom: 8px; }\\n\\n.groupMultiLevelSelect__changeBtn___3fjMP {\\n  color: #f94144;\\n  padding: 8px 16px;\\n  height: auto;\\n  border: 1px solid #f94144;\\n  box-sizing: border-box;\\n  border-radius: 5px; }\\n  .groupMultiLevelSelect__changeBtn___3fjMP > span {\\n    font-size: 15px;\\n    font-weight: 600;\\n    line-height: 22.5px;\\n    letter-spacing: -0.015em; }\\n\\n.groupMultiLevelSelect__selectList___LbNHI > div:first-child, .groupMultiLevelSe"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "st___LbNHI > button:last-child, .groupMultiLevelSelect__selectListMobile___2lZBD > button:last-child {\\n  margin-top: 0;\\n  padding: 8px 17px;\\n  color: #f94144;\\n  margin-top: 31px;\\n  border: 1px solid #f94144;\\n  box-sizing: border-box;\\n  border-radius: 5px;\\n  line-height: 0; }\\n  .groupMultiLevelSelect__selectList___LbNHI > button:last-child > i, .groupMultiLevelSelect__selectListMobile___2lZBD > button:last-child > i {\\n    font-size: 12px;\\n    font-weight: 600; }\\n  .groupMultiLevelSelect__se"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "  padding: 6px 25px 20px 16px; }\\n  .groupMultiLevelSelect__modalMobile___2m_ej > div > div:nth-child(3) > div > button {\\n    padding: 4px 25px;\\n    color: #ff4d66;\\n    font-size: 15px;\\n    height: 42px;\\n    width: calc(50% - 15px);\\n    border-radius: 5px;\\n    border: solid 1px #ff4d66;\\n    font-weight: 600; }\\n    .groupMultiLevelSelect__modalMobile___2m_ej > div > div:nth-child(3) > div > button:last-child {\\n      margin-left: 15px;\\n      color: #ffffff;\\n      border: none; }\\n\",\"\"]),t.lo"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " position: absolute;\\n  opacity: 0;\\n  cursor: pointer; }\\n\\n/* Create a custom checkbox */\\n.multiColorSelector__checkmark___2Z_k- {\\n  position: absolute;\\n  top: 0;\\n  left: 0;\\n  height: 35px;\\n  width: 35px;\\n  background-color: #eee;\\n  border-radius: 5px;\\n  border: solid 1px #c6c6c6; }\\n\\n/* On mouse-over, add a grey background color */\\n.multiColorSelector__container___1RGCj:hover input ~ .multiColorSelector__checkmark___2Z_k- {\\n  background-color: #ccc; }\\n\\n/* When the checkbox is checked,"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "r__container___1RGCj input:checked ~ .multiColorSelector__checkmark___2Z_k-:after {\\n  display: block;\\n  left: 12px;\\n  top: 5px;\\n  width: 7px;\\n  height: 15px;\\n  border: solid #ffffff;\\n  box-shadow: 3px 3px 1px 1px rgba(0, 0, 0, 0.3);\\n  border-radius: 4px;\\n  border-width: 0 3px 3px 0;\\n  -webkit-transform: rotate(45deg);\\n  -ms-transform: rotate(45deg);\\n  transform: rotate(45deg); }\\n\\n.multiColorSelector__checkboxLabel___2zKBB {\\n  margin-top: 3em;\\n  margin-bottom: 0; }\\n\",\"\"]),t.locals={con"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "nsertInto:void 0};n(4)(a,r);a.locals&&(e.exports=a.locals)},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,\".multiSelectFooter__wrapper___kAkjx {\\n  margin-top: 10px; }\\n  .multiSelectFooter__wrapper___kAkjx button {\\n    height: 40px;\\n    border-radius: 5px;\\n    font-size: 15px;\\n    font-weight: 600;\\n    padding: 0 25px;\\n    width: 100%; }\\n    .multiSelectFooter__wrapper___kAkjx button + button {\\n      margin-left: 15px; }\\n  .multiSelectFooter__wrapper___kAkjx .multiSelectFooter__okButton__"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ing\"===typeof a&&(a=[[e.i,a,\"\"]]);var r={hmr:!0,transform:void 0,insertInto:void 0};n(4)(a,r);a.locals&&(e.exports=a.locals)},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,\".colorPreview__color___3KZrg {\\n  width: 22px;\\n  height: 22px;\\n  border-radius: 5px;\\n  border: solid 1px #c6c6c6;\\n  margin-right: 10px;\\n  display: inline-block; }\\n\",\"\"]),t.locals={color:\"colorPreview__color___3KZrg\"}},function(e,t,n){\"use strict\";var a=n(22),r=(n.n(a),n(11)),i=n.n(r),o=n(0),c=n.n(o),s=n(2356),l=n.n(s),u=fu"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "==typeof a&&(a=[[e.i,a,\"\"]]);var r={hmr:!0,transform:void 0,insertInto:void 0};n(4)(a,r);a.locals&&(e.exports=a.locals)},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,\".mobileDropdownSelect__value___BbqNl {\\n  background-color: #f2f2f2;\\n  border-radius: 5px;\\n  width: 100%; }\\n\\n.mobileDropdownSelect__valueDisabled___1-Mbu {\\n  width: 100%; }\\n\",\"\"]),t.locals={value:\"mobileDropdownSelect__value___BbqNl\",valueDisabled:\"mobileDropdownSelect__valueDisabled___1-Mbu\"}},function(e,t,n){var a=n(2361);\"st"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ",n=e.prefixCls,a=e.percent,o=e.successPercent,s=e.strokeWidth,l=e.size,u=e.strokeColor,d=e.strokeLinecap,f=e.children;t=u&&\"string\"!==typeof u?p(u):{background:u};var h=c({width:\"\".concat((0,i.validProgress)(a),\"%\"),height:s||(\"small\"===l?6:8),borderRadius:\"square\"===d?0:\"\"},t),m={width:\"\".concat((0,i.validProgress)(o),\"%\"),height:s||(\"small\"===l?6:8),borderRadius:\"square\"===d?0:\"\"},_=void 0!==o?r.createElement(\"div\",{className:\"\".concat(n,\"-success-bg\"),style:m}):null;return r.createElement(\"div\",nul"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "hildren;t=u&&\"string\"!==typeof u?p(u):{background:u};var h=c({width:\"\".concat((0,i.validProgress)(a),\"%\"),height:s||(\"small\"===l?6:8),borderRadius:\"square\"===d?0:\"\"},t),m={width:\"\".concat((0,i.validProgress)(o),\"%\"),height:s||(\"small\"===l?6:8),borderRadius:\"square\"===d?0:\"\"},_=void 0!==o?r.createElement(\"div\",{className:\"\".concat(n,\"-success-bg\"),style:m}):null;return r.createElement(\"div\",null,r.createElement(\"div\",{className:\"\".concat(n,\"-outer\")},r.createElement(\"div\",{className:\"\".concat(n,\"-inner"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "=n(3)(!1)).push([e.i,\".multiplePhotos__uploader___37pyO {\\n  width: 100%;\\n  max-width: 150px;\\n  height: 150px;\\n  display: block; }\\n  .multiplePhotos__uploader___37pyO > div {\\n    width: 100% !important;\\n    height: 100% !important;\\n    border-radius: 5px !important; }\\n  .multiplePhotos__uploader___37pyO .multiplePhotos__addPhoto___W1Q6b {\\n    font-size: 40px; }\\n\",\"\"]),t.locals={uploader:\"multiplePhotos__uploader___37pyO\",addPhoto:\"multiplePhotos__addPhoto___W1Q6b\"}},function(e,t,n){\"use stri"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "_imageCard___2HTtr:hover {\\n    background-color: transparent;\\n    opacity: 50%; }\\n  .ImageCard__imageCard___2HTtr > img {\\n    object-fit: cover;\\n    width: 100%;\\n    height: 100%;\\n    top: 0;\\n    left: 0;\\n    position: absolute;\\n    border-radius: 5px;\\n    pointer-events: none;\\n    -webkit-touch-callout: none;\\n    -webkit-user-select: none;\\n    -moz-user-select: none;\\n    -ms-user-select: none;\\n    user-select: none; }\\n\\n.ImageCard__deleteButton___13Ygh {\\n  width: 29px;\\n  height: 29"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "30px;\\n      width: auto;\\n      height: auto; }\\n\\n.ImageCard__hoverMenu___e-LxL {\\n  width: 29px;\\n  height: 29px;\\n  position: absolute;\\n  right: 10px;\\n  top: 10px;\\n  display: flex;\\n  align-items: center;\\n  justify-content: center;\\n  border-radius: 50%;\\n  box-shadow: 0px 0px 5px 1px rgba(0, 0, 0, 0.25); }\\n  .ImageCard__hoverMenu___e-LxL > img {\\n    margin: 0; }\\n\\n.ImageCard__error___KSGn9 {\\n  flex: 1;\\n  justify-content: center;\\n  align-items: center;\\n  display: flex;\\n  border: 1px so"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "of a&&(a=[[e.i,a,\"\"]]);var r={hmr:!0,transform:void 0,insertInto:void 0};n(4)(a,r);a.locals&&(e.exports=a.locals)},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,'.averagePriceButton__button___1qm-R {\\n  height: 54px;\\n  font-size: 14px;\\n  border-radius: 5px;\\n  border: none;\\n  color: #ffffff;\\n  background: #f94144;\\n  display: inline-flex;\\n  align-items: center;\\n  justify-content: center;\\n  gap: 8px;\\n  cursor: pointer;\\n  transition: background 0.2s;\\n  padding: 0 16px;\\n  white-space: nowra"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "olor: #000000;\\n  margin: 0 0 16px;\\n  line-height: 1.5; }\\n  .averagePriceButton__rangeText___W8Uts strong {\\n    font-weight: 700; }\\n\\n.averagePriceButton__priceBlock___JQaeI {\\n  background-color: #fafafa;\\n  border: 1px solid #f0f0f0;\\n  border-radius: 8px;\\n  padding: 8px 16px;\\n  margin-top: 24px;\\n  margin-bottom: 16px; }\\n\\n.averagePriceButton__priceRow___3hl5p {\\n  display: flex;\\n  justify-content: space-between;\\n  align-items: center;\\n  padding: 14px 0;\\n  border-bottom: 1px solid #ecece"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "86.5-28.1-113.1 348.4z\"}}]},name:\"radar-chart\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3633)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"RadiusBottomleftOutlined\";r.forwardRef(c)},function(e,t,n){\"use strict\";t.a={icon:{tag:\"svg\",attrs:{viewBox:\"64 64 896 896\",focusable:\"false\"},children:[{tag:\"path\",attrs:{d:\"M712 824h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "-8-8zm-230 72h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm230 624H358c-87.3 0-158-70.7-158-158V484c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v182c0 127 103 230 230 230h182c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z\"}}]},name:\"radius-bottomleft\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3635)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"RadiusBottomrightOutlined\";r.forwa"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "0-4.4-3.6-8-8-8z\"}}]},name:\"radius-bottomleft\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3635)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"RadiusBottomrightOutlined\";r.forwardRef(c)},function(e,t,n){\"use strict\";t.a={icon:{tag:\"svg\",attrs:{viewBox:\"64 64 896 896\",focusable:\"false\"},children:[{tag:\"path\",attrs:{d:\"M368 824h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3."
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "6 8 8 8zm174 0h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8zm230 276h-56c-4.4 0-8 3.6-8 8v182c0 87.3-70.7 158-158 158H484c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h182c127 0 230-103 230-230V484c0-4.4-3.6-8-8-8z\"}}]},name:\"radius-bottomright\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3637)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"RadiusSettingOutlined\";r.forwardR"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "-4.4-3.6-8-8-8z\"}}]},name:\"radius-bottomright\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3637)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"RadiusSettingOutlined\";r.forwardRef(c)},function(e,t,n){\"use strict\";t.a={icon:{tag:\"svg\",attrs:{viewBox:\"64 64 896 896\",focusable:\"false\"},children:[{tag:\"path\",attrs:{d:\"M396 140h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ".3 0 2.4 1.1 2.4 2.4v43.2zM920 780H776c-4.4 0-8 3.6-8 8v144c0 4.4 3.6 8 8 8h144c4.4 0 8-3.6 8-8V788c0-4.4-3.6-8-8-8zm-48 101.6c0 1.3-1.1 2.4-2.4 2.4h-43.2c-1.3 0-2.4-1.1-2.4-2.4v-43.2c0-1.3 1.1-2.4 2.4-2.4h43.2c1.3 0 2.4 1.1 2.4 2.4v43.2z\"}}]},name:\"radius-setting\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3639)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"RadiusUpleftOutlined\";r.forwardRef(c)"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "4 1.1 2.4 2.4v43.2z\"}}]},name:\"radius-setting\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3639)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"RadiusUpleftOutlined\";r.forwardRef(c)},function(e,t,n){\"use strict\";t.a={icon:{tag:\"svg\",attrs:{viewBox:\"64 64 896 896\",focusable:\"false\"},children:[{tag:\"path\",attrs:{d:\"M656 200h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "6-8-8-8zm-174 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm174-696H358c-127 0-230 103-230 230v182c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V358c0-87.3 70.7-158 158-158h182c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8z\"}}]},name:\"radius-upleft\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3641)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"RadiusUprightOutlined\";r.forwardRef(c)"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "-56c0-4.4-3.6-8-8-8z\"}}]},name:\"radius-upleft\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3641)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"RadiusUprightOutlined\";r.forwardRef(c)},function(e,t,n){\"use strict\";t.a={icon:{tag:\"svg\",attrs:{viewBox:\"64 64 896 896\",focusable:\"false\"},children:[{tag:\"path\",attrs:{d:\"M368 128h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "3.6-8-8-8zm174 0h-56c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8v-56c0-4.4-3.6-8-8-8zm-48-696H484c-4.4 0-8 3.6-8 8v56c0 4.4 3.6 8 8 8h182c87.3 0 158 70.7 158 158v182c0 4.4 3.6 8 8 8h56c4.4 0 8-3.6 8-8V358c0-127-103-230-230-230z\"}}]},name:\"radius-upright\",theme:\"outlined\"}},function(e,t,n){\"use strict\";var a=n(1),r=n(0),i=(n.n(r),n(3643)),o=n(2),c=function(e,t){return r.createElement(o.a,Object(a.a)(Object(a.a)({},e),{},{ref:t,icon:i.a}))};c.displayName=\"ReadFilled\";r.forwardRef(c)},function"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "rts=a.locals)},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,\".style__tile___tWNDS {\\n  display: flex;\\n  flex-direction: column;\\n  width: 100%;\\n  overflow: hidden;\\n  height: 140px;\\n  justify-content: center;\\n  align-items: center;\\n  border-radius: 8px;\\n  box-shadow: 0 2px 2px 0 rgba(142, 142, 142, 0.1);\\n  border: solid 1px #eae9eb;\\n  background-color: white;\\n  position: relative; }\\n  .style__tile___tWNDS p {\\n    margin-top: 5px;\\n    line-height: normal;\\n    margin-bottom: 0; }\\n  .st"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ainer___2h_MU .adCard__featuredProperty___2OIfp {\\n        font-size: 12px;\\n        font-weight: 600;\\n        height: 24px;\\n        line-height: 24px;\\n        padding: 0 7px;\\n        background: #E3F2EE;\\n        color: #43AA8B;\\n        border-radius: 4px; }\\n      .adCard__card___vbwvv .adCard__cardContainer___WTD_r .adCard__coverImageContainer___2h_MU .adCard__percentage___2yf2y, .adCard__cardMobile___3IwYJ .adCard__cardContainer___WTD_r .adCard__coverImageContainer___2h_MU .adCard__percentage"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "_3IwYJ .adCard__cardContainer___WTD_r .adCard__coverImageContainer___2h_MU .adCard__percentage___2yf2y {\\n        font-size: 14px;\\n        height: 24px;\\n        line-height: 24px;\\n        background: #f94144;\\n        color: #fff;\\n        border-radius: 4px;\\n        width: 45px;\\n        text-align: center; }\\n      @media (max-width: 992px) {\\n        .adCard__card___vbwvv .adCard__cardContainer___WTD_r .adCard__coverImageContainer___2h_MU, .adCard__cardMobile___3IwYJ .adCard__cardContainer___WT"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ", .adCard__cardMobile___3IwYJ .adCard__cardNoteContainer___2iH8s .adCard__cardNote___3zVx0 {\\n      margin-top: 16px;\\n      font-size: 13px;\\n      color: #3f3f3f;\\n      padding: 12px 60px 12px 12px;\\n      background-color: #f4f4f4;\\n      border-radius: 8px;\\n      cursor: pointer; }\\n    .adCard__card___vbwvv .adCard__cardNoteContainer___2iH8s .adCard__cardNoteIcon___1nydN, .adCard__cardMobile___3IwYJ .adCard__cardNoteContainer___2iH8s .adCard__cardNoteIcon___1nydN {\\n      position: absolute;\\n "
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "_bottomButtonContainerNote___1RInq, .adCard__cardMobile___3IwYJ .adCard__bottomButtonContainerNote___1RInq {\\n    margin-top: 16px;\\n    font-weight: 600;\\n    border: 1px solid #e9e9e9;\\n    background: #ffffff;\\n    padding: 12px 14px;\\n    border-radius: 6.4199px;\\n    display: block;\\n    text-align: center;\\n    margin-right: 10px; }\\n    .adCard__card___vbwvv .adCard__bottomButtonContainerNote___1RInq:hover, .adCard__cardMobile___3IwYJ .adCard__bottomButtonContainerNote___1RInq:hover {\\n      bo"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "rNote___1RInq .adCard__notesText___1LmBx, .adCard__cardMobile___3IwYJ .adCard__bottomButtonContainerNote___1RInq .adCard__notesText___1LmBx {\\n      margin-right: 8px; }\\n\\n.adCard__card___vbwvv {\\n  margin-bottom: 8px;\\n  margin-top: 8px;\\n  border-radius: 8px; }\\n\\n.adCard__cardMobile___3IwYJ {\\n  margin-bottom: 4px;\\n  margin-top: 4px;\\n  padding: 10px;\\n  position: relative; }\\n\\n.adCard__promoted___-yvm8 {\\n  border-top: 1px solid #F94144;\\n  border-bottom: 1px solid #F94144; }\\n  @media (min-wid"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "-align: right;\\n  padding: 4px 8px;\\n  text-transform: uppercase; }\\n\\n.adCard__promotedLabelMobile___1b-fO {\\n  position: absolute;\\n  top: -14px;\\n  right: 10px;\\n  background-color: #fff;\\n  color: #F94144;\\n  border: 1px solid #F94144;\\n  border-radius: 3px;\\n  font-size: 10px;\\n  font-weight: 500;\\n  text-transform: uppercase;\\n  padding: 4px 8px; }\\n\\ndiv.adCard__adBottom___1_zPX {\\n  position: unset;\\n  margin-top: 8px; }\\n  div.adCard__adBottom___1_zPX > span:first-child {\\n    font-size: 11px"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "px; } }\\n  .style__info___2DHny .style__dot___3cBYq {\\n    position: static;\\n    width: 4px;\\n    height: 4px;\\n    background: #c4c4c4;\\n    display: inline-block;\\n    margin-left: 6px;\\n    margin-bottom: 3px;\\n    margin-right: 6px;\\n    border-radius: 50%; }\\n\\n.style__summary___1Vt-X, .style__summaryMobile___1dB1E {\\n  display: flex;\\n  justify-content: space-between; }\\n\\n.style__summary___1Vt-X {\\n  margin-top: 8px; }\\n\\n.style__summaryMobile___1dB1E {\\n  overflow: hidden;\\n  height: fit-cont"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ts=n(3)(!1)).push([e.i,\".AdSummary__featuredPropertyInline___FOZOK {\\n  display: inline-block;\\n  font-size: 12px;\\n  font-weight: 600;\\n  line-height: 20px;\\n  padding: 0 7px;\\n  margin-top: 4px;\\n  background: #E3F2EE;\\n  color: #43AA8B;\\n  border-radius: 4px; }\\n\\n.AdSummary__container___3M4Cb .AdSummary__summaryPriceContainer___34RfS {\\n  display: flex;\\n  justify-content: space-between;\\n  flex-direction: column; }\\n  .AdSummary__container___3M4Cb .AdSummary__summaryPriceContainer___34RfS .AdSumm"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "mButtonContainerFavorite____L3Ke, .adSummaryBottom__postedTimeContainer___1YPed .adSummaryBottom__bottomButtonContainerNotFavorite___3Kkf6 {\\n    background: rgba(249, 65, 68, 0.1);\\n    padding: 6.5px 11.5px;\\n    display: inline-block;\\n    border-radius: 6.4199px; }\\n    .adSummaryBottom__postedTimeContainer___1YPed .adSummaryBottom__bottomButtonContainerFavorite____L3Ke:hover, .adSummaryBottom__postedTimeContainer___1YPed .adSummaryBottom__bottomButtonContainerNotFavorite___3Kkf6:hover {\\n      ba"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " {\\n      font-size: 24px; }\\n  .adSummaryBottom__postedTimeContainer___1YPed .adSummaryBottom__bottomButtonContainerNote___6uoN- {\\n    font-weight: 600;\\n    border: 1px solid #e9e9e9;\\n    background: #ffffff;\\n    padding: 12px 14px;\\n    border-radius: 6.4199px;\\n    float: left;\\n    margin-right: 10px;\\n    transition: 300ms; }\\n    .adSummaryBottom__postedTimeContainer___1YPed .adSummaryBottom__bottomButtonContainerNote___6uoN-:hover {\\n      border: 1px solid #dadada;\\n      background: #f3f3"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "]]);var r={hmr:!0,transform:void 0,insertInto:void 0};n(4)(a,r);a.locals&&(e.exports=a.locals)},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,\"div.CoverImage__carouselImageClassName___2OqIE {\\n  vertical-align: top;\\n  margin-top: -1px;\\n  border-radius: 10px; }\\n\\ndiv.CoverImage__carouselImageClassName___2OqIE {\\n  height: 220px; }\\n\\n.CoverImage__image___3-7GP {\\n  height: 220px;\\n  border-radius: 10px; }\\n\\n@media (max-width: 576px) {\\n  .CoverImage__image___3-7GP,\\n  div.CoverImage__carouselIma"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "v.CoverImage__carouselImageClassName___2OqIE {\\n  vertical-align: top;\\n  margin-top: -1px;\\n  border-radius: 10px; }\\n\\ndiv.CoverImage__carouselImageClassName___2OqIE {\\n  height: 220px; }\\n\\n.CoverImage__image___3-7GP {\\n  height: 220px;\\n  border-radius: 10px; }\\n\\n@media (max-width: 576px) {\\n  .CoverImage__image___3-7GP,\\n  div.CoverImage__carouselImageClassName___2OqIE {\\n    height: 130px; } }\\n\",\"\"]),t.locals={carouselImageClassName:\"CoverImage__carouselImageClassName___2OqIE\",image:\"CoverImag"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ")},function(e,t,n){(t=e.exports=n(3)(!1)).push([e.i,\".DeletedCard__title___2tk20 {\\n  margin-bottom: 10px;\\n  color: #3f3f3f;\\n  text-align: left;\\n  font-size: 18px;\\n  font-weight: 600;\\n  line-height: 23.4px;\\n  background-color: white;\\n  border-radius: 8px;\\n  box-shadow: 0px 4px 25px rgba(0, 0, 0, 0.05);\\n  padding: 20px; }\\n\\n@media (max-width: 768px) {\\n  .DeletedCard__title___2tk20 {\\n    margin-top: 5px;\\n    display: flex;\\n    align-items: center;\\n    justify-content: space-between; } }\\n"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ion: absolute;\\n  color: #ffffff;\\n  line-height: initial;\\n  left: 15px;\\n  top: 15px;\\n  z-index: 2;\\n  min-width: 71px;\\n  min-height: 20px;\\n  text-align: center;\\n  font-size: 12px;\\n  padding: 5.5px 9px;\\n  text-transform: uppercase;\\n  border-radius: 2px; }\\n\\n.adStatusLabel__activeLabel___2BpwG {\\n  background-color: #16c7a5; }\\n\\n.adStatusLabel__pausedLabel___2lvZs {\\n  background-color: #FFFFFF;\\n  color: #828282; }\\n\\n.adStatusLabel__soldLabel___2E2HK {\\n  background-color: #a79265; }\\n\\n.a"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "ion: absolute;\\n  color: #ffffff;\\n  line-height: initial;\\n  left: 15px;\\n  top: 15px;\\n  z-index: 2;\\n  min-width: 71px;\\n  min-height: 20px;\\n  text-align: center;\\n  font-size: 12px;\\n  padding: 5.5px 9px;\\n  text-transform: uppercase;\\n  border-radius: 2px; }\\n\\n.adVisitedLabel__visitedLabel___1oQfn {\\n  top: unset;\\n  right: unset;\\n  bottom: 15px;\\n  left: 15px;\\n  background-color: rgba(0, 0, 0, 0.5); }\\n\\n.adVisitedLabel__visitedLabelMobile___3KDRF {\\n  left: unset;\\n  background-color: rgba("
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ",t,n){(t=e.exports=n(3)(!1)).push([e.i,\".pollPopup__pollPopup___6XXkp {\\n  position: fixed;\\n  right: 20px;\\n  bottom: 70px;\\n  z-index: 10;\\n  width: 380px;\\n  max-width: calc(100vw - 40px);\\n  padding: 20px;\\n  border: 1px solid #dbdbdb;\\n  border-radius: 8px;\\n  background: linear-gradient(0deg, rgba(41, 171, 226, 0.08) 0%, rgba(41, 171, 226, 0.08) 100%), #FFF;\\n  border: 1px solid rgba(41, 171, 226, 0.2);\\n  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);\\n  box-shadow: 0 4px 25px 0 rgba(0, 0, 0, 0.05"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " flex-wrap: wrap;\\n  gap: 10px;\\n  margin-top: 16px; }\\n  .pollPopup__actions___2nglE .pollPopup__button___3V18i {\\n    display: inline-flex;\\n    align-items: center;\\n    white-space: nowrap;\\n    transition: 300ms;\\n    padding: 11px;\\n    border-radius: 8px;\\n    cursor: pointer;\\n    border: 1px solid #c4c4c4;\\n    background: white; }\\n    .pollPopup__actions___2nglE .pollPopup__button___3V18i:hover {\\n      background: #eee; }\\n\\n.pollPopup__options___20m5s {\\n  display: flex;\\n  flex-direction"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "kdwd .SearchBar__searchBarMobile___2WJJr .SearchBar__searchButtonMobile___27thH {\\n  position: absolute;\\n  top: 0;\\n  right: 0;\\n  font-size: 18px;\\n  color: #504f5c;\\n  font-weight: bold;\\n  cursor: pointer;\\n  background-color: #f94144;\\n  border-radius: 50%;\\n  display: flex;\\n  align-items: center;\\n  justify-content: center;\\n  transition: 300ms; }\\n  .SearchBar__wrapper___3kdwd .SearchBar__searchBar___3_vV6 .SearchBar__searchButton___3_JJK:hover, .SearchBar__wrapper___3kdwd .SearchBar__searchBa"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "hrink: 0;\\n      height: 32px;\\n      width: 32px;\\n      display: flex;\\n      align-items: center;\\n      cursor: pointer;\\n      justify-content: center;\\n      margin-right: 18px;\\n      color: #000;\\n      transition: color 300ms;\\n      border-radius: 50%; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__mobileSearchIcon___8ZH-a:hover {\\n        color: #f94144; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__mobileSearchIcon___8ZH-a .Sea"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "vV6 input {\\n      font-size: 16px;\\n      font-weight: 500;\\n      color: #000;\\n      background-color: #ffffff !important;\\n      flex: 1;\\n      height: 48px;\\n      border: 0;\\n      padding: 0;\\n      box-shadow: none !important;\\n      border-radius: 0 !important; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 input::placeholder {\\n        color: #828282; }\\n    .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__mobileInputRowLoading___1pXd1 input {\\n      c"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "_3_vV6 .SearchBar__mobileRadioOption___6VAGf input[type=\"radio\"] {\\n        display: none; }\\n    .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__mobileRadioCircle___2loZz {\\n      width: 18px;\\n      height: 18px;\\n      border-radius: 50%;\\n      border: 2px solid #ccc;\\n      display: flex;\\n      align-items: center;\\n      justify-content: center;\\n      transition: border-color 0.2s ease; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__mobileRad"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "t: center;\\n      transition: border-color 0.2s ease; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__mobileRadioCircle___2loZz::after {\\n        content: \"\";\\n        width: 10px;\\n        height: 10px;\\n        border-radius: 50%;\\n        background-color: transparent;\\n        transition: background-color 0.2s ease; }\\n    .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__mobileRadioOptionActive___3KYpS .SearchBar__mobileRadioCircle___2loZz {\\n     "
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "3_vV6 .SearchBar__suggestionList___19dI6 {\\n      position: relative;\\n      margin-top: 0;\\n      padding: 0 0 16px 0;\\n      background-color: #ffffff;\\n      text-align: left;\\n      box-shadow: none !important;\\n      border: none;\\n      border-radius: 0;\\n      clip-path: none; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__suggestionList___19dI6::before {\\n        display: none; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__suggesti"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "::before {\\n        display: none; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__suggestionList___19dI6 .SearchBar__optionContainer___2gtTY {\\n        background-color: transparent;\\n        margin: 0;\\n        border-radius: 0;\\n        border-bottom: none; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__suggestionList___19dI6 .SearchBar__sectionHeader___QYOlg {\\n        background-color: transparent;\\n        padding: 12px 20px 8px 20px;\\"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "\\n        text-decoration: underline; }\\n      .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__suggestionList___19dI6 .SearchBar__loadingContainer___2LFs2 {\\n        background-color: #ffffff;\\n        margin: 0;\\n        border-radius: 0;\\n        padding: 40px 20px; }\\n    .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6 .SearchBar__mobileAiLineWithGlow___ME3oZ {\\n      position: relative;\\n      height: 12px; }\\n    .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_v"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "earchBar__wrapper___3kdwd .SearchBar__searchBar___3_vV6, .SearchBar__wrapper___3kdwd .SearchBar__searchBarMobile___2WJJr {\\n  position: relative;\\n  display: inline-block;\\n  box-shadow: none;\\n  border: 1px solid #e0e0e0;\\n  width: 750px;\\n  border-radius: 30px;\\n  transition: none; }\\n  @media screen and (max-width: 768px) {\\n    .SearchBar__wrapper___3kdwd .SearchBar__searchBar___3_vV6, .SearchBar__wrapper___3kdwd .SearchBar__searchBarMobile___2WJJr {\\n      width: 500px; } }\\n  @media screen and ("
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": ".SearchBar__searchBarMobile___2WJJr .SearchBar__input___2FQ20 {\\n    background-color: #ffffff !important;\\n    height: 60px;\\n    padding: 0 220px 0 24px;\\n    border: 0;\\n    font-size: 18px;\\n    font-weight: 500;\\n    color: #3f3f3f;\\n    border-radius: 30px;\\n    outline: none;\\n    box-shadow: none;\\n    transition: none; }\\n    .SearchBar__wrapper___3kdwd .SearchBar__searchBar___3_vV6 .SearchBar__input___2FQ20 input, .SearchBar__wrapper___3kdwd .SearchBar__searchBarMobile___2WJJr .SearchBar__in"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "chBar__searchBar___3_vV6 .SearchBar__searchButtonMobile___27thH > img, .SearchBar__wrapper___3kdwd .SearchBar__searchBarMobile___2WJJr .SearchBar__searchButtonMobile___27thH > img {\\n      margin: 0; }\\n\\n.SearchBar__dropdownOpen___23Otf {\\n  border-radius: 30px 30px 0 0 !important;\\n  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.12) !important;\\n  border: none !important;\\n  overflow: visible !important; }\\n  .SearchBar__dropdownOpen___23Otf::before {\\n    display: none !important; }\\n  .SearchBar__dropd"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "le !important; }\\n  .SearchBar__dropdownOpen___23Otf::before {\\n    display: none !important; }\\n  .SearchBar__dropdownOpen___23Otf::after {\\n    display: none !important; }\\n  .SearchBar__dropdownOpen___23Otf .SearchBar__input___2FQ20 {\\n    border-radius: 30px 30px 0 0 !important;\\n    outline: none !important;\\n    box-shadow: none !important; }\\n\\n.SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6.SearchBar__dropdownOpen___23Otf {\\n  border-radius: 0 !important;\\n  box-shadow: none !importan"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "3Otf .SearchBar__input___2FQ20 {\\n    border-radius: 30px 30px 0 0 !important;\\n    outline: none !important;\\n    box-shadow: none !important; }\\n\\n.SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6.SearchBar__dropdownOpen___23Otf {\\n  border-radius: 0 !important;\\n  box-shadow: none !important; }\\n  .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6.SearchBar__dropdownOpen___23Otf .SearchBar__input___2FQ20 {\\n    border-radius: 0 !important; }\\n\\n.SearchBar__wrapper___3kdwd {\\n  display:"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "searchBar___3_vV6.SearchBar__dropdownOpen___23Otf {\\n  border-radius: 0 !important;\\n  box-shadow: none !important; }\\n  .SearchBar__mobile___lyiQP .SearchBar__searchBar___3_vV6.SearchBar__dropdownOpen___23Otf .SearchBar__input___2FQ20 {\\n    border-radius: 0 !important; }\\n\\n.SearchBar__wrapper___3kdwd {\\n  display: block;\\n  padding: 15px 12px 0 12px;\\n  overflow: visible;\\n  position: relative; }\\n  .SearchBar__wrapper___3kdwd .SearchBar__searchBarMobile___2WJJr {\\n    box-shadow: 0px 2px 8px 0 rgb"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " block;\\n  padding: 15px 12px 0 12px;\\n  overflow: visible;\\n  position: relative; }\\n  .SearchBar__wrapper___3kdwd .SearchBar__searchBarMobile___2WJJr {\\n    box-shadow: 0px 2px 8px 0 rgba(0, 0, 0, 0.06);\\n    border: solid 1px #e8e8e8;\\n    border-radius: 28px; }\\n    .SearchBar__wrapper___3kdwd .SearchBar__searchBarMobile___2WJJr .SearchBar__input___2FQ20 {\\n      height: 48px;\\n      padding-left: 20px;\\n      font-size: 14px;\\n      box-shadow: none;\\n      border-radius: 28px;\\n      padding-rig"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " 1px #e8e8e8;\\n    border-radius: 28px; }\\n    .SearchBar__wrapper___3kdwd .SearchBar__searchBarMobile___2WJJr .SearchBar__input___2FQ20 {\\n      height: 48px;\\n      padding-left: 20px;\\n      font-size: 14px;\\n      box-shadow: none;\\n      border-radius: 28px;\\n      padding-right: 50px;\\n      line-height: 48px;\\n      background-color: #ffffff !important; }\\n      .SearchBar__wrapper___3kdwd .SearchBar__searchBarMobile___2WJJr .SearchBar__input___2FQ20 input {\\n        height: 100%;\\n        line"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "isible; }\\n\\n.SearchBar__suggestionList___19dI6 {\\n  position: absolute;\\n  left: 0;\\n  right: 0;\\n  top: 100%;\\n  margin-top: 0;\\n  text-align: left;\\n  z-index: 10;\\n  overflow-y: auto;\\n  max-height: 632px;\\n  background-color: #ffffff;\\n  border-radius: 0 0 24px 24px;\\n  box-shadow: 0 8px 20px 0 rgba(0, 0, 0, 0.12) !important;\\n  clip-path: inset(0 -20px -20px -20px);\\n  border: none;\\n  padding: 0 0 16px 0;\\n  box-sizing: border-box; }\\n  .SearchBar__suggestionList___19dI6::before {\\n    content:"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "play: block;\\n    height: 1px;\\n    background-color: #e0e0e0;\\n    margin: 0 12px 8px 12px; }\\n  @media (max-width: 1199px) {\\n    .SearchBar__suggestionList___19dI6 {\\n      max-height: unset;\\n      padding: 0;\\n      margin-top: 0;\\n      border-radius: 0;\\n      border: none;\\n      background-color: #ffffff; } }\\n  .SearchBar__suggestionList___19dI6 .SearchBar__optionContainer___2gtTY {\\n    margin: 0;\\n    padding: 0;\\n    font-size: 16px;\\n    line-height: 1.5;\\n    height: auto;\\n    border: "
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": " align-items: center;\\n  justify-content: center;\\n  padding: 50px 20px;\\n  width: 100%; }\\n\\n.SearchBar__loadingSpinner___37PqB {\\n  width: 90px;\\n  height: 90px;\\n  border: 8px solid rgba(249, 65, 68, 0.25);\\n  border-top-color: #f94144;\\n  border-radius: 50%;\\n  animation: SearchBar__spin____m-DX 1s linear infinite;\\n  margin-bottom: 32px; }\\n\\n@keyframes SearchBar__spin____m-DX {\\n  to {\\n    transform: rotate(360deg); } }\\n\\n.SearchBar__loadingText___2g5PJ {\\n  font-size: 13px;\\n  font-weight: 60"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "__38OPe {\\n      font-size: 14px; } }\\n  .SearchBar__showAllLink___38OPe:hover {\\n    background-color: #f9f9f9; }\\n\\n.SearchBar__showAllLinkWrapper___1TlVQ {\\n  background-color: #ffffff;\\n  border: 1px solid #e8e8e8;\\n  border-top: none;\\n  border-radius: 0 0 4px 4px;\\n  cursor: pointer; }\\n  .SearchBar__showAllLinkWrapper___1TlVQ .SearchBar__showAllLink___38OPe {\\n    margin-top: 0;\\n    padding: 12px 24px; }\\n\\n@media (max-width: 1199px) {\\n  .SearchBar__recent___2-aCB {\\n    line-height: initial "
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "_3dG4G {\\n  position: absolute;\\n  top: 50%;\\n  transform: translateY(-50%);\\n  right: 185px;\\n  z-index: 100;\\n  cursor: pointer;\\n  display: flex;\\n  align-items: center;\\n  justify-content: center;\\n  transition: 300ms;\\n  padding: 4px;\\n  border-radius: 50%; }\\n  .SearchBar__deleteText___3dG4G:hover {\\n    background: #c6c6c6; }\\n  @media (max-width: 576px) {\\n    .SearchBar__deleteText___3dG4G {\\n      right: 165px; } }\\n  .SearchBar__deleteText___3dG4G img {\\n    width: 12px;\\n    height: 12px;\\"
+   },
+   {
+    "skripta": "main.232f30e6.js",
+    "isjecak": "hBar__aiPillGray___2EBpt {\\n  display: inline-flex;\\n  align-items: center;\\n  justify-content: center;\\n  background-color: #e84d3d;\\n  color: #ffffff;\\n  font-size: 9px;\\n  font-weight: 700;\\n  letter-spacing: 0.5px;\\n  padding: 1px 6px;\\n  border-radius: 4px;\\n  line-height: 14px;\\n  margin-right: 6px;\\n  text-transform: uppercase; }\\n\\n.SearchBar__aiGlow___2pvwT {\\n  position: absolute;\\n  top: 14px;\\n  left: 50%;\\n  transform: translateX(-50%);\\n  width: 752px;\\n  height: 64px;\\n  border-radius: "
+   }
+  ]
+ }
+]
