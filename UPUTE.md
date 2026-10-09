@@ -56,8 +56,10 @@ Primjer (zemljište u Matuljima):
   naselja, ostatak izvan”. Ako je zemljište bilo gdje u krugu jednako vjerojatno, to je i
   vjerojatnost da je u građevinskom području (samo postotak, bez ⚠). U zagradi je naselje u
   kojem je središte oznake, što pomaže kad oglas navodi samo općinu. Za kuće se oko
-  približne oznake ne provjerava. index.hr za približnu lokaciju daje samo središte mjesta,
-  pa tamo piše „nije provjereno – oglas ima samo mjesto”.
+  približne oznake ne provjerava. index.hr za približnu lokaciju ne daje lokaciju kuće ni
+  zemljišta: krug na njegovoj karti stoji na referentnoj točki naselja (u Lovranu ~600 m od
+  stare jezgre, iznad Rta Dependance) ili na točki koju agencija stavlja na više oglasa. Zato
+  tamo piše „nije provjereno – oglas ima samo mjesto”.
 - „nije provjereno” – oglas nema ni čestice ni oznake.
 
 **Duga poruka** se nastavlja u drugoj poruci odmah ispod (bez zvuka).

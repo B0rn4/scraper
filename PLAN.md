@@ -205,7 +205,10 @@ bez stotina poruka.
         250 m iz koda karte, Njuškalo 500 m iz svakog oglasa): točan udio kruga u GP-u
         naselja i izvan naselja, iz obrisa slojeva (GeoServer Ministarstva kroz ISPU, KML),
         i naselje iz bloka PPV-a u središtu; samo postoci, bez ⚠ (odluka korisnika).
-        index.hr za „nepreciznu” lokaciju daje središte mjesta – tamo se ne računa;
+        index.hr za „nepreciznu” lokaciju ne daje lokaciju nekretnine – tamo se ne računa
+        (uzorak 9. 10., 79 oglasa: 41 točno na referentnoj točki naselja iz API-ja,
+        settlementLatitude/Longitude; ostali uglavnom 50–400 m od nje, često ista točka na više
+        oglasa iste agencije – Krk 5×, Kostrena 4×, Vrbnik 4×);
         oglasnik.hr, realestatecroatia i burza nemaju lokaciju čestice.
       - Cijena se ne koristi za odbijanje (osim granice iz kriterija) – samo oznake.
       - **Kuće prema stanovima (6. 10.):** fiksnog omjera nema. Tražene cijene na
