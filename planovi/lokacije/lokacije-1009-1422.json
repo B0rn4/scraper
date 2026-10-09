@@ -1,0 +1,104 @@
+[
+ {
+  "ulaz": "45.124,14.528,500.0",
+  "slojevi": [
+   {
+    "sloj": "Morska obala",
+    "greska": "RuntimeError: ISPU obrisi građevinskog područja: HTTP 200 (application/vnd.ogc.se_xml) '<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\\n<!DOCTYPE ServiceExceptionReport SYSTEM \"http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd\">\\n<ServiceExceptionReport version=\"1.1.1\">\\n  <ServiceEx",
+    "sekundi": 1.4
+   },
+   {
+    "sloj": "Granice gradova i općina",
+    "serviceId": "5",
+    "obrisa": 2,
+    "tocaka": 7064,
+    "udio_kopna": 0.762,
+    "sekundi": 1.0
+   },
+   {
+    "sloj": "Granice naselja",
+    "serviceId": "5",
+    "obrisa": 5,
+    "tocaka": 3036,
+    "udio_kopna": 0.762,
+    "sekundi": 0.5
+   },
+   {
+    "sloj": "Katastarske općine",
+    "serviceId": "4",
+    "obrisa": 9,
+    "tocaka": 7925,
+    "udio_kopna": 0.773,
+    "sekundi": 0.5
+   }
+  ]
+ },
+ {
+  "ulaz": "45.3378,14.308,250.0",
+  "slojevi": [
+   {
+    "sloj": "Morska obala",
+    "greska": "RuntimeError: ISPU obrisi građevinskog područja: HTTP 200 (application/vnd.ogc.se_xml) '<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\\n<!DOCTYPE ServiceExceptionReport SYSTEM \"http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd\">\\n<ServiceExceptionReport version=\"1.1.1\">\\n  <ServiceEx",
+    "sekundi": 1.3
+   },
+   {
+    "sloj": "Granice gradova i općina",
+    "serviceId": "5",
+    "obrisa": 3,
+    "tocaka": 10501,
+    "udio_kopna": 0.922,
+    "sekundi": 0.6
+   },
+   {
+    "sloj": "Granice naselja",
+    "serviceId": "5",
+    "obrisa": 3,
+    "tocaka": 4712,
+    "udio_kopna": 0.922,
+    "sekundi": 0.6
+   },
+   {
+    "sloj": "Katastarske općine",
+    "serviceId": "4",
+    "obrisa": 4,
+    "tocaka": 4868,
+    "udio_kopna": 0.998,
+    "sekundi": 0.6
+   }
+  ]
+ },
+ {
+  "ulaz": "45.3615,14.3241,500.0",
+  "slojevi": [
+   {
+    "sloj": "Morska obala",
+    "greska": "RuntimeError: ISPU obrisi građevinskog područja: HTTP 200 (application/vnd.ogc.se_xml) '<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\" ?>\\n<!DOCTYPE ServiceExceptionReport SYSTEM \"http://schemas.opengis.net/wms/1.1.1/exception_1_1_1.dtd\">\\n<ServiceExceptionReport version=\"1.1.1\">\\n  <ServiceEx",
+    "sekundi": 1.3
+   },
+   {
+    "sloj": "Granice gradova i općina",
+    "serviceId": "5",
+    "obrisa": 4,
+    "tocaka": 12896,
+    "udio_kopna": 1.0,
+    "sekundi": 0.8
+   },
+   {
+    "sloj": "Granice naselja",
+    "serviceId": "5",
+    "obrisa": 5,
+    "tocaka": 8299,
+    "udio_kopna": 1.0,
+    "sekundi": 0.6
+   },
+   {
+    "sloj": "Katastarske općine",
+    "serviceId": "4",
+    "obrisa": 4,
+    "tocaka": 7554,
+    "udio_kopna": 1.0,
+    "sekundi": 0.7
+   }
+  ]
+ }
+]
