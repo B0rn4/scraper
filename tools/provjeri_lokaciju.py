@@ -20,7 +20,7 @@ sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 from scraper.http import Http  # noqa: E402
 from scraper.ispu import APPROX_RADIUS_M, Ispu, _share_check, gp_text  # noqa: E402
 
-RADII = sorted({*APPROX_RADIUS_M.values(), 100, 200, 500})
+RADII = sorted({*(r for r in APPROX_RADIUS_M.values() if r), 100, 200, 500})   # index: None (središte mjesta)
 _COORDS = re.compile(r'"latitude":\s*(-?[\d.]+),\s*"longitude":\s*(-?[\d.]+)')
 _MARKER = re.compile(r'"marker":\s*"(\w+)"')
 
