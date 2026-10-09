@@ -199,6 +199,38 @@ def index_sample(http: Http, n: int) -> dict:
             "neprecizni_po_mjestu": summary, "oglasi": ads}
 
 
+def land_probe(ispu: Ispu, lat: float, lon: float, radius: float) -> dict:
+    """Maska kopna za krug uz obalu: slojevi ISPU-a koji bi mogli pokriti samo kopno (katastar,
+    granice) – daju li obrise (KML), koliko točaka i koliki je udio kopna u krugu."""
+    import math
+    from scraper.ispu import API, _CIRCLE_SIDES, clip_area, to_htrs
+    found: list[dict] = []
+    ispu._walk(ispu.session.get(API + "gis/catalog-izbornik", timeout=ispu.timeout).json(), [], found)
+    cx, cy = to_htrs(lat, lon)
+    circle = [(cx + radius * math.cos(2 * math.pi * i / _CIRCLE_SIDES), cy + radius * math.sin(2 * math.pi * i / _CIRCLE_SIDES))
+              for i in range(_CIRCLE_SIDES)]
+    box = (cx - radius - 20, cy - radius - 20, cx + radius + 20, cy + radius + 20)
+    half = max(radius + 20, 300)
+    query = (cx - half, cy - half, cx + half, cy + half)
+    full = math.pi * radius ** 2
+    out = {"ulaz": f"{lat},{lon},{radius}", "slojevi": []}
+    for la in found:
+        name = la["label"].get("hr", "")
+        if name not in ("Katastarske općine", "Granice gradova i općina", "Granice naselja", "Morska obala"):
+            continue
+        t = time.monotonic()
+        try:
+            polys = ispu._polygons(la, query)
+            land = sum(clip_area(o, box, circle) - sum(clip_area(h, box, circle) for h in hs) for o, hs in polys)
+            out["slojevi"].append({"sloj": name, "serviceId": la.get("serviceId"), "obrisa": len(polys),
+                                   "tocaka": sum(len(o) for o, _ in polys), "udio_kopna": round(land / full, 3),
+                                   "sekundi": round(time.monotonic() - t, 1)})
+        except Exception as exc:  # noqa: BLE001
+            out["slojevi"].append({"sloj": name, "greska": f"{type(exc).__name__}: {exc}"[:300],
+                                   "sekundi": round(time.monotonic() - t, 1)})
+    return out
+
+
 def main() -> int:
     out_dir, args = Path(sys.argv[1]), sys.argv[2:]
     out_dir.mkdir(parents=True, exist_ok=True)
@@ -243,6 +275,15 @@ def main() -> int:
                 item = {"ulaz": arg, "greska": f"{type(exc).__name__}: {exc}"}
             print(json.dumps(item, ensure_ascii=False, indent=1)[:20000])
             results.append({"ulaz": arg, "rezultat": item})
+            continue
+        if arg.startswith("kopno:"):
+            lat, lon, radius = map(float, arg[len("kopno:"):].split(","))
+            try:
+                item = land_probe(ispu, lat, lon, radius)
+            except Exception as exc:  # noqa: BLE001
+                item = {"ulaz": arg, "greska": f"{type(exc).__name__}: {exc}"}
+            print(json.dumps(item, ensure_ascii=False, indent=1))
+            results.append(item)
             continue
         if arg.startswith("radijus:"):
             try:
