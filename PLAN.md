@@ -558,6 +558,13 @@ bez stotina poruka.
 
 ## Otvorena pitanja i sitnice (8. 10.)
 
+- **(gotovo 9. 10.) Ruševina se odbija** (oglas index.hr „u ruševnom stanju, s idejnim
+  rješenjem za poslovnu zgradu” stigao je kao obična kuća): ruševno stanje, za rušenje, bez
+  krova, urušena → odbijen; kad oglas kaže da je za obnovu / adaptaciju / rekonstrukciju →
+  kategorija za obnovu (🔨). Odbijeni ne ulaze u medijan.
+- **Za pregled nakon 1–2 tjedna:** kuća u Lovranu (325.000 €, 90 m²) stigla je 9. 10. s
+  index.hr, a bila je 4. 10. u početnom popisu s nekretnine.hr – okrugli brojevi i samo
+  „Lovran” u naslovima, pa je pravilo istog oglasa (namjerno oprezno) nije povezalo.
 - **(gotovo 8. 10.) Dopuna s drugog portala (➕):** kad isti oglas stigne s portala koji zna
   više, kratka poruka kao odgovor na prvu – samo gumb za taj oglas i popis novog (odluka
   korisnika 8. 10.: lokacija i građevinsko, podaci koji su nedostajali, nova upozorenja iz

@@ -35,7 +35,7 @@ Primjer (zemljište u Matuljima):
 | 📊 | sažetak: more (zračno), vožnja do Rijeke, koliko je skuplji od drugih oglasa, PPV, broj upozorenja |
 | 📍 | mjesto (naselje, grad/općina) |
 | 💶 | cijena po m², portal, vrsta |
-| 🏗 / 🔨 | godina izgradnje i obnove, vlasnički list / kuća za obnovu ili starina |
+| 🏗 / 🔨 | godina izgradnje i obnove, vlasnički list / kuća za obnovu ili starina (ruševina koja nije za obnovu ne stiže) |
 | 🚗 | parking ili garaža (kuće) |
 | 🗺 | građevinsko područje prema ISPU-u (vidi niže) |
 | 📏 | uvjeti gradnje iz prostornog plana: najmanja čestica, kig, kis (zemljišta i čestice iz natječaja) |

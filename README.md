@@ -31,6 +31,10 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   odgovaraju, jer je spomen obično tek u opisu.
 - **Opasni izrazi u opisu** (suvlasništvo, ostavina, legalizacija, teret…): ⚠ s
   citiranom rečenicom; odbija se samo nedvosmisleno (prodaje se suvlasnički dio).
+- **Ruševina se odbija** (odluka 9. 10.): kuća „u ruševnom stanju”, „ruševina”, „za
+  rušenje”, „bez krova”, „urušena”, osim kad oglas kaže da je za obnovu, adaptaciju ili
+  rekonstrukciju – tada je u kategoriji za obnovu (🔨). Ruševna štala ili pomoćna zgrada uz
+  kuću ne računa se. Odbijene ne ulaze u medijan cijena.
 - **Ostvarene cijene (🏛 PPV, samo zemljišta):** Plan približnih vrijednosti
   Ministarstva (ISPU) za naselje: medijan i raspon građevinskog zemljišta stambene i
   mješovite namjene (€/m²) iz svih cjenovnih blokova naselja, uz broj blokova, npr.
@@ -76,7 +80,7 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   broje; očito pogrešni unosi – €/m² izvan razumnog raspona – izbačeni). Uspoređuju se
   oglasi iste vrste i razreda površine, jer €/m² jako pada s površinom: kuće 70–99,
   100–129, 130–169, 170–249 i od 250 m²; zemljišta 300–799, 800–1.199, 1.200–2.499 i od
-  2.500 m². Kuće za obnovu, starine, ruševine i nedovršene (Rohbau) su zasebna
+  2.500 m². Kuće za obnovu, starine i nedovršene (Rohbau) su zasebna
   kategorija, sve veličine zajedno (prepoznaju se u naslovu i opisu; kategorija se pamti
   u bazi). Druge podjele (novogradnja, okućnica, vrste zemljišta) korisnik ne želi
   (8. 10.); dvojne kuće i kuće u nizu se ionako odbijaju. Redak kaže medijan (polovica
