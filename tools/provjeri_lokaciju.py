@@ -142,7 +142,10 @@ def index_ads(http: Http, codes: list[str]) -> list[dict]:
                 yield path, value
         fields = {k: v for k, v in walk(ad)
                   if _LOC_KEYS.search(k.rsplit(".", 1)[-1]) and not (isinstance(v, str) and len(v) >= 120)}
-        out.append({"oglas": code, "naslov": (ad.get("title") or "")[:80], "lat": ad.get("latitude"),
+        kinds = {k: v for k, v in walk(ad) if re.search(r"(?i)type|vrst|kind|categ|subcat|attribute", k)
+                 and not (isinstance(v, str) and len(v) >= 120)}
+        out.append({"oglas": code, "naslov": (ad.get("title") or "")[:80], "vrsta_polja": kinds,
+                    "kljucevi": sorted(ad)[:200], "lat": ad.get("latitude"),
                     "lon": ad.get("longitude"), "isPreciseLocation": ad.get("isPreciseLocation"),
                     "mjesto": ad.get("settlementName") or ad.get("cityName"), "polja": fields,
                     **_condition(ad)})
