@@ -601,6 +601,16 @@ bez stotina poruka.
   za te oglase prije resetiranja.
 - **(gotovo 9. 10.) Raspon za malo oglasa:** s 3–7 usporedivih oglasa (naselje, inače
   grad/općina) redak 🏘 kaže raspon i broj umjesto medijana.
+- **(gotovo 12. 10.) index.hr: dvojna kuća i poljoprivredno zemljište prolazili su** (korisnik:
+  7608900 „Tip kuće: dvojna”, 3802115 „Tip zemljišta: poljoprivredno”). Vrsta se čita dobro, ali
+  samo sa stranice oglasa, a popis je nema: oglas iznad ograničenja otvaranja (10 po pokretanju)
+  ili sa stranicom koja nije odgovorila stizao je s podacima s popisa, a početni popis (4. 10.)
+  nije otvorio nijedan. Sad: index.hr otvara do 25 novih po pokretanju, ostali čekaju sljedeće
+  pokretanje (kao Njuškalo, realestatecroatia, burza); isto čekanje i za nekretnine.hr (ondje vrsta
+  dolazi s popisa, pun opis sa stranice oglasa). Zapamćeni oglasi s index.hr koji nisu odbijeni
+  (~830) jednom se ponovno otvaraju, 30 po pokretanju, i tiho ocjenjuju ispočetka – dvojne i
+  poljoprivredna ispadaju iz usporedbe cijena, bez poruka (`reopen_once`; ponavlja se i nakon
+  novog početnog popisa, npr. kad se oglasi resetiraju).
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

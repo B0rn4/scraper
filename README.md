@@ -146,8 +146,8 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
 
 | Izvor | Kako | Kada |
 |---|---|---|
-| nekretnine.hr (isti oglasi kao Crozilla i Indomio) | podaci sa stranice (novi oglasi koji mogu proći otvaraju se radi punog opisa) | svakih 20 min |
-| index.hr/oglasi | njihov API (novi oglasi koji mogu proći otvaraju se radi opisa) | svakih 20 min |
+| nekretnine.hr (isti oglasi kao Crozilla i Indomio) | podaci sa stranice (novi oglasi koji mogu proći otvaraju se radi punog opisa, do 10 po pokretanju; ostali čekaju sljedeće) | svakih 20 min |
+| index.hr/oglasi | njihov API; popis nema opis ni vrstu, pa se novi oglasi koji mogu proći otvaraju radi opisa i vrste kuće / zemljišta (dvojna, poljoprivredno), do 25 po pokretanju; ostali čekaju sljedeće | svakih 20 min |
 | oglasnik.hr | podaci sa stranice | svakih 20 min |
 | FINA Očevidnik (samo građevinska zemljišta) | dnevni CSV izvoz | jednom dnevno |
 | vender.hr | njihov API | svakih 20 min |

@@ -56,6 +56,9 @@ class Source:
     # Jednom dnevno dublje čitanje (izvori kojima se sniženje inače ne vidi); runner postavlja deep.
     deep_daily = False
     deep = False
+    # Jednokratni popravak: oznaka (npr. "vrsta-2026-10") – runner tada jednom ponovno otvara već
+    # zapamćene oglase izvora (reopen) i tiho ih ocjenjuje ispočetka; nova oznaka = novi popravak.
+    reopen_once = ""
 
     def __init__(self, http: Http, locator: Locator, criteria: dict):
         self.http = http
@@ -104,6 +107,38 @@ class Source:
             return False
         self.deferred.append(x)
         return True
+
+    def open_details(self, found: dict[str, Listing], known_ids: set[str], opener, limit: int) -> list[Listing]:
+        """Otvara stranice novih oglasa koji bi mogli proći, najviše limit po pokretanju (i do
+        DETAIL_SECONDS). Ostali, i oni čija stranica nije odgovorila, čekaju sljedeće pokretanje
+        (defer) – inače bi stigli samo s podacima s popisa (index.hr: bez opisa i vrste kuće ili
+        zemljišta, pa bi npr. dvojna kuća prošla)."""
+        self.add_pending(found, known_ids)
+        out, details, deadline = [], 0, details_deadline()
+        for x in found.values():
+            if x.source_id in known_ids or not self.worth_detail(x):
+                out.append(x)
+                continue
+            if details >= limit or past(deadline):
+                if not self.defer(x):
+                    out.append(x)      # čeka predugo: stiže s podacima s popisa
+                continue
+            details += 1
+            try:
+                opener(x)
+                self.detail_result()
+            except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
+                x.extra["detalji_greska"] = str(exc)[:200]
+                self.detail_result(f"{type(exc).__name__}: {exc}")
+                if self.defer(x, failed=True):
+                    continue
+            out.append(x)
+        return out
+
+    def reopen(self, row: dict) -> Listing | None:
+        """Već zapamćen oglas (redak iz baze) sa stranice oglasa, za reopen_once; None kad oglasa
+        više nema."""
+        raise NotImplementedError
 
     def detail_result(self, error: str = "") -> None:
         """Ishod otvaranja stranice oglasa (bez captche): runner prati jesu li sve pucale."""

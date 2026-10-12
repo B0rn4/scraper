@@ -281,7 +281,7 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
             warnings.append("opis spominje bazen")
     elif listing.kind == LAND:
         limits = criteria["zemljiste"]
-        land_type = subtype or title  # index.hr ne daje vrstu zemljišta, samo naslov
+        land_type = subtype or title  # bez vrste (popis index.hr, neotvoren oglas): naslov
         shown = listing.subtype or "naslov"
         if _BUILDING_LAND.search(land_type):
             if _AGRICULTURAL.search(land_type):

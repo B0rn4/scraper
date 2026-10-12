@@ -6,16 +6,21 @@ includeCityIds (ID-jevi iz data/sources/index_locations_pgz.json).
 
 Popis nema opis ni vrstu kuće/zemljišta. Zato se za nove oglase koji bi mogli proći
 otvara i sam oglas (api/aditem/single-ad): opis ide kroz opasne izraze, a vrsta
-odvaja dvojne kuće i poljoprivredno zemljište."""
+odvaja dvojne kuće i poljoprivredno zemljište. Oglas koji pokretanje ne stigne otvoriti
+(više od MAX_DETAILS novih, stranica ne odgovara) čeka sljedeće pokretanje.
+
+Do 12. 10. takvi su oglasi stizali s podacima s popisa, a početni popis nije otvarao
+nijedan: zapamćeni oglasi zato se jednom ponovno otvaraju (reopen_once, vidi runner)."""
 
 import json
 import re
 from datetime import datetime
 from pathlib import Path
 
+from ..http import FetchError
 from ..models import HOUSE, LAND, Listing
 from ..text import fold
-from .base import DETAIL_RETRIES, FULL, Source, details_deadline, past
+from .base import DETAIL_RETRIES, FULL, Source
 
 BASE = "https://www.index.hr/oglasi"
 CATEGORIES = [
@@ -28,7 +33,7 @@ PAGE_SIZE = 24
 INCREMENTAL_PAGES = 10
 # Index drži dio Opatije kao zaseban "grad".
 CITY_ALIASES = {"Opatija": ["Opatija", "Opatija - Okolica"]}
-MAX_DETAILS = 10   # najviše otvorenih oglasa po pokretanju
+MAX_DETAILS = 25   # najviše otvorenih oglasa po pokretanju (ostali čekaju sljedeće)
 # Šifre iz index.hr ui-config/hr/detail.json
 HOUSE_TYPES = {1: "Samostojeća kuća", 2: "Dvojna kuća", 3: "Kuća u nizu", 4: "Stambeno-poslovna kuća"}
 LAND_TYPES = {1: "Građevinsko zemljište", 2: "Poljoprivredno zemljište"}
@@ -110,6 +115,7 @@ def parse_single(data: dict, listing: Listing) -> None:
 class IndexOglasi(Source):
     name = "index_oglasi"
     label = "index.hr/oglasi"
+    reopen_once = "vrsta-2026-10"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -151,22 +157,29 @@ class IndexOglasi(Source):
                 if not data.get("nextPage") or not data.get("data") or (mode != FULL and not new and not self._recent(items)):
                     break
                 page += 1
-        if mode != FULL:
-            details, deadline = 0, details_deadline()
-            for x in found.values():
-                if details >= MAX_DETAILS or past(deadline):
-                    break
-                if x.source_id in known_ids or not self.worth_detail(x):
-                    continue
-                details += 1
-                try:
-                    parse_single(self.http.get(f"{BASE}/api/aditem/single-ad?code={x.source_id}&format=1",
-                                               headers=JSON_HEADERS, retries=DETAIL_RETRIES).json(), x)
-                    self.detail_result()
-                except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
-                    x.extra["detalji_greska"] = str(exc)[:200]
-                    self.detail_result(f"{type(exc).__name__}: {exc}")
-        return list(found.values())
+        if mode == FULL:
+            return list(found.values())
+        return self.open_details(found, known_ids, lambda x: parse_single(self._single(x.source_id), x), MAX_DETAILS)
+
+    def _single(self, code: str) -> dict:
+        return self.http.get(f"{BASE}/api/aditem/single-ad?code={code}&format=1",
+                             headers=JSON_HEADERS, retries=DETAIL_RETRIES).json()
+
+    def reopen(self, row: dict) -> Listing | None:
+        try:
+            data = self._single(row["source_id"])
+        except FetchError as exc:
+            if str(exc).startswith(("HTTP 404", "HTTP 410")):
+                return None
+            raise
+        if not data.get("data"):
+            return None
+        ad = data["data"][0]
+        category_hr, kind = next(((hr, k) for c, hr, k in CATEGORIES if c == ad.get("category")),
+                                 next((hr, k) for _, hr, k in CATEGORIES if k == row.get("kind")))
+        x = parse_items({"data": [{**ad, "images": []}]}, category_hr, kind)[0]
+        parse_single(data, x)
+        return x
 
     def _recent(self, items: list[Listing]) -> bool:
         """Ima li i najstariji redovni oglas na stranici aktivnost nakon prošlog čitanja?
@@ -180,7 +193,6 @@ class IndexOglasi(Source):
             return True                  # samo istaknuti: redovni su tek na sljedećoj stranici
         times = [_time(x.extra.get("aktivnost")) for x in regular]
         return all(times) and min(times) >= since
-
 
     def search_links(self):
         return [

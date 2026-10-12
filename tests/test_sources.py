@@ -295,11 +295,17 @@ class FakeHttp:
             def json(self):
                 return self.data
 
-        if "single-ad" in url:
-            return Resp({"data": [self.ads[url.split("code=")[1].split("&")[0]]]})
+        if "single-ad" in url:                    # oglasa nema: prazan odgovor
+            ad = self.ads.get(url.split("code=")[1].split("&")[0])
+            return Resp({"data": [ad] if ad else []})
         if "category=houses-for-sale" in url:
             return Resp({"data": self.items, "nextPage": -1})
         return Resp({"data": [LAND_ITEM], "nextPage": -1})
+
+
+def index_item(code, price, city="Omišalj", settlement="Njivice"):
+    return {"code": code, "title": f"Kuća {settlement}", "price": price, "summary": {"area": 120},
+            "countyName": "Primorsko-goranska", "cityName": city, "settlementName": settlement, "smartLink": "k"}
 
 
 def test_index_opens_new_matching_ads():
@@ -330,6 +336,87 @@ def test_index_opens_new_matching_ads():
     d1 = evaluate(x1, cfg, Locator())
     assert d1.status == WARN and any(w.startswith("suvlasništvo") for w in d1.warnings)
     assert evaluate(x2, cfg, Locator()).status == REJECT  # dvojna kuća iz vrste u oglasu
+
+
+def test_index_defers_ads_it_cannot_open(monkeypatch):
+    """Nov oglas koji pokretanje ne stigne otvoriti (ograničenje, stranica oglasa ne odgovara) ne
+    stiže s podacima s popisa – bez vrste bi dvojna kuća prošla – nego čeka sljedeće pokretanje
+    (i kad ga popis tada više nema na pročitanim stranicama)."""
+    from scraper.filters import evaluate
+    from scraper.models import REJECT
+    from scraper.sources.base import INCREMENTAL
+
+    monkeypatch.setattr(index_oglasi, "MAX_DETAILS", 2)
+    cfg = load_config()["kriteriji"]
+    items = [index_item(1, 300_000), index_item(2, 290_000), index_item(3, 280_000)]
+    ads = {"1": {"description": "Kuća.", "houseType": 1}, "3": {"description": "Kuća u nizu.", "houseType": 2}}
+    src = index_oglasi.IndexOglasi(FakeHttp(items, ads), Locator(), cfg)
+    got = {x.source_id for x in src.fetch(INCREMENTAL, set())}
+    assert got == {"1"}                                   # 2: stranica prazna; 3 i zemljište: ograničenje
+    assert [x.source_id for x in src.deferred] == ["2", "3", "9999"]
+    assert src.deferred[0].extra["pokusaja"] == 1
+
+    ads["2"] = {"description": "Kuća.", "houseType": 1}
+    later = index_oglasi.IndexOglasi(FakeHttp([index_item(1, 300_000)], ads), Locator(), cfg)   # popis ih više nema
+    later.pending = src.deferred
+    got = {x.source_id: x for x in later.fetch(INCREMENTAL, {"1"})}
+    assert set(got) == {"1", "2", "3"} and got["3"].subtype == "Dvojna kuća"    # 1: poznat, s popisa
+    assert evaluate(got["3"], cfg, Locator()).status == REJECT
+    assert [x.source_id for x in later.deferred] == ["9999"]
+
+
+def test_index_reopens_known_ad():
+    """Jednokratni popravak: zapamćen oglas (redak iz baze) ponovno se otvara – vrsta s
+    oglasa; obrisan oglas → None."""
+    from scraper.filters import evaluate
+    from scraper.http import FetchError
+
+    def ad(code, category, title, area, **kw):
+        return {"code": code, "category": category, "title": title, "price": 250_000, "area": area,
+                "countyName": "Primorsko-goranska", "cityName": "Krk", "settlementName": "Krk", "smartLink": "oglas",
+                "description": "Prodaje se.", "images": [{"id": 1}], **kw}
+
+    cfg = load_config()["kriteriji"]
+    ads = {"7": ad(7, "houses-for-sale", "Kuća u centru grada Krka", 120, houseType=2),
+           "8": ad(8, "lands-for-sale", "Zemljište Krk, Pinezići", 900, landType=2)}
+    src = index_oglasi.IndexOglasi(FakeHttp([], ads), Locator(), cfg)
+    house = src.reopen({"source_id": "7", "kind": HOUSE})
+    assert house.kind == HOUSE and house.subtype == "Dvojna kuća" and house.area == 120
+    assert house.url == f"{index_oglasi.BASE}/nekretnine/prodaja-kuca/oglas/oglas/7"
+    assert "dvojna kuća (vrsta: Dvojna kuća)" in evaluate(house, cfg, Locator()).reasons
+    land = src.reopen({"source_id": "8", "kind": LAND})
+    assert land.kind == LAND and land.subtype == "Poljoprivredno zemljište"
+    assert "nije građevinsko (Poljoprivredno zemljište)" in evaluate(land, cfg, Locator()).reasons
+    assert src.reopen({"source_id": "9", "kind": HOUSE}) is None             # prazan odgovor
+
+    class Gone(FakeHttp):
+        def get(self, url, **kwargs):
+            raise FetchError(f"HTTP 404 za {url}")
+    assert index_oglasi.IndexOglasi(Gone([], {}), Locator(), cfg).reopen({"source_id": "7", "kind": HOUSE}) is None
+
+
+def test_nekretnine_defers_ads_it_cannot_open(monkeypatch):
+    """nekretnine.hr: stranica oglasa ne odgovara → oglas čeka sljedeće pokretanje (puni opis)."""
+    from types import SimpleNamespace
+
+    from scraper.sources.base import INCREMENTAL
+
+    def fake_parse(text, kind):
+        if kind != HOUSE or "pag=1" not in text:
+            return [], 1
+        return [Listing(source="nekretnine_hr", source_id="1", url="https://x/1", title="Kuća Njivice", kind=HOUSE,
+                        subtype="Samostojeća kuća", price=300_000, area=120, county="Primorsko-goranska",
+                        municipality="Omišalj", settlement="Njivice")], 1
+
+    class Http:
+        def get(self, url, **kw):
+            if url == "https://x/1":
+                raise TimeoutError("stranica oglasa ne odgovara")
+            return SimpleNamespace(text=url)
+
+    monkeypatch.setattr(nekretnine_hr, "parse_page", fake_parse)
+    src = nekretnine_hr.NekretnineHr(Http(), Locator(), load_config()["kriteriji"])
+    assert src.fetch(INCREMENTAL, set()) == [] and [x.source_id for x in src.deferred] == ["1"]
 
 
 def test_nekretnine_detail():

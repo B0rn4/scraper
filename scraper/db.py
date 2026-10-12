@@ -4,7 +4,7 @@ import json
 import sqlite3
 from pathlib import Path
 
-from .models import REJECT, Decision, Listing
+from .models import HOUSE, LAND, REJECT, Decision, Listing
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS listings (
@@ -160,6 +160,24 @@ class State:
                 (listing.key, now, listing.price),
             )
         return old
+
+    def reassess(self, listing: Listing, decision: Decision) -> None:
+        """Nova ocjena već zapamćenog oglasa (ponovno otvaranje, runner._reopen) bez dohvata:
+        zadnje viđenje, cijena i naslov ostaju."""
+        self.conn.execute(
+            """UPDATE listings SET kind = ?, area = COALESCE(?, area), jls = ?, status = ?, reasons = ?, near_miss = ?,
+               settlement = COALESCE(NULLIF(?, ''), settlement), category = COALESCE(?, category) WHERE key = ?""",
+            (listing.kind, listing.area, decision.jls, decision.status,
+             json.dumps(decision.reasons + decision.warnings, ensure_ascii=False), int(decision.near_miss),
+             listing.settlement, listing.extra.get("kategorija"), listing.key),
+        )
+
+    def reopen_candidates(self, source: str, since: str) -> list[str]:
+        """Zapamćene kuće i zemljišta izvora s našeg područja koji nisu odbijeni, najnoviji prvi."""
+        rows = self.conn.execute(
+            "SELECT source_id FROM listings WHERE source = ? AND status != ? AND kind IN (?, ?) "
+            "AND jls IS NOT NULL AND last_seen >= ? ORDER BY last_seen DESC", (source, REJECT, HOUSE, LAND, since))
+        return [r[0] for r in rows]
 
     def mark_notified(self, key: str, price: float | None, now: str) -> None:
         self.conn.execute(

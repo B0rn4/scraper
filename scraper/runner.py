@@ -46,6 +46,8 @@ CLOCK_TOLERANCE = timedelta(minutes=10)   # sat na Redmiju smije toliko odstupat
 LISTING_ERROR_RUNS = 3      # isti izvor toliko pokretanja zaredom ima oglase koji se ne daju obraditi → upozorenje
 DEEP_ALERT_DAYS = 3         # dnevno dublje čitanje toliko dana zaredom ne uspijeva → upozorenje
 CODE_ALERT_RUNS = 18        # Redmi toliko GitHubovih pokretanja (~6 sati) radi s drukčijim kodom → upozorenje
+REOPEN_PER_RUN = 30         # jednokratno ponovno otvaranje zapamćenih oglasa (Source.reopen_once) po pokretanju
+REOPEN_SECONDS = 120        # i najdulje toliko sekundi
 # Izvor radi, ali ovoliko dana nema nijedan nov oglas (npr. portal ne poštuje redoslijed "najnoviji"):
 # upozorenje. Stvarni tempo (listopad 2026.): Njuškalo 375–1245 dnevno, index 21–103, oglasnik 6–31
 # (noćni uvoz agencija oko 5 h), nekretnine.hr 4–28, realestatecroatia 8–14 (također ujutro), burza
@@ -343,6 +345,10 @@ class Runner:
                     if not silent_baseline:
                         baseline.append((src, decided, ""))
                     state.meta_set(f"baseline:{src.name}", self.stamp)
+                    if getattr(src, "reopen_once", ""):   # početni popis ne otvara oglase: otvaraju se poslije
+                        state.meta_set(f"popravak:{src.name}", "")
+                elif getattr(src, "reopen_once", ""):
+                    self._reopen(state, src, prices)
                 if src.daily:
                     state.meta_set(f"daily:{src.name}", today)
                 if getattr(src, "deep", False):
@@ -556,6 +562,50 @@ class Runner:
         state.conn.commit()
         if keys:
             self.log(f"Isti kao tiho zabilježen oglas (nije poslan): {len(keys)} oglasa opet može stići")
+
+    def _reopen(self, state: State, src, prices) -> None:
+        """Jednokratni popravak (Source.reopen_once; i nakon početnog popisa, koji ne otvara
+        oglase): zapamćeni oglasi izvora koji nisu odbijeni ponovno se otvaraju, REOPEN_PER_RUN po
+        pokretanju, i tiho ocjenjuju ispočetka – npr. dvojna kuća ili poljoprivredno zemljište
+        ispadaju iz usporedbe cijena. Bez poruka; zadnje viđenje i cijena ostaju."""
+        mark, queue = f"popravak:{src.name}", f"ponovno_otvori:{src.name}"
+        if state.meta_get(mark) != src.reopen_once:
+            codes = state.reopen_candidates(src.name, (self.now - timedelta(days=MAX_AGE_DAYS)).isoformat())
+            state.meta_set(queue, json.dumps(codes))
+            state.meta_set(mark, src.reopen_once)
+            self.log(f"{src.label}: ponovno otvaranje {len(codes)} zapamćenih oglasa ({REOPEN_PER_RUN} po pokretanju)")
+        try:
+            codes = json.loads(state.meta_get(queue) or "[]")
+        except ValueError:
+            codes = []
+        if not codes:
+            return
+        deadline = time.monotonic() + REOPEN_SECONDS
+        tried, opened, errors, rejected = 0, 0, [], 0
+        for code in codes[:REOPEN_PER_RUN]:
+            if time.monotonic() > deadline or (len(errors) >= 3 and not opened):
+                break
+            tried += 1
+            row = state.get(f"{src.name}:{code}")
+            if row is None or row.get("status") == REJECT:
+                continue
+            try:
+                x = src.reopen(row)
+                opened += 1
+                if x is None:                       # oglasa više nema
+                    continue
+                if row.get("kind") == LAND and x.kind == HOUSE and row.get("area"):
+                    x.extra["okucnica_ranije"] = row["area"]   # ruševina kao zemljište (okućnica)
+                d = evaluate(x, self.criteria, self.locator, prices)
+                state.reassess(x, d)
+                rejected += d.status == REJECT
+            except Exception as exc:  # noqa: BLE001 – oglas ostaje kakav je bio
+                errors.append(f"{code}: {type(exc).__name__}: {exc}")
+        if errors and not opened:
+            tried = 0                               # stranica oglasa ne odgovara: isti oglasi sljedeći put
+        state.meta_set(queue, json.dumps(codes[tried:]))
+        self.log(f"{src.label}: ponovno otvoreno {opened} zapamćenih oglasa, sad odbijeno {rejected}, "
+                 f"preostalo {len(codes) - tried}" + (f"; greške {len(errors)} – {errors[0]}" if errors else ""))
 
     def _prune(self, state: State) -> None:
         """Jednom dnevno: odbijeni oglasi koji se dugo ne pojavljuju (State.prune); s našeg

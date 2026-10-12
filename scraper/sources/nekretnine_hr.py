@@ -4,14 +4,15 @@ Stranice s popisom imaju podatke u __NEXT_DATA__ (JSON), uključujući grad/opć
 vrstu nekretnine, cijenu i površinu. Sortiranje: ?criterio=data&ordine=desc
 (najnoviji), ?criterio=dataModifica&ordine=desc (nedavno izmijenjeni, npr. cijena).
 Popis daje samo početak opisa; novi oglasi koji bi mogli proći otvaraju se
-(props.pageProps.detailData): puni opis, značajke (garaža, parking), godina izgradnje."""
+(props.pageProps.detailData): puni opis, značajke (garaža, parking), godina izgradnje.
+Oglas koji pokretanje ne stigne otvoriti čeka sljedeće pokretanje."""
 
 import json
 import re
 
 from ..models import HOUSE, LAND, Listing
 from ..text import fmt_eur, fmt_m2, fold, parse_number
-from .base import DETAIL_RETRIES, FULL, Source, details_deadline, past
+from .base import DETAIL_RETRIES, FULL, Source
 
 BASE = "https://www.nekretnine.hr"
 COUNTY_SLUG = "primorsko-goranska-zupanija"
@@ -21,7 +22,7 @@ CATEGORIES = [
     ("prodaja-zemljista", LAND, "zemljišta"),
 ]
 _NEXT_DATA = re.compile(r'<script id="__NEXT_DATA__"[^>]*>(.*?)</script>', re.S)
-MAX_DETAILS = 10   # najviše otvorenih oglasa po pokretanju
+MAX_DETAILS = 10   # najviše otvorenih oglasa po pokretanju (ostali čekaju sljedeće)
 _PARKING = re.compile(r"garaz|parkir|parking", re.I)
 
 
@@ -119,22 +120,10 @@ class NekretnineHr(Source):
                 # promijenjenu cijenu (ujutro nakon noći ih je više od jedne stranice), najviše 10.
                 self._crawl(f"{BASE}/{category}/{COUNTY_SLUG}/", kind, found, known_ids, max_pages=10,
                             stop_on_known=False, sort="dataModifica")
-        if mode != FULL:
-            details, deadline = 0, details_deadline()
-            for x in found.values():
-                if details >= MAX_DETAILS or past(deadline):
-                    break
-                if x.source_id in known_ids or not self.worth_detail(x):
-                    continue
-                details += 1
-                try:
-                    parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x)
-                    self.detail_result()
-                except Exception as exc:  # noqa: BLE001 – oglas ostaje s podacima s popisa
-                    x.extra["detalji_greska"] = str(exc)[:200]
-                    self.detail_result(f"{type(exc).__name__}: {exc}")
-        return list(found.values())
-
+        if mode == FULL:
+            return list(found.values())
+        return self.open_details(found, known_ids,
+                                 lambda x: parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x), MAX_DETAILS)
 
     def _crawl(self, url, kind, found, known_ids, max_pages, stop_on_known, sort="data"):
         page = 1

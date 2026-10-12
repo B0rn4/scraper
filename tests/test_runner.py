@@ -1947,3 +1947,44 @@ def test_interrupt_after_listings_keeps_records_of_sent_messages(tmp_path, monke
     state = State(tmp_path / "s.db")
     assert state.meta_get("natjecaj:poslan") == "da" and state.get("t:1")["notified_at"]
     state.close()
+
+
+def test_reopen_known_listings_once_silently(tmp_path, monkeypatch):
+    """Jednokratni popravak (index.hr): zapamćeni oglasi koji nisu odbijeni ponovno se otvaraju,
+    REOPEN_PER_RUN po pokretanju, i tiho ocjenjuju ispočetka – dvojna kuća postaje odbijena, bez
+    poruke; zadnje viđenje i cijena ostaju. Stranica oglasa ne odgovara → isti oglasi sljedeći put."""
+    import scraper.runner as runner_mod
+
+    calls, down = [], [False]
+
+    def reopen(src, row):
+        calls.append(row["source_id"])
+        if down[0]:
+            raise TimeoutError("stranica oglasa ne odgovara")
+        if row["source_id"] == "3":
+            return None                                         # oglasa više nema
+        x = listing(sid=row["source_id"], source="fake", price=1, title=row["title"])
+        if row["source_id"] == "2":
+            x.subtype = "Dvojna kuća"
+        return x
+
+    monkeypatch.setattr(FakeSource, "reopen_once", "v1", raising=False)
+    monkeypatch.setattr(FakeSource, "reopen", reopen, raising=False)
+    monkeypatch.setattr(runner_mod, "REOPEN_PER_RUN", 2)
+    houses = [listing(sid=str(i), source="fake", price=200_000 + i * 10_000, title=f"Kuća {i} Punat") for i in range(1, 5)]
+
+    def configure(r, i):
+        down[0] = i == 1
+
+    sent = _runs(tmp_path, monkeypatch, [houses, [houses[0]], [houses[0]], [houses[0]], [houses[0]]], configure)
+    assert sent[1:] == [[], [], [], []]
+    state = State(tmp_path / "s.db")
+    before = state.get("fake:2")
+    assert before["status"] == REJECT and "dvojna kuća (vrsta: Dvojna kuća)" in before["reasons"]
+    assert before["price"] == 220_000 and before["last_seen"] == before["first_seen"]
+    assert state.get("fake:3")["status"] != REJECT and state.get("fake:4")["status"] != REJECT
+    assert json.loads(state.meta_get("ponovno_otvori:fake")) == []
+    state.close()
+    # 2. pokretanje: stranica ne odgovara (2 pokušaja, ništa otvoreno) → ista dva u 3. pokretanju;
+    # 3. i 4.: po dva; 5.: popravak je gotov.
+    assert len(calls) == 6 and calls[:2] == calls[2:4] and sorted(calls[2:]) == ["1", "2", "3", "4"]
