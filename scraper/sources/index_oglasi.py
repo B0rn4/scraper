@@ -84,7 +84,7 @@ def _year(value) -> int | None:
 
 
 def parse_single(data: dict, listing: Listing) -> None:
-    """Podaci iz samog oglasa: opis, vrsta kuće/zemljišta, okućnica, godine, parking, papiri."""
+    """Podaci iz samog oglasa: opis, vrsta kuće/zemljišta, okućnica, godine, parking, papiri, bazen."""
     if not data.get("data"):
         raise ValueError("index.hr: odgovor za oglas je prazan")
     ad = data["data"][0]
@@ -108,6 +108,12 @@ def parse_single(data: dict, listing: Listing) -> None:
         listing.extra["parking"] = ", ".join(parking)
     if ad.get("ownershipCertificate"):
         listing.extra["vlasnicki_list"] = True
+    permits = [name for key, name in (("buildingPermit", "građevinska dozvola"), ("usePermit", "uporabna dozvola"))
+               if ad.get(key)]
+    if permits:
+        listing.extra["dozvole"] = permits
+    if ad.get("swimmingPool"):
+        listing.extra["bazen"] = True
     listing.extra["detalji"] = True
     listing.extra.pop("samo_popis", None)
 
@@ -115,7 +121,7 @@ def parse_single(data: dict, listing: Listing) -> None:
 class IndexOglasi(Source):
     name = "index_oglasi"
     label = "index.hr/oglasi"
-    reopen_once = "vrsta-2026-10"
+    reopen_once = "vrsta-bazen-dozvole-2026-10"   # 13. 10.: i bazen i dozvole – ispočetka
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

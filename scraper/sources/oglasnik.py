@@ -1,12 +1,14 @@
 """oglasnik.hr (Plavi oglasnik) – Next.js stranica s podacima o oglasima u
 ugrađenom RSC sadržaju (self.__next_f.push). Filter lokacije: f[4][<id>]=true,
-4559 = Primorsko-goranska županija."""
+4559 = Primorsko-goranska županija. Popis ima sva polja oglasa (stranica oglasa ista):
+vrsta, površine, opis, godina izgradnje, parking, dozvole, okućnica/oprema (bazen), stanje."""
 
 import json
 import re
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
+from ..http import FetchError
 from ..models import HOUSE, LAND, Listing
 from ..text import fmt_eur, fmt_m2, fold, parse_number
 from .base import FULL, Source
@@ -70,6 +72,9 @@ def _listing(ad: dict, kind: str, texts: dict, hrefs: dict) -> Listing:
                 return p.get("value")
         return None
 
+    def values(slug):
+        return [str(p.get("value")) for p in params if p.get("slug") == slug and p.get("value") not in (None, "")]
+
     if kind == HOUSE:
         subtype = param("re_house_type") or ""
         area = parse_number(param("re_living_area"))
@@ -84,7 +89,7 @@ def _listing(ad: dict, kind: str, texts: dict, hrefs: dict) -> Listing:
     category = (ad.get("category") or {}).get("url") or ("kuce-prodaja" if kind == HOUSE else "zemljista-prodajem")
     href = hrefs.get(ad_id) or f"/{category}/{fold(ad.get('title', '')).replace(' ', '-')}-oglas-{ad_id}"
     media = ad.get("media") or []
-    return Listing(
+    x = Listing(
         source=Oglasnik.name,
         source_id=ad_id,
         url=BASE + href,
@@ -102,6 +107,27 @@ def _listing(ad: dict, kind: str, texts: dict, hrefs: dict) -> Listing:
         image_url=_absolute((media[0].get("listing") or media[0].get("thumb") or "") if media else ""),
         published=ad.get("publish") or "",
     )
+    # Polja oglasa: godina izgradnje, parking (broj mjesta, garaža), dozvole, bazen (u "Okućnica"
+    # ili "Oprema"), stanje.
+    year = re.search(r"\b(1[89]\d\d|20\d\d)\b", str(param("re_construction_year") or ""))
+    if year:
+        x.extra["godina_izgradnje"] = int(year.group(1))
+    spaces = re.search(r"\d+", str(param("re_parking_number") or ""))
+    if spaces and int(spaces.group(0)) > 0:
+        x.extra["parking"] = spaces.group(0)
+    elif values("re_parking_type"):
+        x.extra["parking"] = ", ".join(values("re_parking_type"))
+    permits = values("re_permits")
+    if any("vlasni" in fold(v) for v in permits):
+        x.extra["vlasnicki_list"] = True
+    permits = [v for v in permits if "dozvol" in fold(v)]
+    if permits:
+        x.extra["dozvole"] = permits
+    if any("bazen" in fold(v) for v in values("re_house_infield") + values("re_equipment")):
+        x.extra["bazen"] = True
+    if param("re_condition"):
+        x.extra["stanje"] = str(param("re_condition"))
+    return x
 
 
 def _absolute(url: str) -> str:
@@ -111,6 +137,20 @@ def _absolute(url: str) -> str:
 class Oglasnik(Source):
     name = "oglasnik"
     label = "oglasnik.hr"
+    reopen_once = "polja-2026-10"   # godina, parking, dozvole, bazen, stanje (13. 10.)
+
+    def reopen(self, row: dict) -> Listing | None:
+        """Stranica oglasa ima iste podatke kao popis (i druge oglase, npr. slične)."""
+        try:
+            page = self.http.get(row["url"]).text
+        except FetchError as exc:
+            if str(exc).startswith(("HTTP 404", "HTTP 410")):
+                return None
+            raise
+        ads = parse_page(page, row["kind"])
+        if not ads:
+            raise ValueError("oglasnik.hr: na stranici oglasa nema podataka o oglasu (promjena stranice?)")
+        return next((x for x in ads if x.source_id == row["source_id"]), None)
 
     def fetch(self, mode, known_ids):
         found: dict[str, Listing] = {}

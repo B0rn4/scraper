@@ -440,3 +440,22 @@ def test_ruin_only_rejection_opens_listing_page(ctx):
     assert src.worth_detail(x) and x.kind != LAND
     y = house(title="Ruševina s građevinskom dozvolom", description="Ruševina, građevinska dozvola, okućnica 500 m2.", area=60)
     assert src.worth_detail(y) and y.kind != LAND and y.area == 60
+
+
+def test_portal_fields_pool_condition_and_land_use(ctx):
+    """Polja oglasa (ne opis): bazen → odbijeno kao i u naslovu; stanje "za renoviranje" → 🔨 i
+    kategorija za obnovu ("renovirano" ne); zemljište čija namjena nije stambena ni mješovita → ⚠."""
+    pool = house()
+    pool.extra["bazen"] = True
+    d = evaluate(pool, *ctx)
+    assert d.status == REJECT and d.reasons == ["s bazenom (podaci oglasa)"]
+    for stanje, poor in (("za renoviranje", True), ("Za renoviranje", True), ("potrebna adaptacija", True),
+                         ("odlično / renovirano", False), ("Dobro / Useljivo", False)):
+        x = house(description="Kuća u mirnom dijelu mjesta, s parkingom ispred kuće i okućnicom.")
+        x.extra["stanje"] = stanje
+        evaluate(x, *ctx)
+        assert bool(x.extra.get("za_obnovu")) == poor and (x.extra.get("kategorija") == "obnova") == poor, stanje
+    for namjena, warned in (("poslovna", True), ("turistička", True), ("stambeno", False), ("mješovita", False)):
+        x = land()
+        x.extra["namjena"] = namjena
+        assert any(w.startswith("namjena prema oglasu") for w in evaluate(x, *ctx).warnings) == warned, namjena

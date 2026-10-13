@@ -30,6 +30,10 @@ class Listing:
     image_url: str = ""
     published: str = ""
     previous_price: float | None = None
+    # Ostali podaci izvora i obrade. Polja oglasa (strukturirana, ne iz opisa): godina_izgradnje,
+    # godina_obnove (godina), parking (broj mjesta ili tekst, npr. "garaža"), vlasnicki_list (bool),
+    # dozvole (npr. ["građevinska dozvola", "uporabna dozvola"]), bazen (bool), stanje (tekst s
+    # portala, npr. "za renoviranje"), namjena (zemljište, npr. "stambena", "poslovna").
     extra: dict = field(default_factory=dict)
 
     @property

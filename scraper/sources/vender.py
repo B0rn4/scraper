@@ -2,13 +2,16 @@
 
 Filtri: property_state (županija), property_status (prodaja), property_type.
 Cijena i površine su u property_meta (fave_property_price, fave_property_size,
-fave_property_land), a grad i vrsta u pojmovima (_embed=wp:term)."""
+fave_property_land), a grad i vrsta u pojmovima (_embed=wp:term). Dodatne značajke agencije
+(additional_features: "Tip kuće: dvojna", godina adaptacije, parkirna mjesta, površina parcele)
+i oznake (property_feature: garaža, parkirno mjesto, bazen) dopunjuju vrstu i podatke."""
 
 import html
 import re
 
+from ..http import FetchError
 from ..models import HOUSE, LAND, OTHER, Listing
-from ..text import parse_number
+from ..text import fold, parse_number
 from .base import FULL, Source
 
 API = "https://vender.hr/wp-json/wp/v2/properties"
@@ -22,6 +25,10 @@ LAND_TYPES = {19276: "Građevinsko zemljište", 120: "Zemljište", 20004: "Zemlj
 GENERIC = {"Kuća", "Kuće", "Zemljište", "Zemljišta"}
 _TAGS = re.compile(r"<[^>]+>")
 _TITLE_AREA = re.compile(r"(\d+(?:[.,]\d+)?)\s*m2", re.I)
+# Dodatne značajke agencije (PHP-serijalizirano: naslov i vrijednost), npr. "Tip kuće": "dvojna".
+_EXTRA_FEATURE = re.compile(r's:\d+:"fave_additional_feature_title";s:\d+:"(.*?)";'
+                            r's:\d+:"fave_additional_feature_value";s:\d+:"(.*?)";', re.S)
+_YEAR = re.compile(r"\b(1[89]\d\d|20\d\d)\b")
 
 
 def _meta(meta: dict, key: str):
@@ -75,6 +82,7 @@ def parse_items(items: list[dict]) -> list[Listing]:
             image_url=media.get("source_url", "") if isinstance(media, dict) else "",
             published=x.get("date") or "",
         ))
+        _features(out[-1], meta, [t["name"] for t in terms if t.get("taxonomy") == "property_feature"])
         coords = re.match(r"\s*(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)", _meta(meta, "fave_property_location") or "")
         if coords and _meta(meta, "fave_property_map") == "1":
             # Oznaka na karti oglasa; agencija je može staviti i približno.
@@ -83,9 +91,42 @@ def parse_items(items: list[dict]) -> list[Listing]:
     return out
 
 
+def _features(x: Listing, meta: dict, features: list[str]) -> None:
+    """Dodatne značajke ("Tip kuće", godine, parkirna mjesta, površina parcele), oznake (garaža,
+    parkirno mjesto, bazen), godina izgradnje i "Stara cijena" ispred cijene."""
+    extra = {html.unescape(k).strip().lower(): html.unescape(v).strip()
+             for k, v in _EXTRA_FEATURE.findall(str(_meta(meta, "additional_features") or ""))}
+    house_type = extra.get("tip kuće", "")
+    if x.kind == HOUSE and house_type and fold(house_type).split()[0] not in fold(x.subtype):
+        x.subtype = f"{x.subtype} ({house_type})" if x.subtype else house_type   # npr. "Kuća (dvojna)"
+    for name, key in (("godina izgradnje", "godina_izgradnje"), ("godina zadnje adaptacije", "godina_obnove"),
+                      ("godina zadnje renovacije", "godina_obnove")):
+        year = _YEAR.search(extra.get(name, ""))
+        if year:
+            x.extra[key] = int(year.group(1))
+    year = _YEAR.search(str(_meta(meta, "fave_property_year") or ""))
+    if year and "godina_izgradnje" not in x.extra:
+        x.extra["godina_izgradnje"] = int(year.group(1))
+    plot = parse_number(extra.get("površina parcele"))
+    if x.kind == HOUSE and plot and not x.plot_area:
+        x.plot_area = plot
+    spaces = re.search(r"\d+", extra.get("parkirna mjesta", ""))
+    marks = [f.lower() for f in features if re.search(r"(?i)garaž|parkir", f)]
+    if spaces and int(spaces.group(0)) > 0:
+        x.extra["parking"] = spaces.group(0)
+    elif marks:
+        x.extra["parking"] = ", ".join(marks)
+    if any(re.search(r"(?i)\bbazen", f) for f in features):
+        x.extra["bazen"] = True
+    before = re.search(r"(?i)stara cijena:?\s*([\d.,]+)", str(_meta(meta, "fave_property_price_prefix") or ""))
+    if before and parse_number(before.group(1)):
+        x.previous_price = parse_number(before.group(1))
+
+
 class Vender(Source):
     name = "vender"
     label = "vender.hr"
+    reopen_once = "polja-2026-10"   # vrsta iz dodatnih značajki, parking, bazen, godine (13. 10.)
 
     def fetch(self, mode, known_ids):
         types = ",".join(str(i) for i in [*HOUSE_TYPES, *LAND_TYPES])
@@ -109,6 +150,15 @@ class Vender(Source):
                 break
             page += 1
         return list(found.values())
+
+    def reopen(self, row: dict) -> Listing | None:
+        try:
+            item = self.http.get(f"{API}/{row['source_id']}?_fields={FIELDS}&_embed=wp:term,wp:featuredmedia").json()
+        except FetchError as exc:
+            if str(exc).startswith(("HTTP 404", "HTTP 410")):
+                return None
+            raise
+        return parse_items([item])[0] if isinstance(item, dict) and item.get("id") else None
 
     def search_links(self):
         return [("PGŽ, prodaja", "https://vender.hr/zupanija/primorsko-goranska/")]

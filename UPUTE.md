@@ -35,7 +35,7 @@ Primjer (zemljište u Matuljima):
 | 📊 | sažetak: more (zračno), vožnja do Rijeke, koliko je skuplji od drugih oglasa, PPV, broj upozorenja |
 | 📍 | mjesto (naselje, grad/općina) |
 | 💶 | cijena po m², portal, vrsta |
-| 🏗 / 🔨 | godina izgradnje i obnove, vlasnički list / kuća za obnovu ili starina (ruševina koja nije za obnovu ne stiže; ruševina s dozvolom ili na građevinskoj čestici stiže kao zemljište s ⚠) |
+| 🏗 / 🔨 | godina izgradnje i obnove, vlasnički list, građevinska i uporabna dozvola / kuća za obnovu ili starina – iz opisa ili polja oglasa („stanje: za renoviranje”) (ruševina koja nije za obnovu ne stiže; ruševina s dozvolom ili na građevinskoj čestici stiže kao zemljište s ⚠) |
 | 🚗 | parking ili garaža (kuće) |
 | 🗺 | građevinsko područje prema ISPU-u (vidi niže) |
 | 📏 | uvjeti gradnje iz prostornog plana: najmanja čestica, kig, kis (zemljišta i čestice iz natječaja) |
@@ -80,7 +80,7 @@ Primjer (zemljište u Matuljima):
   i dalje:
   - bolja lokacija: 🗺 građevinsko područje, 🏛 PPV na lokaciji, 📏 uvjeti gradnje;
   - podaci koji su nedostajali: 📍 naselje, 🏗 vrsta kuće, okućnica, godina, vlasnički
-    list, 🚗 parking, ✂️ parcelacija;
+    list, dozvole, 🚗 parking, ✂️ parcelacija;
   - ⚠ nova upozorenja iz opisa ili s ISPU-a;
   - ⚠ „prema ovom oglasu ne odgovara kriterijima: …” – novi portal pokazuje da oglas ne
     odgovara (npr. poljoprivredno zemljište, naselje koje nije na popisu).

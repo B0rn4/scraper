@@ -619,6 +619,30 @@ bez stotina poruka.
   čita i broj parkirnih mjesta; zapamćeni oglasi bez površine jednom se ponovno otvaraju, 30 po
   pokretanju (vrsta i mjesto iz zaglavlja stranice), tiho – kuće ispod 70 m² i zemljišta ispod
   300 m² postaju odbijene, ostali ulaze u usporedbu cijena.
+- **(gotovo 13. 10.) Revizija: koje podatke portali daju, a ne čitamo** (korisnik: „Ima li još
+  stranica na kojima ne prikupljamo sve informacije?”). Izmjereno na stvarnim oglasima
+  (`tools/provjeri_lokaciju.py polja:IZVOR:N`, grana debug) i snimkama stranica:
+  - vender: „Tip kuće: dvojna / u nizu” u dodatnim značajkama (vrsta je inače samo „Kuća” –
+    dvojna bi prošla), godina izgradnje i adaptacije, parkirna mjesta, površina parcele,
+    oznake garaža / parkirno mjesto / bazen, „Stara cijena”;
+  - oglasnik: godina izgradnje, parking (broj, garaža), dozvole i vlasnički list, bazen (polje
+    „Okućnica”: 29 od 100 kuća u snimci), stanje – sve je već na popisu;
+  - nekretnine.hr: stanje („Za renoviranje” → za obnovu), parking („3 na zajedničkom parkingu”
+    umjesto dosadašnjeg nagađanja „garaža”), bazen (9 od 25 kuća), okućnica iz razdiobe površina;
+    stanje, parking i bazen i s popisa (polja ga4…, na talijanskom);
+  - index.hr: bazen, građevinska i uporabna dozvola (namjena zemljišta: šifre 1–3 bez naziva –
+    nije uključeno);
+  - realestatecroatia: garaža i parkiralište; koordinate na karti su središte mjesta (svi oglasi
+    istog mjesta imaju istu točku) – ne vrijede za građevinsko područje;
+  - Njuškalo: bazen, vlasnički list i dozvole iz grupa svojstava, godina zadnje renovacije;
+    namjena zemljišta (već čitana) sad daje ⚠ kad nije stambena ni mješovita; poznat oglas sa
+    sniženjem ili bez površine (103 zemljišta) otvara se kad se pojavi na popisu;
+  - burza: oglasnik slobodnog teksta – čita se sve što ima.
+  Filtri: bazen iz polja odbija kao i naslov; stanje za renoviranje → 🔨 i kategorija za obnovu;
+  🏗 i dopuna navode dozvole. Zapamćeni oglasi s vendera, oglasnika i nekretnine.hr jednom se
+  ponovno otvaraju (index ispočetka, s bazenom i dozvolama), tiho, najviše 3 minute po pokretanju.
+  Dostupno, a ne korišteno: komunalni priključci zemljišta (voda, struja, kanalizacija),
+  udaljenost od mora, energetski razred.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

@@ -1988,3 +1988,10 @@ def test_reopen_known_listings_once_silently(tmp_path, monkeypatch):
     # 2. pokretanje: stranica ne odgovara (2 pokušaja, ništa otvoreno) → ista dva u 3. pokretanju;
     # 3. i 4.: po dva; 5.: popravak je gotov.
     assert len(calls) == 6 and calls[:2] == calls[2:4] and sorted(calls[2:]) == ["1", "2", "3", "4"]
+
+
+def test_pool_from_portal_fields_survives_list_only_data():
+    """Bazen iz polja stranice oglasa: sljedeći put samo popis (bez polja) → ostaje odbijen."""
+    prev = {"reasons": json.dumps(["s bazenom (podaci oglasa)"]), "status": REJECT}
+    d = Decision(PASS, jls="Punat")
+    assert Runner._keep_text_reject(d, prev).reasons == ["s bazenom (podaci oglasa)"]

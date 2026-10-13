@@ -53,6 +53,9 @@ class Source:
     deep_error = ""
     # Cijene već viđenih oglasa (postavlja runner): koliko daleko čitati "nedavno izmijenjene".
     known_prices: dict = {}
+    # Poznati oglasi koji nisu odbijeni, a nemaju površinu (početni popis ne otvara oglase;
+    # postavlja runner): otvaraju se kad se pojave na popisu.
+    known_incomplete: set = set()
     # Jednom dnevno dublje čitanje (izvori kojima se sniženje inače ne vidi); runner postavlja deep.
     deep_daily = False
     deep = False
@@ -113,18 +116,24 @@ class Source:
         old = self.known_prices.get(x.source_id)
         return bool(old and x.price and x.price < old - 1)
 
+    def reopen_known(self, x: Listing) -> bool:
+        """Poznat oglas čija se stranica ipak otvara: snižena cijena ili zapamćen bez površine."""
+        return self.price_dropped(x) or x.source_id in self.known_incomplete
+
     def open_details(self, found: dict[str, Listing], known_ids: set[str], opener, limit: int) -> list[Listing]:
         """Otvara stranice novih oglasa koji bi mogli proći, najviše limit po pokretanju (i do
         DETAIL_SECONDS). Ostali, i oni čija stranica nije odgovorila, čekaju sljedeće pokretanje
         (defer) – inače bi stigli samo s podacima s popisa (index.hr: bez opisa i vrste kuće ili
-        zemljišta, pa bi npr. dvojna kuća prošla). Otvara se i poznat oglas sa sniženom cijenom:
-        poruka o sniženju inače bi imala samo podatke s popisa (oglas zapamćen u početnom popisu,
-        koji ne otvara oglase, nema ni površinu); on ne čeka – bez mjesta stiže kao prije."""
+        zemljišta, pa bi npr. dvojna kuća prošla). Otvara se i poznat oglas sa sniženom cijenom ili
+        bez površine (reopen_known): poruka o sniženju inače bi imala samo podatke s popisa (oglas
+        zapamćen u početnom popisu, koji ne otvara oglase, nema ni površinu); on ne čeka – bez
+        mjesta stiže kao prije."""
         self.add_pending(found, known_ids)
         out, details, deadline = [], 0, details_deadline()
-        for x in found.values():
+        # Novi oglasi prvi: poznati (sniženje, bez površine) ne smiju zauzeti mjesto novom.
+        for x in sorted(found.values(), key=lambda x: x.source_id in known_ids):
             known = x.source_id in known_ids
-            if (known and not self.price_dropped(x)) or not self.worth_detail(x):
+            if (known and not self.reopen_known(x)) or not self.worth_detail(x):
                 out.append(x)
                 continue
             if details >= limit or past(deadline):

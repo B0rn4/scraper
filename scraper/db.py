@@ -172,6 +172,13 @@ class State:
              listing.settlement, listing.extra.get("kategorija"), listing.key),
         )
 
+    def known_incomplete(self, source: str) -> set[str]:
+        """Zapamćene kuće i zemljišta izvora bez površine koji nisu odbijeni (otvaraju se kad se
+        pojave na popisu, Source.known_incomplete)."""
+        rows = self.conn.execute("SELECT source_id FROM listings WHERE source = ? AND status != ? AND area IS NULL "
+                                 "AND kind IN (?, ?)", (source, REJECT, HOUSE, LAND))
+        return {r[0] for r in rows}
+
     def reopen_candidates(self, source: str, since: str) -> list[str]:
         """Zapamćene kuće i zemljišta izvora s našeg područja koji nisu odbijeni, najnoviji prvi."""
         rows = self.conn.execute(

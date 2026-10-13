@@ -362,3 +362,19 @@ def test_queued_listing_description_has_no_contacts(tmp_path):
                                          "mirna lokacija.\nKontakt: Ivan Horvat, 091.503.2253, ivan.horvat@gmail.com")
     text = json.dumps(_stored(x), ensure_ascii=False)
     assert "Horvat" not in text and "2253" not in text and "gmail" not in text and "k.č. 1234/5" in text
+
+
+def test_permits_in_message_and_supplement():
+    """Dozvole s portala: 🏗 redak poruke; dopuna javlja samo dozvolu koje prva poruka nije imala."""
+    from scraper.notify import format_listing
+
+    d = Decision(PASS, jls="Punat")
+    first = Listing("index_oglasi", "1", "https://i/1", "Kuća Punat", HOUSE, price=280_000, area=120,
+                    municipality="Punat", settlement="Punat")
+    first.extra.update({"vlasnicki_list": True, "dozvole": ["građevinska dozvola"]})
+    assert "🏗 vlasnički list ✔ · građevinska dozvola ✔" in format_listing(first, d)
+    copy = Listing("oglasnik", "2", "https://o/2", "Kuća Punat", HOUSE, price=280_000, area=120,
+                   municipality="Punat", settlement="Punat")
+    copy.extra.update({"vlasnicki_list": True, "dozvole": ["građevinska dozvola", "uporabna dozvola"]})
+    lines = dopuna.news(dopuna.snapshot(first, d), dopuna.snapshot(copy, d), copy, d)
+    assert lines == ["🏗 uporabna dozvola ✔"]

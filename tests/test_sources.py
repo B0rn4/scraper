@@ -412,6 +412,21 @@ def test_known_ad_with_price_drop_is_opened():
     assert got["5"].subtype == "Dvojna kuća" and got["7"].extra.get("samo_popis") and not src.deferred
 
 
+def test_new_ad_goes_before_known_price_drop(monkeypatch):
+    """Jedno mjesto za otvaranje: dobiva ga nov oglas (zemljište 9999), a poznat oglas sa
+    sniženjem stiže s podacima s popisa (ne čeka)."""
+    from scraper.sources.base import INCREMENTAL
+
+    monkeypatch.setattr(index_oglasi, "MAX_DETAILS", 1)
+    http = FakeHttp([index_item(5, 250_000)], {"5": {"description": "Kuća.", "houseType": 1},
+                                               "9999": {"description": "Građevinsko zemljište.", "landType": 1}})
+    src = index_oglasi.IndexOglasi(http, Locator(), load_config()["kriteriji"])
+    src.known_prices = {"5": 300_000}
+    got = {x.source_id: x for x in src.fetch(INCREMENTAL, {"5"})}
+    assert [u.split("code=")[1].split("&")[0] for u in http.calls if "single-ad" in u] == ["9999"]
+    assert got["5"].extra.get("samo_popis") and not src.deferred
+
+
 def test_realestatecroatia_detail_and_reopen():
     """realestatecroatia.com: broj parkirnih mjesta sa stranice oglasa; jednokratno ponovno
     otvaranje zapamćenog oglasa (vrsta i mjesto iz zaglavlja stranice) i otvaranje poznatog
@@ -453,6 +468,149 @@ def test_realestatecroatia_detail_and_reopen():
     got = {y.source_id: y for y in src.fetch(INCREMENTAL, known)}
     assert [u for u in http.urls if "detail.asp" in u] == [drop.url]
     assert got[drop.source_id].area == 86 and got[drop.source_id].extra["parking"] == "3"
+
+
+def test_portal_fields_vender_oglasnik_nekretnine():
+    """Polja koja portali daju, a nisu u opisu: vrsta kuće iz dodatnih značajki (vender), godine,
+    parking, dozvole, vlasnički list, bazen, stanje, okućnica."""
+    from scraper.filters import evaluate
+    from scraper.models import REJECT
+    from scraper.sources import nekretnine_hr, oglasnik, vender
+
+    cfg = load_config()["kriteriji"]
+    features = ('a:4:{i:0;a:2:{s:29:"fave_additional_feature_title";s:9:"Tip kuće";s:29:"fave_additional_feature_value";'
+                's:6:"dvojna";}i:1;a:2:{s:29:"fave_additional_feature_title";s:24:"Godina zadnje adaptacije";'
+                's:29:"fave_additional_feature_value";s:4:"2019";}i:2;a:2:{s:29:"fave_additional_feature_title";'
+                's:15:"Parkirna mjesta";s:29:"fave_additional_feature_value";s:1:"2";}i:3;a:2:{s:29:'
+                '"fave_additional_feature_title";s:17:"Površina parcele";s:29:"fave_additional_feature_value";'
+                's:6:"420 m²";}}')
+    item = {"id": 1, "link": "https://vender.hr/1", "title": {"rendered": "Kuća Njivice"}, "property_type": [62],
+            "content": {"rendered": "Kuća."}, "property_meta": {
+                "fave_property_price": ["300000"], "fave_property_size": ["120"], "fave_property_year": ["1985"],
+                "fave_property_price_prefix": ["Stara cijena: 320000"], "additional_features": [features]},
+            "_embedded": {"wp:term": [[{"taxonomy": "property_city", "name": "OMIŠALJ"},
+                                       {"taxonomy": "property_area", "name": "NJIVICE"},
+                                       {"taxonomy": "property_feature", "name": "Bazen"}]]}}
+    x = vender.parse_items([item])[0]
+    assert x.subtype == "Kuća (dvojna)" and x.plot_area == 420 and x.previous_price == 320_000
+    assert (x.extra["godina_izgradnje"], x.extra["godina_obnove"], x.extra["parking"], x.extra["bazen"]) == (1985, 2019, "2", True)
+    assert evaluate(x, cfg, Locator()).status == REJECT
+
+    houses = {x.source_id: x for x in oglasnik.parse_page(read("oglasnik_kuce.html.gz"), HOUSE)}
+    assert sum(1 for x in houses.values() if x.extra.get("bazen")) == 29
+    assert sum(1 for x in houses.values() if x.extra.get("godina_izgradnje")) == 67
+    assert any(x.extra.get("dozvole") == ["građevinska dozvola", "uporabna dozvola"] for x in houses.values())
+    assert any(x.extra.get("parking") == "samostojeća garaža" for x in houses.values())
+
+    listed = {x.source_id: x for x in nekretnine_hr.parse_page(read("nekretnine_kuce_pgz.html.gz"), HOUSE)[0]}
+    assert listed["2627689"].extra["stanje"] == "za renoviranje" and listed["3846159"].extra["bazen"]
+    assert listed["3273189"].extra["parking"] == "7" and listed["2509191"].extra["parking"] == "garaža: 1, parkirnih mjesta: 2"
+    assert listed["3735293"].extra["stanje"] == "odlično / renovirano"
+    detail = {"props": {"pageProps": {"detailData": {"realEstate": {"properties": [{
+        "description": "Kuća za obnovu.", "garage": "3 na zajedničkom parkingu", "condition": "Za renoviranje",
+        "features": ["Konoba", "bazen"], "primaryFeatures": [{"name": "bazen", "codeName": "pool", "value": 0}],
+        "surfaceConstitution": {"surfaceConstitutionElements": [
+            {"constitutionKey": "residence", "surface": "80,0 m²"}, {"constitutionKey": "garden", "surface": "1.755,0 m²"}]}}]}}}}}
+    y = Listing("nekretnine_hr", "9", "u", "Kuća", HOUSE)
+    nekretnine_hr.parse_detail(f'<script id="__NEXT_DATA__" type="application/json">{json.dumps(detail)}</script>', y)
+    assert (y.extra["parking"], y.extra["stanje"], y.extra["bazen"], y.plot_area) == (
+        "3 na zajedničkom parkingu", "Za renoviranje", True, 1755)
+
+
+def test_portal_fields_realestatecroatia_and_njuskalo():
+    from scraper.sources import njuskalo, realestatecroatia as rc
+
+    page = read("realestatecroatia_oglas.html.gz")
+    for old, new, expected in (("Broj parkirnih mjesta:", "Garaža:", "garaža: 3"),
+                               ("Broj parkirnih mjesta:</td>\n          <td ><strong>3", "Parkiralište:</td>\n          <td ><strong>48 m2", "parkiralište 48 m²")):
+        x = Listing("realestatecroatia", "1", "u", "Kuća", HOUSE)
+        rc.parse_detail(page.replace(old, new), x)
+        assert x.extra["parking"] == expected, expected
+
+    groups = ('<h3 class="ClassifiedDetailPropertyGroups-groupTitle">Dozvole</h3><ul>'
+              '<li class="ClassifiedDetailPropertyGroups-groupListItem">Vlasnički list</li>'
+              '<li class="ClassifiedDetailPropertyGroups-groupListItem">Građevinska dozvola</li>'
+              '<li class="ClassifiedDetailPropertyGroups-groupListItem">Uporabna dozvola</li></ul>'
+              '<h3 class="ClassifiedDetailPropertyGroups-groupTitle">Ostali objekti i površine</h3><ul>'
+              '<li class="ClassifiedDetailPropertyGroups-groupListItem">Bazen</li></ul>')
+    renovated = ('<dt class="ClassifiedDetailBasicDetails-listTerm">Godina zadnje renovacije</dt>\n'
+                 '<dd class="ClassifiedDetailBasicDetails-listDefinition">2018.</dd>')
+    detail = read("njuskalo_kuca_oglas.html.gz")
+    detail = detail.replace('<dt class="ClassifiedDetailBasicDetails-listTerm">', renovated + '<dt class="ClassifiedDetailBasicDetails-listTerm">', 1)
+    detail = detail.replace('<h3 class="ClassifiedDetailPropertyGroups-groupTitle">', groups + '<h3 class="ClassifiedDetailPropertyGroups-groupTitle">', 1)
+    x = Listing("njuskalo", "1", "u", "Kuća", HOUSE)
+    njuskalo.parse_detail(detail, x)
+    assert (x.extra["bazen"], x.extra["vlasnicki_list"], x.extra["dozvole"], x.extra["godina_obnove"]) == (
+        True, True, ["građevinska dozvola", "uporabna dozvola"], 2018)
+
+
+def test_njuskalo_opens_known_ad_with_price_drop_or_without_area(fina):
+    """Njuškalo: poznat oglas se otvara kad mu je cijena snižena ili je zapamćen bez površine
+    (stari ponovno objavljen, početni popis); bez sniženja ne."""
+    from scraper.sources.base import INCREMENTAL
+    from scraper.sources.njuskalo import Njuskalo, parse_list
+
+    # Svi oglasi s popisa su poznati (novi bi imali prednost i popunili mjesta za otvaranje).
+    known = {x.source_id for page, kind in (("njuskalo_kuce.html.gz", HOUSE), ("njuskalo_zemljista.html.gz", LAND))
+             for x in parse_list(read(page), kind)}
+
+    def run(prices, incomplete=()):
+        browser = FakeBrowser({"prodaja-kuca": read("njuskalo_kuce.html.gz"),
+                               "prodaja-zemljista": read("njuskalo_zemljista.html.gz"),
+                               "oglas-51323938": read("njuskalo_kuca_oglas.html.gz")})
+        src = Njuskalo(None, Locator(), load_config()["kriteriji"], browser=browser)
+        src.since, src.known_prices, src.known_incomplete = "2026-10-05T11:30:00+02:00", prices, set(incomplete)
+        items = {x.source_id: x for x in src.fetch(INCREMENTAL, known)}
+        return items["51323938"], [u for u in browser.calls if "oglas-51323938" in u], src.deferred
+
+    x, opened, deferred = run({"51323938": 368_000})
+    assert not opened and "detalji" not in x.extra
+    x, opened, deferred = run({"51323938": 400_000})
+    assert opened and x.extra.get("detalji") and x.plot_area == 250
+    assert "51323938" not in {y.source_id for y in deferred}           # poznat oglas ne čeka
+    x, opened, _ = run({"51323938": 368_000}, {"51323938"})
+    assert opened and x.extra.get("detalji")
+
+
+def test_reopen_vender_oglasnik_nekretnine():
+    """Jednokratno ponovno otvaranje zapamćenih oglasa (nova polja): vender (API jednog oglasa),
+    oglasnik (stranica oglasa ima i druge oglase), nekretnine.hr (podaci stranice oglasa)."""
+    from types import SimpleNamespace
+
+    from scraper.http import FetchError
+    from scraper.sources import nekretnine_hr, oglasnik, vender
+
+    cfg = load_config()["kriteriji"]
+    item = {"id": 7, "link": "https://vender.hr/7", "title": {"rendered": "Kuća Njivice"}, "property_type": [19277],
+            "content": {"rendered": "Kuća."}, "property_meta": {"fave_property_price": ["300000"], "fave_property_size": ["120"]},
+            "_embedded": {"wp:term": [[{"taxonomy": "property_city", "name": "OMIŠALJ"},
+                                       {"taxonomy": "property_feature", "name": "Garaža"}]]}}
+    ogl = read("oglasnik_kuce.html.gz")
+    detail = {"realEstate": {"id": 9, "title": "Kuća Njivice", "price": {"visible": True, "value": 300_000}, "properties": [{
+        "surface": "120 m²", "typology": {"name": "Kuća"}, "description": "Kuća u mirnom dijelu.", "condition": "Za renoviranje",
+        "location": {"city": "Omišalj", "macrozone": "Njivice", "province": "Primorsko-goranska"}}]}}
+    nek = '<script id="__NEXT_DATA__" type="application/json">' + json.dumps({"props": {"pageProps": {"detailData": detail}}}) + "</script>"
+
+    class Http:
+        def get(self, url, **kw):
+            if "properties/7" in url:
+                return SimpleNamespace(json=lambda: item)
+            if "oglas-404" in url or "properties/8" in url:
+                raise FetchError(f"HTTP 404 za {url}")
+            return SimpleNamespace(text=ogl if "oglasnik" in url else nek)
+
+    x = vender.Vender(Http(), Locator(), cfg).reopen({"source_id": "7", "kind": HOUSE})
+    assert x.subtype == "Samostojeća kuća" and x.extra["parking"] == "garaža"
+    assert vender.Vender(Http(), Locator(), cfg).reopen({"source_id": "8", "kind": HOUSE}) is None
+    first = oglasnik.parse_page(ogl, HOUSE)[3]
+    src = oglasnik.Oglasnik(Http(), Locator(), cfg)
+    got = src.reopen({"source_id": first.source_id, "url": "https://oglasnik.hr/kuce-prodaja/x-oglas-1", "kind": HOUSE})
+    assert got.source_id == first.source_id and got.extra == first.extra
+    assert src.reopen({"source_id": "1", "url": "https://oglasnik.hr/kuce-prodaja/x-oglas-1", "kind": HOUSE}) is None
+    assert src.reopen({"source_id": "1", "url": "https://oglasnik.hr/oglas-404", "kind": HOUSE}) is None
+    y = nekretnine_hr.NekretnineHr(Http(), Locator(), cfg).reopen({"source_id": "9", "url": "https://www.nekretnine.hr/oglasi/9/", "kind": HOUSE})
+    assert (y.source_id, y.area, y.settlement, y.extra["stanje"]) == ("9", 120, "Njivice", "Za renoviranje")
+    assert "opis_skracen" not in y.extra
 
 
 def test_nekretnine_defers_ads_it_cannot_open(monkeypatch):

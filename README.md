@@ -100,7 +100,11 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   raspon i broj umjesto medijana („🏘 Vrbnik – cijela općina, kuće 170–249 m² (5, premalo za
   medijan): 1.150–2.300 €/m² – ovaj u rasponu”; odluka 9. 10.). Bez dovoljno oglasa po kriterijima ostaje stara
   usporedba s medijanom svih oglasa u naselju (💰/💸/📊), osim za kuće za obnovu.
-- **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, vlasnički list.
+- **Iz oglasa, kad ga portal navodi:** godina izgradnje i obnove, vlasnički list, građevinska
+  i uporabna dozvola (🏗). Polja oglasa (ne samo opis) čitaju se na svim portalima (13. 10.):
+  vrsta kuće i iz dodatnih značajki (vender: „Tip kuće: dvojna”), stanje („za renoviranje” →
+  🔨 i kategorija za obnovu), bazen (kao u naslovu: odbija se), parking, okućnica, namjena
+  zemljišta (nije stambena ni mješovita → ⚠).
 - **Parking (🚗, kuće):** parkirno mjesto ili garaža iz oglasa, ili okućnica od barem
   100 m². „Nema parkinga”, samo javni parking ili parking nije naveden → ⚠.
 - **Duga poruka:** opis uz fotografiju smije imati oko 1.000 znakova. Što ne stane

@@ -46,8 +46,9 @@ CLOCK_TOLERANCE = timedelta(minutes=10)   # sat na Redmiju smije toliko odstupat
 LISTING_ERROR_RUNS = 3      # isti izvor toliko pokretanja zaredom ima oglase koji se ne daju obraditi → upozorenje
 DEEP_ALERT_DAYS = 3         # dnevno dublje čitanje toliko dana zaredom ne uspijeva → upozorenje
 CODE_ALERT_RUNS = 18        # Redmi toliko GitHubovih pokretanja (~6 sati) radi s drukčijim kodom → upozorenje
-REOPEN_PER_RUN = 30         # jednokratno ponovno otvaranje zapamćenih oglasa (Source.reopen_once) po pokretanju
-REOPEN_SECONDS = 120        # i najdulje toliko sekundi
+REOPEN_PER_RUN = 30         # jednokratno ponovno otvaranje zapamćenih oglasa (Source.reopen_once) po izvoru i pokretanju
+REOPEN_SECONDS = 120        # i najdulje toliko sekundi po izvoru
+REOPEN_TOTAL_SECONDS = 180  # i ukupno za sve izvore u pokretanju (pokretanje ne smije postati predugo)
 # Izvor radi, ali ovoliko dana nema nijedan nov oglas (npr. portal ne poštuje redoslijed "najnoviji"):
 # upozorenje. Stvarni tempo (listopad 2026.): Njuškalo 375–1245 dnevno, index 21–103, oglasnik 6–31
 # (noćni uvoz agencija oko 5 h), nekretnine.hr 4–28, realestatecroatia 8–14 (također ujutro), burza
@@ -219,6 +220,7 @@ class Runner:
         baseline: list[tuple[object, list[tuple[Listing, Decision]], str]] = []
         today = self.now.date().isoformat()
         reading = True                 # obrada oglasa po izvorima (prekid tada odbacuje nezapisano)
+        self._reopen_until = time.monotonic() + REOPEN_TOTAL_SECONDS
         try:
             for src in self.enabled_sources():
                 if src.daily and state.meta_get(f"daily:{src.name}") == today:
@@ -231,6 +233,7 @@ class Runner:
                 src.since = gap or next((h["last_ok"] for h in state.health_all() if h["source"] == src.name), None)
                 src.catch_up = bool(gap)
                 src.known_prices = state.known_prices(src.name)
+                src.known_incomplete = state.known_incomplete(src.name)
                 # Jednom dnevno, poslijepodne (jutarnje pokretanje već ima dnevne provjere).
                 src.deep = (getattr(src, "deep_daily", False) and not first and self.now.hour >= 12
                             and state.meta_get(f"dubinsko:{src.name}") != today)
@@ -580,7 +583,10 @@ class Runner:
             codes = []
         if not codes:
             return
-        deadline = time.monotonic() + REOPEN_SECONDS
+        deadline = min(time.monotonic() + REOPEN_SECONDS, getattr(self, "_reopen_until", float("inf")))
+        if time.monotonic() > deadline:
+            self.log(f"{src.label}: ponovno otvaranje čeka sljedeće pokretanje (preostalo {len(codes)})")
+            return
         tried, opened, errors, rejected = 0, 0, [], 0
         for code in codes[:REOPEN_PER_RUN]:
             if time.monotonic() > deadline or (len(errors) >= 3 and not opened):
@@ -817,12 +823,13 @@ class Runner:
     @staticmethod
     def _keep_text_reject(d: Decision, prev: dict, on_request: bool = False) -> Decision:
         """Oglas odbijen zbog podatka sa stranice oglasa (rečenica iz punog opisa, vrsta kuće
-        ili zemljišta, luksuz iz opisa kod "cijene na upit") ostaje odbijen kad ovaj put imamo
+        ili zemljišta, bazen, luksuz iz opisa kod "cijene na upit") ostaje odbijen kad ovaj put imamo
         samo podatke s popisa – inače bi stiglo lažno "sad odgovara"."""
         labels = tuple(r.label for r in risks.RULES if r.reject)
         kept = [r for r in json.loads(prev.get("reasons") or "[]")
                 if r.startswith(labels) or "(vrsta: " in r
                 or (r.startswith("nije građevinsko (") and not r.endswith("(naslov)")) or r.startswith("ruševina: „")
+                or r == "s bazenom (podaci oglasa)"
                 or (on_request and r.startswith("cijena na upit – luksuzna"))]
         return Decision(REJECT, kept, jls=d.jls, location_evidence=d.location_evidence) if kept else d
 

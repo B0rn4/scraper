@@ -22,7 +22,7 @@ import re
 import time
 
 from ..models import HOUSE, LAND, Listing
-from ..text import fmt_eur, parse_number
+from ..text import fmt_eur, fmt_m2, parse_number
 from ..http import FetchError
 from .base import DETAIL_RETRIES, FULL, Source
 
@@ -84,11 +84,13 @@ def parse_header(page: str) -> tuple[str, str, str] | None:
 
 
 def parse_detail(page: str, x: Listing) -> None:
-    """Površina, okućnica, broj parkirnih mjesta, puni opis i slika sa stranice oglasa."""
+    """Površina, okućnica, parking (broj mjesta, garaža, parkiralište), puni opis i slika sa stranice oglasa."""
     text = _text(page)
     area = re.search(r"Površina:\s*([\d.,]+)\s*m2", text)
     plot = re.search(r"Okućnica:\s*([\d.,]+)\s*m2", text)
     parking = re.search(r"Broj parkirnih mjesta:\s*(\d+)", text)
+    garage = re.search(r"Garaža:\s*(\d+)", text)
+    lot = re.search(r"Parkiralište:\s*([\d.,]+)\s*m2", text)
     desc = re.search(r"OPIS OBJEKTA\s*Hrvatski English Deutsch Italiano Ruski\s*(.*?)(?:Interni broj|REC ID)", text)
     image = re.search(r'(https://data\.realestatecroatia\.com/thumbnails/userimages/[^"\']+\.jpe?g)', page, re.I)
     if not area and not desc:
@@ -100,6 +102,10 @@ def parse_detail(page: str, x: Listing) -> None:
         x.plot_area = parse_number(plot.group(1))
     if parking and int(parking.group(1)) > 0:
         x.extra["parking"] = parking.group(1)
+    elif garage and int(garage.group(1)) > 0:
+        x.extra["parking"] = f"garaža: {garage.group(1)}"
+    elif lot and (parse_number(lot.group(1)) or 0) >= 10:
+        x.extra["parking"] = f"parkiralište {fmt_m2(parse_number(lot.group(1)))}"
     if desc:
         x.description = desc.group(1)[:3000]
         x.extra.pop("opis_skracen", None)

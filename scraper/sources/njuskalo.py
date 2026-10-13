@@ -22,7 +22,7 @@ from pathlib import Path
 
 from ..browser import Browser
 from ..models import HOUSE, LAND, Listing
-from ..text import areas_in_text, fmt_eur, fmt_m2, parse_number
+from ..text import areas_in_text, fmt_eur, fmt_m2, fold, parse_number
 from .base import FULL, Source, details_deadline, past
 
 BASE = "https://www.njuskalo.hr"
@@ -241,6 +241,19 @@ def parse_detail(page: str, listing: Listing) -> None:
                       ("namjena", "namjena")):
         if fields.get(key):
             listing.extra[name] = fields[key]
+    renovated = next((v for k, v in fields.items() if k.startswith("godina zadnje")), "")   # renovacije/adaptacije
+    if re.search(r"\b(1[89]|20)\d\d\b", renovated):
+        listing.extra["godina_obnove"] = int(re.search(r"\b(?:1[89]|20)\d\d\b", renovated).group(0))
+    # Grupe svojstava (u opisu su kao tekst): bazen, vlasnički list i dozvole kao polja oglasa.
+    items = [fold(g) for g in groups]
+    if any(re.match(r"bazen\b", i) and not re.search(r":\s*ne\b", i) for i in items):
+        listing.extra["bazen"] = True
+    if any(i.startswith("vlasnicki list") and not re.search(r":\s*ne\b", i) for i in items):
+        listing.extra["vlasnicki_list"] = True
+    permits = [g.split(":")[0].strip().lower() for g, i in zip(groups, items)
+               if re.search(r"\bdozvol", i) and not re.search(r":\s*ne\b", i)]
+    if permits:
+        listing.extra["dozvole"] = permits
     if "ClassifiedDetailUnavailableNotice" in page and not listing.extra.get("neaktivan"):
         # "Ovaj oglas je neaktivan.": stiže s upozorenjem – oglašivač je i dalje dostupan, a
         # drugi oglas više ne vide (do njega se dolazi samo izravnom poveznicom).
@@ -373,20 +386,24 @@ class Njuskalo(Source):
                 now + CAPTCHA_PAUSE).isoformat(timespec="seconds")
             self.detail_ok = False
             details, later, deadline = 0, set(), details_deadline()
-            for x in found.values():
+            # Novi oglasi prvi: poznati (sniženje, bez površine) ne smiju zauzeti mjesto novom.
+            for x in sorted(found.values(), key=lambda x: x.source_id in known_ids):
                 bare = x.extra.get("bez_podataka")
-                if x.source_id in known_ids or (bare and (mode == FULL or (
+                # Poznat oglas se otvara samo kad mu je cijena snižena ili nema površinu
+                # (reopen_known); tada ne čeka – bez mjesta stiže s podacima s popisa.
+                known = x.source_id in known_ids
+                if (known and (bare or mode == FULL or not self.reopen_known(x))) or (bare and (mode == FULL or (
                         threshold is not None and int(x.source_id) <= threshold))):
                     if bare:
                         later.add(x.source_id)   # "Super Vau" bez podataka: poznat ili star – ništa se ne bilježi
                     continue
-                if threshold is not None and int(x.source_id) <= threshold:
+                if not known and threshold is not None and int(x.source_id) <= threshold:
                     x.extra["stari_oglas"] = True
                 elif mode != FULL and not x.extra.get("detalji") and (bare or self.worth_detail(x)):
                     # Sljedeći put (bez stranice oglasa stigao bi bez površine); čeka li predugo
                     # (MAX_DEFERRALS), stiže s podacima s popisa.
                     if details >= MAX_DETAILS or self.detail_blocked or past(deadline):
-                        if self.defer(x):
+                        if not known and self.defer(x):
                             later.add(x.source_id)
                         continue
                     details += 1
@@ -396,7 +413,7 @@ class Njuskalo(Source):
                             self.detail_blocked = True
                             self.captcha_until = (now + CAPTCHA_PAUSE).isoformat(timespec="seconds")
                             x.extra["detalji_greska"] = "stranica oglasa: captcha"
-                            if self.defer(x):
+                            if not known and self.defer(x):
                                 later.add(x.source_id)
                             continue
                         if "ClassifiedDetail" not in page:
@@ -407,7 +424,7 @@ class Njuskalo(Source):
                     except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
                         x.extra["detalji_greska"] = str(exc)[:200]
                         self.detail_result(f"{type(exc).__name__}: {exc}")
-                        if self.defer(x, failed=True):
+                        if not known and self.defer(x, failed=True):
                             later.add(x.source_id)
         finally:
             if own_browser:

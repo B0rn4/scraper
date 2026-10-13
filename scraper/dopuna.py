@@ -6,7 +6,7 @@ novo, bez ponavljanja ostatka obavijesti:
 - lokacija i građevinsko područje: bolja lokacija (broj čestice > točna oznaka > krug oko
   približne oznake > ništa) donosi redak 🗺, PPV na lokaciji i 📏 uvjete gradnje;
 - podaci koji su nedostajali: naselje, vrsta kuće, okućnica, godina izgradnje / obnove,
-  vlasnički list, parking, „za obnovu”, parcelacija;
+  vlasnički list i dozvole, parking, „za obnovu”, parcelacija;
 - nova upozorenja iz opisa (i s ISPU-a na boljoj lokaciji);
 - ⚠ kad prema novom portalu oglas ne odgovara kriterijima (npr. „nije građevinsko”).
 Dopuna je tiha, osim kad donosi ⚠.
@@ -113,6 +113,7 @@ def snapshot(x: Listing, d: Decision) -> dict:
         "godina": str(x.extra.get("godina_izgradnje") or ""),
         "obnova": str(x.extra.get("godina_obnove") or ""),
         "vlasnicki": bool(x.extra.get("vlasnicki_list")),
+        "dozvole": sorted(x.extra.get("dozvole") or []),
         "za_obnovu": bool(x.extra.get("za_obnovu")),
         "parking": _parking(x),
         "parcelacija": x.extra.get("parcelacija") or "",
@@ -186,6 +187,8 @@ def news(old: dict, new: dict, x: Listing, d: Decision, rejected: bool = False,
         facts.append(f"obnovljena {new['obnova']}")
     if _missing(old, new, "vlasnicki"):
         facts.append("vlasnički list ✔")
+    if "dozvole" in old:                       # stara poruka: ne zna se je li ih navela
+        facts += [f"{permit} ✔" for permit in new.get("dozvole") or [] if permit not in old["dozvole"]]
     if facts:
         lines.append("🏗 " + " · ".join(facts))
     if _missing(old, new, "za_obnovu") and not rejected:    # odbijena ruševina nije "za obnovu"

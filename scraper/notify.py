@@ -160,6 +160,7 @@ def _lines(listing: Listing, decision: Decision, headline: str) -> list[tuple[st
         facts.append(f"obnovljena {listing.extra['godina_obnove']}")
     if listing.extra.get("vlasnicki_list"):
         facts.append("vlasnički list ✔")
+    facts += [f"{permit} ✔" for permit in listing.extra.get("dozvole") or []]
     if facts:
         lines.append(("cinjenice", ("" if facts[0].startswith("🔨") else "🏗 ") + e(" · ".join(facts))))
     if listing.extra.get("parcelacija"):            # stiže neovisno o cijeni i površini

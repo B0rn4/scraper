@@ -28,8 +28,8 @@ _TITLE_REJECT = [
     (re.compile(r"\b(etaz\w*|kat|prizemlje|visoko prizemlje|potkrovlje) (obiteljske )?kuc"), "etaža kuće"),
     (re.compile(r"\bstan u (obiteljskoj )?kuc"), "stan u kući"),
 ]
-# Bazen (korisnik 7. 10.: kuću s bazenom ne želi). Naslov ili vrsta → odbija se; opis → ⚠
-# (opis zna spominjati i "mogućnost izgradnje bazena", "gradski bazen u blizini").
+# Bazen (korisnik 7. 10.: kuću s bazenom ne želi). Naslov, vrsta ili polje oglasa (bazen: da) →
+# odbija se; opis → ⚠ (opis zna spominjati i "mogućnost izgradnje bazena", "gradski bazen u blizini").
 _POOL = re.compile(r"\bbazen\w*|\bpool\b")
 _NO_POOL = re.compile(r"\bbez bazen|mogucnost\w* (izgradnje |gradnje |izvedbe )?(i )?bazen|(prostor|mjest|predviden)\w* "
                       r"(\w+ )?(za )?bazen|blizin\w* (\w+ )?bazen|gradsk\w* bazen|javn\w* bazen|bazen\w* u (naselju|blizini)")
@@ -37,6 +37,12 @@ _TEXT_WARN = [
     (re.compile(r"\bdvojn\w* (kuc|objekt)|\bkuc\w* u nizu\b"), "opis spominje dvojnu kuću ili kuću u nizu"),
     (re.compile(r"\b(polovic\w*|polovin\w*|pola) kuc|\betaz\w* kuc"), "opis spominje dio kuće ili etažu"),
 ]
+# Stanje iz polja oglasa ("Za renoviranje", "potrebna adaptacija"; ne "renovirano"): za obnovu.
+_POOR_CONDITION = re.compile(r"\bza (renovir|adaptacij|obnov|rekonstrukcij)|potrebn\w* (renovir|renovacij|adaptacij|obnov)"
+                             r"|zapust|\bruin")
+# Namjena zemljišta iz polja oglasa: za kuću stambena ili mješovita; druga (poslovna,
+# turistička, ugostiteljska, industrijska…) → ⚠.
+_HOME_USE = re.compile(r"stamben|mjesovit|residential")
 _RENOVATION = re.compile(
     r"za obnov|za adaptacij|potrebn\w* (obnov|adaptacij|renovacij)|starin(?!\w* stil)|za rusenje|zapust"
 )
@@ -277,6 +283,9 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
         if _POOL.search(heading) and not _NO_POOL.search(heading):
             reasons.append("s bazenom (naslov)")
             near_miss_only = False
+        elif listing.extra.get("bazen"):
+            reasons.append("s bazenom (podaci oglasa)")
+            near_miss_only = False
         elif _POOL.search(text) and not _NO_POOL.search(text):
             warnings.append("opis spominje bazen")
     elif listing.kind == LAND:
@@ -294,6 +303,9 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
                 near_miss_only = False
         elif not _BUILDING_LAND.search(text):
             warnings.append("vrsta zemljišta nije navedena")
+        use = listing.extra.get("namjena") or ""
+        if use and not _HOME_USE.search(fold(use)):
+            warnings.append(f"namjena prema oglasu: {use} – provjeri smije li se graditi kuća")
     else:
         return Decision(REJECT, [f"nije kuća ni zemljište ({listing.subtype or 'nepoznato'})"])
 
@@ -393,9 +405,10 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
     else:
         reasons.extend(limit_reasons)
 
-    if listing.kind == HOUSE and needs_renovation(text):
+    poor = bool(_POOR_CONDITION.search(fold(listing.extra.get("stanje") or "")))
+    if listing.kind == HOUSE and (poor or needs_renovation(text)):
         listing.extra["za_obnovu"] = True
-    if listing.kind == HOUSE and not_ready(text):
+    if listing.kind == HOUSE and (poor or not_ready(text)):
         listing.extra["kategorija"] = "obnova"      # pamti se u bazi (usporedba cijena)
     elif listing.kind == HOUSE and listing.description and not (
             listing.extra.get("opis_skracen") or listing.extra.get("samo_popis")):
