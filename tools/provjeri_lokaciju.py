@@ -4,11 +4,15 @@ Pokreće GitHub (radnja "Planovi", naredba "lokacija"), jer okruženje za razvoj
 portala ni do ISPU-a; rezultat ide na granu debug (planovi/lokacije/).
 
     python tools/provjeri_lokaciju.py IZLAZ ADRESA_OGLASA|LAT,LON|radijus:ADRESA|stranica:ADRESA|js:ADRESA
-                                         |index:BROJ[,BROJ…]|index-uzorak:N [...]
+                                         |index:BROJ[,BROJ…]|index-uzorak:N|polja:IZVOR:N [...]
 
 index: podaci o lokaciji iz index.hr API-ja (koordinate, isPreciseLocation, sva polja s lokacijom);
 index-uzorak: N najnovijih oglasa kuća i zemljišta u PGŽ-u – dijele li neprecizni oglasi istog
 mjesta iste koordinate (središte mjesta) ili svaki ima svoje (približna lokacija oglasa).
+polja: koja polja daju stranice oglasa (IZVOR: nekretnine, rc, index, oglasnik, vender), N oglasa po
+vrsti: naziv polja, u koliko oglasa ga ima i do 40 kratkih primjera vrijednosti – bez opisa,
+naslova, adresa, slika i podataka o oglašivaču (repozitorij je javan). rc: i dijele li oglasi istog
+mjesta koordinate s karte (središte mjesta ili točna oznaka).
 
 Za adresu oglasa koordinate i vrsta oznake ("marker": točna, "only_area": približna) čitaju se
 iz podataka stranice (nekretnine.hr, index.hr: __NEXT_DATA__ / JSON u stranici)."""
@@ -202,6 +206,120 @@ def index_sample(http: Http, n: int) -> dict:
             "neprecizni_po_mjestu": summary, "oglasi": ads}
 
 
+_PRIVATE = re.compile(r"(?i)phone|mail|agent|advertiser|user|contact|kontakt|owner|creator|person|company|agenc"
+                      r"|descr|caption|title|url|link|href|image|photo|media|video|seo|address|street|ulica|thumb")
+
+
+def _flat(value, path=""):
+    if isinstance(value, dict):
+        for k, v in value.items():
+            yield from _flat(v, f"{path}.{k}" if path else str(k))
+    elif isinstance(value, list):
+        if not value:
+            yield path + "[]", None
+        for v in value[:40]:
+            yield from _flat(v, path + "[]")
+    else:
+        yield path, value
+
+
+def census(records: list) -> dict:
+    """Polja zapisa: u koliko zapisa je polje i do 40 kratkih primjera (bez osobnih podataka)."""
+    from collections import Counter
+    from scraper.text import strip_contacts
+    count, examples = Counter(), {}
+    for record in records:
+        seen = set()
+        for path, value in _flat(record):
+            if path not in seen:
+                seen.add(path)
+                count[path] += 1
+            if value in (None, "") or _PRIVATE.search(path):
+                continue
+            shown = value if isinstance(value, (bool, int, float)) else strip_contacts(str(value))[:60]
+            known = examples.setdefault(path, [])
+            if shown not in known and len(known) < 40:
+                known.append(shown)
+    return {"zapisa": len(records),
+            "polja": {path: {"n": n, "primjeri": examples.get(path, [])} for path, n in count.most_common()}}
+
+
+def _distance_m(a: tuple, b: tuple) -> float:
+    import math
+    dy = (a[0] - b[0]) * 111_320
+    dx = (a[1] - b[1]) * 111_320 * math.cos(math.radians(a[0]))
+    return math.hypot(dx, dy)
+
+
+def field_sample(http: Http, source: str, n: int) -> dict:
+    """Polja stranica oglasa za N najnovijih oglasa po vrsti (vidi "polja:" u opisu modula)."""
+    records, points = [], {}
+    if source == "nekretnine":
+        from scraper.sources.nekretnine_hr import _NEXT_DATA, BASE, CATEGORIES, COUNTY_SLUG, parse_page
+        for category, kind, _ in CATEGORIES:
+            listings, _ = parse_page(http.get(f"{BASE}/{category}/{COUNTY_SLUG}/?criterio=data&ordine=desc&pag=1").text, kind)
+            for x in listings[:n]:
+                m = _NEXT_DATA.search(http.get(x.url).text)
+                records.append(json.loads(m.group(1))["props"]["pageProps"].get("detailData") if m else {"greska": "nema podataka"})
+    elif source == "rc":
+        from scraper.sources import realestatecroatia as rc
+        for vrsta, kind, _ in rc.KINDS:
+            page = http.get(f"{rc.BASE}list.asp?regija={rc.REGION_PGZ}&vrsta={vrsta}&akcija=1&sort=objekt_id&smjer=desc&page=1").text
+            for x in rc.parse_list(page, kind)[:n]:
+                html_page = http.get(x.url).text
+                table = re.search(r'id="podacionekretnini"(.*?)</table>', html_page, re.S)
+                fields = {k.strip(): rc._clean(v)[:60] for k, v in re.findall(
+                    r"<td[^>]*>\s*([^<:]{2,40}):\s*</td>\s*<td[^>]*>(.*?)</td>", table.group(1) if table else "", re.S)}
+                header = rc.parse_header(html_page)
+                coords = re.search(r"fromLonLat\(\[\s*(\d+)[.,](\d+)\s*,\s*(\d+)[.,](\d+)\s*\]\)", html_page)
+                records.append({"vrsta": kind, "polja": fields, "zaglavlje": list(header) if header else None,
+                                "koordinate": bool(coords)})
+                if coords:
+                    point = (float(f"{coords.group(3)}.{coords.group(4)}"), float(f"{coords.group(1)}.{coords.group(2)}"))
+                    points.setdefault(header[2] if header else x.settlement, []).append(point)
+    elif source == "index":
+        from scraper.sources.index_oglasi import BASE, JSON_HEADERS, LOCATIONS
+        county = json.loads(LOCATIONS.read_text(encoding="utf-8"))["id"]
+        http.get(f"{BASE}/nekretnine/prodaja-kuca")
+        for category in ("houses-for-sale", "lands-for-sale"):
+            data = http.get(f"{BASE}/api/aditem?module=real-estate&category={category}&sortOption=4&itemPerPage=24"
+                            f"&page=1&includeCountyIds={county}", headers=JSON_HEADERS).json()
+            for item in (data.get("data") or [])[:n]:
+                ad = http.get(f"{BASE}/api/aditem/single-ad?code={item.get('code')}&format=1", headers=JSON_HEADERS).json()
+                records.append((ad.get("data") or [{}])[0])
+    elif source == "oglasnik":
+        from scraper.sources.oglasnik import _AD_START, _HREF, BASE, CATEGORIES, PGZ_LOCATION_ID, rsc_payload
+        for category, _ in CATEGORIES:
+            listing_page = http.get(f"{BASE}/{category}?sort=newest&page=1&f%5B4%5D%5B{PGZ_LOCATION_ID}%5D=true").text
+            for href, ad_id in list(dict.fromkeys(_HREF.findall(listing_page)))[:n]:
+                payload = rsc_payload(http.get(BASE + href).text)
+                for m in _AD_START.finditer(payload):
+                    if m.group(1) == ad_id:
+                        try:
+                            records.append(json.JSONDecoder().raw_decode(payload, m.start() + len('"ad":'))[0])
+                        except ValueError:
+                            continue
+                        break
+    elif source == "vender":
+        from scraper.sources.vender import API, STATE_PGZ, STATUS_SALE
+        items = http.get(f"{API}?property_state={STATE_PGZ}&property_status={STATUS_SALE}&per_page={n}"
+                         f"&_embed=wp:term").json()
+        for x in items:
+            terms = [t for group in (x.get("_embedded", {}).get("wp:term") or []) for t in group]
+            records.append({"property_meta": x.get("property_meta"),
+                            "pojmovi": {t.get("taxonomy"): t.get("name") for t in terms if t.get("taxonomy") != "property_feature"},
+                            "znacajke": [t.get("name") for t in terms if t.get("taxonomy") == "property_feature"]})
+    else:
+        return {"greska": f"nepoznat izvor {source}"}
+    out = census(records)
+    if points:
+        out["karta_po_mjestu"] = {
+            place: {"oglasa": len(pts), "razlicitih_tocaka": len(set(pts)),
+                    "najveci_razmak_m": round(max(_distance_m(a, b) for a in pts for b in pts))}
+            for place, pts in points.items()}
+    return out
+
+
 def land_probe(ispu: Ispu, lat: float, lon: float, radius: float) -> dict:
     """Maska kopna za krug uz obalu: slojevi ISPU-a koji bi mogli pokriti samo kopno (katastar,
     granice) – daju li obrise (KML), koliko točaka i koliki je udio kopna u krugu."""
@@ -277,6 +395,15 @@ def main() -> int:
             except Exception as exc:  # noqa: BLE001
                 item = {"ulaz": arg, "greska": f"{type(exc).__name__}: {exc}"}
             print(json.dumps(item, ensure_ascii=False, indent=1)[:20000])
+            results.append({"ulaz": arg, "rezultat": item})
+            continue
+        if arg.startswith("polja:"):
+            _, source, count = arg.split(":")
+            try:
+                item = field_sample(http, source, int(count))
+            except Exception as exc:  # noqa: BLE001
+                item = {"greska": f"{type(exc).__name__}: {exc}"}
+            print(json.dumps(item, ensure_ascii=False)[:3000])
             results.append({"ulaz": arg, "rezultat": item})
             continue
         if arg.startswith("kopno:"):
