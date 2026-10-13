@@ -1,0 +1,4360 @@
+[
+ {
+  "ulaz": "polja:index-zemljista:70",
+  "rezultat": {
+   "zapisa": 70,
+   "polja": {
+    "postedTime": {
+     "n": 70,
+     "primjeri": [
+      "2026-09-01T13:26:16.248Z",
+      "2026-10-11T02:39:33.331Z",
+      "2026-10-12T10:54:12.802Z",
+      "2026-09-24T05:13:14.504Z",
+      "2023-05-31T10:39:55.723Z",
+      "2026-07-14T01:04:38.164Z",
+      "2026-07-14T01:04:38.158Z",
+      "2023-04-17T06:53:03.22Z",
+      "2026-06-13T00:46:39.695Z",
+      "2026-06-13T00:46:39.694Z",
+      "2026-06-13T00:46:39.693Z",
+      "2025-09-04T00:15:41.442Z",
+      "2025-09-02T00:40:56.668Z",
+      "2025-08-29T01:02:03.828Z",
+      "2025-08-21T00:37:43.613Z",
+      "2025-08-20T00:37:56.34Z",
+      "2025-07-08T00:39:08.443Z",
+      "2025-06-27T00:41:54.632Z",
+      "2025-06-26T00:15:30.367Z",
+      "2025-07-10T00:08:19.838Z",
+      "2025-07-02T00:36:41.512Z",
+      "2025-06-24T11:21:35.26Z",
+      "2025-06-24T11:21:35.255Z",
+      "2025-06-24T00:13:10.779Z",
+      "2025-08-12T00:40:26.597Z",
+      "2025-08-05T00:55:29.986Z",
+      "2025-08-02T00:49:10.41Z",
+      "2025-07-25T00:24:59.845Z",
+      "2025-07-24T00:51:13.685Z",
+      "2025-07-22T00:16:12.677Z",
+      "2025-04-30T00:42:48.957Z",
+      "2025-04-30T00:40:34.016Z",
+      "2025-04-30T00:10:22.014Z",
+      "2025-04-29T00:38:41.689Z",
+      "2025-04-26T00:45:02.327Z",
+      "2025-04-18T00:11:39.138Z",
+      "2025-04-16T00:54:21.368Z",
+      "2025-04-10T00:14:52.644Z",
+      "2025-04-09T00:21:01.344Z",
+      "2025-04-08T00:10:46.752Z"
+     ]
+    },
+    "id": {
+     "n": 70,
+     "primjeri": [
+      "4fa1bb39-a04f-4d1b-8aed-534b20fd697d",
+      "4fd71a3d-1be6-432c-8b2f-186c035b796d",
+      "9ba29782-c34f-4ffa-b410-9c1b038a2dcf",
+      "2e7adb71-6758-4857-a54f-77df5c7d71af",
+      "3b101a66-f62e-4467-a8ee-e081a4b7b26c",
+      "78f2f4ea-de1e-47bb-8493-7c5aca776ff8",
+      "8e443dbc-a7ec-47a0-a239-542af577e026",
+      "64e4c576-302c-4794-8c56-36caa8721c98",
+      "ca9aaae8-a550-4b77-a29d-5c14fd564c43",
+      "ac89c37c-8a9d-4d5b-89ff-4d3b7cdebed7",
+      "521fe18a-d9f4-4e38-b77b-dad40e2f8f9e",
+      "6d207eba-1c62-4d35-bfbb-0046aa138d0f",
+      "ea946f7e-9ba5-44ce-b45c-644997c3fb88",
+      "4f878925-8a94-4a54-aaf8-7ed99e1ae324",
+      "21b0b24b-ffa6-4c74-8e84-ea5045086af2",
+      "8947ae99-ce15-4032-a678-3857d4a28d4f",
+      "3b06b2a3-f8d1-4cf0-a521-ba728b1e994b",
+      "0fb89e72-5627-4095-af8a-3d5a92020fd6",
+      "cd3c2384-0deb-4c43-82c8-5fc2610802f7",
+      "bb058189-c2a3-4e1b-bcaa-08e5de8a3b1a",
+      "2589c60d-7eb3-40e2-ba70-8dc125d89110",
+      "a3703366-b3a9-4835-bf0e-ed925af58557",
+      "0773588b-d973-4c90-b46d-e9a059bf3253",
+      "2366c906-43be-498a-9e70-7f6bc224e91c",
+      "a32d5c0d-20e4-4e8c-94cc-82d8ec32fe78",
+      "65727540-68d3-45a2-8239-8f33331b148c",
+      "d5ec8982-8848-4e3a-a0fa-e0a9665800c8",
+      "3093ce60-d304-4216-a952-1b5f0f8c1d51",
+      "95a77e5a-41c3-4963-9692-46cee95e23ac",
+      "2e8c3467-4fb9-4894-90f0-456d6028adc6",
+      "1dc3d6e0-adeb-43b4-94ba-38b1efd5c6aa",
+      "c7d178f3-93ec-4778-85de-1c82e4cdc01a",
+      "fa417cfe-5c89-4fdb-988d-aab31048c0a9",
+      "f5bba37a-3f44-4a00-bff3-6ce13a003b8e",
+      "d0d52283-de63-40fa-99a1-11f7f901cd7a",
+      "94e7399b-f542-44c1-a314-7cb6508981d3",
+      "2d9be405-f49e-407a-b483-af1efc3d7aad",
+      "20d40b3c-b30c-4021-a6df-c6a5deec8aa8",
+      "1ab39a51-c194-4a40-a84c-44b26fcc4233",
+      "c6287a7e-d8bc-412d-a0ec-80ef65270962"
+     ]
+    },
+    "favoriteCount": {
+     "n": 70,
+     "primjeri": [
+      0,
+      1
+     ]
+    },
+    "code": {
+     "n": 70,
+     "primjeri": [
+      7520458,
+      7630306,
+      7631349,
+      7568592,
+      4050720,
+      7454430,
+      7454429,
+      3979513,
+      7415420,
+      7415418,
+      7415417,
+      7415416,
+      6987082,
+      6984594,
+      6979952,
+      6939861,
+      6938710,
+      6887923,
+      6876246,
+      6874732,
+      6890678,
+      6881707,
+      6871925,
+      6871918,
+      6871204,
+      6931377,
+      6925241,
+      6922307,
+      6913320,
+      6912522,
+      6903118,
+      6782322,
+      6782261,
+      6781363,
+      6779797,
+      6775309,
+      6760003,
+      6756420,
+      6744816,
+      6742815
+     ]
+    },
+    "module": {
+     "n": 70,
+     "primjeri": [
+      "real-estate"
+     ]
+    },
+    "category": {
+     "n": 70,
+     "primjeri": [
+      "lands-for-sale"
+     ]
+    },
+    "smartLink": {
+     "n": 70,
+     "primjeri": []
+    },
+    "creatorId": {
+     "n": 70,
+     "primjeri": []
+    },
+    "status": {
+     "n": 70,
+     "primjeri": [
+      1
+     ]
+    },
+    "renewalTime": {
+     "n": 70,
+     "primjeri": [
+      "2026-10-07T08:39:05.565Z",
+      "2026-10-13T08:00:01.83Z",
+      "2026-10-13T07:15:37.302Z",
+      "2026-10-13T07:00:05.941Z",
+      "2026-10-13T06:00:04.14Z",
+      "2026-10-13T05:00:02.411Z",
+      "2026-10-13T04:00:00.676Z"
+     ]
+    },
+    "expirationPeriod": {
+     "n": 70,
+     "primjeri": [
+      999999,
+      90,
+      30
+     ]
+    },
+    "externalUrl": {
+     "n": 70,
+     "primjeri": []
+    },
+    "sharingConfiguration.description": {
+     "n": 70,
+     "primjeri": []
+    },
+    "sharingConfiguration.header": {
+     "n": 70,
+     "primjeri": []
+    },
+    "sharingConfiguration.imageId": {
+     "n": 70,
+     "primjeri": []
+    },
+    "sharingConfiguration.createdAt": {
+     "n": 70,
+     "primjeri": [
+      "2026-10-12T02:40:06.529Z",
+      "2026-10-12T02:40:06.547Z",
+      "2026-10-12T10:54:12.802Z",
+      "2026-10-12T02:40:06.632Z",
+      "2024-04-08T20:57:14.427Z",
+      "2026-10-12T00:58:41.631Z",
+      "2026-10-12T00:58:41.611Z",
+      "2024-04-08T20:58:27.701Z",
+      "2026-10-13T00:33:16.668Z",
+      "2026-10-13T00:33:16.667Z",
+      "2026-10-13T00:33:16.666Z",
+      "2026-10-13T00:23:13.555Z",
+      "2026-10-12T01:28:34.26Z",
+      "2026-10-12T01:28:34.267Z",
+      "2026-10-13T00:28:36.509Z",
+      "2026-10-13T00:28:36.51Z",
+      "2026-10-12T01:28:34.337Z",
+      "2026-10-12T01:28:34.35Z",
+      "2026-10-13T00:16:00.314Z",
+      "2026-10-13T00:01:31.417Z",
+      "2026-10-13T00:28:36.524Z",
+      "2026-10-13T00:19:49.209Z",
+      "2026-10-13T00:19:49.208Z",
+      "2026-10-13T00:48:02Z",
+      "2026-10-12T01:28:34.287Z",
+      "2026-10-12T01:22:22.574Z",
+      "2026-10-12T01:43:59.643Z",
+      "2026-10-13T00:40:59.923Z",
+      "2026-10-12T01:50:05.969Z",
+      "2026-10-13T00:48:01.942Z",
+      "2026-10-12T01:36:21.881Z",
+      "2026-10-12T01:22:22.75Z",
+      "2026-10-13T00:05:18.948Z",
+      "2026-10-12T01:21:03.792Z",
+      "2026-10-12T01:28:34.459Z",
+      "2026-10-12T01:09:02.589Z",
+      "2026-10-12T01:37:36.087Z",
+      "2026-10-13T00:48:02.296Z",
+      "2026-10-12T01:17:42.666Z",
+      "2026-10-12T01:09:02.424Z"
+     ]
+    },
+    "sharingConfiguration.lastModifiedDate": {
+     "n": 70,
+     "primjeri": [
+      "2026-10-12T02:40:06.529Z",
+      "2026-10-12T02:40:06.547Z",
+      "2026-10-12T10:54:12.802Z",
+      "2026-10-12T02:40:06.632Z",
+      "2024-04-08T20:57:14.427Z",
+      "2026-10-12T00:58:41.631Z",
+      "2026-10-12T00:58:41.611Z",
+      "2024-04-08T20:58:27.701Z",
+      "2026-10-13T00:33:16.668Z",
+      "2026-10-13T00:33:16.667Z",
+      "2026-10-13T00:33:16.666Z",
+      "2026-10-13T00:23:13.555Z",
+      "2026-10-12T01:28:34.26Z",
+      "2026-10-12T01:28:34.267Z",
+      "2026-10-13T00:28:36.509Z",
+      "2026-10-13T00:28:36.51Z",
+      "2026-10-12T01:28:34.337Z",
+      "2026-10-12T01:28:34.35Z",
+      "2026-10-13T00:16:00.314Z",
+      "2026-10-13T00:01:31.417Z",
+      "2026-10-13T00:28:36.524Z",
+      "2026-10-13T00:19:49.209Z",
+      "2026-10-13T00:19:49.208Z",
+      "2026-10-13T00:48:02Z",
+      "2026-10-12T01:28:34.287Z",
+      "2026-10-12T01:22:22.574Z",
+      "2026-10-12T01:43:59.643Z",
+      "2026-10-13T00:40:59.923Z",
+      "2026-10-12T01:50:05.969Z",
+      "2026-10-13T00:48:01.942Z",
+      "2026-10-12T01:36:21.881Z",
+      "2026-10-12T01:22:22.75Z",
+      "2026-10-13T00:05:18.948Z",
+      "2026-10-12T01:21:03.792Z",
+      "2026-10-12T01:28:34.459Z",
+      "2026-10-12T01:09:02.589Z",
+      "2026-10-12T01:37:36.087Z",
+      "2026-10-13T00:48:02.296Z",
+      "2026-10-12T01:17:42.666Z",
+      "2026-10-12T01:09:02.424Z"
+     ]
+    },
+    "sharingConfiguration.id": {
+     "n": 70,
+     "primjeri": [
+      "12ce7bd0-0748-4926-aec4-774a4920d9a2",
+      "0b661269-c106-401d-ba89-365d17408eb9",
+      "b92c907f-a546-4cca-a57e-2ecefa44768f",
+      "4e38389d-446d-422d-96c2-3fe0ca257bb5",
+      "2babcf36-7431-4fcc-9d63-928c7f560ac7",
+      "2080bad6-14e1-4581-b508-41073853f536",
+      "26460b8a-abea-402f-b542-e84c863cc705",
+      "eaf30727-a26c-440d-ae42-f3b4ad7cf3e1",
+      "7550ddff-484b-4a9b-848a-88e398d4dc98",
+      "3ce5b9e3-c6f7-471e-961c-de7228c6a759",
+      "34d3ba7c-c01c-45df-85ec-0341753fba6d",
+      "afd4b3cf-5a51-4ed7-b2db-e5cf6b6cc41c",
+      "247884d0-76d4-44b8-92d4-61b2bd5e4092",
+      "5e8fd7b5-49f9-4880-9d13-028dbc109744",
+      "c297f30b-8c44-494d-8a13-14c8745c8aa2",
+      "47d69415-0446-482b-adc3-eae7a1153324",
+      "eb004c7c-a647-4f2d-9078-88b4928f4bfc",
+      "60d5e997-34dc-47f1-ad30-d4c0bc56a5ec",
+      "0d267ebe-f245-4bfb-996a-896ece3b3b51",
+      "cd66ff0d-c1ed-4214-b571-fe1219cdaf3b",
+      "00a22b9d-7545-420e-8cd0-33e38b56af63",
+      "2abcf6ff-8ff1-43b5-bc48-0c03530cdc5e",
+      "1fa54ac7-ab89-4ea5-a292-8fee20eedd8b",
+      "3303c651-7bb9-496a-b429-778a0cbc6d8d",
+      "61b98c3e-48a6-4bd9-bcf6-31636ceaf1bd",
+      "1a6b59fc-70c2-4ca4-9081-e09ecb09df13",
+      "5d9f3ebb-d9d3-4114-8165-8c493cda23e0",
+      "99f7e5a0-6030-44b0-8214-7d5175a1b471",
+      "4b452b94-44a6-4936-afbf-5431533e6fe6",
+      "76fc1369-5a9a-44fd-abdc-31b2e968fc3c",
+      "035a3e2f-f34b-49eb-91b1-7c4daf7b4259",
+      "f534ae40-12d4-47d9-94b7-da5b56c521de",
+      "8df96474-00e6-4b40-9ecf-021f67fe4118",
+      "ad6ff25b-618e-4f15-930e-467a727335eb",
+      "3faa872c-33f6-4fbf-82d1-8ec4a9ec50e5",
+      "7e90bd20-5bd2-4b1b-a4b3-3ca04e1b6fad",
+      "6e492158-a476-42f6-a5d3-d21cffde4836",
+      "077ab600-b21e-4e24-aef0-54bcaa46c471",
+      "d14f1dab-bf6d-4555-bd09-f339dd5fe7cb",
+      "3a9acf01-7295-4c48-808f-4acb2f9d5ff9"
+     ]
+    },
+    "sharingConfiguration.isDeleted": {
+     "n": 70,
+     "primjeri": [
+      false
+     ]
+    },
+    "is18Old": {
+     "n": 70,
+     "primjeri": [
+      false
+     ]
+    },
+    "cityId": {
+     "n": 70,
+     "primjeri": [
+      "7c09b091-82bc-4d6a-90f0-[telefon]",
+      "762fcd90-c987-4e62-8cf3-f23b8bb1c886",
+      "11ca77af-2614-48fc-a105-b78dacb48ed9",
+      "75529031-239f-4ac6-8e08-645bb777ce70",
+      "21a57a53-5e8a-4640-baa1-2428432f253f",
+      "1fe788b7-013d-4282-b6c3-4986be8e77cb",
+      "98f82c8b-1ecb-429a-b8af-dbaebb69d7ea",
+      "7276d1fa-f644-405c-8116-a09473701697",
+      "d176f157-39a6-48a0-af0f-dbdffa2a1bb6",
+      "a7c37ff2-205f-4ca3-9984-76d1afab288d",
+      "6a64a40a-36c1-4135-bd3a-537ba3bb2486",
+      "c18873e8-9f93-4638-b312-07908e7c7dc4",
+      "36bd1dbc-f301-4ae7-988e-171765d599f7",
+      "957a4129-4077-43f4-a4e5-d07a322a5cb9",
+      "d0a44061-2065-4062-90be-aac95217c288",
+      "32dbe0d8-e66d-442a-a5a9-a14695d01a20",
+      "dd63ce70-6c7f-476d-be41-f96e5d1a5e9c",
+      "68714b3e-3c95-411d-a763-716e76452956",
+      "7fdc782e-ae70-4cfb-861d-6c5911f70293",
+      "a7ab4761-71f1-44ec-befb-aeed49cfe090",
+      "049ed303-4b28-4235-93a4-ac1ba0a116ac",
+      "84408878-6c27-41b9-9acc-d6c6511512b6",
+      "daf4061c-d5c5-4607-8003-6d8a0fab414c",
+      "68aae8ff-b1c8-44bc-8c42-69916762da8e",
+      "e9c26dc0-6ddb-4e0e-b71c-690df71b3010"
+     ]
+    },
+    "countryId": {
+     "n": 70,
+     "primjeri": [
+      "1d0ed9f8-c5b3-47f8-8ca1-7feb948d5aef"
+     ]
+    },
+    "countyId": {
+     "n": 70,
+     "primjeri": [
+      "95c57539-6835-4b89-8ddd-a5de2100686e"
+     ]
+    },
+    "settlementId": {
+     "n": 70,
+     "primjeri": [
+      "139fa2b6-f0ce-49af-91cb-a8afb44187c3",
+      "f0680f14-f34a-4bb8-92b7-8a7a5df7d95a",
+      "207e57e5-d953-436e-a17b-7253f945d2e9",
+      "68bb0715-5cbc-439b-b6d2-7be0e15595a3",
+      "8c0e989d-7197-433e-b550-84f5e37ca74a",
+      "658d32f6-b46c-4776-9139-6f8326c41c69",
+      "8f341943-2e53-465a-8208-1df83fa69b1d",
+      "da05f0f1-9617-449d-b5ae-8b599ccef725",
+      "89a0f24e-c506-4c16-9587-1b0552f568cd",
+      "d25ac76a-fb3d-4dfb-b26e-6fdc56057f5b",
+      "53b0d6a6-43d7-4b2f-90fb-9522a2113840",
+      "8c291d9b-6508-4e67-912b-9a968a378ea9",
+      "962efc0b-06e1-4cf9-8afd-e35c5a6a7a22",
+      "051d0ba3-e639-4b57-a3d9-52341a812203",
+      "8de95436-311a-4b9e-a33d-27cc147f9222",
+      "7806f3f1-e29b-4933-9feb-4e7d9d0581c2",
+      "5ce9f71a-9b64-469b-a89f-003b79f6dbdd",
+      "bc1d076b-1a15-42c3-a937-204cdd9df392",
+      "97ce78d7-d3c4-454f-97ff-4e7d66f7e81f",
+      "e38d199a-31cf-4dfb-a64f-a7917bc6e842",
+      "117d69c0-5348-4104-bcfb-e3b31ea4fe57",
+      "45134874-ab80-4e49-a0b8-5e32e922b85b",
+      "901a6ccf-c0c8-42b0-ad24-1a00d6617cfb",
+      "87eb4db0-b262-4127-83b0-88ca2e3220c3",
+      "4f9b7c4d-6667-4a21-ab05-4610f766be83",
+      "4a42380a-ad02-49c9-b0ac-c9567e1b8167",
+      "a81f5f0b-6b5a-4a7c-a2fb-05123a9b67bf",
+      "aaadeddb-ed98-4858-8006-afd8608eb41d",
+      "bd456b64-4a8a-4c16-8d50-396fa2419bda",
+      "ba60be72-bd56-42d3-ab06-2a2bb23c2558",
+      "6b5622b9-37b1-4cbd-8c40-4219c4359ab3",
+      "541e07ff-bde9-4f70-aebf-03c15ce4655b",
+      "504b6c3e-d917-4a23-8ee9-3b1094c3c3d1",
+      "7ef1d067-04d3-478d-a715-0459dc76fa91",
+      "06321ad3-d208-407e-abf9-3fca0931d75e",
+      "f507cbea-4faa-4d8e-9418-a2e61956414e",
+      "e89956cd-553f-42e5-9eb9-78dcc6367468",
+      "bc6713bd-385b-4a7a-84fb-f528ce3e4cf2",
+      "844a304d-0e35-457f-8585-534b2856cff0",
+      "60057ddc-68d6-44f7-8334-07cf029dd867"
+     ]
+    },
+    "title": {
+     "n": 70,
+     "primjeri": []
+    },
+    "description": {
+     "n": 70,
+     "primjeri": []
+    },
+    "images[]": {
+     "n": 70,
+     "primjeri": []
+    },
+    "floorPlans[]": {
+     "n": 70,
+     "primjeri": [
+      "7b5330b4-067d-4b46-838f-a3f90cda53f1/18189aa6-08a8-4005-b026",
+      "7b5330b4-067d-4b46-838f-a3f90cda53f1/d0fa1f88-9538-4336-8f49",
+      "7b5330b4-067d-4b46-838f-a3f90cda53f1/1dcac56e-25c1-4b6b-b9cb",
+      "7b5330b4-067d-4b46-838f-a3f90cda53f1/85b2b13b-17ae-4795-8367"
+     ]
+    },
+    "price": {
+     "n": 70,
+     "primjeri": [
+      74000,
+      7500,
+      179000,
+      99000,
+      21808,
+      800000,
+      229000,
+      45000,
+      125000,
+      110000,
+      106000,
+      75000,
+      385000,
+      785000,
+      199000,
+      120000,
+      421579,
+      129000,
+      210000,
+      830000,
+      115000,
+      137000,
+      150000,
+      475000,
+      28000,
+      455000,
+      42000,
+      90000,
+      153000,
+      49000,
+      390000,
+      300000,
+      29000,
+      810000,
+      280000,
+      55000,
+      258000,
+      97000,
+      1040000,
+      450000
+     ]
+    },
+    "priceM2": {
+     "n": 70,
+     "primjeri": [
+      147,
+      4,
+      203,
+      95,
+      8,
+      178,
+      210,
+      46,
+      182,
+      171,
+      170,
+      176,
+      433,
+      743,
+      185,
+      93,
+      103,
+      53,
+      627,
+      89,
+      11,
+      121,
+      130,
+      5,
+      75,
+      419,
+      96,
+      671,
+      275,
+      76,
+      300,
+      298,
+      26,
+      399,
+      150,
+      208,
+      100,
+      132,
+      37,
+      177
+     ]
+    },
+    "previousPrice": {
+     "n": 70,
+     "primjeri": [
+      849000,
+      239000,
+      36500
+     ]
+    },
+    "priceReductionPercentage": {
+     "n": 70,
+     "primjeri": [
+      -8,
+      -21,
+      -12
+     ]
+    },
+    "videoUrl": {
+     "n": 70,
+     "primjeri": []
+    },
+    "isPromoted": {
+     "n": 70,
+     "primjeri": [
+      true,
+      false
+     ]
+    },
+    "promotionStartDate": {
+     "n": 70,
+     "primjeri": [
+      "2026-10-13T07:36:34.686Z",
+      "2026-10-13T07:28:56.311Z",
+      "2026-10-12T11:11:50.883Z",
+      "2026-10-09T07:50:07.703Z",
+      "2026-10-07T08:39:05.565Z"
+     ]
+    },
+    "promotionExpirationDate": {
+     "n": 70,
+     "primjeri": [
+      "2026-10-20T07:36:34.686Z",
+      "2026-10-20T07:28:56.311Z",
+      "2026-11-11T11:11:50.883Z",
+      "2026-10-16T07:50:07.703Z",
+      "2026-11-06T08:39:05.565Z"
+     ]
+    },
+    "hasPhones": {
+     "n": 70,
+     "primjeri": []
+    },
+    "latitude": {
+     "n": 70,
+     "primjeri": [
+      45.3108083,
+      45.4249989,
+      45.254906399999996,
+      45.37029784183118,
+      44.65755846620539,
+      45.361948,
+      45.3155895,
+      45.1795231,
+      45.173583,
+      45.0278995,
+      45.1285255,
+      45.3613096,
+      45.3756926,
+      45.3569463,
+      45.3740088,
+      45.3734716,
+      45.2992599,
+      45.3969917,
+      45.4632122,
+      45.16807,
+      45.07982,
+      45.3623068,
+      45.31565,
+      45.101632,
+      45.3181577,
+      44.5315814,
+      45.156,
+      45.020739,
+      45.1355486,
+      45.0757288,
+      45.148124,
+      45.3358254,
+      45.3715797,
+      45.3533472,
+      45.1385187,
+      45.1294898,
+      45.0738088,
+      45.3349,
+      45.2549674,
+      45.4248901
+     ]
+    },
+    "longitude": {
+     "n": 70,
+     "primjeri": [
+      14.555525,
+      14.2704166,
+      14.598001300000002,
+      14.460411071777346,
+      14.395669817324466,
+      14.358608,
+      14.2709989,
+      14.235063,
+      14.6915049,
+      14.5752114,
+      14.7897992,
+      14.3054103,
+      14.3839655,
+      14.3679956,
+      14.8005663,
+      14.3356434,
+      14.510126,
+      14.392612,
+      14.9704043,
+      14.7606,
+      14.85218,
+      15.1658608,
+      14.48871,
+      14.8445516,
+      14.7301907,
+      14.4720423,
+      14.53377,
+      14.6315962,
+      14.6436958,
+      14.6752504,
+      14.607473,
+      14.2751518,
+      14.3504236,
+      14.4223562,
+      14.8203385,
+      14.6043626,
+      14.4659526,
+      14.30164,
+      14.5967136,
+      14.2695546
+     ]
+    },
+    "isPreciseLocation": {
+     "n": 70,
+     "primjeri": [
+      false,
+      true
+     ]
+    },
+    "featuredProperty": {
+     "n": 70,
+     "primjeri": []
+    },
+    "priceCurrency": {
+     "n": 70,
+     "primjeri": [
+      "EUR"
+     ]
+    },
+    "area": {
+     "n": 70,
+     "primjeri": [
+      502,
+      2073,
+      881,
+      1037.52,
+      2726,
+      4500,
+      1089,
+      971,
+      686,
+      644,
+      623,
+      426,
+      890,
+      1057,
+      1073,
+      1286,
+      4093,
+      2436,
+      1000,
+      1323,
+      1285,
+      13000,
+      1244,
+      3930,
+      7176,
+      3489,
+      8784,
+      1200,
+      365,
+      511,
+      581,
+      381,
+      2700,
+      940,
+      2087,
+      646,
+      645,
+      5010,
+      4502,
+      7551
+     ]
+    },
+    "legalEntity": {
+     "n": 70,
+     "primjeri": [
+      2,
+      1
+     ]
+    },
+    "countryName": {
+     "n": 70,
+     "primjeri": [
+      "HRVATSKA"
+     ]
+    },
+    "countyName": {
+     "n": 70,
+     "primjeri": [
+      "Primorsko-goranska"
+     ]
+    },
+    "cityName": {
+     "n": 70,
+     "primjeri": [
+      "Bakar",
+      "Matulji",
+      "Kraljevica",
+      "Čavle",
+      "Mali Lošinj",
+      "Kastav",
+      "Opatija - Okolica",
+      "Mošćenička Draga",
+      "Crikvenica",
+      "Krk",
+      "Novi Vinodolski",
+      "Viškovo",
+      "Rijeka",
+      "Delnice",
+      "Kostrena",
+      "Brod Moravice",
+      "Vinodolska Općina",
+      "Vrbovsko",
+      "Fužine",
+      "Omišalj",
+      "Punat",
+      "Dobrinj",
+      "Vrbnik",
+      "Klana",
+      "Malinska-Dubašnica"
+     ]
+    },
+    "settlementName": {
+     "n": 70,
+     "primjeri": [
+      "Krasica",
+      "Veli Brgud",
+      "Šmrika",
+      "Grobnik",
+      "Nerezine",
+      "Rešetari",
+      "Poljane",
+      "Brseč",
+      "Crikvenica",
+      "Krk",
+      "Novi Vinodolski",
+      "Mihotići",
+      "Viškovo",
+      "Srdoči",
+      "Lučice",
+      "Spinčići",
+      "Kostrena Sveta Lucija",
+      "Marčelji",
+      "Brod Moravice",
+      "Bribir",
+      "Smokvica Krmpotska",
+      "Kamensko",
+      "Kostrena",
+      "Klenovica",
+      "Vrata",
+      "Mali Lošinj",
+      "Njivice",
+      "Kraljevica",
+      "Punat",
+      "Polje",
+      "Vrbnik",
+      "Soline",
+      "Veprinac",
+      "Kastav",
+      "Drenova",
+      "Donji Zagon",
+      "Dobrinj",
+      "Linardići",
+      "Ičići",
+      "Klana"
+     ]
+    },
+    "locationName": {
+     "n": 70,
+     "primjeri": [
+      "Bakar",
+      "Matulji",
+      "Kraljevica",
+      "Čavle",
+      "Mali Lošinj",
+      "Kastav",
+      "Opatija - Okolica",
+      "Mošćenička Draga",
+      "Crikvenica",
+      "Krk",
+      "Novi Vinodolski",
+      "Viškovo",
+      "Rijeka",
+      "Delnice",
+      "Kostrena",
+      "Brod Moravice",
+      "Vinodolska Općina",
+      "Vrbovsko",
+      "Fužine",
+      "Omišalj",
+      "Punat",
+      "Dobrinj",
+      "Vrbnik",
+      "Klana",
+      "Malinska-Dubašnica"
+     ]
+    },
+    "settlementLatitude": {
+     "n": 70,
+     "primjeri": [
+      45.310039,
+      45.4248901,
+      45.2549674,
+      45.369498,
+      44.65755846620539,
+      45.3616658,
+      45.3144964,
+      45.1795231,
+      45.1734979,
+      45.0259957,
+      45.12866289999999,
+      45.3613096,
+      45.3776425,
+      45.3569463,
+      45.374689,
+      45.37347159999999,
+      45.3058083,
+      45.39729579999999,
+      45.4632122,
+      45.1620629,
+      45.0860721,
+      45.3623068,
+      45.3097736,
+      45.101632,
+      45.3181577,
+      44.5315814,
+      45.1644434,
+      45.2741107,
+      45.02069789999999,
+      45.1355486,
+      45.0756694,
+      45.1480289,
+      45.3358032,
+      45.3682585,
+      45.3539334,
+      45.1385187,
+      45.12948979999999,
+      45.07380879999999,
+      45.312713,
+      45.446434
+     ]
+    },
+    "settlementLongitude": {
+     "n": 70,
+     "primjeri": [
+      14.554181,
+      14.2695546,
+      14.5967136,
+      14.4601664,
+      14.395669817324466,
+      14.3587629,
+      14.272669,
+      14.235063,
+      14.6913884,
+      14.5734276,
+      14.7895736,
+      14.3054103,
+      14.3858617,
+      14.3679956,
+      14.8000714,
+      14.3356434,
+      14.5004676,
+      14.3891577,
+      14.9704043,
+      14.7596983,
+      14.8525098,
+      15.1658608,
+      14.488711,
+      14.8445516,
+      14.7301907,
+      14.4720423,
+      14.5448533,
+      14.5688542,
+      14.6311582,
+      14.6436958,
+      14.6743573,
+      14.6079015,
+      14.2743616,
+      14.352017,
+      14.4302132,
+      14.8203385,
+      14.6043626,
+      14.4659526,
+      14.2856284,
+      14.3769785
+     ]
+    },
+    "permutiveData.adCode": {
+     "n": 70,
+     "primjeri": [
+      7520458,
+      7630306,
+      7631349,
+      7568592,
+      4050720,
+      7454430,
+      7454429,
+      3979513,
+      7415420,
+      7415418,
+      7415417,
+      7415416,
+      6987082,
+      6984594,
+      6979952,
+      6939861,
+      6938710,
+      6887923,
+      6876246,
+      6874732,
+      6890678,
+      6881707,
+      6871925,
+      6871918,
+      6871204,
+      6931377,
+      6925241,
+      6922307,
+      6913320,
+      6912522,
+      6903118,
+      6782322,
+      6782261,
+      6781363,
+      6779797,
+      6775309,
+      6760003,
+      6756420,
+      6744816,
+      6742815
+     ]
+    },
+    "permutiveData.module": {
+     "n": 70,
+     "primjeri": [
+      "nekretnine"
+     ]
+    },
+    "permutiveData.categories[]": {
+     "n": 70,
+     "primjeri": [
+      "prodaja-zemljista"
+     ]
+    },
+    "permutiveData.location[]": {
+     "n": 70,
+     "primjeri": [
+      "HRVATSKA",
+      "Primorsko-goranska",
+      "Bakar",
+      "Krasica",
+      "Matulji",
+      "Veli Brgud",
+      "Kraljevica",
+      "Šmrika",
+      "Čavle",
+      "Grobnik",
+      "Mali Lošinj",
+      "Nerezine",
+      "Kastav",
+      "Rešetari",
+      "Opatija - Okolica",
+      "Poljane",
+      "Mošćenička Draga",
+      "Brseč",
+      "Crikvenica",
+      "Krk",
+      "Novi Vinodolski",
+      "Mihotići",
+      "Viškovo",
+      "Rijeka",
+      "Srdoči",
+      "Delnice",
+      "Lučice",
+      "Spinčići",
+      "Kostrena",
+      "Kostrena Sveta Lucija",
+      "Marčelji",
+      "Brod Moravice",
+      "Vinodolska Općina",
+      "Bribir",
+      "Smokvica Krmpotska",
+      "Vrbovsko",
+      "Kamensko",
+      "Klenovica",
+      "Fužine",
+      "Vrata"
+     ]
+    },
+    "permutiveData.priceFrom": {
+     "n": 70,
+     "primjeri": [
+      74000,
+      7500,
+      179000,
+      99000,
+      21808,
+      800000,
+      229000,
+      45000,
+      125000,
+      110000,
+      106000,
+      75000,
+      385000,
+      785000,
+      199000,
+      120000,
+      421579,
+      129000,
+      210000,
+      830000,
+      115000,
+      137000,
+      150000,
+      475000,
+      28000,
+      455000,
+      42000,
+      90000,
+      153000,
+      49000,
+      390000,
+      300000,
+      29000,
+      810000,
+      280000,
+      55000,
+      258000,
+      97000,
+      1040000,
+      450000
+     ]
+    },
+    "permutiveData.priceTo": {
+     "n": 70,
+     "primjeri": []
+    },
+    "landType": {
+     "n": 69,
+     "primjeri": [
+      1,
+      2
+     ]
+    },
+    "propertyCode": {
+     "n": 68,
+     "primjeri": [
+      "6943",
+      "5980",
+      "1572",
+      "3051",
+      "46240",
+      "46278",
+      "00",
+      "8149",
+      "8151",
+      "8152",
+      "8153",
+      "12761",
+      "[telefon]",
+      "1105",
+      "1103",
+      "15802",
+      "23259",
+      "1047",
+      "iro-1140",
+      "iro-610",
+      "135-38",
+      "7723",
+      "ZG7333",
+      "1229",
+      "Z11225",
+      "122-034",
+      "ZG2453",
+      "7187",
+      "679",
+      "549",
+      "19815",
+      "103333",
+      "124-023",
+      "541",
+      "29235",
+      "5683",
+      "5675",
+      "5672",
+      "B-151",
+      "ZG276"
+     ]
+    },
+    "priceTo": {
+     "n": 67,
+     "primjeri": []
+    },
+    "categoryLv1Id": {
+     "n": 67,
+     "primjeri": [
+      "[telefon]-[telefon]-[telefon]"
+     ]
+    },
+    "categoryLv2Id": {
+     "n": 67,
+     "primjeri": [
+      "[telefon]-[telefon]-[telefon]"
+     ]
+    },
+    "makeId": {
+     "n": 67,
+     "primjeri": [
+      "[telefon]-[telefon]-[telefon]"
+     ]
+    },
+    "modelId": {
+     "n": 67,
+     "primjeri": [
+      "[telefon]-[telefon]-[telefon]"
+     ]
+    },
+    "makeYear": {
+     "n": 67,
+     "primjeri": []
+    },
+    "landUse": {
+     "n": 42,
+     "primjeri": [
+      2,
+      3,
+      1
+     ]
+    },
+    "cityWaterSupply": {
+     "n": 16,
+     "primjeri": [
+      true
+     ]
+    },
+    "asphaltRoad": {
+     "n": 9,
+     "primjeri": [
+      true
+     ]
+    },
+    "buildingPermit": {
+     "n": 9,
+     "primjeri": [
+      true
+     ]
+    },
+    "citySewerage": {
+     "n": 8,
+     "primjeri": [
+      true
+     ]
+    },
+    "ownershipCertificate": {
+     "n": 6,
+     "primjeri": []
+    },
+    "validDataGuarantee": {
+     "n": 3,
+     "primjeri": [
+      true
+     ]
+    },
+    "viewViaVideoCall": {
+     "n": 2,
+     "primjeri": []
+    },
+    "usePermit": {
+     "n": 1,
+     "primjeri": [
+      true
+     ]
+    }
+   }
+  }
+ },
+ {
+  "ulaz": "polja:nekretnine-zemljista:20",
+  "rezultat": {
+   "zapisa": 20,
+   "polja": {
+    "realEstate.isAIVoiceEnabled": {
+     "n": 20,
+     "primjeri": [
+      false
+     ]
+    },
+    "realEstate.updatedAt": {
+     "n": 20,
+     "primjeri": [
+      1791874912,
+      1791876903,
+      1791817372,
+      1791817447,
+      1791817208,
+      1791847098,
+      1791795237,
+      1791820582,
+      1791820805,
+      1791817684,
+      1791803759,
+      1791725795,
+      1791726932,
+      1791724422,
+      1791727351,
+      1791727465,
+      1791724865,
+      1791803199,
+      1791724683,
+      1791725923
+     ]
+    },
+    "realEstate.advertiser.hasCallNumbers": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.reference.label": {
+     "n": 20,
+     "primjeri": [
+      "referenca"
+     ]
+    },
+    "realEstate.reference.code": {
+     "n": 20,
+     "primjeri": [
+      "50206",
+      "EK-4320913",
+      "3-75921",
+      "M-600",
+      "T1892",
+      "126-151",
+      "iro-135",
+      "1588",
+      "T1981",
+      "793",
+      "559",
+      "EUROVILLA-548747",
+      "EUROVILLA-795891",
+      "EUROVILLA-251517",
+      "EUROVILLA-885246",
+      "EUROVILLA-910390",
+      "EUROVILLA-346975",
+      "EUROVILLA-410274",
+      "EUROVILLA-311547",
+      "EUROVILLA-575471"
+     ]
+    },
+    "realEstate.dataType": {
+     "n": 20,
+     "primjeri": [
+      "real-estate"
+     ]
+    },
+    "realEstate.contract": {
+     "n": 20,
+     "primjeri": [
+      "sale"
+     ]
+    },
+    "realEstate.contractValue": {
+     "n": 20,
+     "primjeri": [
+      "Prodaja"
+     ]
+    },
+    "realEstate.createdAt": {
+     "n": 20,
+     "primjeri": [
+      1791874912,
+      1791875816,
+      1791817372,
+      1791817447,
+      1791817208,
+      1791847098,
+      1791793984,
+      1791820162,
+      1791817225,
+      1791817325,
+      1791803759,
+      1791725795,
+      1791726932,
+      1791724422,
+      1791727351,
+      1791727465,
+      1791724865,
+      1791725152,
+      1791724683,
+      1791725923
+     ]
+    },
+    "realEstate.id": {
+     "n": 20,
+     "primjeri": [
+      4320895,
+      4320913,
+      4308691,
+      4308723,
+      4308603,
+      4314201,
+      4307323,
+      4309327,
+      4308639,
+      4308655,
+      4307771,
+      4292771,
+      4294055,
+      4291295,
+      4294489,
+      4294609,
+      4291769,
+      4292081,
+      4291575,
+      4292911
+     ]
+    },
+    "realEstate.isNew": {
+     "n": 20,
+     "primjeri": [
+      true
+     ]
+    },
+    "realEstate.luxury": {
+     "n": 20,
+     "primjeri": [
+      false
+     ]
+    },
+    "realEstate.price.visible": {
+     "n": 20,
+     "primjeri": [
+      true
+     ]
+    },
+    "realEstate.price.value": {
+     "n": 20,
+     "primjeri": [
+      155000,
+      76190,
+      82000,
+      900000,
+      117000,
+      2025000,
+      94000,
+      80000,
+      150000,
+      25000,
+      475000,
+      48500,
+      105000,
+      219950,
+      20000,
+      45000,
+      86000,
+      300000,
+      185000
+     ]
+    },
+    "realEstate.price.formattedValue": {
+     "n": 20,
+     "primjeri": [
+      "€ 155.000",
+      "€ 76.190",
+      "€ 82.000",
+      "€ 900.000",
+      "€ 117.000",
+      "€ 2.025.000",
+      "€ 94.000",
+      "€ 80.000",
+      "€ 150.000",
+      "€ 25.000",
+      "€ 475.000",
+      "€ 48.500",
+      "€ 105.000",
+      "€ 219.950",
+      "€ 20.000",
+      "€ 45.000",
+      "€ 86.000",
+      "€ 300.000",
+      "€ 185.000"
+     ]
+    },
+    "realEstate.price.priceRange": {
+     "n": 20,
+     "primjeri": [
+      "150.001 - 200.000 &euro;",
+      "fino a 100.000 &euro;",
+      "oltre 500.000 &euro;",
+      "100.001 - 150.000 &euro;",
+      "300.001 - 500.000 &euro;",
+      "200.001 - 300.000 &euro;"
+     ]
+    },
+    "realEstate.price.pricePerSquareMeter": {
+     "n": 20,
+     "primjeri": [
+      "185 €/m²",
+      "190 €/m²",
+      "66 €/m²",
+      "692 €/m²",
+      "69 €/m²",
+      "298 €/m²",
+      "198 €/m²",
+      "10 €/m²",
+      "2 €/m²",
+      "380 €/m²",
+      "35 €/m²",
+      "14 €/m²",
+      "232 €/m²",
+      "7 €/m²",
+      "36 €/m²",
+      "42 €/m²",
+      "103 €/m²",
+      "22 €/m²",
+      "78 €/m²"
+     ]
+    },
+    "realEstate.properties[].showSurfaceConstitution": {
+     "n": 20,
+     "primjeri": [
+      false
+     ]
+    },
+    "realEstate.properties[].adLinks[]": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].isMain": {
+     "n": 20,
+     "primjeri": [
+      true
+     ]
+    },
+    "realEstate.properties[].ga4features[]": {
+     "n": 20,
+     "primjeri": [
+      "illuminazione pubblica",
+      "allaccio acqua",
+      "allaccio elettricità"
+     ]
+    },
+    "realEstate.properties[].id": {
+     "n": 20,
+     "primjeri": [
+      "917801",
+      "917805",
+      "917043",
+      "917051",
+      "917027",
+      "917375",
+      "916823",
+      "917093",
+      "917029",
+      "917031",
+      "916883",
+      "915417",
+      "915769",
+      "915039",
+      "915887",
+      "915925",
+      "915145",
+      "915223",
+      "915103",
+      "915455"
+     ]
+    },
+    "realEstate.properties[].cadastrals[]": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].category.id": {
+     "n": 20,
+     "primjeri": [
+      24
+     ]
+    },
+    "realEstate.properties[].category.name": {
+     "n": 20,
+     "primjeri": [
+      "Zemljišta"
+     ]
+    },
+    "realEstate.properties[].description": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].defaultDescription": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].ga4Heating": {
+     "n": 20,
+     "primjeri": [
+      "Assente"
+     ]
+    },
+    "realEstate.properties[].features[]": {
+     "n": 20,
+     "primjeri": [
+      "Javna rasvjeta",
+      "Priključak za vodu",
+      "orijentacija zapad",
+      "Priključak za struju"
+     ]
+    },
+    "realEstate.properties[].income": {
+     "n": 20,
+     "primjeri": [
+      false
+     ]
+    },
+    "realEstate.properties[].location.latitude": {
+     "n": 20,
+     "primjeri": [
+      45.33582687,
+      44.66067886,
+      45.42226791,
+      45.12506485,
+      45.46149826,
+      44.96069336,
+      45.19332123,
+      45.28467178,
+      45.28297806,
+      45.02323914,
+      45.39812088,
+      45.12184525,
+      45.37400818,
+      45.39572144
+     ]
+    },
+    "realEstate.properties[].location.longitude": {
+     "n": 20,
+     "primjeri": [
+      14.27515221,
+      14.39599991,
+      14.34513378,
+      14.52882385,
+      14.85331059,
+      14.40917015,
+      14.22620964,
+      14.60595036,
+      14.60060596,
+      14.56603813,
+      14.80092621,
+      14.62868595,
+      14.80056667,
+      14.92887783
+     ]
+    },
+    "realEstate.properties[].location.zoom": {
+     "n": 20,
+     "primjeri": [
+      17
+     ]
+    },
+    "realEstate.properties[].location.nation.id": {
+     "n": 20,
+     "primjeri": [
+      "HR"
+     ]
+    },
+    "realEstate.properties[].location.nation.name": {
+     "n": 20,
+     "primjeri": [
+      "Croazia"
+     ]
+    },
+    "realEstate.properties[].location.nation.keyurl": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].location.region": {
+     "n": 20,
+     "primjeri": [
+      "Središnja i Sjeverozapadna Hrvatska"
+     ]
+    },
+    "realEstate.properties[].location.province": {
+     "n": 20,
+     "primjeri": [
+      "Primorsko-goranska"
+     ]
+    },
+    "realEstate.properties[].location.provinceId": {
+     "n": 20,
+     "primjeri": [
+      "HR_6"
+     ]
+    },
+    "realEstate.properties[].location.city": {
+     "n": 20,
+     "primjeri": [
+      "Opatija",
+      "Mali Lošinj",
+      "Klana",
+      "Malinska-Dubašnica",
+      "Delnice",
+      "Cres",
+      "Mošćenička Draga",
+      "Bakar",
+      "Krk",
+      "Dobrinj",
+      "Skrad"
+     ]
+    },
+    "realEstate.properties[].location.cityId": {
+     "n": 20,
+     "primjeri": [
+      956,
+      641,
+      613,
+      642,
+      587,
+      585,
+      651,
+      752,
+      630,
+      589,
+      966
+     ]
+    },
+    "realEstate.properties[].location.macrozone": {
+     "n": 20,
+     "primjeri": [
+      "Veprinac, Poljane",
+      "Centar"
+     ]
+    },
+    "realEstate.properties[].location.macrozoneId": {
+     "n": 20,
+     "primjeri": [
+      7476,
+      7384
+     ]
+    },
+    "realEstate.properties[].location.microzone": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].location.locality": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].location.address": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].location.streetNumber": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].location.marker": {
+     "n": 20,
+     "primjeri": [
+      "marker",
+      "only_area",
+      "no_map"
+     ]
+    },
+    "realEstate.properties[].multimedia.photos[].id": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.photos[].caption": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.photos[].urls.thumb": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.photos[].urls.small": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.photos[].urls.medium": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.photos[].urls.large": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.photos[].tag.label": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.photos[].tag.key": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.photos[].tag.category": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.videos[]": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.photoPlan[]": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.virtualTours[]": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.documents[]": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.hasMultimedia": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.hasOnlyPhotos": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].photo.id": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].photo.caption": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].photo.urls.thumb": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].photo.urls.small": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].photo.urls.medium": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].photo.urls.large": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].price.visible": {
+     "n": 20,
+     "primjeri": [
+      true
+     ]
+    },
+    "realEstate.properties[].price.value": {
+     "n": 20,
+     "primjeri": [
+      155000,
+      76190,
+      82000,
+      900000,
+      117000,
+      2025000,
+      94000,
+      80000,
+      150000,
+      25000,
+      475000,
+      48500,
+      105000,
+      219950,
+      20000,
+      45000,
+      86000,
+      300000,
+      185000
+     ]
+    },
+    "realEstate.properties[].price.formattedValue": {
+     "n": 20,
+     "primjeri": [
+      "€ 155.000",
+      "€ 76.190",
+      "€ 82.000",
+      "€ 900.000",
+      "€ 117.000",
+      "€ 2.025.000",
+      "€ 94.000",
+      "€ 80.000",
+      "€ 150.000",
+      "€ 25.000",
+      "€ 475.000",
+      "€ 48.500",
+      "€ 105.000",
+      "€ 219.950",
+      "€ 20.000",
+      "€ 45.000",
+      "€ 86.000",
+      "€ 300.000",
+      "€ 185.000"
+     ]
+    },
+    "realEstate.properties[].price.priceRange": {
+     "n": 20,
+     "primjeri": [
+      "150.001 - 200.000 &euro;",
+      "fino a 100.000 &euro;",
+      "oltre 500.000 &euro;",
+      "100.001 - 150.000 &euro;",
+      "300.001 - 500.000 &euro;",
+      "200.001 - 300.000 &euro;"
+     ]
+    },
+    "realEstate.properties[].price.pricePerSquareMeter": {
+     "n": 20,
+     "primjeri": [
+      "185 €/m²",
+      "190 €/m²",
+      "66 €/m²",
+      "692 €/m²",
+      "69 €/m²",
+      "298 €/m²",
+      "198 €/m²",
+      "10 €/m²",
+      "2 €/m²",
+      "380 €/m²",
+      "35 €/m²",
+      "14 €/m²",
+      "232 €/m²",
+      "7 €/m²",
+      "36 €/m²",
+      "42 €/m²",
+      "103 €/m²",
+      "22 €/m²",
+      "78 €/m²"
+     ]
+    },
+    "realEstate.properties[].lastUpdate": {
+     "n": 20,
+     "primjeri": [
+      "Oglas ažuriran 13. 10. 2026.",
+      "Oglas ažuriran 12. 10. 2026.",
+      "Oglas ažuriran 11. 10. 2026."
+     ]
+    },
+    "realEstate.properties[].surface": {
+     "n": 20,
+     "primjeri": [
+      "840 m²",
+      "401 m²",
+      "1.250 m²",
+      "1.300 m²",
+      "1.705 m²",
+      "6.800 m²",
+      "475 m²",
+      "7.907 m²",
+      "759 m²",
+      "10.590 m²",
+      "1.380 m²",
+      "7.732 m²",
+      "950 m²",
+      "2.694 m²",
+      "1.254 m²",
+      "2.048 m²",
+      "2.910 m²",
+      "6.919 m²",
+      "2.363 m²"
+     ]
+    },
+    "realEstate.properties[].surfaceValue": {
+     "n": 20,
+     "primjeri": [
+      "840 m²",
+      "401 m²",
+      "1.250 m²",
+      "1.300 m²",
+      "1.705 m²",
+      "6.800 m²",
+      "475 m²",
+      "7.907 m²",
+      "759 m²",
+      "10.590 m²",
+      "1.380 m²",
+      "7.732 m²",
+      "950 m²",
+      "2.694 m²",
+      "1.254 m²",
+      "2.048 m²",
+      "2.910 m²",
+      "6.919 m²",
+      "2.363 m²"
+     ]
+    },
+    "realEstate.properties[].typology.id": {
+     "n": 20,
+     "primjeri": [
+      107,
+      106
+     ]
+    },
+    "realEstate.properties[].typology.name": {
+     "n": 20,
+     "primjeri": [
+      "Građevinsko zemljište",
+      "Poljoprivredno zemljište"
+     ]
+    },
+    "realEstate.properties[].typologyV2.id": {
+     "n": 20,
+     "primjeri": [
+      261,
+      269
+     ]
+    },
+    "realEstate.properties[].typologyV2.name": {
+     "n": 20,
+     "primjeri": [
+      "Građevinsko zemljište",
+      "Poljoprivredno zemljište"
+     ]
+    },
+    "realEstate.properties[].typologyValue": {
+     "n": 20,
+     "primjeri": [
+      "Građevinsko zemljište",
+      "Poljoprivredno zemljište"
+     ]
+    },
+    "realEstate.properties[].typologyGA4Translation": {
+     "n": 20,
+     "primjeri": [
+      "Terreno edificabile",
+      "Terreno Agricolo"
+     ]
+    },
+    "realEstate.properties[].residentialUnits": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].commercialUnits": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.properties[].mainFeatures[].type": {
+     "n": 20,
+     "primjeri": [
+      "surface"
+     ]
+    },
+    "realEstate.properties[].mainFeatures[].label": {
+     "n": 20,
+     "primjeri": [
+      "840 m²",
+      "401 m²",
+      "1.250 m²",
+      "1.300 m²",
+      "1.705 m²",
+      "6.800 m²",
+      "475 m²",
+      "7.907 m²",
+      "759 m²",
+      "10.590 m²",
+      "1.380 m²",
+      "7.732 m²",
+      "950 m²",
+      "2.694 m²",
+      "1.254 m²",
+      "2.048 m²",
+      "2.910 m²",
+      "6.919 m²",
+      "2.363 m²"
+     ]
+    },
+    "realEstate.title": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.type": {
+     "n": 20,
+     "primjeri": [
+      "ad"
+     ]
+    },
+    "realEstate.typology.id": {
+     "n": 20,
+     "primjeri": [
+      107,
+      106
+     ]
+    },
+    "realEstate.typology.name": {
+     "n": 20,
+     "primjeri": [
+      "Građevinsko zemljište",
+      "Poljoprivredno zemljište"
+     ]
+    },
+    "realEstate.uuid": {
+     "n": 20,
+     "primjeri": [
+      "8fc1c0e7-2478-5c4f-8f69-bb84f9827113",
+      "b8b0e73b-4ed5-5ff7-b61e-8c407e7f6317",
+      "2307ce93-fc6c-513f-a918-362c69e39be2",
+      "f5f138eb-8a76-5922-ad63-0021fa3aff30",
+      "03d15201-9eaa-5ff8-8193-309c86d0e6c3",
+      "c65eeadb-95d8-5470-9c8f-73f2f049838b",
+      "bcbf67eb-5210-5a45-afb4-befd3d625618",
+      "ebf9c3fe-2365-5434-81a8-e47493ad5c45",
+      "dfea2383-1cf6-5d56-8419-4a7ba2094ccd",
+      "3b03935c-02d6-5127-936f-a916b2c7655f",
+      "06dc4253-5cdc-5105-b5c3-e7482c898e47",
+      "9936d503-ff71-5265-aaa5-9a77a1f2c313",
+      "3d3d26c9-16c6-5906-bd9a-b345b2ca1c9f",
+      "80f82d26-17a5-5ea7-91b7-ad9c707d65d6",
+      "e91f8ffc-7e28-5b8f-8768-3894adab1e0e",
+      "27cedd4a-4ed5-5494-bd2f-17372ce856c5",
+      "3f6a7b7a-00b6-512e-8965-15268b906e47",
+      "9398aa4e-c4d3-5cc6-9dbd-d538d45a2333",
+      "3fcb2fdd-a7ef-5c6c-b714-f264a2fc60eb",
+      "059ae3c0-cc30-56a5-93f4-fecff06e4cf4"
+     ]
+    },
+    "realEstate.visibility": {
+     "n": 20,
+     "primjeri": [
+      "premium"
+     ]
+    },
+    "realEstate.hasMainProperty": {
+     "n": 20,
+     "primjeri": [
+      false
+     ]
+    },
+    "realEstate.isProjectLike": {
+     "n": 20,
+     "primjeri": [
+      false
+     ]
+    },
+    "realEstate.hasParent": {
+     "n": 20,
+     "primjeri": [
+      false
+     ]
+    },
+    "realEstate.state.id": {
+     "n": 20,
+     "primjeri": [
+      1
+     ]
+    },
+    "realEstate.state.name": {
+     "n": 20,
+     "primjeri": [
+      "aktivan"
+     ]
+    },
+    "seo.canonical": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.alternates[].rel": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.alternates[].hreflang": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.alternates[].href": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.title": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.metaTitle": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.metaDescription": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.openGraph.prefix": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.openGraph.appId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.openGraph.type": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.openGraph.url": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.openGraph.title": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.openGraph.description": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.openGraph.image": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.openGraph.options": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.openGraph.locale": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.seoLinks[]": {
+     "n": 20,
+     "primjeri": []
+    },
+    "seo.listingSearchUrl": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.nation": {
+     "n": 20,
+     "primjeri": [
+      "HR"
+     ]
+    },
+    "trovakasa.regionId": {
+     "n": 20,
+     "primjeri": [
+      "HR_3"
+     ]
+    },
+    "trovakasa.provinceId": {
+     "n": 20,
+     "primjeri": [
+      "HR_6"
+     ]
+    },
+    "trovakasa.cityId": {
+     "n": 20,
+     "primjeri": [
+      956,
+      641,
+      613,
+      642,
+      587,
+      585,
+      651,
+      752,
+      630,
+      589,
+      966
+     ]
+    },
+    "trovakasa.geographyAreaId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.zoneId": {
+     "n": 20,
+     "primjeri": [
+      7476,
+      7384
+     ]
+    },
+    "trovakasa.holiday": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.contractId": {
+     "n": 20,
+     "primjeri": [
+      1
+     ]
+    },
+    "trovakasa.categoryId": {
+     "n": 20,
+     "primjeri": [
+      24
+     ]
+    },
+    "trovakasa.typologyId": {
+     "n": 20,
+     "primjeri": [
+      107,
+      106
+     ]
+    },
+    "trovakasa.subTypologyId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.buildingStateId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.bathrooms": {
+     "n": 20,
+     "primjeri": [
+      0
+     ]
+    },
+    "trovakasa.income": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.propertyTypeId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.heatingId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.minPrice": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.maxPrice": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.minSurface": {
+     "n": 20,
+     "primjeri": [
+      750,
+      360,
+      1100,
+      1500,
+      6100,
+      420,
+      7100,
+      680,
+      9000,
+      1200,
+      6900,
+      850,
+      2400,
+      1800,
+      2600,
+      6200,
+      2100
+     ]
+    },
+    "trovakasa.maxSurface": {
+     "n": 20,
+     "primjeri": [
+      930,
+      450,
+      1400,
+      1500,
+      1900,
+      7500,
+      530,
+      8700,
+      840,
+      12000,
+      1600,
+      8600,
+      1050,
+      3000,
+      2300,
+      3300,
+      7700,
+      2600
+     ]
+    },
+    "trovakasa.minLocals": {
+     "n": 20,
+     "primjeri": [
+      0
+     ]
+    },
+    "trovakasa.maxLocals": {
+     "n": 20,
+     "primjeri": [
+      0
+     ]
+    },
+    "trovakasa.boxAutoId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.garden": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.balcony": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.terrace": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.inAuction": {
+     "n": 20,
+     "primjeri": [
+      0
+     ]
+    },
+    "trovakasa.noAuction": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.animals": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.smoker": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.roomsCategoryId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.roomsTypologyId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.energyClassId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.elevator": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.auctionSection": {
+     "n": 20,
+     "primjeri": []
+    },
+    "trovakasa.furnished": {
+     "n": 20,
+     "primjeri": []
+    },
+    "preview.enabled": {
+     "n": 20,
+     "primjeri": [
+      false
+     ]
+    },
+    "preview.isOwner": {
+     "n": 20,
+     "primjeri": []
+    },
+    "preview.urls.edit": {
+     "n": 20,
+     "primjeri": []
+    },
+    "preview.urls.upgrade": {
+     "n": 20,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.id": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.type": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.showOnlyAgentPhone": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.bookableVisit.isVisitBookable": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.bookableVisit.virtualVisitEnabled": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.isPaid": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.label": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.displayName": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.guaranteed": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.showAgentPhone": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.showLogo": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.imageUrls.small": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.imageUrls.large": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.agencyUrl": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.showExternalLink": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.timetable[]": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.hasPriceProposal": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.properties[].caption": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.floorplans[]": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.properties[].reference.label": {
+     "n": 19,
+     "primjeri": [
+      "referenca"
+     ]
+    },
+    "realEstate.properties[].reference.code": {
+     "n": 19,
+     "primjeri": [
+      "50206",
+      "3-75921",
+      "M-600",
+      "T1892",
+      "126-151",
+      "iro-135",
+      "1588",
+      "T1981",
+      "793",
+      "559",
+      "EUROVILLA-548747",
+      "EUROVILLA-795891",
+      "EUROVILLA-251517",
+      "EUROVILLA-885246",
+      "EUROVILLA-910390",
+      "EUROVILLA-346975",
+      "EUROVILLA-410274",
+      "EUROVILLA-311547",
+      "EUROVILLA-575471"
+     ]
+    },
+    "realEstate.properties[].land": {
+     "n": 19,
+     "primjeri": []
+    },
+    "realEstate.advertiser.supervisor.type": {
+     "n": 13,
+     "primjeri": []
+    },
+    "realEstate.advertiser.supervisor.imageGender": {
+     "n": 13,
+     "primjeri": []
+    },
+    "realEstate.advertiser.supervisor.imageType": {
+     "n": 13,
+     "primjeri": []
+    },
+    "realEstate.advertiser.supervisor.label": {
+     "n": 13,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.phones[]": {
+     "n": 12,
+     "primjeri": []
+    },
+    "realEstate.advertiser.supervisor.phones[].type": {
+     "n": 12,
+     "primjeri": []
+    },
+    "realEstate.advertiser.supervisor.phones[].value": {
+     "n": 12,
+     "primjeri": []
+    },
+    "realEstate.advertiser.supervisor.displayName": {
+     "n": 12,
+     "primjeri": []
+    },
+    "realEstate.properties[].primaryFeatures[]": {
+     "n": 12,
+     "primjeri": []
+    },
+    "realEstate.properties[].primaryFeatures[].id": {
+     "n": 8,
+     "primjeri": [
+      66,
+      67,
+      63,
+      64,
+      65
+     ]
+    },
+    "realEstate.properties[].primaryFeatures[].name": {
+     "n": 8,
+     "primjeri": [
+      "Kanalizacijski priključak",
+      "Javna rasvjeta",
+      "Priključak za vodu",
+      "Priključak za struju",
+      "Plinski priključak"
+     ]
+    },
+    "realEstate.properties[].primaryFeatures[].value": {
+     "n": 8,
+     "primjeri": [
+      0,
+      1
+     ]
+    },
+    "realEstate.properties[].primaryFeatures[].isVisible": {
+     "n": 8,
+     "primjeri": [
+      false,
+      true
+     ]
+    },
+    "realEstate.properties[].primaryFeatures[].codeName": {
+     "n": 8,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.phones[].type": {
+     "n": 7,
+     "primjeri": []
+    },
+    "realEstate.advertiser.agency.phones[].value": {
+     "n": 7,
+     "primjeri": []
+    },
+    "realEstate.properties[].seaDistanceValue": {
+     "n": 3,
+     "primjeri": [
+      "100 m",
+      "1 m"
+     ]
+    },
+    "realEstate.advertiser.supervisor.phones[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].availability": {
+     "n": 1,
+     "primjeri": [
+      "slobodno"
+     ]
+    },
+    "realEstate.properties[].buildingUsage.label": {
+     "n": 1,
+     "primjeri": [
+      "Urbana kvalifikacija"
+     ]
+    },
+    "realEstate.properties[].buildingUsage.value": {
+     "n": 1,
+     "primjeri": [
+      "Ured"
+     ]
+    },
+    "realEstate.properties[].costs.appliedVat": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].costs.agencyCommission": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].costs.commissionSubject": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].rent.deposit": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].rent.priceReferenceIndex": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].rent.redemptionRent": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].rent.availableToStudents": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].land.heightDifference": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].land.access": {
+     "n": 1,
+     "primjeri": [
+      "Na makadamskoj cesti"
+     ]
+    },
+    "realEstate.properties[].land.buildingHeight": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].land.buildingArea": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.availableState": {
+     "n": 1,
+     "primjeri": [
+      true
+     ]
+    },
+    "realEstate.properties[].views[].id": {
+     "n": 1,
+     "primjeri": [
+      1
+     ]
+    },
+    "realEstate.properties[].views[].name": {
+     "n": 1,
+     "primjeri": [
+      "more"
+     ]
+    },
+    "realEstate.properties[].multimedia.floorplans[].id": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.floorplans[].caption": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.floorplans[].urls.thumb": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.floorplans[].urls.small": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.floorplans[].urls.medium": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.floorplans[].urls.large": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.floorplans[].url": {
+     "n": 1,
+     "primjeri": []
+    },
+    "realEstate.properties[].multimedia.floorplans[].interactive": {
+     "n": 1,
+     "primjeri": []
+    }
+   }
+  }
+ },
+ {
+  "ulaz": "polja:oglasnik-zemljista:20",
+  "rezultat": {
+   "zapisa": 20,
+   "polja": {
+    "id": {
+     "n": 20,
+     "primjeri": [
+      4949830,
+      7065983,
+      6789326,
+      6797959,
+      7080810,
+      7092181,
+      7151527,
+      7151253,
+      7151254,
+      7062987,
+      7073124,
+      7063173,
+      7073132,
+      7062692,
+      7063080,
+      7062693,
+      7073128,
+      7063177,
+      7062706,
+      7062698
+     ]
+    },
+    "title": {
+     "n": 20,
+     "primjeri": []
+    },
+    "type": {
+     "n": 20,
+     "primjeri": [
+      "ad"
+     ]
+    },
+    "active": {
+     "n": 20,
+     "primjeri": [
+      true
+     ]
+    },
+    "activeCategory": {
+     "n": 20,
+     "primjeri": [
+      true
+     ]
+    },
+    "moderation": {
+     "n": 20,
+     "primjeri": [
+      true
+     ]
+    },
+    "moderationReason": {
+     "n": 20,
+     "primjeri": [
+      "ok-oglas-prosao-moderaciju"
+     ]
+    },
+    "owner.manualDeactivation": {
+     "n": 20,
+     "primjeri": []
+    },
+    "restricted": {
+     "n": 20,
+     "primjeri": [
+      false
+     ]
+    },
+    "category.id": {
+     "n": 20,
+     "primjeri": [
+      246
+     ]
+    },
+    "category.name": {
+     "n": 20,
+     "primjeri": [
+      "Prodaja"
+     ]
+    },
+    "category.url": {
+     "n": 20,
+     "primjeri": []
+    },
+    "category.layout": {
+     "n": 20,
+     "primjeri": [
+      "tabs:filters"
+     ]
+    },
+    "category.active": {
+     "n": 20,
+     "primjeri": [
+      1
+     ]
+    },
+    "breadcrumbs[].name": {
+     "n": 20,
+     "primjeri": [
+      "Naslovnica",
+      "Nekretnine",
+      "Zemljišta",
+      "Prodaja"
+     ]
+    },
+    "breadcrumbs[].slug": {
+     "n": 20,
+     "primjeri": [
+      "/",
+      "nekretnine",
+      "zemljista",
+      "zemljista-prodajem"
+     ]
+    },
+    "breadcrumbs[].id": {
+     "n": 20,
+     "primjeri": [
+      24,
+      29,
+      246
+     ]
+    },
+    "location[].id": {
+     "n": 20,
+     "primjeri": [
+      1,
+      4559,
+      5071,
+      5086,
+      4917,
+      4937,
+      4987,
+      4992,
+      4880,
+      4892,
+      4874,
+      4878,
+      4998,
+      5000,
+      5007,
+      5020,
+      5024,
+      4876,
+      4895,
+      4897,
+      4817,
+      4819,
+      4900,
+      4803,
+      4810
+     ]
+    },
+    "location[].name": {
+     "n": 20,
+     "primjeri": [
+      "Hrvatska",
+      "Primorsko-goranska",
+      "Skrad",
+      "Malo Selce",
+      "Matulji",
+      "Veli Brgud",
+      "Opatija",
+      "Mali Lošinj",
+      "Ustrine",
+      "Lovran",
+      "Medveja",
+      "Opatija - Okolica",
+      "Ičići",
+      "Veprinac",
+      "Ravna Gora",
+      "Stara Sušica",
+      "Malinska-Dubašnica",
+      "Bogovići",
+      "Klana",
+      "Malinska",
+      "Kastav"
+     ]
+    },
+    "location[].point.lat": {
+     "n": 20,
+     "primjeri": [
+      "45.1000000000000000000",
+      "45.0578029450000000000",
+      "45.4244783500000000000",
+      "45.4331156700000000000",
+      "45.4211756850000000000",
+      "45.4329025950000000000",
+      "45.3348906350000000000",
+      "45.3350959000000000000",
+      "44.6191565400000000000",
+      "44.7381941800000000000",
+      "45.2820041400000000000",
+      "45.2666890000000000000",
+      "45.3139070400000000000",
+      "45.3538307600000000000",
+      "45.3670276000000000000",
+      "45.3778468100000000000",
+      "45.2923740650000000000",
+      "45.1215134850000000000",
+      "45.1146952800000000000",
+      "45.4609591100000000000",
+      "45.4804714600000000000",
+      "45.1279099850000000000",
+      "45.3765225450000000000",
+      "45.3731852950000000000"
+     ]
+    },
+    "location[].point.lon": {
+     "n": 20,
+     "primjeri": [
+      "15.2000000000000000000",
+      "14.6897753250000000000",
+      "14.9133951550000000000",
+      "14.9248361550000000000",
+      "14.2261909500000000000",
+      "14.2727310500000000000",
+      "14.2606646300000000000",
+      "14.3050485450000000000",
+      "14.3866967650000000000",
+      "14.4106953400000000000",
+      "14.2397752750000000000",
+      "14.2556124100000000000",
+      "14.2851233450000000000",
+      "14.2389943200000000000",
+      "14.9316602500000000000",
+      "14.9912137450000000000",
+      "14.2731406300000000000",
+      "14.5199251550000000000",
+      "14.5298625750000000000",
+      "14.3975186850000000000",
+      "14.4175836750000000000",
+      "14.5284246800000000000",
+      "14.3487711750000000000",
+      "14.3485385100000000000"
+     ]
+    },
+    "price": {
+     "n": 20,
+     "primjeri": [
+      33200,
+      125000,
+      340000,
+      250000,
+      381000,
+      155000,
+      78000,
+      39000,
+      311000,
+      350000,
+      74700,
+      258000,
+      43700,
+      215000,
+      74000,
+      23000,
+      87350,
+      41100
+     ]
+    },
+    "withMedia": {
+     "n": 20,
+     "primjeri": []
+    },
+    "description": {
+     "n": 20,
+     "primjeri": []
+    },
+    "publishedAt": {
+     "n": 20,
+     "primjeri": [
+      1791883076000,
+      1791868002000,
+      1791867662000,
+      1791867013000,
+      1791866892000,
+      1791866887000,
+      1791866841000,
+      1791865961000,
+      1791865828000,
+      1791865812000,
+      1791865730000,
+      1791865704000,
+      1791865655000,
+      1791865588000,
+      1791865565000,
+      1791865497000,
+      1791865457000,
+      1791865420000,
+      1791865419000
+     ]
+    },
+    "expiredAt": {
+     "n": 20,
+     "primjeri": [
+      1794471476000,
+      1810681746000,
+      1797738547000,
+      1815021315000,
+      1815025838000,
+      1815062705000,
+      1815095952000,
+      1797796226000,
+      1797761222000,
+      1796991696000,
+      1797021045000,
+      1796983398000,
+      1796965717000,
+      1797014577000,
+      1796976156000,
+      1796988710000,
+      1796987932000,
+      1797004207000,
+      1796973183000,
+      1797036475000
+     ]
+    },
+    "virtualPublishedAt": {
+     "n": 20,
+     "primjeri": [
+      1791875876,
+      1791860802,
+      1791860462,
+      1791859813,
+      1791859692,
+      1791859687,
+      1791859641,
+      1791858761,
+      1791858628,
+      1791858612,
+      1791858530,
+      1791858504,
+      1791858455,
+      1791858388,
+      1791858365,
+      1791858297,
+      1791858257,
+      1791858220,
+      1791858219
+     ]
+    },
+    "details[].group": {
+     "n": 20,
+     "primjeri": [
+      "Osnovni podaci"
+     ]
+    },
+    "details[].params[].name": {
+     "n": 20,
+     "primjeri": [
+      "Vrsta zemljišta",
+      "Površina",
+      "Dozvole"
+     ]
+    },
+    "details[].params[].value": {
+     "n": 20,
+     "primjeri": [
+      "Građevinsko",
+      "2244",
+      "vlasnički list",
+      "809",
+      "649",
+      "Poljoprivredno",
+      "10454",
+      "2716",
+      "650",
+      "građevinska dozvola",
+      "840",
+      "1300",
+      "964",
+      "852",
+      "9587",
+      "864",
+      "1052",
+      "18383",
+      "1777",
+      "700",
+      "14790",
+      "2105",
+      "990"
+     ]
+    },
+    "details[].params[].formattedText": {
+     "n": 20,
+     "primjeri": [
+      "Građevinsko",
+      "2.244 m²",
+      "vlasnički list",
+      "809 m²",
+      "649 m²",
+      "Poljoprivredno",
+      "10.454 m²",
+      "2.716 m²",
+      "650 m²",
+      "građevinska dozvola",
+      "840 m²",
+      "1.300 m²",
+      "964 m²",
+      "852 m²",
+      "9.587 m²",
+      "864 m²",
+      "1.052 m²",
+      "18.383 m²",
+      "1.777 m²",
+      "700 m²",
+      "14.790 m²",
+      "2.105 m²",
+      "990 m²"
+     ]
+    },
+    "details[].params[].slug": {
+     "n": 20,
+     "primjeri": [
+      "re_land_type",
+      "re_total_area",
+      "re_permits"
+     ]
+    },
+    "details[].params[].typeId": {
+     "n": 20,
+     "primjeri": [
+      "RADIO",
+      "NUMBER",
+      "CHECKBOXGROUP"
+     ]
+    },
+    "list[].name": {
+     "n": 20,
+     "primjeri": [
+      "Vrsta zemljišta"
+     ]
+    },
+    "list[].value": {
+     "n": 20,
+     "primjeri": [
+      "Građevinsko",
+      "Poljoprivredno"
+     ]
+    },
+    "list[].formattedText": {
+     "n": 20,
+     "primjeri": [
+      "Građevinsko",
+      "Poljoprivredno"
+     ]
+    },
+    "list[].slug": {
+     "n": 20,
+     "primjeri": [
+      "re_land_type"
+     ]
+    },
+    "list[].typeId": {
+     "n": 20,
+     "primjeri": [
+      "RADIO"
+     ]
+    },
+    "searchable.param_90": {
+     "n": 20,
+     "primjeri": [
+      "2170",
+      "2169"
+     ]
+    },
+    "searchable.re_land_type": {
+     "n": 20,
+     "primjeri": [
+      "2170",
+      "2169"
+     ]
+    },
+    "searchable.param_44": {
+     "n": 20,
+     "primjeri": [
+      2244,
+      809,
+      649,
+      10454,
+      2716,
+      650,
+      840,
+      1300,
+      964,
+      852,
+      9587,
+      864,
+      1052,
+      18383,
+      1777,
+      700,
+      14790,
+      2105,
+      990
+     ]
+    },
+    "searchable.re_total_area": {
+     "n": 20,
+     "primjeri": [
+      2244,
+      809,
+      649,
+      10454,
+      2716,
+      650,
+      840,
+      1300,
+      964,
+      852,
+      9587,
+      864,
+      1052,
+      18383,
+      1777,
+      700,
+      14790,
+      2105,
+      990
+     ]
+    },
+    "media": {
+     "n": 20,
+     "primjeri": []
+    },
+    "product": {
+     "n": 20,
+     "primjeri": [
+      "osnovni"
+     ]
+    },
+    "user.id": {
+     "n": 20,
+     "primjeri": []
+    },
+    "user.name": {
+     "n": 20,
+     "primjeri": []
+    },
+    "user.slug": {
+     "n": 20,
+     "primjeri": []
+    },
+    "user.type": {
+     "n": 20,
+     "primjeri": []
+    },
+    "user.avatar": {
+     "n": 20,
+     "primjeri": []
+    },
+    "user.shopTitle": {
+     "n": 20,
+     "primjeri": []
+    },
+    "user.shopId": {
+     "n": 20,
+     "primjeri": []
+    },
+    "user.createdAt": {
+     "n": 20,
+     "primjeri": []
+    },
+    "user.usernamePublic": {
+     "n": 20,
+     "primjeri": []
+    },
+    "phones[]": {
+     "n": 20,
+     "primjeri": []
+    },
+    "viewCount": {
+     "n": 20,
+     "primjeri": [
+      6807,
+      4
+     ]
+    },
+    "status": {
+     "n": 20,
+     "primjeri": [
+      "active"
+     ]
+    },
+    "canReportAd": {
+     "n": 20,
+     "primjeri": [
+      true
+     ]
+    },
+    "canContactForm": {
+     "n": 20,
+     "primjeri": []
+    },
+    "canFavoriteAd": {
+     "n": 20,
+     "primjeri": [
+      true
+     ]
+    },
+    "external": {
+     "n": 20,
+     "primjeri": []
+    },
+    "hasPhones": {
+     "n": 20,
+     "primjeri": []
+    },
+    "searchable.param_83": {
+     "n": 3,
+     "primjeri": [
+      "2134",
+      "2131"
+     ]
+    },
+    "searchable.re_permits": {
+     "n": 3,
+     "primjeri": [
+      "2134",
+      "2131"
+     ]
+    }
+   }
+  }
+ },
+ {
+  "ulaz": "polja:vender-zemljista:50",
+  "rezultat": {
+   "zapisa": 50,
+   "polja": {
+    "property_meta.fave_property_size[]": {
+     "n": 50,
+     "primjeri": [
+      "6376.00",
+      "2313.00",
+      "2539.00",
+      "1000.00",
+      "2028.00",
+      "1202.00",
+      "759.00",
+      "615",
+      "695.00",
+      "2614.00",
+      "600.00",
+      "2340.00",
+      "2014.00",
+      "1092.00",
+      "751.00",
+      "2236.00",
+      "1962.00",
+      "1060.00",
+      "1052.00",
+      "884.00",
+      "1192.00",
+      "612.00",
+      "690.00",
+      "708.00",
+      "4934.00",
+      "529.00",
+      "1368.00",
+      "779.00",
+      "553.00",
+      "926.00",
+      "649.00",
+      "982.00",
+      "1223.00",
+      "6349.00",
+      "2377.00",
+      "11167.00",
+      "1034.00",
+      "13662.00",
+      "22797.00",
+      "1201.00"
+     ]
+    },
+    "property_meta.fave_property_size_prefix[]": {
+     "n": 50,
+     "primjeri": [
+      "m2",
+      "m²"
+     ]
+    },
+    "property_meta.fave_property_map[]": {
+     "n": 50,
+     "primjeri": [
+      "1"
+     ]
+    },
+    "property_meta.fave_property_id[]": {
+     "n": 50,
+     "primjeri": [
+      "FOUR-680628",
+      "FOUR-680627",
+      "FOUR-680622",
+      "FOUR-680600",
+      "FOUR-680599",
+      "FOUR-680598",
+      "FOUR-680569",
+      "FOUR-680370",
+      "FOUR-680369",
+      "OPER-z30864",
+      "OPER-z30819",
+      "OPER-z27582",
+      "DUXN-680428",
+      "OPER-z22586",
+      "OPER-z30580",
+      "FOUR-680180",
+      "FOUR-680178",
+      "FOUR-680179",
+      "DUXN-680215",
+      "DUXN-680175",
+      "FOUR-680150",
+      "FOUR-680149",
+      "FOUR-680148",
+      "OPER-i1165",
+      "DUXN-680158",
+      "OPER-z3915",
+      "OPER-z30389",
+      "OPER-z30390",
+      "OPER-z30388",
+      "OPER-z29671",
+      "OPER-z28812",
+      "OPER-z28813",
+      "OPER-z28424",
+      "OPER-z26441",
+      "OPER-z23550",
+      "OPER-z21657",
+      "FOUR-680135",
+      "DUXN-680126",
+      "FOUR-680101",
+      "DUXN-679921"
+     ]
+    },
+    "property_meta.fave_featured[]": {
+     "n": 50,
+     "primjeri": [
+      "0"
+     ]
+    },
+    "property_meta.fave_agent_display_option[]": {
+     "n": 50,
+     "primjeri": []
+    },
+    "property_meta.floor_plans[]": {
+     "n": 50,
+     "primjeri": [
+      "a:0:{}",
+      "a:1:{i:0;a:8:{s:15:\"fave_plan_title\";s:0:\"\";s:15:\"fave_plan_"
+     ]
+    },
+    "property_meta.fave_multi_units[]": {
+     "n": 50,
+     "primjeri": [
+      "a:0:{}"
+     ]
+    },
+    "property_meta.additional_features[]": {
+     "n": 50,
+     "primjeri": [
+      "a:1:{i:0;a:2:{s:29:\"fave_additional_feature_title\";s:14:\"Tip",
+      "a:2:{i:0;a:2:{s:29:\"fave_additional_feature_title\";s:14:\"Tip",
+      "a:1:{i:0;a:2:{s:29:\"fave_additional_feature_title\";s:0:\"\";s:",
+      "a:0:{}",
+      "a:3:{i:0;a:2:{s:29:\"fave_additional_feature_title\";s:18:\"Uda",
+      "a:2:{i:0;a:2:{s:29:\"fave_additional_feature_title\";s:18:\"Uda"
+     ]
+    },
+    "property_meta.fave_property_map_address[]": {
+     "n": 50,
+     "primjeri": []
+    },
+    "property_meta.fave_property_location[]": {
+     "n": 50,
+     "primjeri": [
+      "45.2779969,14.7181764",
+      "45.3969917,14.3926120",
+      "45.3760325,14.9949199",
+      "45.3358254,14.2751518",
+      "45.30481833271938,14.503725317816176",
+      "45.3611725,14.8777018",
+      "45.087736,14.613776",
+      "44.904700,13.878704",
+      "45.167468,14.758705",
+      "44.8311328,14.7299603",
+      "45.334742,14.290283",
+      "45.308034,14.870060",
+      "44.8195083,14.3517375",
+      "45.0502909,14.5296770",
+      "45.0784550,14.4493510",
+      "45.2829781,14.6006062",
+      "45.0468871,14.6126169",
+      "45.3226801,14.8199317",
+      "45.358577,14.332252",
+      "45.3376197,14.3051960",
+      "45.354432,14.312659",
+      "44.868492,13.919254",
+      "45.312798,14.273818",
+      "45.355974,14.304779",
+      "45.423887,14.563339",
+      "45.064560,13.882789",
+      "44.871850,13.871412",
+      "45.304985,14.714837",
+      "45.2992599,14.5101260",
+      "44.9225750,14.4375606",
+      "45.3148765,14.8520695",
+      "45.3713574,14.3282423",
+      "45.1250642,14.5288239",
+      "45.3652354,14.3926584",
+      "45.3092964,14.2734484",
+      "45.3376145,14.4450345",
+      "45.3127130,14.2856284",
+      "45.2110039,14.5569253",
+      "45.075669,14.674357"
+     ]
+    },
+    "property_meta.houzez_geolocation_lat[]": {
+     "n": 50,
+     "primjeri": [
+      "45.2779969",
+      "45.3969917",
+      "45.3760325",
+      "45.3358254",
+      "45.30481833271938",
+      "45.3611725",
+      "45.087736",
+      "44.904700",
+      "45.167468",
+      "44.8311328",
+      "45.334742",
+      "45.308034",
+      "44.8195083",
+      "45.0502909",
+      "45.0784550",
+      "45.2829781",
+      "45.0468871",
+      "45.3226801",
+      "45.358577",
+      "45.3376197",
+      "45.354432",
+      "44.868492",
+      "45.312798",
+      "45.355974",
+      "45.423887",
+      "45.064560",
+      "44.871850",
+      "45.304985",
+      "45.2992599",
+      "44.9225750",
+      "45.3148765",
+      "45.3713574",
+      "45.1250642",
+      "45.3652354",
+      "45.3092964",
+      "45.3376145",
+      "45.3127130",
+      "45.2110039",
+      "45.075669"
+     ]
+    },
+    "property_meta.houzez_geolocation_long[]": {
+     "n": 50,
+     "primjeri": [
+      "14.7181764",
+      "14.3926120",
+      "14.9949199",
+      "14.2751518",
+      "14.503725317816176",
+      "14.8777018",
+      "14.613776",
+      "13.878704",
+      "14.758705",
+      "14.7299603",
+      "14.290283",
+      "14.870060",
+      "14.3517375",
+      "14.5296770",
+      "14.4493510",
+      "14.6006062",
+      "14.6126169",
+      "14.8199317",
+      "14.332252",
+      "14.3051960",
+      "14.312659",
+      "13.919254",
+      "14.273818",
+      "14.304779",
+      "14.563339",
+      "13.882789",
+      "13.871412",
+      "14.714837",
+      "14.5101260",
+      "14.4375606",
+      "14.8520695",
+      "14.3282423",
+      "14.5288239",
+      "14.3926584",
+      "14.2734484",
+      "14.4450345",
+      "14.2856284",
+      "14.5569253",
+      "14.674357"
+     ]
+    },
+    "property_meta.fave_property_images[]": {
+     "n": 50,
+     "primjeri": []
+    },
+    "pojmovi.property_type": {
+     "n": 50,
+     "primjeri": [
+      "Zemljište",
+      "Građevinsko zemljište"
+     ]
+    },
+    "pojmovi.property_status": {
+     "n": 50,
+     "primjeri": [
+      "Prodaja"
+     ]
+    },
+    "pojmovi.property_country": {
+     "n": 50,
+     "primjeri": [
+      "Hrvatska"
+     ]
+    },
+    "pojmovi.property_state": {
+     "n": 50,
+     "primjeri": [
+      "Primorsko-goranska"
+     ]
+    },
+    "pojmovi.property_city": {
+     "n": 50,
+     "primjeri": [
+      "FUŽINE",
+      "VIŠKOVO",
+      "RAVNA GORA",
+      "OPATIJA",
+      "KOSTRENA",
+      "MALINSKA-DUBAŠNICA",
+      "RIJEKA",
+      "VINODOLSKA OPĆINA",
+      "RAB",
+      "DELNICE",
+      "CRES",
+      "KRK",
+      "BAKAR",
+      "MRKOPALJ",
+      "ČAVLE",
+      "KASTAV",
+      "OMIŠALJ"
+     ]
+    },
+    "pojmovi.property_area": {
+     "n": 50,
+     "primjeri": [
+      "LIČ",
+      "MARČELJI",
+      "STARA SUŠICA",
+      "VEPRINAC",
+      "KOSTRENA SVETA LUCIJA",
+      "STARI LAZ",
+      "MALINSKA",
+      "Pulac",
+      "BRIBIR",
+      "LOPAR",
+      "OPATIJA",
+      "LUČICE",
+      "MARTINŠĆICA",
+      "VRH",
+      "BRZAC",
+      "HRELJIN",
+      "KORNIĆ",
+      "SUNGER",
+      "SOBOLI",
+      "FUŽINE",
+      "KOSTRENA",
+      "Loznati",
+      "MRKOPALJ",
+      "TRINAJSTIĆI",
+      "MARINIĆI",
+      "OPRIČ",
+      "Kozala",
+      "IČIĆI",
+      "OMIŠALJ",
+      "KRK"
+     ]
+    },
+    "znacajke[]": {
+     "n": 50,
+     "primjeri": [
+      "Asfaltni put",
+      "Igralište",
+      "Struja",
+      "Trgovina",
+      "Voda",
+      "Vrtić",
+      "Javni prijevoz",
+      "Park",
+      "Pošta",
+      "Škola",
+      "Pogled na more",
+      "Investicija",
+      "Vlasnički list",
+      "Blizina mora",
+      "Gradska kanalizacija",
+      "Gradski vodovod",
+      "Sportski centar",
+      "Telefon",
+      "Banka",
+      "Fitness",
+      "Kino",
+      "Građevinska dozvola",
+      "Uporabna dozvola",
+      "Etažni elaborat",
+      "Lokacijska dozvola"
+     ]
+    },
+    "property_meta._wp_page_template[]": {
+     "n": 49,
+     "primjeri": [
+      "default"
+     ]
+    },
+    "property_meta.fave_prop_homeslider[]": {
+     "n": 49,
+     "primjeri": [
+      "no"
+     ]
+    },
+    "property_meta.fave_agents[]": {
+     "n": 49,
+     "primjeri": []
+    },
+    "property_meta.fave_property_agency[]": {
+     "n": 49,
+     "primjeri": []
+    },
+    "property_meta._thumbnail_id[]": {
+     "n": 49,
+     "primjeri": []
+    },
+    "property_meta.fave_property_price[]": {
+     "n": 48,
+     "primjeri": [
+      "57500",
+      "7000",
+      "88500",
+      "85000",
+      "150000",
+      "72000",
+      "280000",
+      "70000",
+      "107000",
+      "150000.00",
+      "353000.00",
+      "159000.00",
+      "143100",
+      "339000.00",
+      "19000.00",
+      "110000",
+      "83000",
+      "130000",
+      "45300",
+      "44500",
+      "50100",
+      "51400",
+      "1234000.00",
+      "650000",
+      "500000.00",
+      "31100.00",
+      "22100.00",
+      "37000.00",
+      "250000.00",
+      "196400.00",
+      "244600.00",
+      "675000.00",
+      "190000.00",
+      "5000000.00",
+      "79000.00",
+      "964000",
+      "137000",
+      "50000",
+      "65000",
+      "230000"
+     ]
+    },
+    "property_meta.fave_currency[]": {
+     "n": 47,
+     "primjeri": [
+      "EUR"
+     ]
+    },
+    "property_meta.fave_currency_info[]": {
+     "n": 47,
+     "primjeri": [
+      "a:8:{s:2:\"id\";s:1:\"1\";s:13:\"currency_name\";s:4:\"Euro\";s:13:\""
+     ]
+    },
+    "property_meta.houzez_total_property_views[]": {
+     "n": 36,
+     "primjeri": [
+      "36",
+      "21",
+      "37",
+      "10",
+      "33",
+      "24",
+      "20",
+      "34",
+      "32",
+      "52",
+      "42",
+      "19",
+      "30",
+      "26",
+      "29",
+      "31",
+      "23",
+      "51",
+      "48",
+      "15",
+      "53",
+      "17",
+      "6",
+      "41",
+      "47",
+      "11",
+      "46",
+      "38"
+     ]
+    },
+    "property_meta.houzez_views_by_date[]": {
+     "n": 36,
+     "primjeri": [
+      "a:19:{s:10:\"09-14-2026\";i:5;s:10:\"09-15-2026\";i:3;s:10:\"09-1",
+      "a:17:{s:10:\"09-12-2026\";i:2;s:10:\"09-13-2026\";i:1;s:10:\"09-1",
+      "a:18:{s:10:\"09-12-2026\";i:1;s:10:\"09-13-2026\";i:2;s:10:\"09-1",
+      "a:9:{s:10:\"09-18-2026\";i:2;s:10:\"09-19-2026\";i:1;s:10:\"09-23",
+      "a:20:{s:10:\"08-31-2026\";i:2;s:10:\"09-01-2026\";i:1;s:10:\"09-0",
+      "a:20:{s:10:\"08-22-2026\";i:1;s:10:\"08-24-2026\";i:1;s:10:\"08-2",
+      "a:14:{s:10:\"08-16-2026\";i:1;s:10:\"08-17-2026\";i:1;s:10:\"08-2",
+      "a:30:{s:10:\"08-18-2026\";i:1;s:10:\"08-19-2026\";i:1;s:10:\"08-2",
+      "a:27:{s:10:\"08-18-2026\";i:1;s:10:\"08-19-2026\";i:2;s:10:\"08-2",
+      "a:32:{s:10:\"08-18-2026\";i:5;s:10:\"08-19-2026\";i:1;s:10:\"08-2",
+      "a:28:{s:10:\"08-24-2026\";i:1;s:10:\"08-25-2026\";i:1;s:10:\"08-2",
+      "a:18:{s:10:\"08-09-2026\";i:1;s:10:\"08-10-2026\";i:1;s:10:\"08-1",
+      "a:23:{s:10:\"08-18-2026\";i:1;s:10:\"08-20-2026\";i:2;s:10:\"08-2",
+      "a:20:{s:10:\"08-10-2026\";i:1;s:10:\"08-12-2026\";i:2;s:10:\"08-1",
+      "a:27:{s:10:\"08-08-2026\";i:1;s:10:\"08-09-2026\";i:1;s:10:\"08-1",
+      "a:28:{s:10:\"08-10-2026\";i:2;s:10:\"08-11-2026\";i:1;s:10:\"08-1",
+      "a:21:{s:10:\"08-10-2026\";i:1;s:10:\"08-14-2026\";i:1;s:10:\"08-1",
+      "a:30:{s:10:\"08-08-2026\";i:1;s:10:\"08-09-2026\";i:1;s:10:\"08-1",
+      "a:41:{s:10:\"08-08-2026\";i:1;s:10:\"08-09-2026\";i:2;s:10:\"08-1",
+      "a:34:{s:10:\"08-08-2026\";i:1;s:10:\"08-09-2026\";i:2;s:10:\"08-1",
+      "a:14:{s:10:\"08-08-2026\";i:1;s:10:\"08-13-2026\";i:1;s:10:\"08-2",
+      "a:38:{s:10:\"08-08-2026\";i:1;s:10:\"08-13-2026\";i:1;s:10:\"08-1",
+      "a:16:{s:10:\"08-10-2026\";i:1;s:10:\"08-13-2026\";i:1;s:10:\"08-1",
+      "a:17:{s:10:\"08-13-2026\";i:1;s:10:\"08-16-2026\";i:1;s:10:\"08-2",
+      "a:18:{s:10:\"08-20-2026\";i:2;s:10:\"08-21-2026\";i:1;s:10:\"08-2",
+      "a:5:{s:10:\"10-06-2026\";i:1;s:10:\"10-08-2026\";i:1;s:10:\"10-09",
+      "a:18:{s:10:\"08-28-2026\";i:1;s:10:\"09-01-2026\";i:1;s:10:\"09-0",
+      "a:29:{s:10:\"08-04-2026\";i:1;s:10:\"08-05-2026\";i:1;s:10:\"08-0",
+      "a:33:{s:10:\"08-18-2026\";i:2;s:10:\"08-19-2026\";i:2;s:10:\"08-2",
+      "a:15:{s:10:\"08-21-2026\";i:1;s:10:\"08-22-2026\";i:1;s:10:\"08-2",
+      "a:13:{s:10:\"09-04-2026\";i:1;s:10:\"09-09-2026\";i:1;s:10:\"09-1",
+      "a:18:{s:10:\"07-28-2026\";i:1;s:10:\"07-29-2026\";i:3;s:10:\"08-0",
+      "a:11:{s:10:\"09-02-2026\";i:1;s:10:\"09-03-2026\";i:1;s:10:\"09-0",
+      "a:18:{s:10:\"07-29-2026\";i:2;s:10:\"07-30-2026\";i:1;s:10:\"07-3",
+      "a:32:{s:10:\"07-27-2026\";i:1;s:10:\"07-29-2026\";i:2;s:10:\"07-3",
+      "a:30:{s:10:\"07-18-2026\";i:1;s:10:\"07-19-2026\";i:1;s:10:\"07-2"
+     ]
+    },
+    "property_meta.houzez_recently_viewed[]": {
+     "n": 36,
+     "primjeri": [
+      "[telefon]:58:15",
+      "[telefon]:33:17",
+      "[telefon]:20:00",
+      "[telefon]:27:08",
+      "[telefon]:34:12",
+      "[telefon]:19:39",
+      "[telefon]:33:40",
+      "[telefon]:17:27",
+      "[telefon]:32:30",
+      "[telefon]:38:24",
+      "[telefon]:14:19",
+      "[telefon]:16:05",
+      "[telefon]:05:39",
+      "[telefon]:08:56",
+      "[telefon]:47:24",
+      "[telefon]:01:08",
+      "[telefon]:01:05",
+      "[telefon]:05:47",
+      "[telefon]:18:12",
+      "[telefon]:38:26",
+      "[telefon]:38:30",
+      "[telefon]:58:12",
+      "[telefon]:38:41",
+      "[telefon]:47:18",
+      "[telefon]:41:47",
+      "[telefon]:18:22",
+      "[telefon]:34:06",
+      "[telefon]:41:49",
+      "[telefon]:38:37",
+      "[telefon]:05:30",
+      "[telefon]:30:37",
+      "[telefon]:42:33",
+      "[telefon]:13:57",
+      "[telefon]:33:19",
+      "[telefon]:53:55",
+      "[telefon]:01:13"
+     ]
+    },
+    "property_meta._elementor_page_assets[]": {
+     "n": 36,
+     "primjeri": [
+      "a:0:{}"
+     ]
+    },
+    "property_meta.fave_property_land[]": {
+     "n": 32,
+     "primjeri": [
+      "0.00"
+     ]
+    },
+    "property_meta.fave_property_country[]": {
+     "n": 31,
+     "primjeri": [
+      "Hrvatska"
+     ]
+    },
+    "property_meta.houzez_featured_listing_date[]": {
+     "n": 27,
+     "primjeri": []
+    },
+    "property_meta.fave_property_land_postfix[]": {
+     "n": 19,
+     "primjeri": [
+      "m²",
+      "m2"
+     ]
+    },
+    "property_meta.fave_property_price_prefix[]": {
+     "n": 5,
+     "primjeri": [
+      "Stara cijena: 159000",
+      "Stara cijena: 130000",
+      "Stara cijena: 500000",
+      "Stara cijena: 320000"
+     ]
+    },
+    "pojmovi.property_label": {
+     "n": 4,
+     "primjeri": [
+      "Akcija"
+     ]
+    },
+    "property_meta.fave_property_bathrooms[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_bedrooms[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_garage[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_garage_size[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_year[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_price_placeholder[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_price_postfix[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_sec_price[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_show_price_placeholder[]": {
+     "n": 1,
+     "primjeri": [
+      "0"
+     ]
+    },
+    "property_meta.fave_additional_features_enable[]": {
+     "n": 1,
+     "primjeri": [
+      "enable"
+     ]
+    },
+    "property_meta.fave_virtual_tour[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_video_url[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_zip[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_address[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_property_map_street_view[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_private_note[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_energy_class[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_energy_global_index[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_renewable_energy_global_index[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_energy_performance[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_epc_current_rating[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_epc_potential_rating[]": {
+     "n": 1,
+     "primjeri": []
+    },
+    "property_meta.fave_payment_status[]": {
+     "n": 1,
+     "primjeri": [
+      "not_paid"
+     ]
+    },
+    "property_meta.fave_mortgage_cal[]": {
+     "n": 1,
+     "primjeri": [
+      "0"
+     ]
+    },
+    "property_meta._edit_last[]": {
+     "n": 1,
+     "primjeri": [
+      "1"
+     ]
+    },
+    "property_meta._advads_ad_settings[]": {
+     "n": 1,
+     "primjeri": [
+      "a:1:{s:11:\"disable_ads\";i:0;}"
+     ]
+    },
+    "property_meta._edit_lock[]": {
+     "n": 1,
+     "primjeri": [
+      "[telefon]:1"
+     ]
+    },
+    "property_meta._oembed_bfb686330eab461999a596c9d5f608f2[]": {
+     "n": 1,
+     "primjeri": [
+      "{{unknown}}"
+     ]
+    }
+   }
+  }
+ },
+ {
+  "ulaz": "polja:rc-zemljista:15",
+  "rezultat": {
+   "zapisa": 15,
+   "polja": {
+    "vrsta": {
+     "n": 15,
+     "primjeri": [
+      "zemljiste"
+     ]
+    },
+    "polja.Cijena": {
+     "n": 15,
+     "primjeri": [
+      "125,000 €",
+      "240,000 €",
+      "1,250,000 €",
+      "45,000 €",
+      "180,000 €",
+      "208,500 €",
+      "117,000 €",
+      "150,000 €",
+      "25,000 €",
+      "2,025,000 €",
+      "900,000 €",
+      "155,000 €",
+      "82,000 €",
+      "228,000 €",
+      "72,000 €"
+     ]
+    },
+    "polja.Mjesto": {
+     "n": 15,
+     "primjeri": [
+      "MALINSKA",
+      "BRZAC",
+      "OPATIJA",
+      "DONJA DOBRA",
+      "NOVI VINODOLSKI",
+      "MUČIĆI",
+      "BROD NA KUPI",
+      "VEPRINAC",
+      "HRELJIN",
+      "CRES",
+      "BREZA",
+      "DOBRINJ",
+      "STARA SUŠICA"
+     ]
+    },
+    "polja.Površina": {
+     "n": 15,
+     "primjeri": [
+      "607 m2",
+      "575 m2",
+      "990 m2",
+      "2971 m2",
+      "970 m2",
+      "2780 m2",
+      "1705 m2",
+      "759 m2",
+      "10590 m2",
+      "6800 m2",
+      "1300 m2",
+      "840 m2",
+      "1250 m2",
+      "1114 m2",
+      "1202 m2"
+     ]
+    },
+    "polja.Broj soba": {
+     "n": 15,
+     "primjeri": [
+      "0"
+     ]
+    },
+    "polja.Broj kupaona": {
+     "n": 15,
+     "primjeri": [
+      "0"
+     ]
+    },
+    "polja.Broj pregleda": {
+     "n": 15,
+     "primjeri": [
+      "Broj pregleda"
+     ]
+    },
+    "zaglavlje[]": {
+     "n": 15,
+     "primjeri": [
+      "Zemljište",
+      "KRK",
+      "MALINSKA",
+      "BRZAC",
+      "OPATIJA",
+      "BROD MORAVICE",
+      "DONJA DOBRA",
+      "NOVI VINODOLSKI",
+      "MATULJI",
+      "MUČIĆI",
+      "DELNICE",
+      "BROD NA KUPI",
+      "VEPRINAC",
+      "BAKAR",
+      "HRELJIN",
+      "CRES",
+      "KLANA",
+      "BREZA",
+      "DOBRINJ",
+      "RAVNA GORA",
+      "STARA SUŠICA"
+     ]
+    },
+    "koordinate": {
+     "n": 15,
+     "primjeri": [
+      true
+     ]
+    },
+    "polja.Izdvojeni oglas": {
+     "n": 6,
+     "primjeri": []
+    },
+    "polja.Pogled": {
+     "n": 2,
+     "primjeri": [
+      "na more"
+     ]
+    }
+   },
+   "karta_po_mjestu": {
+    "MALINSKA": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "BRZAC": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "OPATIJA": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "DONJA DOBRA": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "NOVI VINODOLSKI": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "MUČIĆI": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "BROD NA KUPI": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "VEPRINAC": {
+     "oglasa": 2,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "HRELJIN": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "CRES": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "BREZA": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "DOBRINJ": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    },
+    "STARA SUŠICA": {
+     "oglasa": 1,
+     "razlicitih_tocaka": 1,
+     "najveci_razmak_m": 0
+    }
+   }
+  }
+ }
+]
