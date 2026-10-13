@@ -9,8 +9,8 @@ portala ni do ISPU-a; rezultat ide na granu debug (planovi/lokacije/).
 index: podaci o lokaciji iz index.hr API-ja (koordinate, isPreciseLocation, sva polja s lokacijom);
 index-uzorak: N najnovijih oglasa kuća i zemljišta u PGŽ-u – dijele li neprecizni oglasi istog
 mjesta iste koordinate (središte mjesta) ili svaki ima svoje (približna lokacija oglasa).
-polja: koja polja daju stranice oglasa (IZVOR: nekretnine, rc, index, oglasnik, vender), N oglasa po
-vrsti: naziv polja, u koliko oglasa ga ima i do 40 kratkih primjera vrijednosti – bez opisa,
+polja: koja polja daju stranice oglasa (IZVOR: nekretnine, rc, index, oglasnik, vender; IZVOR-zemljista
+samo zemljišta), N oglasa po vrsti: naziv polja, u koliko oglasa ga ima i do 40 kratkih primjera vrijednosti – bez opisa,
 naslova, adresa, slika i podataka o oglašivaču (repozitorij je javan). rc: i dijele li oglasi istog
 mjesta koordinate s karte (središte mjesta ili točna oznaka).
 
@@ -252,11 +252,17 @@ def _distance_m(a: tuple, b: tuple) -> float:
 
 
 def field_sample(http: Http, source: str, n: int) -> dict:
-    """Polja stranica oglasa za N najnovijih oglasa po vrsti (vidi "polja:" u opisu modula)."""
+    """Polja stranica oglasa za N najnovijih oglasa po vrsti (vidi "polja:" u opisu modula).
+    IZVOR-zemljista: samo zemljišta (index: i preko više stranica popisa)."""
+    from scraper.models import LAND
+    source, _, only = source.partition("-")
+    land_only = only == "zemljista"
     records, points = [], {}
     if source == "nekretnine":
         from scraper.sources.nekretnine_hr import _NEXT_DATA, BASE, CATEGORIES, COUNTY_SLUG, parse_page
         for category, kind, _ in CATEGORIES:
+            if land_only and kind != LAND:
+                continue
             listings, _ = parse_page(http.get(f"{BASE}/{category}/{COUNTY_SLUG}/?criterio=data&ordine=desc&pag=1").text, kind)
             for x in listings[:n]:
                 m = _NEXT_DATA.search(http.get(x.url).text)
@@ -264,6 +270,8 @@ def field_sample(http: Http, source: str, n: int) -> dict:
     elif source == "rc":
         from scraper.sources import realestatecroatia as rc
         for vrsta, kind, _ in rc.KINDS:
+            if land_only and kind != LAND:
+                continue
             page = http.get(f"{rc.BASE}list.asp?regija={rc.REGION_PGZ}&vrsta={vrsta}&akcija=1&sort=objekt_id&smjer=desc&page=1").text
             for x in rc.parse_list(page, kind)[:n]:
                 html_page = http.get(x.url).text
@@ -281,15 +289,23 @@ def field_sample(http: Http, source: str, n: int) -> dict:
         from scraper.sources.index_oglasi import BASE, JSON_HEADERS, LOCATIONS
         county = json.loads(LOCATIONS.read_text(encoding="utf-8"))["id"]
         http.get(f"{BASE}/nekretnine/prodaja-kuca")
-        for category in ("houses-for-sale", "lands-for-sale"):
-            data = http.get(f"{BASE}/api/aditem?module=real-estate&category={category}&sortOption=4&itemPerPage=24"
-                            f"&page=1&includeCountyIds={county}", headers=JSON_HEADERS).json()
-            for item in (data.get("data") or [])[:n]:
+        for category in (("lands-for-sale",) if land_only else ("houses-for-sale", "lands-for-sale")):
+            items, page = [], 1
+            while len(items) < n and page <= 10:
+                data = http.get(f"{BASE}/api/aditem?module=real-estate&category={category}&sortOption=4&itemPerPage=24"
+                                f"&page={page}&includeCountyIds={county}", headers=JSON_HEADERS).json()
+                items += data.get("data") or []
+                if not data.get("nextPage"):
+                    break
+                page += 1
+            for item in items[:n]:
                 ad = http.get(f"{BASE}/api/aditem/single-ad?code={item.get('code')}&format=1", headers=JSON_HEADERS).json()
                 records.append((ad.get("data") or [{}])[0])
     elif source == "oglasnik":
         from scraper.sources.oglasnik import _AD_START, _HREF, BASE, CATEGORIES, PGZ_LOCATION_ID, rsc_payload
-        for category, _ in CATEGORIES:
+        for category, kind in CATEGORIES:
+            if land_only and kind != LAND:
+                continue
             listing_page = http.get(f"{BASE}/{category}?sort=newest&page=1&f%5B4%5D%5B{PGZ_LOCATION_ID}%5D=true").text
             for href, ad_id in list(dict.fromkeys(_HREF.findall(listing_page)))[:n]:
                 payload = rsc_payload(http.get(BASE + href).text)
@@ -301,9 +317,10 @@ def field_sample(http: Http, source: str, n: int) -> dict:
                             continue
                         break
     elif source == "vender":
-        from scraper.sources.vender import API, STATE_PGZ, STATUS_SALE
+        from scraper.sources.vender import API, LAND_TYPES, STATE_PGZ, STATUS_SALE
+        kinds = f"&property_type={','.join(str(i) for i in LAND_TYPES)}" if land_only else ""
         items = http.get(f"{API}?property_state={STATE_PGZ}&property_status={STATUS_SALE}&per_page={n}"
-                         f"&_embed=wp:term").json()
+                         f"&_embed=wp:term{kinds}").json()
         for x in items:
             terms = [t for group in (x.get("_embedded", {}).get("wp:term") or []) for t in group]
             records.append({"property_meta": x.get("property_meta"),
