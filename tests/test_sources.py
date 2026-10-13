@@ -395,6 +395,66 @@ def test_index_reopens_known_ad():
     assert index_oglasi.IndexOglasi(Gone([], {}), Locator(), cfg).reopen({"source_id": "7", "kind": HOUSE}) is None
 
 
+def test_known_ad_with_price_drop_is_opened():
+    """Poruka o sniženju poznatog oglasa ne smije imati samo podatke s popisa (oglas iz početnog
+    popisa nikad nije otvoren): otvara se i on. Ne čeka: kad se stranica ne da otvoriti, stiže kao
+    prije."""
+    from scraper.sources.base import INCREMENTAL
+
+    cfg = load_config()["kriteriji"]
+    items = [index_item(5, 250_000), index_item(6, 280_000), index_item(7, 260_000)]
+    http = FakeHttp(items, {"5": {"description": "Kuća.", "houseType": 2}})
+    src = index_oglasi.IndexOglasi(http, Locator(), cfg)
+    src.known_prices = {"5": 300_000, "6": 280_000, "7": 300_000}
+    got = {x.source_id: x for x in src.fetch(INCREMENTAL, {"5", "6", "7", "9999"})}
+    opened = sorted(u.split("code=")[1].split("&")[0] for u in http.calls if "single-ad" in u)
+    assert opened == ["5", "7"]                       # 6: ista cijena; 7: stranica prazna
+    assert got["5"].subtype == "Dvojna kuća" and got["7"].extra.get("samo_popis") and not src.deferred
+
+
+def test_realestatecroatia_detail_and_reopen():
+    """realestatecroatia.com: broj parkirnih mjesta sa stranice oglasa; jednokratno ponovno
+    otvaranje zapamćenog oglasa (vrsta i mjesto iz zaglavlja stranice) i otvaranje poznatog
+    oglasa sa sniženom cijenom (početni popis nije otvarao oglase – bez površine)."""
+    from types import SimpleNamespace
+
+    from scraper.filters import evaluate
+    from scraper.sources import realestatecroatia as rc
+    from scraper.sources.base import INCREMENTAL
+
+    detail, page = read("realestatecroatia_oglas.html.gz"), read("realestatecroatia_kuce.html.gz")
+
+    class Http:
+        def __init__(self):
+            self.urls = []
+
+        def get(self, url, **kw):
+            self.urls.append(url)
+            if "detail.asp" in url:
+                return SimpleNamespace(text=detail)
+            return SimpleNamespace(text=page if url.endswith("page=1") else "")
+
+    cfg = load_config()["kriteriji"]
+    src = rc.RealEstateCroatia(Http(), Locator(), cfg)
+    row = {"source_id": "1311438", "url": f"{rc.BASE}detail.asp?id=1311438", "title": "Kuća Malinska",
+           "kind": HOUSE, "price": 399_000}
+    x = src.reopen(row)
+    assert (x.subtype, x.settlement, x.area, x.plot_area, x.extra["parking"]) == ("Kuća", "Malinska", 86, 170, "3")
+    assert "opis_skracen" not in x.extra
+    assert evaluate(x, cfg, Locator()).jls == "Malinska-Dubašnica"
+
+    listed = [y for y in rc.parse_list(page, HOUSE) if y.price]
+    known = {y.source_id for y in listed}
+    http = Http()
+    src = rc.RealEstateCroatia(http, Locator(), cfg)
+    drop = next(y for y in listed if src.worth_detail(y))
+    src.known_prices = {y.source_id: y.price for y in listed}
+    src.known_prices[drop.source_id] = drop.price + 20_000                    # bio je skuplji
+    got = {y.source_id: y for y in src.fetch(INCREMENTAL, known)}
+    assert [u for u in http.urls if "detail.asp" in u] == [drop.url]
+    assert got[drop.source_id].area == 86 and got[drop.source_id].extra["parking"] == "3"
+
+
 def test_nekretnine_defers_ads_it_cannot_open(monkeypatch):
     """nekretnine.hr: stranica oglasa ne odgovara → oglas čeka sljedeće pokretanje (puni opis)."""
     from types import SimpleNamespace

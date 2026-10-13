@@ -10,8 +10,12 @@ sort=objekt_id&smjer=desc (najnoviji prvi; broj oglasa raste i ne mijenja se pri
 osvježavanju), cijenaDo=granica iz kriterija. Cijena je zapisana "530,000 €". Mjesto
 je "ČIŽIĆI (KRK)" – u zagradi otok ili općina. Površina je samo na stranici oglasa,
 pa se otvaraju novi oglasi koji bi mogli proći (najviše MAX_DETAILS po pokretanju; ostali
-čekaju sljedeće pokretanje, da ne stignu bez površine).
-"Cijena na upit" se preskače (gotovo uvijek luksuzne vile iznad granice)."""
+čekaju sljedeće pokretanje, da ne stignu bez površine) i poznati sa sniženom cijenom.
+"Cijena na upit" se preskače (gotovo uvijek luksuzne vile iznad granice).
+
+Početni popis (6. 10.) nije otvarao oglase: zapamćeni oglasi zato se jednom ponovno otvaraju
+(reopen_once, vidi runner) – vrsta i mjesto tada iz zaglavlja stranice oglasa
+("Kuća - Prodaja - PRIMORSKO-GORANSKA - KRK - MALINSKA")."""
 
 import html
 import re
@@ -19,7 +23,8 @@ import time
 
 from ..models import HOUSE, LAND, Listing
 from ..text import fmt_eur, parse_number
-from .base import DETAIL_RETRIES, FULL, Source, details_deadline, past
+from ..http import FetchError
+from .base import DETAIL_RETRIES, FULL, Source
 
 BASE = "https://www.realestatecroatia.com/hrv/"
 REGION_PGZ = 8
@@ -27,6 +32,7 @@ KINDS = [(1, HOUSE, "kuca"), (3, LAND, "zemljiste")]
 PAGE_SIZE = 20
 MAX_DETAILS = 10
 DEEP_SECONDS = 240     # dnevno dublje čitanje: najviše toliko po vrsti (kuće, zemljišta)
+_HEADER = re.compile(r"([A-ZČĆŽŠĐ][a-zčćžšđ]+(?: [a-zčćžšđ]+)*) - Prodaja - PRIMORSKO-GORANSKA - ([^-]+?) - (.+?) REC ID")
 
 
 def _clean(value: str) -> str:
@@ -67,11 +73,22 @@ def parse_list(page: str, kind: str) -> list[Listing]:
     return out
 
 
+def _text(page: str) -> str:
+    return _clean(re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", page))
+
+
+def parse_header(page: str) -> tuple[str, str, str] | None:
+    """(vrsta, otok ili grad/općina, naselje) iz zaglavlja stranice oglasa."""
+    m = _HEADER.search(_text(page))
+    return (m.group(1), m.group(2).strip(), m.group(3).strip()) if m else None
+
+
 def parse_detail(page: str, x: Listing) -> None:
-    """Površina, okućnica, puni opis i slika sa stranice oglasa."""
-    text = _clean(re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>", " ", page))
+    """Površina, okućnica, broj parkirnih mjesta, puni opis i slika sa stranice oglasa."""
+    text = _text(page)
     area = re.search(r"Površina:\s*([\d.,]+)\s*m2", text)
     plot = re.search(r"Okućnica:\s*([\d.,]+)\s*m2", text)
+    parking = re.search(r"Broj parkirnih mjesta:\s*(\d+)", text)
     desc = re.search(r"OPIS OBJEKTA\s*Hrvatski English Deutsch Italiano Ruski\s*(.*?)(?:Interni broj|REC ID)", text)
     image = re.search(r'(https://data\.realestatecroatia\.com/thumbnails/userimages/[^"\']+\.jpe?g)', page, re.I)
     if not area and not desc:
@@ -81,6 +98,8 @@ def parse_detail(page: str, x: Listing) -> None:
         x.area = parse_number(area.group(1))
     if plot and x.kind == HOUSE:
         x.plot_area = parse_number(plot.group(1))
+    if parking and int(parking.group(1)) > 0:
+        x.extra["parking"] = parking.group(1)
     if desc:
         x.description = desc.group(1)[:3000]
         x.extra.pop("opis_skracen", None)
@@ -92,6 +111,7 @@ class RealEstateCroatia(Source):
     name = "realestatecroatia"
     label = "realestatecroatia.com"
     baseline_report = False   # prvo pokretanje se samo zabilježi (oglasi agencija su većinom već poslani)
+    reopen_once = "povrsina-2026-10"
 
     def _list(self, vrsta: int, cap: float, page: int) -> str:
         return self.http.get(f"{BASE}list.asp?regija={REGION_PGZ}&vrsta={vrsta}&akcija=1&sort=objekt_id&smjer=desc"
@@ -147,27 +167,30 @@ class RealEstateCroatia(Source):
                     self.deep_reached[key] = page        # 250 stranica: ostatak sljedeći put
         if mode == FULL:
             return list(found.values())
-        self.add_pending(found, known_ids)
-        out, details, deadline = [], 0, details_deadline()
-        for x in sorted(found.values(), key=lambda x: (not x.extra.get("odgodjen"), -int(x.source_id))):
-            if x.source_id in known_ids or not self.worth_detail(x):
-                out.append(x)
-                continue
-            if details >= MAX_DETAILS or past(deadline):
-                if not self.defer(x):  # otvara se sljedeći put (bez površine bi stigao kao ⚠)
-                    out.append(x)      # čeka predugo: stiže s podacima s popisa
-                continue
-            details += 1
-            try:
-                parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x)
-                self.detail_result()
-            except Exception as exc:  # noqa: BLE001 – pokušava se ponovno sljedeći put
-                x.extra["detalji_greska"] = str(exc)[:200]
-                self.detail_result(f"{type(exc).__name__}: {exc}")
-                if self.defer(x, failed=True):
-                    continue
-            out.append(x)
-        return out
+        # Najnoviji prvi (odgođeni iz prošlih pokretanja svejedno idu prvi, vidi add_pending).
+        found = dict(sorted(found.items(), key=lambda item: -int(item[0])))
+        return self.open_details(found, known_ids, self._open, MAX_DETAILS)
+
+    def _open(self, x: Listing) -> None:
+        parse_detail(self.http.get(x.url, retries=DETAIL_RETRIES).text, x)
+
+    def reopen(self, row: dict) -> Listing | None:
+        try:
+            page = self.http.get(row["url"], retries=DETAIL_RETRIES).text
+        except FetchError as exc:
+            if str(exc).startswith(("HTTP 404", "HTTP 410")):
+                return None
+            raise
+        header = parse_header(page)
+        if header is None:
+            raise ValueError("realestatecroatia.com: stranica oglasa nema zaglavlje s vrstom i mjestom")
+        vrsta, place, settlement = header
+        x = Listing(source=self.name, source_id=row["source_id"], url=row["url"], title=row.get("title") or "",
+                    kind=row["kind"], subtype=vrsta.capitalize(), price=row.get("price"),
+                    settlement=settlement.title(), location_text=f"{settlement} ({place})".title())
+        x.extra["opis_skracen"] = True
+        parse_detail(page, x)
+        return x
 
     def search_links(self):
         out = []

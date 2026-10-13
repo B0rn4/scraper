@@ -152,10 +152,13 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
 | FINA Očevidnik (samo građevinska zemljišta) | dnevni CSV izvoz | jednom dnevno |
 | vender.hr | njihov API | svakih 20 min |
 | Njuškalo | s Redmija, pravim preglednikom ([REDMI.md](REDMI.md)) | svakih 20 min |
-| realestatecroatia.com (oglasi agencija iz sustava Agentor) | popis cijele PGŽ, najnoviji prvi; novi oglasi koji mogu proći otvaraju se radi površine | svakih 20 min |
+| realestatecroatia.com (oglasi agencija iz sustava Agentor) | popis cijele PGŽ, najnoviji prvi; novi oglasi koji mogu proći otvaraju se radi površine, okućnice, broja parkirnih mjesta i opisa | svakih 20 min |
 | burza.com.hr (regionalni oglasnik, agencije i privatni) | prve dvije stranice Kvarnera i Istre; novi oglasi se otvaraju radi mjesta i površine (do 10 po pokretanju) | svakih 20 min |
 | Natječaji gradova i općina, PGŽ-a, CERP-a i Državnih nekretnina ([data/natjecaji.yaml](data/natjecaji.yaml)) | tražilica stranice, RSS ili stranica natječaja; tekst i priloženi PDF | jednom dnevno |
 | Banke ([data/banke.yaml](data/banke.yaml)): Zaba, OTP, HBOR, HPB, Croatia banka | stranice s prodajom preuzetih nekretnina; poruka samo za novi tekst koji spominje naše područje | jednom dnevno |
+
+Poznat oglas sa sniženom cijenom (index.hr, nekretnine.hr, realestatecroatia.com) otvara se
+prije poruke, pa poruka o sniženju ima podatke sa stranice oglasa, a ne samo s popisa (13. 10.).
 
 Popis svih praćenih stranica s poveznicama na iste pretrage (filtri cijene i površine
 iz kriterija), za ručnu provjeru propuštenih oglasa: `python tools/stranice.py stranice.html`.

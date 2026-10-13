@@ -611,6 +611,14 @@ bez stotina poruka.
   (~830) jednom se ponovno otvaraju, 30 po pokretanju, i tiho ocjenjuju ispočetka – dvojne i
   poljoprivredna ispadaju iz usporedbe cijena, bez poruka (`reopen_once`; ponavlja se i nakon
   novog početnog popisa, npr. kad se oglasi resetiraju).
+- **(gotovo 13. 10.) realestatecroatia: sniženje bez površine** (korisnik: REC 1251625, „površina
+  nije navedena”, a stranica kaže 197 m², okućnica 342 m², 4 parkirna mjesta). Isti uzrok: početni
+  popis (6. 10.) nije otvarao oglase, a poznat oglas se ne otvara – 1311 neodbijenih bez površine,
+  6 poruka o sniženju bez nje. Sad: poznat oglas sa sniženom cijenom otvara se prije poruke (svi
+  izvori sa zajedničkim otvaranjem: index.hr, nekretnine.hr, realestatecroatia); realestatecroatia
+  čita i broj parkirnih mjesta; zapamćeni oglasi bez površine jednom se ponovno otvaraju, 30 po
+  pokretanju (vrsta i mjesto iz zaglavlja stranice), tiho – kuće ispod 70 m² i zemljišta ispod
+  300 m² postaju odbijene, ostali ulaze u usporedbu cijena.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
