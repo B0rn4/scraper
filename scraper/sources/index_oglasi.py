@@ -10,7 +10,11 @@ odvaja dvojne kuće i poljoprivredno zemljište. Oglas koji pokretanje ne stigne
 (više od MAX_DETAILS novih, stranica ne odgovara) čeka sljedeće pokretanje.
 
 Do 12. 10. takvi su oglasi stizali s podacima s popisa, a početni popis nije otvarao
-nijedan: zapamćeni oglasi zato se jednom ponovno otvaraju (reopen_once, vidi runner)."""
+nijedan: zapamćeni oglasi zato se jednom ponovno otvaraju (reopen_once, vidi runner).
+
+Popis je poredan po zadnjoj aktivnosti, a početni popis čita najviše 80 stranica: stariji
+oglasi koje agencija kasnije obnovi pojave se kao nepoznati. Objavljeni prije početka praćenja
+(postedTime) bilježe se bez poruke, kao na Njuškalu (13. 10.: 383 takva odjednom)."""
 
 import json
 import re
@@ -165,6 +169,13 @@ class IndexOglasi(Source):
                 page += 1
         if mode == FULL:
             return list(found.values())
+        # Obnova starog oglasa (agencije obnavljaju i oglase stare godinama, katkad stotine odjednom)
+        # stavlja ga na vrh popisa: nepoznat oglas objavljen prije početka praćenja nije nov.
+        start = _time(self.baseline_at)
+        for x in found.values():
+            posted = _time(x.published)
+            if start and posted and posted < start and x.source_id not in known_ids:
+                x.extra["stari_oglas"] = True
         return self.open_details(found, known_ids, lambda x: parse_single(self._single(x.source_id), x), MAX_DETAILS)
 
     def _single(self, code: str) -> dict:

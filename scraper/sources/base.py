@@ -56,6 +56,9 @@ class Source:
     # Poznati oglasi koji nisu odbijeni, a nemaju površinu (početni popis ne otvara oglase;
     # postavlja runner): otvaraju se kad se pojave na popisu.
     known_incomplete: set = set()
+    # Početak praćenja izvora (početni popis; postavlja runner): oglas objavljen prije toga, a
+    # nepoznat, star je oglas koji je agencija obnovila – bilježi se bez poruke (stari_oglas).
+    baseline_at = ""
     # Jednom dnevno dublje čitanje (izvori kojima se sniženje inače ne vidi); runner postavlja deep.
     deep_daily = False
     deep = False
@@ -130,8 +133,9 @@ class Source:
         mjesta stiže kao prije."""
         self.add_pending(found, known_ids)
         out, details, deadline = [], 0, details_deadline()
-        # Novi oglasi prvi: poznati (sniženje, bez površine) ne smiju zauzeti mjesto novom.
-        for x in sorted(found.values(), key=lambda x: x.source_id in known_ids):
+        # Novi oglasi prvi, zatim stari obnovljeni, pa poznati (sniženje, bez površine): ne smiju
+        # zauzeti mjesto novom.
+        for x in sorted(found.values(), key=lambda x: (x.source_id in known_ids, bool(x.extra.get("stari_oglas")))):
             known = x.source_id in known_ids
             if (known and not self.reopen_known(x)) or not self.worth_detail(x):
                 out.append(x)

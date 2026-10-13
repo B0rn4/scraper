@@ -427,6 +427,24 @@ def test_new_ad_goes_before_known_price_drop(monkeypatch):
     assert got["5"].extra.get("samo_popis") and not src.deferred
 
 
+def test_index_renewed_old_ad_is_not_new(monkeypatch):
+    """Agencije obnavljaju i oglase stare godinama (13. 10.: 383 odjednom); početni popis ih nije
+    pročitao (najviše 80 stranica). Nepoznat oglas objavljen prije početka praćenja bilježi se bez
+    poruke (stari_oglas) i otvara se tek nakon novih."""
+    from scraper.sources.base import INCREMENTAL
+
+    monkeypatch.setattr(index_oglasi, "MAX_DETAILS", 1)
+    old, new = index_item(1, 300_000), index_item(2, 290_000)
+    old["postedTime"], new["postedTime"] = "2021-03-01T10:00:00Z", "2026-10-13T06:00:00Z"
+    http = FakeHttp([old, new], {"1": {"description": "Kuća.", "houseType": 1}, "2": {"description": "Kuća.", "houseType": 1}})
+    src = index_oglasi.IndexOglasi(http, Locator(), load_config()["kriteriji"])
+    src.baseline_at = "2026-10-04T16:58:25+02:00"
+    src.fetch(INCREMENTAL, {"9999"})
+    assert [u.split("code=")[1].split("&")[0] for u in http.calls if "single-ad" in u] == ["2"]
+    waiting = {x.source_id: x for x in src.deferred}
+    assert waiting["1"].extra.get("stari_oglas") and "stari_oglas" not in new
+
+
 def test_realestatecroatia_detail_and_reopen():
     """realestatecroatia.com: broj parkirnih mjesta sa stranice oglasa; jednokratno ponovno
     otvaranje zapamćenog oglasa (vrsta i mjesto iz zaglavlja stranice) i otvaranje poznatog

@@ -223,7 +223,7 @@ class Runner:
         baseline: list[tuple[object, list[tuple[Listing, Decision]], str]] = []
         today = self.now.date().isoformat()
         reading = True                 # obrada oglasa po izvorima (prekid tada odbacuje nezapisano)
-        self._reopen_until = time.monotonic() + REOPEN_TOTAL_SECONDS
+        self._reopen_left = REOPEN_TOTAL_SECONDS      # samo vrijeme ponovnog otvaranja (ne čitanje popisa)
         self._reopen_share = REOPEN_TOTAL_SECONDS / max(1, self._reopen_waiting(state))
         try:
             for src in self.enabled_sources():
@@ -238,6 +238,7 @@ class Runner:
                 src.catch_up = bool(gap)
                 src.known_prices = state.known_prices(src.name)
                 src.known_incomplete = state.known_incomplete(src.name)
+                src.baseline_at = state.meta_get(f"baseline:{src.name}") or ""
                 # Jednom dnevno, poslijepodne (jutarnje pokretanje već ima dnevne provjere).
                 src.deep = (getattr(src, "deep_daily", False) and not first and self.now.hour >= 12
                             and state.meta_get(f"dubinsko:{src.name}") != today)
@@ -597,11 +598,12 @@ class Runner:
             codes = []
         if not codes:
             return
-        deadline = min(time.monotonic() + min(REOPEN_SECONDS, getattr(self, "_reopen_share", REOPEN_SECONDS)),
-                       getattr(self, "_reopen_until", float("inf")))
-        if time.monotonic() > deadline:
+        started = time.monotonic()
+        budget = min(REOPEN_SECONDS, getattr(self, "_reopen_share", REOPEN_SECONDS), getattr(self, "_reopen_left", REOPEN_SECONDS))
+        if budget <= 0:
             self.log(f"{src.label}: ponovno otvaranje čeka sljedeće pokretanje (preostalo {len(codes)})")
             return
+        deadline = started + budget
         tried, opened, errors, rejected = 0, 0, [], 0
         for code in codes[:REOPEN_PER_RUN]:
             if time.monotonic() > deadline or (len(errors) >= 3 and not opened):
@@ -624,6 +626,8 @@ class Runner:
                 errors.append(f"{code}: {type(exc).__name__}: {exc}")
         if errors and not opened:
             tried = 0                               # stranica oglasa ne odgovara: isti oglasi sljedeći put
+        if hasattr(self, "_reopen_left"):
+            self._reopen_left -= time.monotonic() - started
         state.meta_set(queue, json.dumps(codes[tried:]))
         self.log(f"{src.label}: ponovno otvoreno {opened} zapamćenih oglasa, sad odbijeno {rejected}, "
                  f"preostalo {len(codes) - tried}" + (f"; greške {len(errors)} – {errors[0]}" if errors else ""))

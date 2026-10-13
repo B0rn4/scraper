@@ -643,6 +643,13 @@ bez stotina poruka.
   ponovno otvaraju (index ispočetka, s bazenom i dozvolama), tiho, najviše 3 minute po pokretanju.
   Dostupno, a ne korišteno: komunalni priključci zemljišta (voda, struja, kanalizacija),
   udaljenost od mora, energetski razred.
+- **(gotovo 13. 10.) index.hr: obnovljeni stari oglasi stizali su kao novi.** Jutros 383
+  nepoznatih oglasa u jednom čitanju (srednji broj oglasa 6,6 mil., poznatih 7,1 mil.): agencije su
+  noću obnovile stare oglase, a početni popis (4. 10.) čitao je najviše 80 stranica po vrsti
+  (poredano po zadnjoj aktivnosti), pa ih nije zabilježio. Stiglo je 23 poruke za stare oglase.
+  Sad se nepoznat oglas objavljen prije početka praćenja (postedTime) bilježi bez poruke, kao na
+  Njuškalu, a pri otvaranju stranica novi oglasi idu prije starih. Ponovno otvaranje zapamćenih
+  oglasa: vrijeme (3 min po pokretanju) dijeli se na izvore i broji se samo ono, ne čitanje popisa.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
