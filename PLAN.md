@@ -242,6 +242,12 @@ bez stotina poruka.
      lokacija, pripremljen davno a objavljen sad, ili ga je pregled propustio. Do pregleda
      pravilo ostaje (Redmi zna samo dio Njuškala – inače desetci starih oglasa dnevno).
      Parcelaciju u postojećim oglasima korisnik provjerava sam (pretraga na portalima).
+     **Odluka 13. 10.:** uz oglas iz početnog popisa (ili datoteke „N novih oglasa”) pregled
+     prikazuje napomene s drugih portala – što je isti oglas drugdje pokazao, i da prema tom
+     portalu ne odgovara (npr. dvojna kuća, isključeno naselje): `State.notes()` iz obje baze
+     (GitHub i Redmi), `report.entry(x, d, notes)` (redak ➕ s poveznicom na kopiju). Oglas s
+     napomenom „ne odgovara” ostaje u pregledu, s ⚠ – ne izostavlja se. Pregled uz to može
+     isti oglas povezati i među svježe pročitanima (napomene čuvaju i ono čega više nema).
 4. **(gotovo 5. 10.)** Natječaji za prodaju nekretnina (`scraper/tenders.py`, popis
    stranica u `data/natjecaji.yaml`), jednom dnevno (prvo pokretanje od 7 h):
    - 13 gradova/općina + Matulji: WordPress tražilica (wp-json) ili RSS tražilica
@@ -574,6 +580,13 @@ bez stotina poruka.
     oznaka > krug oko približne > ništa.
   - Samo za oglase koji su stigli kao vlastita poruka (u stvarnim podacima 407 od 424
     odbijenih kopija bile su kopije oglasa iz početnog popisa – bez dopune).
+  - **(13. 10., odluka korisnika)** Za oglas iz datoteke s popisom isti retci se ne šalju, nego
+    pamte uz njega kao napomena za završni pregled (tablica `napomene`, `State.notes`; na
+    Redmiju za kopije s Njuškala). Procjena: 20–25 kopija dnevno, uglavnom ⚠ „ne odgovara”
+    (isključeno naselje, dvojna kuća ili kuća u nizu, nije građevinsko). Jednokratno popunjeno
+    iz ranijih odbijenih kopija (od početnog popisa; u bazi su samo razlozi, pa samo ⚠): prema
+    kopijama stanja 13. 10. oko 58 napomena na GitHubu i 171 na Redmiju. Odbijena kopija s ⚠
+    dopunom ili napomenom više nije na popisu „preskočeni kao već viđeni” u tjednom izvještaju.
   - ⚠ „ne odgovara” ne dolazi od granica cijene i površine ni od grada/općine izvan popisa
     (to je promjena pravila, isti grad/općina), ni kad je prvi oglas danas i sam odbijen.
     Procjena iz stvarnih podataka: nekoliko ⚠ dopuna tjedno (npr. „Bregi” umjesto „Matulji”).

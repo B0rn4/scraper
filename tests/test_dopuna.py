@@ -220,19 +220,19 @@ def test_rejected_copy_only_for_reasons_beyond_price_and_area(tmp_path):
     assert r._supplements == []
     r._rejected_copy(state, seen, pricier, Decision(REJECT, ["nije građevinsko (Poljoprivredno)"], jls="Omišalj"))
     assert [i["za"] for i in r._supplements] == ["oglasnik:1"] and r._supplements[0]["odbijen"]
-    # Prvi oglas samo u datoteci s popisom, ili je i sam danas odbijen: bez dopune.
-    for mark, status in (("zbirno:t1", PASS), ("t1", REJECT)):
+    # Prvi oglas i sam danas odbijen: bez dopune. Samo u datoteci s popisom: u red (napomena, 13. 10.).
+    for mark, status, queued in (("t1", REJECT, []), ("zbirno:t1", PASS, ["oglasnik:1"])):
         r._supplements = []
         seen = dedupe.Seen(r.locator)
         seen.add({**dedupe.row(first, Decision(PASS, jls="Omišalj")), "notified_at": mark, "status": status})
         r._rejected_copy(state, seen, pricier, Decision(REJECT, ["nije građevinsko (Poljoprivredno)"], jls="Omišalj"))
-        assert r._supplements == []
+        assert [i["za"] for i in r._supplements] == queued
     state.close()
 
 
-def test_copy_of_listing_from_overflow_file_gets_no_supplement(tmp_path, monkeypatch):
+def test_copy_of_listing_from_overflow_file_is_noted_not_sent(tmp_path, monkeypatch):
     """Previše novih oglasa odjednom → popis u datoteci; kopija takvog oglasa ne šalje dopunu
-    (nema poruke na koju bi odgovorila)."""
+    (nema poruke na koju bi odgovorila), nego novo pamti uz prvi oglas (odluka 13. 10.)."""
     first = land("oglasnik", "1")
     precise = land("vender", "2", lat=45.16, lon=14.55, priblizna_lokacija=False)
     import scraper.runner as runner_mod
@@ -265,6 +265,34 @@ def test_copy_of_listing_from_overflow_file_gets_no_supplement(tmp_path, monkeyp
     assert state.get("oglasnik:1")["notified_at"].startswith("zbirno:")
     assert state.get("vender:2")["notified_at"] == "dup:oglasnik:1"
     assert tg.replies == [] and not json.loads(state.meta_get("dopune") or "[]")
+    [note] = state.notes()["oglasnik:1"]
+    assert note["kopija"] == "vender:2" and note["url"] == "https://vender/2" and not note["ne_odgovara"]
+    assert note["retci"][0].startswith("🗺 U građevinskom području naselja") and note["retci"][1].startswith("🏛 PPV")
+    state.close()
+
+
+def test_listing_from_initial_list_gets_notes_not_messages(tmp_path, monkeypatch):
+    """Oglas iz početnog popisa: kopija s drugog portala koja prema svojim podacima ne odgovara
+    ne šalje ⚠ dopunu, nego je napomena uz prvi oglas; ista ⚠ s trećeg portala se ne ponavlja,
+    a nova se doda. Završni pregled napomene prikazuje uz oglas (report.entry)."""
+    from scraper import report
+
+    first = land("oglasnik", "1")
+    farm = land("burza", "4", subtype="Poljoprivredno zemljište", title="Zemljište Njivice")
+    farm2 = land("index_oglasi", "5", subtype="", title="Poljoprivredno zemljište Njivice")
+    share = land("nekretnine_hr", "6", description="Građevinsko zemljište. Prodaje se suvlasnički dio od 1/2 zemljišta.")
+    tg = _runs(tmp_path, monkeypatch, [[first], [farm], [farm2, share]])
+    assert tg.listings == [] and tg.replies == []
+    state = State(tmp_path / "s.db")
+    assert state.get("oglasnik:1")["notified_at"].startswith("zbirno:")     # početni popis
+    notes = state.notes()["oglasnik:1"]
+    assert [(n["kopija"], n["ne_odgovara"]) for n in notes] == [("burza:4", True), ("nekretnine_hr:6", True)]
+    assert notes[0]["retci"] == ["⚠ prema ovom oglasu ne odgovara kriterijima: nije građevinsko (Poljoprivredno zemljište)"]
+    assert notes[1]["retci"][0].startswith("⚠ prema ovom oglasu ne odgovara kriterijima: prodaje se suvlasnički dio")
+    assert state.get("burza:4")["notified_at"] == "dup:oglasnik:1"
+    assert state.get("index_oglasi:5")["notified_at"] is None          # ništa novo: bez napomene i oznake
+    entry = report.entry(first, Decision(PASS, jls="Omišalj"), notes)
+    assert entry["n"][0] == {"s": "burza.com.hr", "u": "https://burza/4", "x": True, "l": notes[0]["retci"]}
     state.close()
 
 
@@ -389,3 +417,37 @@ def test_land_utilities_in_supplement():
     copy.extra["prikljucci"] = ["struja", "voda", "asfaltni put"]
     lines = dopuna.news(dopuna.snapshot(first, d), dopuna.snapshot(copy, d), copy, d)
     assert lines == ["🔌 priključci: struja ✔ · asfaltni put ✔"]
+
+
+def test_earlier_rejected_copies_become_notes_once(tmp_path):
+    """Jednokratno: odbijene kopije oglasa iz popisa zabilježene prije napomena – samo razlozi
+    odbijanja (u bazi su zajedno s upozorenjima), bez ponavljanja istog razloga; ne kopije iz
+    početnog popisa svog portala ni kopije oglasa s vlastitom porukom."""
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    for source, at in (("oglasnik", "2026-10-04T16:58:25+02:00"), ("burza", "2026-10-06T15:25:50+02:00"),
+                       ("index_oglasi", "2026-10-04T16:58:25+02:00")):
+        state.meta_set(f"baseline:{source}", at)
+    first, sent = land("oglasnik", "1"), land("oglasnik", "2", area=900, price=150_000)
+    for x, mark in ((first, "zbirno:2026-10-04T16:58:25+02:00"), (sent, "2026-10-09T10:00:00+02:00")):
+        state.upsert(x, Decision(PASS, jls="Omišalj"), "2026-10-04T16:58:25+02:00")
+        state.mark_notified(x.key, x.price, mark)
+    farm = Decision(REJECT, ["nije građevinsko (Poljoprivredno zemljište)", "cijena 121.000 € > 120.000 €"],
+                    ["vrsta zemljišta nije navedena", "Njivice: daleko od Rijeke"], jls="Omišalj")
+    copies = [(land("burza", "4"), "2026-10-08T09:00:00+02:00"),          # → napomena
+              (land("index_oglasi", "5"), "2026-10-09T09:00:00+02:00"),   # isti razlog: ništa
+              (land("burza", "6"), "2026-10-06T15:25:50+02:00"),          # početni popis burze
+              (land("index_oglasi", "7", area=900, price=150_000), "2026-10-10T09:00:00+02:00")]  # poslan oglas
+    for x, at in copies:
+        state.upsert(x, farm, at)
+    seen = dedupe.Seen(r.locator)
+    seen.add_state(state)
+    r._repair_list_notes(state, seen)
+    assert state.notes() == {"oglasnik:1": [{
+        "kopija": "burza:4", "izvor": "burza", "url": "https://burza/4", "ne_odgovara": True, "at": "2026-10-08T09:00:00+02:00",
+        "retci": ["⚠ prema ovom oglasu ne odgovara kriterijima: nije građevinsko (Poljoprivredno zemljište)"]}]}
+    assert state.get("burza:4")["notified_at"] == "dup:oglasnik:1"
+    assert state.duplicates_since("2000") == []        # tjedni izvještaj: odbijena, ne "preskočena"
+    assert [state.get(k)["notified_at"] for k in ("index_oglasi:5", "burza:6", "index_oglasi:7")] == [None] * 3
+    assert state.meta_get("popravak:napomene_popisa")
+    state.close()

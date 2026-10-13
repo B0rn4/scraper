@@ -154,6 +154,12 @@ class Seen:
         mark = (r or {}).get("notified_at") or ""
         return r if mark and not mark.startswith(("zbirno:", "tiho:", "dup:")) else None
 
+    def list_root(self, key: str) -> dict | None:
+        """Prvi oglas, ako je stigao samo u datoteci s popisom (početni popis, "N novih
+        oglasa"): dopuna se ne šalje, nego se pamti kao napomena za završni pregled."""
+        r = self.root(key)
+        return r if ((r or {}).get("notified_at") or "").startswith("zbirno:") else None
+
     def family(self, key: str) -> list[dict]:
         """Kopije (izravne i preko druge kopije) zabilježene kao "isti kao `key`"."""
         children: dict[str, list[dict]] = {}

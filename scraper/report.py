@@ -25,7 +25,8 @@ def reason_category(reason: str) -> str:
     return "ostalo"
 
 
-def entry(listing: Listing, decision: Decision) -> dict:
+def entry(listing: Listing, decision: Decision, notes: list[dict] | None = None) -> dict:
+    """notes: napomene s drugih portala za oglas iz datoteke s popisom (State.notes) – završni pregled."""
     desc = " ".join(listing.description.split())
     return {
         "k": listing.key,
@@ -51,6 +52,8 @@ def entry(listing: Listing, decision: Decision) -> dict:
         # Opis samo gdje pomaže provjeri, da datoteka ostane mala.
         "d": desc[:600] if decision.status != REJECT or decision.near_miss else "",
         "pub": listing.published,
+        "n": [{"s": SOURCE_LABELS.get(n["izvor"], n["izvor"]), "u": n["url"], "l": n["retci"], "x": n["ne_odgovara"]}
+              for n in notes or []],
     }
 
 
@@ -181,7 +184,7 @@ function filtered() {{
   const q = $("#f-q").value.trim().toLowerCase();
   return DATA.filter(e => st.includes(e.b) && (!cat || e.cat.includes(cat)) && (!src || e.s === src)
     && (!kind || e.kind === kind)
-    && (!q || [e.t, e.loc, e.jls, e.sub, ...e.r, ...e.w].join(" ").toLowerCase().includes(q)));
+    && (!q || [e.t, e.loc, e.jls, e.sub, ...e.r, ...e.w, ...(e.n || []).flatMap(n => n.l)].join(" ").toLowerCase().includes(q)));
 }}
 
 function card(e, i) {{
@@ -196,6 +199,7 @@ function card(e, i) {{
       <div class="facts muted">📍 ${{esc(e.loc)}} → <b>${{esc(e.jls || "?")}}</b> · ${{esc(e.s)}}</div>
       ${{e.r.map(r => `<div class="reason r">❌ ${{esc(r)}}</div>`).join("")}}
       ${{e.w.map(w => `<div class="reason w">⚠ ${{esc(w)}}</div>`).join("")}}
+      ${{(e.n || []).map(n => `<div class="reason ${{n.x ? "w" : "n"}}">➕ <a href="${{esc(n.u)}}" target="_blank" rel="noopener">${{esc(n.s)}}</a>: ${{n.l.map(esc).join(" · ")}}</div>`).join("")}}
       ${{e.d ? `<details><summary>opis</summary>${{esc(e.d)}}</details>` : ""}}
       <div class="mark"><label><input type="checkbox" data-i="${{i}}" class="m" ${{m ? "checked" : ""}}> pogrešno</label>
         <input type="text" data-i="${{i}}" class="n" placeholder="napomena (npr. trebao je proći)" value="${{esc(m ? m.note : "")}}" ${{m ? "" : "hidden"}}></div>

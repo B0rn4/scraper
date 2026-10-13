@@ -459,3 +459,22 @@ def test_portal_fields_pool_condition_and_land_use(ctx):
         x = land()
         x.extra["namjena"] = namjena
         assert any(w.startswith("namjena prema oglasu") for w in evaluate(x, *ctx).warnings) == warned, namjena
+
+
+def test_stored_rejections_are_told_apart_from_warnings():
+    """U bazi su razlozi i upozorenja u istom stupcu; jednokratne napomene za završni pregled
+    (13. 10.) uzimaju samo razloge odbijanja (stvarni zapisi iz baze)."""
+    from scraper.filters import stored_rejections
+
+    reasons = ["Veprinac: isključeno po popisu naselja (daleko od mora)", "Dobrinj: isključeno po popisu naselja",
+               "dvojna kuća (vrsta: dvojni objekt)", "kuća u nizu (vrsta: U nizu kuća)", "dvojna kuća (naslov)",
+               "poluugrađena (dvojna) kuća (vrsta: Poluugrađena)", "s bazenom (naslov)", "s bazenom (podaci oglasa)",
+               "nije građevinsko (Poljoprivredno zemljište)", "nije građevinsko (naslov)", "ruševina: „Kuća je ruševna.”",
+               "prodaje se suvlasnički dio: „Prodaje se suvlasnički dio od 1/2 kuće.”", "Vrh (Krk): prihvaća se samo Krk"]
+    warnings = ["Veprinac: daleko od mora", "Kantrida: grad Rijeka", "opis spominje bazen", "parking nije naveden – provjeri",
+                "opis spominje dvojnu kuću ili kuću u nizu", "vrsta zemljišta nije navedena", "suvlasništvo: „Dva vlasnika.”",
+                "Poljoprivredno zemljište, ali opis spominje građevinsko", "mješovito zemljište (Građevinsko i poljoprivredno)",
+                "ruševina (120 m²) na građevinskom zemljištu ili s dozvolom – stiže kao zemljište (površina je okućnica), "
+                "provjeri: „Ruševina.”", "Opatija: prihvaća se samo mjesto Opatija – provjeri",
+                "stambena ili poslovno-stambena zgrada – provjeri je li cijela kuća"]
+    assert stored_rejections(reasons + warnings) == reasons

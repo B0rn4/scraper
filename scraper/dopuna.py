@@ -9,7 +9,9 @@ novo, bez ponavljanja ostatka obavijesti:
   vlasnički list i dozvole, parking, priključci zemljišta, „za obnovu”, parcelacija;
 - nova upozorenja iz opisa (i s ISPU-a na boljoj lokaciji);
 - ⚠ kad prema novom portalu oglas ne odgovara kriterijima (npr. „nije građevinsko”).
-Dopuna je tiha, osim kad donosi ⚠.
+Dopuna je tiha, osim kad donosi ⚠. Oglas iz datoteke s popisom (početni popis, "N novih
+oglasa") nema poruku: isti retci se ne šalju, nego pamte uz njega kao napomena za završni
+pregled (State.notes; odluka korisnika 13. 10.).
 
 Što je prva poruka rekla pamti se pri slanju (`snapshot`, tablica `podaci`); poslane dopune
 se pribrajaju (`merge`), pa ista novost ne stiže dvaput. Za poruke poslane prije ove dopune

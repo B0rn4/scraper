@@ -21,8 +21,9 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   koji su nedostajali (naselje, vrsta kuće, okućnica, godina, vlasnički list, parking,
   parcelacija); nova upozorenja iz opisa. Kad prema novom portalu oglas ne odgovara
   (npr. „poljoprivredno”, isključeno naselje), dopuna nosi ⚠ i nije tiha; inače je tiha.
-  Samo za oglase koji su stigli kao vlastita poruka (ne iz datoteke s popisom). Što je
-  poruka rekla pamti se (tablica `podaci`), pa ista novost ne stiže dvaput (`scraper/dopuna.py`).
+  Za oglase iz datoteke s popisom ne šalje se ništa: isto novo pamti se uz oglas kao napomena
+  za završni pregled (tablica `napomene`, odluka 13. 10.). Što je poruka rekla pamti se
+  (tablica `podaci`), pa ista novost ne stiže dvaput (`scraper/dopuna.py`).
 - **Parcelacija (✂️):** oglas koji u naslovu ili opisu spominje mogućnost parcelacije
   (i „parcelizacija”, „parcelirati”, „podijeliti na dvije čestice”, engleski…) stiže
   neovisno o cijeni i površini – one se navode kao ⚠. Mjesto (popis naselja) i ostala

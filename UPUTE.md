@@ -87,7 +87,9 @@ Primjer (zemljište u Matuljima):
     odgovara (npr. poljoprivredno zemljište, naselje koje nije na popisu).
 
   Gumb vodi na oglas s novog portala. Dopuna je tiha (bez zvuka), osim kad ima ⚠.
-  👎 na dopunu znači isto kao na prvu poruku. Za oglase iz datoteke s popisom dopune nema.
+  👎 na dopunu znači isto kao na prvu poruku. Za oglase iz datoteke s popisom (početni popis,
+  „N novih oglasa”) dopuna se ne šalje: ono što drugi portal pokaže – i da prema njemu oglas
+  ne odgovara – pamti se uz oglas i bit će uz njega u završnom pregledu.
 - **„N novih oglasa – previše za pojedinačne poruke”**: datoteka s popisom (više od 30
   odjednom, npr. nakon prekida). Otvori je u pregledniku.
 - **📜 Natječaji**: prodaja nekretnina gradova, općina, PGŽ-a i države na našem području

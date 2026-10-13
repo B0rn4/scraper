@@ -233,6 +233,22 @@ def effective_price(price: float | None, area: float | None, total: bool = False
     return price * area if per_m2 and area else None
 
 
+# Razlozi odbijanja kako su u bazi, gdje su razlozi i upozorenja u istom stupcu (State.upsert).
+# Samo oblici koji dolaze od podataka oglasa: cijena, površina i grad/općina izvan popisa za
+# dopunu nisu novost (dopuna.OLD_NEWS).
+_STORED_REJECTION = re.compile(r"^(?:ruševina: „|s bazenom \((?:naslov|podaci oglasa)\)$|nije građevinsko \()"
+                               r"|: isključeno po popisu naselja|\): prihvaća se samo ")
+
+
+def stored_rejections(items: list[str]) -> list[str]:
+    """Razlozi odbijanja među spremljenim razlozima i upozorenjima (jednokratne napomene za
+    završni pregled iz kopija zabilježenih prije napomena)."""
+    kinds = [label for _, label in _HOUSE_SUBTYPE_REJECT + _TITLE_REJECT]
+    rules = tuple(f"{rule.label}: „" for rule in risks.RULES if rule.reject)
+    return [item for item in items if _STORED_REJECTION.search(item) or item.startswith(rules)
+            or any(item.startswith(f"{label} (vrsta: ") or item == f"{label} (naslov)" for label in kinds)]
+
+
 def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ignore_limits: bool = False) -> Decision:
     """prices (medijani traženih, scraper/prices.py): za procjenu kod "cijene na upit".
     ignore_limits: cijena i površina ne odbijaju (izvori: vrijedi li otvoriti stranicu oglasa

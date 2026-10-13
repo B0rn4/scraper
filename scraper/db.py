@@ -58,6 +58,16 @@ CREATE TABLE IF NOT EXISTS muted (
     at TEXT,
     note TEXT
 );
+CREATE TABLE IF NOT EXISTS napomene (
+    key TEXT NOT NULL,
+    kopija TEXT NOT NULL,
+    izvor TEXT,
+    url TEXT,
+    retci TEXT,
+    ne_odgovara INTEGER DEFAULT 0,
+    at TEXT,
+    PRIMARY KEY (key, kopija)
+);
 CREATE TABLE IF NOT EXISTS tenders (
     key TEXT PRIMARY KEY,
     site TEXT,
@@ -239,6 +249,22 @@ class State:
         self.conn.execute("INSERT OR REPLACE INTO podaci (key, info, at) VALUES (?, ?, ?)",
                           (key, json.dumps(info, ensure_ascii=False), at))
 
+    def add_note(self, key: str, copy: str, source: str, url: str, lines: list[str], mismatch: bool, at: str) -> None:
+        """Napomena uz oglas iz datoteke s popisom: što je isti oglas na drugom portalu (`copy`)
+        donio – retci kao u dopuni; mismatch: prema tom portalu ne odgovara kriterijima."""
+        self.conn.execute("INSERT OR REPLACE INTO napomene (key, kopija, izvor, url, retci, ne_odgovara, at) "
+                          "VALUES (?, ?, ?, ?, ?, ?, ?)",
+                          (key, copy, source, url, json.dumps(lines, ensure_ascii=False), int(mismatch), at))
+
+    def notes(self) -> dict[str, list[dict]]:
+        """Napomene po oglasu iz datoteke s popisom (završni pregled: report.entry(..., notes))."""
+        out: dict[str, list[dict]] = {}
+        for r in self.conn.execute("SELECT * FROM napomene ORDER BY at, kopija"):
+            out.setdefault(r["key"], []).append({"kopija": r["kopija"], "izvor": r["izvor"], "url": r["url"],
+                                                 "retci": json.loads(r["retci"] or "[]"),
+                                                 "ne_odgovara": bool(r["ne_odgovara"]), "at": r["at"]})
+        return out
+
     def message_key(self, message_id: int) -> str | None:
         row = self.conn.execute("SELECT key FROM messages WHERE message_id = ?", (message_id,)).fetchone()
         return row[0] if row else None
@@ -284,8 +310,11 @@ class State:
         return [dict(r) for r in rows]
 
     def duplicates_since(self, since: str) -> list[dict]:
+        """Preskočeni kao već viđeni. Odbijena kopija s ⚠ dopunom ili napomenom također je "isti
+        kao" (da se ⚠ ne ponavlja), ali nije preskočena – odbijena je."""
         rows = self.conn.execute(
-            "SELECT * FROM listings WHERE first_seen >= ? AND notified_at LIKE 'dup:%' ORDER BY first_seen", (since,)
+            "SELECT * FROM listings WHERE first_seen >= ? AND notified_at LIKE 'dup:%' AND status != ? "
+            "ORDER BY first_seen", (since, REJECT)
         )
         return [dict(r) for r in rows]
 
