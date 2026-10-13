@@ -1990,6 +1990,23 @@ def test_reopen_known_listings_once_silently(tmp_path, monkeypatch):
     assert len(calls) == 6 and calls[:2] == calls[2:4] and sorted(calls[2:]) == ["1", "2", "3", "4"]
 
 
+def test_reopen_time_is_shared_between_sources(tmp_path):
+    """Vrijeme za ponovno otvaranje dijeli se na izvore koji imaju što otvarati – inače bi prvi
+    izvori u popisu zauzeli sve i ostali bi čekali danima."""
+    import scraper.runner as runner_mod
+
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    waiting = r._reopen_waiting(state)                 # nov popravak: svi izvori s reopen_once
+    labelled = [n for n in r._enabled_names() if getattr(runner_mod.ALL[n], "reopen_once", "")]
+    assert waiting == len(labelled) >= 4
+    for name in labelled[1:]:                          # gotovo: oznaka upisana, red prazan
+        state.meta_set(f"popravak:{name}", runner_mod.ALL[name].reopen_once)
+        state.meta_set(f"ponovno_otvori:{name}", "[]")
+    assert r._reopen_waiting(state) == 1
+    state.close()
+
+
 def test_pool_from_portal_fields_survives_list_only_data():
     """Bazen iz polja stranice oglasa: sljedeći put samo popis (bez polja) → ostaje odbijen."""
     prev = {"reasons": json.dumps(["s bazenom (podaci oglasa)"]), "status": REJECT}

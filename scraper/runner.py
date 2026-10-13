@@ -48,7 +48,8 @@ DEEP_ALERT_DAYS = 3         # dnevno dublje čitanje toliko dana zaredom ne uspi
 CODE_ALERT_RUNS = 18        # Redmi toliko GitHubovih pokretanja (~6 sati) radi s drukčijim kodom → upozorenje
 REOPEN_PER_RUN = 30         # jednokratno ponovno otvaranje zapamćenih oglasa (Source.reopen_once) po izvoru i pokretanju
 REOPEN_SECONDS = 120        # i najdulje toliko sekundi po izvoru
-REOPEN_TOTAL_SECONDS = 180  # i ukupno za sve izvore u pokretanju (pokretanje ne smije postati predugo)
+REOPEN_TOTAL_SECONDS = 180  # i ukupno za sve izvore u pokretanju (pokretanje ne smije postati predugo),
+                            # podijeljeno na izvore koji imaju što otvarati (inače prvi zauzmu sve)
 # Izvor radi, ali ovoliko dana nema nijedan nov oglas (npr. portal ne poštuje redoslijed "najnoviji"):
 # upozorenje. Stvarni tempo (listopad 2026.): Njuškalo 375–1245 dnevno, index 21–103, oglasnik 6–31
 # (noćni uvoz agencija oko 5 h), nekretnine.hr 4–28, realestatecroatia 8–14 (također ujutro), burza
@@ -114,13 +115,15 @@ class Runner:
         print(line, flush=True)
         self.log_lines.append(line)
 
-    def enabled_sources(self):
+    def _enabled_names(self) -> list[str]:
         """Izvori za ovaj uređaj: true = GitHub, "redmi" = Redmi (kućna IP adresa)."""
-        for name, where in self.cfg["izvori"].items():
-            if not where or (self.only and name not in self.only):
-                continue
-            if (where is True and self.device == "github") or where == self.device:
-                yield ALL[name](self.http, self.locator, self.criteria)
+        return [name for name, where in self.cfg["izvori"].items()
+                if where and not (self.only and name not in self.only)
+                and ((where is True and self.device == "github") or where == self.device)]
+
+    def enabled_sources(self):
+        for name in self._enabled_names():
+            yield ALL[name](self.http, self.locator, self.criteria)
 
     def _redmi_usable(self) -> bool:
         """Postoji li čitljivo stanje s Redmija. Oštećena datoteka ne smije zaustaviti
@@ -221,6 +224,7 @@ class Runner:
         today = self.now.date().isoformat()
         reading = True                 # obrada oglasa po izvorima (prekid tada odbacuje nezapisano)
         self._reopen_until = time.monotonic() + REOPEN_TOTAL_SECONDS
+        self._reopen_share = REOPEN_TOTAL_SECONDS / max(1, self._reopen_waiting(state))
         try:
             for src in self.enabled_sources():
                 if src.daily and state.meta_get(f"daily:{src.name}") == today:
@@ -566,6 +570,16 @@ class Runner:
         if keys:
             self.log(f"Isti kao tiho zabilježen oglas (nije poslan): {len(keys)} oglasa opet može stići")
 
+    def _reopen_waiting(self, state: State) -> int:
+        """Koliko izvora ima što ponovno otvarati (red nije prazan ili je popravak nov)."""
+        n = 0
+        for name in self._enabled_names():
+            label = getattr(ALL[name], "reopen_once", "")
+            if label and (state.meta_get(f"popravak:{name}") != label
+                          or (state.meta_get(f"ponovno_otvori:{name}") or "[]") != "[]"):
+                n += 1
+        return n
+
     def _reopen(self, state: State, src, prices) -> None:
         """Jednokratni popravak (Source.reopen_once; i nakon početnog popisa, koji ne otvara
         oglase): zapamćeni oglasi izvora koji nisu odbijeni ponovno se otvaraju, REOPEN_PER_RUN po
@@ -583,7 +597,8 @@ class Runner:
             codes = []
         if not codes:
             return
-        deadline = min(time.monotonic() + REOPEN_SECONDS, getattr(self, "_reopen_until", float("inf")))
+        deadline = min(time.monotonic() + min(REOPEN_SECONDS, getattr(self, "_reopen_share", REOPEN_SECONDS)),
+                       getattr(self, "_reopen_until", float("inf")))
         if time.monotonic() > deadline:
             self.log(f"{src.label}: ponovno otvaranje čeka sljedeće pokretanje (preostalo {len(codes)})")
             return

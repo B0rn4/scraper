@@ -88,7 +88,11 @@ def _listing(ad: dict, kind: str, texts: dict, hrefs: dict) -> Listing:
         description = texts.get(description[1:], "")
     category = (ad.get("category") or {}).get("url") or ("kuce-prodaja" if kind == HOUSE else "zemljista-prodajem")
     href = hrefs.get(ad_id) or f"/{category}/{fold(ad.get('title', '')).replace(' ', '-')}-oglas-{ad_id}"
-    media = ad.get("media") or []
+    # Stranica oglasa (ponovno otvaranje) zapisuje cijenu kao broj, a slike drukčije nego popis.
+    price = ad.get("price")
+    price = price.get("value") if isinstance(price, dict) else price
+    media = ad.get("media") if isinstance(ad.get("media"), list) else []
+    first = media[0] if media and isinstance(media[0], dict) else {}
     x = Listing(
         source=Oglasnik.name,
         source_id=ad_id,
@@ -96,7 +100,7 @@ def _listing(ad: dict, kind: str, texts: dict, hrefs: dict) -> Listing:
         title=ad.get("title") or "",
         kind=kind,
         subtype=subtype,
-        price=parse_number((ad.get("price") or {}).get("value")),
+        price=parse_number(price),
         area=area,
         plot_area=plot,
         county=county,
@@ -104,7 +108,7 @@ def _listing(ad: dict, kind: str, texts: dict, hrefs: dict) -> Listing:
         settlement=settlement,
         location_text=", ".join(filter(None, [settlement, city])),
         description=description,
-        image_url=_absolute((media[0].get("listing") or media[0].get("thumb") or "") if media else ""),
+        image_url=_absolute(first.get("listing") or first.get("thumb") or ""),
         published=ad.get("publish") or "",
     )
     # Polja oglasa: godina izgradnje, parking (broj mjesta, garaža), dozvole, bazen (u "Okućnica"

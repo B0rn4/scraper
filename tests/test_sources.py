@@ -613,6 +613,22 @@ def test_reopen_vender_oglasnik_nekretnine():
     assert "opis_skracen" not in y.extra
 
 
+def test_oglasnik_ad_page_format():
+    """Stranica oglasa (ponovno otvaranje) zapisuje cijenu kao broj, a slike drukčije nego popis
+    (12. 10. na GitHubu: AttributeError 'int' object has no attribute 'get')."""
+    from scraper.sources.oglasnik import _listing
+
+    ad = {"id": 7080680, "title": "Kuća Njivice", "price": 160000, "media": "", "publishedAt": 1791868578000,
+          "category": {"id": 238, "url": "kuce-prodaja"},
+          "location": [{"name": "Hrvatska"}, {"name": "Primorsko-goranska"}, {"name": "Omišalj"}, {"name": "Njivice"}],
+          "details": [{"group": "Osnovni podaci", "params": [
+              {"slug": "re_house_type", "value": "samostojeća kuća"}, {"slug": "re_living_area", "value": "135"},
+              {"slug": "re_house_infield", "value": "bazen"}, {"slug": "re_permits", "value": "vlasnički list"}]}]}
+    x = _listing(ad, HOUSE, {}, {})
+    assert (x.price, x.area, x.settlement, x.image_url, x.extra["bazen"], x.extra["vlasnicki_list"]) == (
+        160000, 135, "Njivice", "", True, True)
+
+
 def test_nekretnine_defers_ads_it_cannot_open(monkeypatch):
     """nekretnine.hr: stranica oglasa ne odgovara → oglas čeka sljedeće pokretanje (puni opis)."""
     from types import SimpleNamespace
