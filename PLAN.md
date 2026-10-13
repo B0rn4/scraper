@@ -643,6 +643,13 @@ bez stotina poruka.
   ponovno otvaraju (index ispočetka, s bazenom i dozvolama), tiho, najviše 3 minute po pokretanju.
   Dostupno, a ne korišteno: komunalni priključci zemljišta (voda, struja, kanalizacija),
   udaljenost od mora, energetski razred.
+- **(gotovo 13. 10.) Priključci u poruci za zemljišta** (odluka korisnika): redak 🔌 – iz polja
+  oglasa (index.hr: voda, kanalizacija, plin, asfalt – polja za struju nema; vender: oznake;
+  nekretnine.hr: popis na talijanskom i stranica oglasa, vrijednost 0 = nema, i pristup;
+  Njuškalo: grupe svojstava), inače citat rečenice iz opisa (oglasnik i realestatecroatia za
+  zemljišta nemaju polja; na 100 zemljišta s oglasnika 75 ih spominje u opisu), inače „nisu
+  navedeni”. Vender: i vlasnički list i dozvole iz oznaka, vrsta zemljišta iz dodatnih značajki.
+  Popravljeno usput: "Bazen: Ne" na Njuškalu čitao se kao bazen (fold() briše dvotočku).
 - **(gotovo 13. 10.) index.hr: obnovljeni stari oglasi stizali su kao novi.** Jutros 383
   nepoznatih oglasa u jednom čitanju (srednji broj oglasa 6,6 mil., poznatih 7,1 mil.): agencije su
   noću obnovile stare oglase, a početni popis (4. 10.) čitao je najviše 80 stranica po vrsti

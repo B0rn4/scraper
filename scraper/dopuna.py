@@ -6,7 +6,7 @@ novo, bez ponavljanja ostatka obavijesti:
 - lokacija i građevinsko područje: bolja lokacija (broj čestice > točna oznaka > krug oko
   približne oznake > ništa) donosi redak 🗺, PPV na lokaciji i 📏 uvjete gradnje;
 - podaci koji su nedostajali: naselje, vrsta kuće, okućnica, godina izgradnje / obnove,
-  vlasnički list i dozvole, parking, „za obnovu”, parcelacija;
+  vlasnički list i dozvole, parking, priključci zemljišta, „za obnovu”, parcelacija;
 - nova upozorenja iz opisa (i s ISPU-a na boljoj lokaciji);
 - ⚠ kad prema novom portalu oglas ne odgovara kriterijima (npr. „nije građevinsko”).
 Dopuna je tiha, osim kad donosi ⚠.
@@ -22,7 +22,7 @@ import re
 
 from .ispu import APPROX_RADIUS_M, parcels_in_text
 from .models import HOUSE, LAND, Decision, Listing
-from . import risks
+from . import prikljucci, risks
 from .text import fmt_m2
 
 NO_COORDS = {"oglasnik", "realestatecroatia", "burza"}   # portal nema lokaciju na karti
@@ -114,6 +114,7 @@ def snapshot(x: Listing, d: Decision) -> dict:
         "obnova": str(x.extra.get("godina_obnove") or ""),
         "vlasnicki": bool(x.extra.get("vlasnicki_list")),
         "dozvole": sorted(x.extra.get("dozvole") or []),
+        "prikljucci": sorted(x.extra.get("prikljucci") or []) if x.kind == LAND else [],
         "za_obnovu": bool(x.extra.get("za_obnovu")),
         "parking": _parking(x),
         "parcelacija": x.extra.get("parcelacija") or "",
@@ -191,6 +192,10 @@ def news(old: dict, new: dict, x: Listing, d: Decision, rejected: bool = False,
         facts += [f"{permit} ✔" for permit in new.get("dozvole") or [] if permit not in old["dozvole"]]
     if facts:
         lines.append("🏗 " + " · ".join(facts))
+    if "prikljucci" in old:                    # stara poruka: ne zna se je li ih navela
+        utilities = [u for u in prikljucci.merge(new.get("prikljucci")) if u not in old["prikljucci"]]
+        if utilities:
+            lines.append("🔌 priključci: " + " · ".join(f"{u} ✔" for u in utilities))
     if _missing(old, new, "za_obnovu") and not rejected:    # odbijena ruševina nije "za obnovu"
         lines.append("🔨 za obnovu / starina (prema opisu)")
     if _missing(old, new, "parking"):

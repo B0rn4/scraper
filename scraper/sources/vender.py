@@ -9,6 +9,7 @@ i oznake (property_feature: garaža, parkirno mjesto, bazen) dopunjuju vrstu i p
 import html
 import re
 
+from .. import prikljucci
 from ..http import FetchError
 from ..models import HOUSE, LAND, OTHER, Listing
 from ..text import fold, parse_number
@@ -92,13 +93,14 @@ def parse_items(items: list[dict]) -> list[Listing]:
 
 
 def _features(x: Listing, meta: dict, features: list[str]) -> None:
-    """Dodatne značajke ("Tip kuće", godine, parkirna mjesta, površina parcele), oznake (garaža,
-    parkirno mjesto, bazen), godina izgradnje i "Stara cijena" ispred cijene."""
+    """Dodatne značajke ("Tip kuće", "Tip zemljišta", godine, parkirna mjesta, površina parcele),
+    oznake (garaža, parkirno mjesto, bazen, priključci, vlasnički list, dozvole), godina izgradnje
+    i "Stara cijena" ispred cijene."""
     extra = {html.unescape(k).strip().lower(): html.unescape(v).strip()
              for k, v in _EXTRA_FEATURE.findall(str(_meta(meta, "additional_features") or ""))}
-    house_type = extra.get("tip kuće", "")
-    if x.kind == HOUSE and house_type and fold(house_type).split()[0] not in fold(x.subtype):
-        x.subtype = f"{x.subtype} ({house_type})" if x.subtype else house_type   # npr. "Kuća (dvojna)"
+    kind_type = extra.get("tip kuće" if x.kind == HOUSE else "tip zemljišta", "")
+    if x.kind in (HOUSE, LAND) and kind_type and fold(kind_type).split()[0] not in fold(x.subtype):
+        x.subtype = f"{x.subtype} ({kind_type})" if x.subtype else kind_type   # npr. "Kuća (dvojna)"
     for name, key in (("godina izgradnje", "godina_izgradnje"), ("godina zadnje adaptacije", "godina_obnove"),
                       ("godina zadnje renovacije", "godina_obnove")):
         year = _YEAR.search(extra.get(name, ""))
@@ -118,6 +120,14 @@ def _features(x: Listing, meta: dict, features: list[str]) -> None:
         x.extra["parking"] = ", ".join(marks)
     if any(re.search(r"(?i)\bbazen", f) for f in features):
         x.extra["bazen"] = True
+    utilities = prikljucci.from_labels(features)
+    if utilities:
+        x.extra["prikljucci"] = utilities
+    if any(fold(f) == "vlasnicki list" for f in features):
+        x.extra["vlasnicki_list"] = True
+    permits = [f.lower() for f in features if re.search(r"(?i)dozvol", f)]
+    if permits:
+        x.extra["dozvole"] = permits
     before = re.search(r"(?i)stara cijena:?\s*([\d.,]+)", str(_meta(meta, "fave_property_price_prefix") or ""))
     if before and parse_number(before.group(1)):
         x.previous_price = parse_number(before.group(1))

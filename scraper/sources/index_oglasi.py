@@ -22,6 +22,7 @@ from datetime import datetime
 from pathlib import Path
 
 from ..http import FetchError
+from .. import prikljucci
 from ..models import HOUSE, LAND, Listing
 from ..text import fold
 from .base import DETAIL_RETRIES, FULL, Source
@@ -41,6 +42,8 @@ MAX_DETAILS = 25   # najviše otvorenih oglasa po pokretanju (ostali čekaju slj
 # Šifre iz index.hr ui-config/hr/detail.json
 HOUSE_TYPES = {1: "Samostojeća kuća", 2: "Dvojna kuća", 3: "Kuća u nizu", 4: "Stambeno-poslovna kuća"}
 LAND_TYPES = {1: "Građevinsko zemljište", 2: "Poljoprivredno zemljište"}
+# Priključci (polja su samo kad postoje; struje nema ni u jednom od 70 zemljišta, 13. 10.).
+UTILITY_FIELDS = {"cityWaterSupply": "voda", "citySewerage": "kanalizacija", "cityGas": "plin", "asphaltRoad": "asfaltni put"}
 PARKING_FIELDS = {"garage": "garaža", "garageSpace": "garažno mjesto", "enclosedCarPark": "natkriveno parkirno mjesto",
                   "noEnclosedCarPark": "vanjsko parkirno mjesto", "onSiteParking": "parking na licu mjesta"}
 
@@ -88,7 +91,7 @@ def _year(value) -> int | None:
 
 
 def parse_single(data: dict, listing: Listing) -> None:
-    """Podaci iz samog oglasa: opis, vrsta kuće/zemljišta, okućnica, godine, parking, papiri, bazen."""
+    """Podaci iz samog oglasa: opis, vrsta kuće/zemljišta, okućnica, godine, parking, papiri, bazen, priključci."""
     if not data.get("data"):
         raise ValueError("index.hr: odgovor za oglas je prazan")
     ad = data["data"][0]
@@ -118,6 +121,9 @@ def parse_single(data: dict, listing: Listing) -> None:
         listing.extra["dozvole"] = permits
     if ad.get("swimmingPool"):
         listing.extra["bazen"] = True
+    utilities = [name for key, name in UTILITY_FIELDS.items() if ad.get(key)]
+    if utilities:
+        listing.extra["prikljucci"] = prikljucci.merge(utilities)
     listing.extra["detalji"] = True
     listing.extra.pop("samo_popis", None)
 

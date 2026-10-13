@@ -107,8 +107,12 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   zemljišta (nije stambena ni mješovita → ⚠).
 - **Parking (🚗, kuće):** parkirno mjesto ili garaža iz oglasa, ili okućnica od barem
   100 m². „Nema parkinga”, samo javni parking ili parking nije naveden → ⚠.
+- **Priključci (🔌, zemljišta; odluka 13. 10.):** struja, voda, kanalizacija, septička jama,
+  plin, asfaltni put, javna rasvjeta iz polja oglasa (index.hr, vender, nekretnine.hr, Njuškalo),
+  inače citat rečenice iz opisa koja ih spominje, inače „priključci nisu navedeni”
+  (`scraper/prikljucci.py`). Ništa se ne odbija; dopuna javlja priključke koje prva poruka nije imala.
 - **Duga poruka:** opis uz fotografiju smije imati oko 1.000 znakova. Što ne stane
-  (redom: usporedba s medijanom mjesta, činjenice, PPV, prosjek područja, uvjeti gradnje, parking, mjesto,
+  (redom: usporedba s medijanom mjesta, činjenice, priključci, PPV, prosjek područja, uvjeti gradnje, parking, mjesto,
   zadnja upozorenja) stiže odmah u drugoj poruci, kao odgovor na prvu i bez zvuka; 👎 na
   bilo kojoj od njih vrijedi za oglas. Ne stane li samo naslov oglasa ili „nije
   provjereno”, druge poruke nema.

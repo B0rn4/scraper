@@ -11,6 +11,7 @@ Oglas koji pokretanje ne stigne otvoriti čeka sljedeće pokretanje."""
 import json
 import re
 
+from .. import prikljucci
 from ..http import FetchError
 from ..models import HOUSE, LAND, Listing
 from ..text import fmt_eur, fmt_m2, fold, parse_number
@@ -89,6 +90,9 @@ def _listing(result: dict, kind: str) -> Listing:
     listing.extra["opis_skracen"] = True   # popis daje samo početak opisa
     if "piscina" in [str(f).lower() for f in prop.get("ga4features") or []]:
         listing.extra["bazen"] = True
+    utilities = prikljucci.from_labels(prop.get("ga4features") or [])      # "allaccio acqua"…
+    if utilities:
+        listing.extra["prikljucci"] = utilities
     condition = str(prop.get("ga4Condition") or "")
     if condition:
         listing.extra["stanje"] = _CONDITIONS.get(condition.lower(), condition)
@@ -121,6 +125,12 @@ def parse_detail(html: str, listing: Listing) -> None:
         listing.extra["parking"] = parking[0].lower()
     if any(fold(n) == "bazen" for n in names) or any(f.get("codeName") == "pool" for f in primary):
         listing.extra["bazen"] = True
+    utilities = prikljucci.from_labels(names)        # "Priključak za vodu", "Kanalizacijski priključak"
+    if utilities:
+        listing.extra["prikljucci"] = prikljucci.merge(listing.extra.get("prikljucci"), utilities)
+    access = ((prop.get("land") or {}) if isinstance(prop.get("land"), dict) else {}).get("access")
+    if access:
+        listing.extra["pristup"] = str(access)    # zemljište: "Na makadamskoj cesti"
     if prop.get("condition"):                       # "Za renoviranje", "Dobro / Useljivo"
         listing.extra["stanje"] = str(prop["condition"])
     if prop.get("buildingYear"):
@@ -129,7 +139,8 @@ def parse_detail(html: str, listing: Listing) -> None:
     parts = (prop.get("surfaceConstitution") or {}).get("surfaceConstitutionElements") or []
     garden = [parse_number(e.get("surface")) for e in parts if isinstance(e, dict)
               and e.get("constitutionKey") in ("garden", "land")]
-    land = parse_number(prop.get("land")) if prop.get("land") else max(filter(None, garden), default=None)
+    land = (parse_number(prop.get("land")) if prop.get("land") and not isinstance(prop.get("land"), dict)
+            else max(filter(None, garden), default=None))
     if listing.kind == HOUSE and land and not listing.plot_area:
         listing.plot_area = land
     listing.extra["detalji"] = True

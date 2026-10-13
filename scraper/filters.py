@@ -3,7 +3,7 @@
 import re
 import unicodedata
 
-from . import parking, risks
+from . import parking, prikljucci, risks
 from .locations import LocationResult, Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
 from .text import areas_in_text, fmt_eur, fmt_m2, fold
@@ -350,6 +350,10 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
             near_miss_only = False
         else:
             warnings.append(f"{rule.label}: „{sentence}”")
+
+    # --- priključci zemljišta (struja, voda, kanalizacija…; odluka korisnika 13. 10.) ---
+    if listing.kind == LAND:
+        listing.extra["prikljucci_redak"] = prikljucci.check(listing)
 
     # --- parking (kuća: parkirno mjesto ili dovoljno okućnice) ---
     if listing.kind == HOUSE:

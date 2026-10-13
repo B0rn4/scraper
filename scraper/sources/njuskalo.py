@@ -20,6 +20,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+from .. import prikljucci
 from ..browser import Browser
 from ..models import HOUSE, LAND, Listing
 from ..text import areas_in_text, fmt_eur, fmt_m2, fold, parse_number
@@ -245,15 +246,18 @@ def parse_detail(page: str, listing: Listing) -> None:
     if re.search(r"\b(1[89]|20)\d\d\b", renovated):
         listing.extra["godina_obnove"] = int(re.search(r"\b(?:1[89]|20)\d\d\b", renovated).group(0))
     # Grupe svojstava (u opisu su kao tekst): bazen, vlasnički list i dozvole kao polja oglasa.
-    items = [fold(g) for g in groups]
-    if any(re.match(r"bazen\b", i) and not re.search(r":\s*ne\b", i) for i in items):
+    items = [fold(g) for g in groups]               # fold() briše dvotočku: "Bazen: Ne" → "bazen ne"
+    if any(re.match(r"bazen\b", i) and not prikljucci.DENIED.search(i) for i in items):
         listing.extra["bazen"] = True
-    if any(i.startswith("vlasnicki list") and not re.search(r":\s*ne\b", i) for i in items):
+    if any(i.startswith("vlasnicki list") and not prikljucci.DENIED.search(i) for i in items):
         listing.extra["vlasnicki_list"] = True
     permits = [g.split(":")[0].strip().lower() for g, i in zip(groups, items)
-               if re.search(r"\bdozvol", i) and not re.search(r":\s*ne\b", i)]
+               if re.search(r"\bdozvol", i) and not prikljucci.DENIED.search(i)]
     if permits:
         listing.extra["dozvole"] = permits
+    utilities = prikljucci.from_labels(groups)           # "Gradski vodovod", "Struja", "Kanalizacija"
+    if utilities:
+        listing.extra["prikljucci"] = utilities
     if "ClassifiedDetailUnavailableNotice" in page and not listing.extra.get("neaktivan"):
         # "Ovaj oglas je neaktivan.": stiže s upozorenjem – oglašivač je i dalje dostupan, a
         # drugi oglas više ne vide (do njega se dolazi samo izravnom poveznicom).

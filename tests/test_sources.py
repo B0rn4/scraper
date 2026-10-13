@@ -560,6 +560,11 @@ def test_portal_fields_realestatecroatia_and_njuskalo():
     njuskalo.parse_detail(detail, x)
     assert (x.extra["bazen"], x.extra["vlasnicki_list"], x.extra["dozvole"], x.extra["godina_obnove"]) == (
         True, True, ["građevinska dozvola", "uporabna dozvola"], 2018)
+    assert x.extra["prikljucci"] == ["voda"]                 # "Gradski vodovod" (grupa "Podaci o objektu")
+    # "Bazen: Ne" nije bazen (fold() briše dvotočku – nijekanje se traži na kraju).
+    y = Listing("njuskalo", "2", "u", "Kuća", HOUSE)
+    njuskalo.parse_detail(detail.replace(">Bazen<", ">Bazen: Ne<").replace(">Vlasnički list<", ">Vlasnički list: Ne<"), y)
+    assert "bazen" not in y.extra and "vlasnicki_list" not in y.extra
 
 
 def test_njuskalo_opens_known_ad_with_price_drop_or_without_area(fina):
@@ -645,6 +650,44 @@ def test_oglasnik_ad_page_format():
     x = _listing(ad, HOUSE, {}, {})
     assert (x.price, x.area, x.settlement, x.image_url, x.extra["bazen"], x.extra["vlasnicki_list"]) == (
         160000, 135, "Njivice", "", True, True)
+
+
+def test_land_utilities_from_portal_fields():
+    """Priključci zemljišta iz polja: index.hr (voda, kanalizacija, asfalt), vender (oznake; i
+    vlasnički list, dozvole), nekretnine.hr (popis na talijanskom, stranica oglasa; vrijednost 0 =
+    nema), pristup."""
+    from scraper.notify import format_listing
+    from scraper.filters import evaluate
+    from scraper.sources import nekretnine_hr, vender
+
+    cfg = load_config()["kriteriji"]
+    x = Listing("index_oglasi", "1", "u", "Zemljište Njivice", LAND, area=800, price=150_000)
+    index_oglasi.parse_single({"data": [{"description": "Zemljište.", "landType": 1, "cityWaterSupply": True,
+                                         "asphaltRoad": True, "citySewerage": True}]}, x)
+    assert x.extra["prikljucci"] == ["voda", "kanalizacija", "asfaltni put"]
+
+    item = {"id": 5, "link": "https://vender.hr/5", "title": {"rendered": "Zemljište Njivice"}, "property_type": [19276],
+            "content": {"rendered": "Zemljište."}, "property_meta": {"fave_property_price": ["150000"], "fave_property_land": ["800"]},
+            "_embedded": {"wp:term": [[{"taxonomy": "property_city", "name": "OMIŠALJ"},
+                                       *({"taxonomy": "property_feature", "name": n} for n in (
+                                           "Struja", "Gradski vodovod", "Asfaltni put", "Vlasnički list", "Građevinska dozvola",
+                                           "Pogled na more"))]]}}
+    y = vender.parse_items([item])[0]
+    assert (y.extra["prikljucci"], y.extra["vlasnicki_list"], y.extra["dozvole"]) == (
+        ["struja", "voda", "asfaltni put"], True, ["građevinska dozvola"])
+
+    listed = {z.source_id: z for z in nekretnine_hr.parse_page(read("nekretnine_zemljista_pgz.html.gz"), LAND)[0]}
+    assert any(z.extra.get("prikljucci") == ["struja", "voda", "kanalizacija"] for z in listed.values())
+    detail = {"props": {"pageProps": {"detailData": {"realEstate": {"properties": [{
+        "description": "Građevinsko zemljište.", "features": ["Priključak za vodu", "orijentacija zapad"],
+        "primaryFeatures": [{"name": "Priključak za struju", "value": 1}, {"name": "Plinski priključak", "value": 0}],
+        "land": {"access": "Na makadamskoj cesti"}}]}}}}}
+    z = Listing("nekretnine_hr", "9", "u", "Zemljište Njivice", LAND, price=150_000, area=800,
+                county="Primorsko-goranska", municipality="Omišalj", settlement="Njivice")
+    nekretnine_hr.parse_detail(f'<script id="__NEXT_DATA__" type="application/json">{json.dumps(detail)}</script>', z)
+    assert (z.extra["prikljucci"], z.extra["pristup"], z.plot_area) == (["struja", "voda"], "Na makadamskoj cesti", None)
+    text = format_listing(z, evaluate(z, cfg, Locator()))
+    assert "🔌 priključci: struja ✔ · voda ✔ · pristup: na makadamskoj cesti" in text
 
 
 def test_nekretnine_defers_ads_it_cannot_open(monkeypatch):

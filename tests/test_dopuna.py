@@ -378,3 +378,14 @@ def test_permits_in_message_and_supplement():
     copy.extra.update({"vlasnicki_list": True, "dozvole": ["građevinska dozvola", "uporabna dozvola"]})
     lines = dopuna.news(dopuna.snapshot(first, d), dopuna.snapshot(copy, d), copy, d)
     assert lines == ["🏗 uporabna dozvola ✔"]
+
+
+def test_land_utilities_in_supplement():
+    """Dopuna javlja priključke koje prva poruka nije imala (samo zemljišta)."""
+    d = Decision(PASS, jls="Omišalj")
+    first = Listing("oglasnik", "1", "https://o/1", "Zemljište Njivice", LAND, price=150_000, area=800)
+    first.extra["prikljucci"] = ["voda"]
+    copy = Listing("vender", "2", "https://v/2", "Zemljište Njivice", LAND, price=150_000, area=800)
+    copy.extra["prikljucci"] = ["struja", "voda", "asfaltni put"]
+    lines = dopuna.news(dopuna.snapshot(first, d), dopuna.snapshot(copy, d), copy, d)
+    assert lines == ["🔌 priključci: struja ✔ · asfaltni put ✔"]
