@@ -818,6 +818,37 @@ def test_burza_list_detail_and_fetch():
     assert sorted(u.split("/")[-1] for u in http.urls if u.split("/")[-1].isdigit()) == ["347113", "350118"]
 
 
+def test_burza_opens_known_listing_with_lower_price():
+    """15. 10. (kao realestatecroatia 989420, gdje je "dvojna kuća" bila samo u punom opisu): poznat
+    oglas sa sniženom cijenom otvara se, da poruka o sniženju ima pun opis; ostali poznati ne."""
+    from scraper.sources import burza
+
+    page = read("burza_kuce.html.gz")
+    prices = {x.source_id: x.price for x in burza.parse_list(page, HOUSE, "Crikvenica")}
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+    class Http:
+        def __init__(self):
+            self.urls = []
+
+        def get(self, url, **kw):
+            self.urls.append(url)
+            if url.rstrip("/").split("/")[-1].isdigit():
+                return Resp(read("burza_oglas.html.gz"))
+            return Resp(page if url.endswith("kvarner-i-istra") else "")
+
+    http = Http()
+    src = burza.Burza(http, Locator(), load_config()["kriteriji"])
+    src.known_prices = {"350166": prices["350166"] + 10_000, "350164": prices["350164"]}
+    found = {x.source_id: x for x in src.fetch("incremental", {"350166", "350164"})}
+    assert sorted(u.split("/")[-1] for u in http.urls if u.split("/")[-1].isdigit()) == ["347113", "350118", "350166"]
+    assert found["350166"].description.startswith("Prodaje se velika") and "opis_skracen" not in found["350166"].extra
+    assert found["350164"].extra["opis_skracen"]                      # ista cijena: bez otvaranja
+
+
 def test_detail_limit_defers_instead_of_sending_without_area(monkeypatch, fina):
     """Kandidati iznad ograničenja otvaranja ne vraćaju se (inače bi stigli bez površine),
     nego čekaju sljedeće pokretanje."""

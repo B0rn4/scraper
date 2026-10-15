@@ -131,7 +131,9 @@ def parse_single(data: dict, listing: Listing) -> None:
 class IndexOglasi(Source):
     name = "index_oglasi"
     label = "index.hr/oglasi"
-    reopen_once = "vrsta-bazen-dozvole-2026-10"   # 13. 10.: i bazen i dozvole – ispočetka
+    # 13. 10.: vrsta, bazen, dozvole; 15. 10. ispočetka: upozorenja iz opisa sad ostaju
+    # (runner._keep_text_warnings), a čitanje popisa ih je dosad brisalo.
+    reopen_once = "opis-2026-10"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

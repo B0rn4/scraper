@@ -249,6 +249,14 @@ def stored_rejections(items: list[str]) -> list[str]:
             or any(item.startswith(f"{label} (vrsta: ") or item == f"{label} (naslov)" for label in kinds)]
 
 
+def text_warnings(items: list[str]) -> list[str]:
+    """Upozorenja iz punog opisa i polja sa stranice oglasa (dvojna kuća ili bazen u opisu,
+    suvlasništvo, namjena…) među spremljenima: popis ih ne može ponoviti (runner ih zadržava)."""
+    rules = tuple(f"{rule.label}: „" for rule in risks.RULES if not rule.reject)
+    return [item for item in items if item.startswith(("opis spominje ", "namjena prema oglasu: ", *rules))
+            or item.endswith((", ali opis spominje građevinsko", " – provjeri je li cijela kuća"))]
+
+
 def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ignore_limits: bool = False) -> Decision:
     """prices (medijani traženih, scraper/prices.py): za procjenu kod "cijene na upit".
     ignore_limits: cijena i površina ne odbijaju (izvori: vrijedi li otvoriti stranicu oglasa

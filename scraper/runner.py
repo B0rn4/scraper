@@ -19,7 +19,7 @@ from .ispu import APPROX_RADIUS_M, Ispu, check_land, gp_text, heritage_warning
 from .plans import Plans
 from .prices import MAX_AGE_DAYS, PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
 from .db import State
-from .filters import effective_price, evaluate, stored_rejections
+from .filters import effective_price, evaluate, stored_rejections, text_warnings
 from .http import Http, blocked
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
@@ -300,6 +300,8 @@ class Runner:
                                 x.price, x.area, bool(x.extra.get("ukupna_cijena")), x.kind) is None)
                         if prev and partial and d.status == REJECT and prev.get("status") != REJECT:
                             d = self._drop_snippet_ruin(d, prev)
+                        if prev and partial and d.status != REJECT and prev.get("status") != REJECT:
+                            d = self._keep_text_warnings(d, prev)
                         old = state.upsert(x, d, self.stamp)
                         decided.append((x, d))
                         if silent_baseline or (old is None and x.extra.get("stari_oglas")):
@@ -665,6 +667,8 @@ class Runner:
                 if row.get("kind") == LAND and x.kind == HOUSE and row.get("area"):
                     x.extra["okucnica_ranije"] = row["area"]   # ruševina kao zemljište (okućnica)
                 d = evaluate(x, self.criteria, self.locator, prices)
+                if d.status != REJECT and (x.extra.get("opis_skracen") or x.extra.get("samo_popis")):
+                    d = self._keep_text_warnings(d, row)        # stranica bez opisa: ne briše ranija upozorenja
                 state.reassess(x, d)
                 rejected += d.status == REJECT
             except Exception as exc:  # noqa: BLE001 – oglas ostaje kakav je bio
@@ -909,6 +913,17 @@ class Runner:
         if len(rest) == len(d.reasons) or rest:
             return d
         return Decision(WARN if d.warnings else PASS, [], d.warnings, d.jls, d.location_evidence)
+
+    @staticmethod
+    def _keep_text_warnings(d: Decision, prev: dict) -> Decision:
+        """Upozorenja iz punog opisa ili polja sa stranice oglasa (npr. "opis spominje dvojnu kuću")
+        ostaju kad ovaj put imamo samo podatke s popisa: inače ih briše prvo sljedeće čitanje popisa
+        (u bazi, za završni pregled), a sniženje bez mjesta za otvaranje stiže bez njih (15. 10.)."""
+        known = {dopuna.warning_key(w) for w in d.warnings}
+        kept = [w for w in text_warnings(json.loads(prev.get("reasons") or "[]")) if dopuna.warning_key(w) not in known]
+        if not kept:
+            return d
+        return Decision(WARN, d.reasons, d.warnings + kept, d.jls, d.location_evidence, d.near_miss)
 
     def _load_seen(self, state: State) -> dedupe.Seen:
         """Već viđeni oglasi: ova baza, baza s Redmija (na GitHubu) i sažetak s GitHuba (na Redmiju)."""

@@ -117,7 +117,7 @@ class RealEstateCroatia(Source):
     name = "realestatecroatia"
     label = "realestatecroatia.com"
     baseline_report = False   # prvo pokretanje se samo zabilježi (oglasi agencija su većinom već poslani)
-    reopen_once = "povrsina-2026-10"
+    reopen_once = "opis-2026-10"   # 13. 10. površina; 15. 10. upozorenja iz punog opisa (ostaju)
 
     def _list(self, vrsta: int, cap: float, page: int) -> str:
         return self.http.get(f"{BASE}list.asp?regija={REGION_PGZ}&vrsta={vrsta}&akcija=1&sort=objekt_id&smjer=desc"

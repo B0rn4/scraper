@@ -171,15 +171,18 @@ class Burza(Source):
                 found.setdefault(x.source_id, x)
         self.add_pending(found, known_ids)
         out, details, deadline = [], 0, details_deadline()
-        for x in found.values():
-            if x.source_id in known_ids:                       # mjesto i površina iz ranijeg dohvata
+        # Novi oglasi prvi. Poznat se otvara samo kod sniženja ili bez površine (reopen_known): poruka
+        # o sniženju inače bi imala samo isječak opisa s popisa (npr. bez "dvojna kuća", 15. 10.).
+        for x in sorted(found.values(), key=lambda x: x.source_id in known_ids):
+            known = x.source_id in known_ids
+            if known and not self.reopen_known(x):             # mjesto i površina iz ranijeg dohvata
                 out.append(x)
             elif details < MAX_DETAILS and not past(deadline):
                 details += 1
-                if self._detail(x) or not self.defer(x, failed=True):
+                if self._detail(x) or known or not self.defer(x, failed=True):
                     out.append(x)
-            elif not self.defer(x):                            # sljedeći put (bez mjesta bi bili "nepoznata lokacija")
-                out.append(x)                                  # čeka predugo: stiže s podacima s popisa
+            elif known or not self.defer(x):                   # sljedeći put (bez mjesta bi bili "nepoznata lokacija")
+                out.append(x)                                  # čeka predugo (poznat ne čeka): podaci s popisa
         return out
 
     def search_links(self):

@@ -670,6 +670,17 @@ bez stotina poruka.
   Sad se nepoznat oglas objavljen prije početka praćenja (postedTime) bilježi bez poruke, kao na
   Njuškalu, a pri otvaranju stranica novi oglasi idu prije starih. Ponovno otvaranje zapamćenih
   oglasa: vrijeme (3 min po pokretanju) dijeli se na izvore i broji se samo ono, ne čitanje popisa.
+- **(gotovo 15. 10.) Dvojna kuća samo u punom opisu, poruka bez ⚠** (korisnik: realestatecroatia
+  989420 – „Prodaje se vrlo interesantna dvojna kuća”; isti oglas na index.hr ima polje „Dvojna
+  kuća” i 15. 10. je stigla dopuna s ⚠). Poruka 9. 10. bila je sniženje poznatog oglasa, a tada
+  se stranica poznatog oglasa nije otvarala: samo isječak s popisa, bez te rečenice (i bez
+  površine). Za realestatecroatia, nekretnine.hr i index.hr to je popravljeno 13. 10.; burza je
+  ostala – sad i ona otvara poznat oglas sa sniženjem. Drugi nalaz: upozorenja iz punog opisa
+  (dvojna, bazen, suvlasništvo, namjena…) brisalo je prvo sljedeće čitanje popisa (isječak), pa je
+  u bazi taj oglas „prolazi” – sad ostaju (`runner._keep_text_warnings`, kao `_keep_text_reject`
+  za odbijanja), a novi pun opis bez rečenice ih briše. Zapamćeni neodbijeni oglasi s
+  realestatecroatia, nekretnine.hr i index.hr jednom se ponovno otvaraju (`opis-2026-10`), tiho,
+  da se upozorenja vrate u bazu (završni pregled).
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

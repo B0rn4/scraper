@@ -149,7 +149,7 @@ def parse_detail(html: str, listing: Listing) -> None:
 class NekretnineHr(Source):
     name = "nekretnine_hr"
     label = "nekretnine.hr"
-    reopen_once = "polja-2026-10"   # stanje, parking, bazen, okućnica, puni opis (13. 10.)
+    reopen_once = "opis-2026-10"   # 13. 10. polja; 15. 10. upozorenja iz punog opisa (ostaju)
 
     def reopen(self, row: dict) -> Listing | None:
         try:

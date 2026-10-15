@@ -279,6 +279,46 @@ def test_short_description_keeps_text_reject(tmp_path, monkeypatch):
     state.close()
 
 
+def test_list_snippet_keeps_warning_from_full_description(tmp_path, monkeypatch):
+    """15. 10. (realestatecroatia 989420): "dvojna kuća" je samo u punom opisu; sljedeće čitanje
+    popisa (isječak) ga ne smije obrisati – ni u bazi ni u poruci o sniženju bez otvorene
+    stranice. Novi pun opis bez te rečenice upozorenje briše."""
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    full = listing(sid="4")
+    full.description = "Prodaje se vrlo interesantna dvojna kuća. Krov je terasa s pogledom na more."
+    short, cheaper = listing(sid="4"), listing(280_000, sid="4")
+    for x in (short, cheaper):
+        x.description, x.extra["opis_skracen"] = "Kuća s pogledom na more.", True
+    rewritten = listing(270_000, sid="4")
+    rewritten.description = "Samostojeća kuća s pogledom na more."
+    FakeSource.modes = []
+    FakeSource.batches = [[listing(sid="1")], [full], [short], [cheaper], [rewritten]]
+    sent, statuses = [], []
+
+    def notify(state, items):
+        for x, d, h in items:
+            sent.append((h, d.warnings))
+            state.mark_notified(x.key, x.price, "2026-10-09T12:01:04+02:00")
+
+    for _ in range(5):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r._send_report = lambda *a, **k: None
+        r._send_notifications = notify
+        r.run(force=True)
+        state = State(tmp_path / "s.db")
+        row = state.get("t:4")
+        statuses.append((row["status"], json.loads(row["reasons"])) if row else None)
+        state.close()
+    dual = "opis spominje dvojnu kuću ili kuću u nizu"
+    assert [dual in reasons for _, reasons in statuses[1:]] == [True, True, True, False]
+    assert sent[0][0] == "" and dual in sent[0][1]                                # nov oglas
+    assert sent[1][0].startswith("📉 Snižena cijena") and dual in sent[1][1]     # isječak, upozorenje ostaje
+    assert sent[2][0].startswith("📉 Snižena cijena") and dual not in sent[2][1]  # novi pun opis
+
+
 def test_known_listing_gets_place_from_earlier_fetch(tmp_path, monkeypatch):
     """Popis bez mjesta (burza.com.hr): naselje i tekst lokacije dolaze iz ranijeg dohvata stranice oglasa."""
     import scraper.runner as runner_mod

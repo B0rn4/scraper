@@ -478,3 +478,19 @@ def test_stored_rejections_are_told_apart_from_warnings():
                 "provjeri: „Ruševina.”", "Opatija: prihvaća se samo mjesto Opatija – provjeri",
                 "stambena ili poslovno-stambena zgrada – provjeri je li cijela kuća"]
     assert stored_rejections(reasons + warnings) == reasons
+
+
+def test_text_warnings_are_those_a_list_cannot_repeat():
+    """Upozorenja iz punog opisa i polja sa stranice oglasa ostaju kad sljedeće čitanje popisa ima
+    samo isječak (15. 10.); ona iz lokacije, cijene ili nedostatka podataka ne."""
+    from scraper.filters import text_warnings
+
+    kept = ["opis spominje dvojnu kuću ili kuću u nizu", "opis spominje bazen", "opis spominje dio kuće ili etažu",
+            "suvlasništvo: „Kuća ima dva vlasnika.”", "nema kolnog pristupa: „Do kuće se dolazi stazom.”",
+            "namjena prema oglasu: turistička – provjeri smije li se graditi kuća",
+            "Poljoprivredno zemljište, ali opis spominje građevinsko",
+            "stambena ili poslovno-stambena zgrada – provjeri je li cijela kuća"]
+    other = ["Punat: daleko od Rijeke", "površina nije navedena", "parking nije naveden – provjeri",
+             "cijena na upit – procjena ≈ 300.000 €", "lokacija nesigurna – samo grad", "vrsta zemljišta nije navedena",
+             "prodaje se suvlasnički dio: „Prodaje se 1/2 kuće.”"]          # razlog odbijanja (_keep_text_reject)
+    assert text_warnings(kept + other) == kept
