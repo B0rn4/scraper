@@ -82,3 +82,19 @@ def test_same_settlement_name_resolved_by_text():
     assert r.jls.name == "Mali Lošinj" and r.included is False
     assert loc.resolve(settlement="Sušak", text="Rijeka, Sušak, kuća").included is True
     assert loc.resolve(settlement="Susak", text="SUSAK, kuća u najmu").jls is None      # bez drugog traga: ⚠
+
+
+def test_title_naming_other_town_makes_location_uncertain():
+    """oglasnik 6731618 (18. 10.): mjesto s portala "Rijeka", naslov "Kuća u Kastvu" (Kastav nije na
+    popisu) – stiže s ⚠ "lokacija nesigurna"; obrnuto (polje izvan područja, naslov "u Rijeci") ne
+    gubi se tiho. Ne broje se naselja ("u centru" – i rječki Centar) ni "u blizini Kastva"."""
+    loc = Locator()
+    r = loc.resolve(municipality="Rijeka", county="Primorsko-goranska", text="Kuća u Kastvu 377m2")
+    assert (r.jls.name, r.included, r.ambiguous) == ("Rijeka", True, True)
+    assert r.evidence == "grad/općina: Rijeka, a naslov kaže „u Kastvu” (Kastav)"
+    r = loc.resolve(municipality="Kastav", county="Primorsko-goranska", text="Kuća u Rijeci, Zamet")
+    assert (r.jls.name, r.included, r.ambiguous) == ("Rijeka", True, True)
+    for muni, text in (("Rijeka", "Kuća u blizini Kastva"), ("Novi Vinodolski", "Adaptirana kuća u centru!"),
+                       ("Rab", "Kuća u Loparu")):
+        r = loc.resolve(municipality=muni, county="Primorsko-goranska", text=text)
+        assert not r.ambiguous and r.jls.name == muni, text

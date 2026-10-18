@@ -681,6 +681,17 @@ bez stotina poruka.
   za odbijanja), a novi pun opis bez rečenice ih briše. Zapamćeni neodbijeni oglasi s
   realestatecroatia, nekretnine.hr i index.hr jednom se ponovno otvaraju (`opis-2026-10`), tiho,
   da se upozorenja vrate u bazu (završni pregled).
+- **(gotovo 18. 10.) oglasnik.hr: karta nije točna lokacija** (korisnik: oglas 6731618 „otvara
+  Google Maps s preciznom lokacijom”). U podacima oglasa jedine koordinate su „točke” razina
+  lokacije (Hrvatska → županija → grad/općina → naselje); karta pokazuje točku najdublje razine –
+  ovdje grad „Rijeka” (45,344937, 14,431943, sjever Rijeke), a kuća je prema opisu u Kastvu,
+  Spinčići. U 200 oglasa iz snimki svako mjesto ima uvijek istu točku. Kao na realestatecroatia:
+  ne vrijedi za građevinsko područje, oglasnik ostaje „bez lokacije na karti” (`dopuna.NO_COORDS`).
+  Usput: oglas je 16. 10. stigao kao Rijeka, a naslov kaže „Kuća u Kastvu” (Kastav nije na popisu).
+  Sad, kad naslov kaže „u <grad/općina>” za drugi grad ili općinu s drugom odlukom, lokacija je
+  nesigurna (⚠, oglas stiže; i obrnuto – polje izvan područja, naslov „u Rijeci” – ne gubi se tiho).
+  Samo imena gradova i općina, ne naselja („u centru” je i rječki Centar). Na 28.475 oglasa u bazi
+  to mijenja samo ovaj oglas.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

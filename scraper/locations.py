@@ -253,6 +253,18 @@ class Locator:
         """Kao scan_text, ali s osnovnim (normaliziranim) nazivom: "u Njivicama" → "njivice"."""
         return [(jls, self.settlement_aliases.get(name, name)) for jls, name, _ in self._scan(text)]
 
+    def _title_says_elsewhere(self, text: str, jls: Jls) -> tuple[Jls, str] | None:
+        """"u <grad/općina>" u tekstu (naslov, mjesto s portala) za drugi grad ili općinu s drugom
+        odlukom (na popisu / izvan njega): (taj grad/općina, napisani oblik). Samo ime grada ili
+        općine, ne naselja – "u centru" je i rječki Centar, a naselja istog imena ima u više mjesta."""
+        folded = fold(text or "")
+        for other, name, written in self._scan(text or ""):
+            if other.name == jls.name or other.included == jls.included or name != fold(other.name):
+                continue
+            if re.search(rf"(?:^|\s)u {re.escape(fold(written))}\b", folded):
+                return other, written
+        return None
+
     def _scan(self, text: str) -> list[tuple[Jls, str, str]]:
         cased = fold_case(text)
         folded = cased.lower()
@@ -372,6 +384,15 @@ class Locator:
         if municipality:
             jls = self.by_name(municipality)
             if jls:
+                other = self._title_says_elsewhere(text, jls)
+                if other:
+                    # Polje oglasa i naslov se ne slažu (oglasnik 6731618: mjesto "Rijeka", naslov
+                    # "Kuća u Kastvu", opis "Kastav, Spinčići"): oglas stiže s ⚠ – i kad je polje
+                    # izvan područja, inače bi se oglas iz naslova tiho izgubio.
+                    found, written = other
+                    return LocationResult(jls if jls.included else found, True,
+                                          f"grad/općina: {municipality}, a naslov kaže „u {written}” ({found.name})",
+                                          ambiguous=True)
                 return LocationResult(jls, jls.included, f"grad/općina: {municipality}")
         if settlement:
             matches = self.by_settlement(settlement)
