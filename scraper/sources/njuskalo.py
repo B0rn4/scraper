@@ -6,8 +6,10 @@ captchu, a Chromium s trajnim profilom prolazi (proba 5. 10. 2026.).
 Popis je poredan po datumu objave (sort=new), ali na vrhu su većinom stari oglasi
 koje agencije ponovno objave – zadržavaju stari broj oglasa. Brojevi oglasa rastu
 (~20.000 dnevno na cijelom Njuškalu), pa je oglas nov ako mu je broj veći od
-najvećeg dosad viđenog umanjenog za OLD_MARGIN. Stariji oglas koji vidimo prvi put
-zabilježi se bez obavijesti (extra["stari_oglas"]); sniženje cijene i dalje stiže.
+najvećeg dosad viđenog umanjenog za OLD_MARGIN – ili veći od najvećeg na početku praćenja
+(start_max_id): takav je objavljen poslije, i kad na popis stigne danima nakon dobivanja broja.
+Stariji oglas koji vidimo prvi put zabilježi se bez obavijesti (extra["stari_oglas"]); sniženje
+cijene i dalje stiže.
 
 Popis ne daje površinu zemljišta, a vrstu kuće samo ugrubo, pa se za nove oglase
 na našem području otvara i stranica oglasa (površine, vrsta, opis, koordinate)."""
@@ -381,6 +383,10 @@ class Njuskalo(Source):
             if mode != FULL:
                 self.add_pending(found, known_ids)
             threshold = _old_threshold(known_ids, found)
+            if self.start_max_id and (threshold is None or threshold > self.start_max_id):
+                # Oglas s brojem većim od najvećeg na početku praćenja objavljen je poslije: nije star,
+                # i kad se na popisu pojavi danima nakon dobivanja broja (19. 10.: 16 takvih tiho).
+                threshold = self.start_max_id
             # Nakon captche na stranici oglasa ne otvara se nijedna CAPTCHA_PAUSE (zaštita bi
             # inače ostala na oprezu); kraj stanke pamti runner (captcha_until). Stanka dalja od
             # CAPTCHA_PAUSE (sat na mobitelu bio je naprijed) ne vrijedi.

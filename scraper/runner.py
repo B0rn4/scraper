@@ -245,6 +245,7 @@ class Runner:
                 src.known_prices = state.known_prices(src.name)
                 src.known_incomplete = state.known_incomplete(src.name)
                 src.baseline_at = state.meta_get(f"baseline:{src.name}") or ""
+                src.start_max_id = None if first else state.start_max_id(src.name)
                 # Jednom dnevno, poslijepodne (jutarnje pokretanje već ima dnevne provjere).
                 src.deep = (getattr(src, "deep_daily", False) and not first and self.now.hour >= 12
                             and state.meta_get(f"dubinsko:{src.name}") != today)
@@ -2369,9 +2370,10 @@ class Runner:
             state.close()
         e = html.escape
         rows = "".join(
-            f"<tr><td>{e(SOURCE_LABELS.get(s, s))}</td><td>{c.get(PASS, 0)}</td><td>{c.get(WARN, 0)}</td><td>{c.get(REJECT, 0)}</td></tr>"
+            f"<tr><td>{e(SOURCE_LABELS.get(s, s))}</td><td>{c.get(PASS, 0)}</td><td>{c.get(WARN, 0)}</td><td>{c.get(REJECT, 0)}</td>"
+            f"<td>{c.get('stari', 0)}</td></tr>"
             for s, c in sorted(counts.items())
-        ) or "<tr><td colspan=4>nema novih oglasa</td></tr>"
+        ) or "<tr><td colspan=5>nema novih oglasa</td></tr>"
         sent = "".join(
             f"<li><a href='{e(r['url'] or '')}'>{e(r['title'] or '')}</a> – {fmt_eur(r['price'])}, {e(r['jls'] or '')}</li>"
             for r in notified if not str(r["notified_at"]).startswith("zbirno")
@@ -2396,7 +2398,9 @@ class Runner:
         body = f"""<h2>Tjedni izvještaj scrapera</h2>
 <p>Razdoblje: {self.now - timedelta(days=7):%d.%m.} – {self.now:%d.%m.%Y.}</p>
 <h3>Novi oglasi po izvoru</h3>
-<table border=1 cellpadding=4 cellspacing=0><tr><th>Izvor</th><th>✅</th><th>⚠</th><th>❌</th></tr>{rows}</table>
+<table border=1 cellpadding=4 cellspacing=0><tr><th>Izvor</th><th>✅</th><th>⚠</th><th>❌</th><th>stari ✅⚠</th></tr>{rows}</table>
+<p>Novi oglasi su objavljeni nakon početka praćenja. Stari ✅⚠: odgovaraju kriterijima, a objavljeni su
+prije – agencije ih ponovno objave pod starim brojem oglasa (bez istih kao već viđeni).</p>
 <h3>Poslane obavijesti</h3><ul>{sent}</ul>
 <h3>Za dlaku promašeni (cijena ili površina do {self.criteria.get('za_dlaku_posto', 15)} %)</h3><ul>{nm}</ul>
 <h3>Preskočeni kao već viđeni ({len(dups)})</h3><p>Isti oglas na drugom portalu ili ponovno objavljen,

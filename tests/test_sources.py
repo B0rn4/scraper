@@ -211,6 +211,13 @@ def test_njuskalo_fetch_old_and_new(fina):
                  .fetch(INCREMENTAL, known)}
         assert items["41395237"].extra.get("stari_oglas") and items["45131418"].extra.get("stari_oglas") is None
 
+    # 19. 10.: oglas s brojem većim od najvećeg na početku praćenja nije star, i kad se na popisu
+    # pojavi danima nakon dobivanja broja (zadnja 3 dana brojeva tada su već daleko iznad njega).
+    src = Njuskalo(None, Locator(), load_config()["kriteriji"], browser=browser)
+    src.start_max_id = 45_100_000
+    items = {x.source_id: x for x in src.fetch(INCREMENTAL, {"45300000"})}
+    assert items["41395237"].extra.get("stari_oglas") and items["45131418"].extra.get("stari_oglas") is None
+
 
 def test_njuskalo_deferred_listing_that_expired_comes_with_warning(fina):
     """Oglas odgođen prošli put, a u međuvremenu istekao ("Ovaj oglas je neaktivan."): stiže

@@ -2052,3 +2052,22 @@ def test_pool_from_portal_fields_survives_list_only_data():
     prev = {"reasons": json.dumps(["s bazenom (podaci oglasa)"]), "status": REJECT}
     d = Decision(PASS, jls="Punat")
     assert Runner._keep_text_reject(d, prev).reasons == ["s bazenom (podaci oglasa)"]
+
+
+def test_weekly_counts_separate_old_republished_listings(tmp_path):
+    """19. 10.: tjedna tablica – oglas s brojem do najvećeg na početku praćenja objavljen je prije
+    (osvježen star oglas): ne broji se među nove, nego pod "stari" ako odgovara. Najveći broj s
+    početka pamti se (odbijeni s početka s vremenom se brišu) i nije neobično velik broj."""
+    state = State(tmp_path / "s.db")
+    state.meta_set("baseline:t", "2026-10-05T10:00:00+02:00")
+    for sid, status in (("1000", REJECT), ("1050", PASS), ("99999999", REJECT)):     # početni popis
+        state.upsert(listing(sid=sid), Decision(status, jls="Punat"), "2026-10-05T10:00:00+02:00")
+    rows = [("900", PASS, "tiho:x"), ("950", WARN, "2026-10-12T10:00:00+02:00"), ("960", REJECT, None),
+            ("970", PASS, "dup:t:1"), ("1100", PASS, "2026-10-13T10:00:00+02:00"), ("1101", REJECT, None)]
+    for sid, status, mark in rows:
+        state.upsert(listing(sid=sid), Decision(status, jls="Punat"), "2026-10-12T10:00:00+02:00")
+        if mark:
+            state.mark_notified(f"t:{sid}", 300_000, mark)
+    assert state.counts_since("2026-10-12T00:00:00+02:00") == {"t": {"stari": 2, PASS: 1, REJECT: 1}}
+    assert state.start_max_id("t") == 1050 and state.meta_get("pocetni_broj:t") == "1050"
+    state.close()

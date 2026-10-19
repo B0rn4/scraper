@@ -59,6 +59,7 @@ class Source:
     # Početak praćenja izvora (početni popis; postavlja runner): oglas objavljen prije toga, a
     # nepoznat, star je oglas koji je agencija obnovila – bilježi se bez poruke (stari_oglas).
     baseline_at = ""
+    start_max_id: int | None = None   # najveći broj oglasa na početku praćenja (runner, State.start_max_id)
     # Jednom dnevno dublje čitanje (izvori kojima se sniženje inače ne vidi); runner postavlja deep.
     deep_daily = False
     deep = False

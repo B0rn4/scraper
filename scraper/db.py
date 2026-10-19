@@ -319,11 +319,42 @@ class State:
         return [dict(r) for r in rows]
 
     def counts_since(self, since: str) -> dict[str, dict[str, int]]:
-        out: dict[str, dict[str, int]] = {}
-        for r in self._new_since(since):
-            out.setdefault(r["source"], {}).setdefault(r["status"], 0)
-            out[r["source"]][r["status"]] += 1
+        """Novi oglasi po izvoru i odluci (bez istih kao već viđeni). Oglas s brojem do najvećeg na
+        početku praćenja objavljen je prije (agencije ga ponovno objave pod starim brojem): ne broji
+        se među nove, nego pod "stari" – samo ako odgovara."""
+        baselines, tops, out = self._baselines(), {}, {}
+        rows = self.conn.execute("SELECT source, source_id, status, notified_at, first_seen FROM listings WHERE "
+                                 "first_seen >= ? AND (notified_at IS NULL OR notified_at NOT LIKE 'dup:%')", (since,))
+        for r in rows:
+            if r["first_seen"] <= baselines.get(r["source"], ""):
+                continue
+            if r["source"] not in tops:
+                tops[r["source"]] = self.start_max_id(r["source"])
+            top, counts = tops[r["source"]], out.setdefault(r["source"], {})
+            if top is not None and str(r["source_id"]).isdigit() and int(r["source_id"]) <= top:
+                if r["status"] != REJECT:
+                    counts["stari"] = counts.get("stari", 0) + 1
+            elif not (r["notified_at"] or "").startswith("tiho:"):
+                counts[r["status"]] = counts.get(r["status"], 0) + 1
         return out
+
+    def start_max_id(self, source: str) -> int | None:
+        """Najveći broj oglasa izvora na početku praćenja: oglas s manjim brojem objavljen je prije
+        (Njuškalo, index.hr: osvježeni stari oglasi zadržavaju broj). Pamti se, jer se odbijeni
+        oglasi s početka s vremenom brišu (prune). Bez neobično velikog broja (druga numeracija)."""
+        key = f"pocetni_broj:{source}"
+        if self.meta_get(key):
+            return int(self.meta_get(key))
+        start = self.meta_get(f"baseline:{source}")
+        ids = sorted((int(r[0]) for r in self.conn.execute(
+            "SELECT source_id FROM listings WHERE source = ? AND first_seen <= ? AND source_id GLOB '[0-9]*' "
+            "AND source_id NOT GLOB '*[^0-9]*'", (source, start or ""))), reverse=True)
+        if not start or not ids:
+            return None
+        median = ids[:50][len(ids[:50]) // 2]
+        top = max(i for i in ids if i <= median * 1.05)
+        self.meta_set(key, str(top))
+        return top
 
     # --- zdravlje izvora ---
 

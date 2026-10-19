@@ -692,6 +692,23 @@ bez stotina poruka.
   nesigurna (⚠, oglas stiže; i obrnuto – polje izvan područja, naslov „u Rijeci” – ne gubi se tiho).
   Samo imena gradova i općina, ne naselja („u centru” je i rječki Centar). Na 28.475 oglasa u bazi
   to mijenja samo ovaj oglas.
+- **(19. 10.) Tjedna tablica i stari oglasi** (korisnik: „Njuškalo 1 novi oglas po kriterijima
+  čini mi se premalo”). Tablica broji nove oglase bez istih kao već viđeni i bez tiho zabilježenih.
+  Na Njuškalu je ovaj tjedan 264 oglasa koji odgovaraju zabilježeno tiho kao „stari” (agencije
+  osvježavaju stare oglase; broj oglasa ostaje) – čekaju završni pregled. Nalazi:
+  - Njuškalo: pravilo „stari” gledalo je samo zadnja ~3 dana brojeva (stvarno ~40.000 dnevno), pa je
+    oglas koji na popis stigne danima nakon dobivanja broja bio „star”. Od 5. 10. takvih 16 koji
+    odgovaraju; 15 je stiglo s drugog portala, propušten je jedan (Crikvenica, građevinsko zemljište
+    1.050 m², 189.000 €, Njuškalo 51718204). Sad oglas s brojem većim od najvećeg na početku
+    praćenja nikad nije star (`State.start_max_id`, pamti se u meta `pocetni_broj:IZVOR`).
+  - index.hr: od 196 poruka od 12. 10. samo 7 je za oglase objavljene nakon početka praćenja; 189 su
+    osvježeni stari oglasi (brojevi do 1,4 mil., medijan 6,8 mil.; početni najveći 7,59 mil.):
+    osvježavanje mijenja postedTime, pa ih pravilo od 13. 10. ne prepoznaje. Stvarno novih koji
+    odgovaraju tjedno je na oba portala podjednako (~12). **Otvoreno pitanje korisniku:** stari
+    osvježeni oglasi s index.hr tiho kao na Njuškalu (završni pregled) ili i dalje porukom.
+  - Tablica sad odvaja: ✅ ⚠ ❌ samo novi (broj veći od najvećeg na početku), „stari ✅⚠” osvježeni
+    stari koji odgovaraju (bez istih kao već viđeni). Za tjedan do 19. 10.: index.hr 3/3/179 i 189
+    starih, Njuškalo 1/0/178 i 255 starih.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
