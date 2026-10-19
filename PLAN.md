@@ -704,8 +704,9 @@ bez stotina poruka.
   - index.hr: od 196 poruka od 12. 10. samo 7 je za oglase objavljene nakon početka praćenja; 189 su
     osvježeni stari oglasi (brojevi do 1,4 mil., medijan 6,8 mil.; početni najveći 7,59 mil.):
     osvježavanje mijenja postedTime, pa ih pravilo od 13. 10. ne prepoznaje. Stvarno novih koji
-    odgovaraju tjedno je na oba portala podjednako (~12). **Otvoreno pitanje korisniku:** stari
-    osvježeni oglasi s index.hr tiho kao na Njuškalu (završni pregled) ili i dalje porukom.
+    odgovaraju tjedno je na oba portala podjednako (~12). **Odluka korisnika 19. 10.:** kao na
+    Njuškalu – oglas s brojem do najvećeg na početku praćenja je „stari” i bilježi se bez poruke
+    (završni pregled); s index.hr tada stiže ~1 poruka dnevno umjesto ~28.
   - Tablica sad odvaja: ✅ ⚠ ❌ samo novi (broj veći od najvećeg na početku), „stari ✅⚠” osvježeni
     stari koji odgovaraju (bez istih kao već viđeni). Za tjedan do 19. 10.: index.hr 3/3/179 i 189
     starih, Njuškalo 1/0/178 i 255 starih.

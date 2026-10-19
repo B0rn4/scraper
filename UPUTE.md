@@ -221,7 +221,9 @@ Actions → **Planovi – preuzimanje** → naredba `lokacija`, u „adrese” z
 **Zašto nije stigao oglas koji vidim na portalu?** Najčešće:
 - odbijen je (cijena, površina, naselje, vrsta kuće, opis) – vidi se u preglednom izvještaju;
 - isti oglas već je stigao s drugog portala;
-- „stari oglas”: agencija je ponovno objavila oglas koji već dugo postoji;
+- „stari oglas”: agencija je ponovno objavila (osvježila) oglas objavljen prije početka
+  praćenja (Njuškalo, index.hr) – takvi stižu u završnom pregledu, a tjedni izvještaj ih broji
+  u stupcu „stari ✅⚠”;
 - označio si ga s 👎.
 
 Ako misliš da je trebao stići, pošalji Claudeu poveznicu.

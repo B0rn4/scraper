@@ -14,7 +14,8 @@ nijedan: zapamćeni oglasi zato se jednom ponovno otvaraju (reopen_once, vidi ru
 
 Popis je poredan po zadnjoj aktivnosti, a početni popis čita najviše 80 stranica: stariji
 oglasi koje agencija kasnije obnovi pojave se kao nepoznati. Objavljeni prije početka praćenja
-(postedTime) bilježe se bez poruke, kao na Njuškalu (13. 10.: 383 takva odjednom)."""
+(postedTime, ili broj oglasa do najvećeg na početku – obnova mijenja i postedTime) bilježe se
+bez poruke, kao na Njuškalu (13. 10.: 383 takva odjednom; 19. 10.: 189 poruka u tjednu)."""
 
 import json
 import re
@@ -178,11 +179,17 @@ class IndexOglasi(Source):
         if mode == FULL:
             return list(found.values())
         # Obnova starog oglasa (agencije obnavljaju i oglase stare godinama, katkad stotine odjednom)
-        # stavlja ga na vrh popisa: nepoznat oglas objavljen prije početka praćenja nije nov.
+        # stavlja ga na vrh popisa: nepoznat oglas objavljen prije početka praćenja nije nov. Obnova
+        # često mijenja i postedTime (19. 10.: 189 od 196 poruka u tjednu), pa odlučuje i broj
+        # oglasa – do najvećeg na početku praćenja (start_max_id) oglas je star (odluka korisnika
+        # 19. 10.: kao na Njuškalu, bez poruke, za završni pregled).
         start = _time(self.baseline_at)
         for x in found.values():
+            if x.source_id in known_ids:
+                continue
             posted = _time(x.published)
-            if start and posted and posted < start and x.source_id not in known_ids:
+            older = bool(self.start_max_id) and x.source_id.isdigit() and int(x.source_id) <= self.start_max_id
+            if older or (start and posted and posted < start):
                 x.extra["stari_oglas"] = True
         return self.open_details(found, known_ids, lambda x: parse_single(self._single(x.source_id), x), MAX_DETAILS)
 

@@ -451,6 +451,15 @@ def test_index_renewed_old_ad_is_not_new(monkeypatch):
     waiting = {x.source_id: x for x in src.deferred}
     assert waiting["1"].extra.get("stari_oglas") and "stari_oglas" not in new
 
+    # 19. 10.: obnova mijenja i postedTime – star je i oglas s brojem do najvećeg na početku praćenja.
+    renewed, fresh = index_item(5, 300_000), index_item(9, 290_000)
+    renewed["postedTime"] = fresh["postedTime"] = "2026-10-18T06:00:00Z"
+    http = FakeHttp([renewed, fresh], {"5": {"description": "Kuća.", "houseType": 1}, "9": {"description": "Kuća.", "houseType": 1}})
+    src = index_oglasi.IndexOglasi(http, Locator(), load_config()["kriteriji"])
+    src.baseline_at, src.start_max_id = "2026-10-04T16:58:25+02:00", 7
+    found = {x.source_id: x for x in src.fetch(INCREMENTAL, {"9999"}) + src.deferred}
+    assert found["5"].extra.get("stari_oglas") and "stari_oglas" not in found["9"].extra
+
 
 def test_realestatecroatia_detail_and_reopen():
     """realestatecroatia.com: broj parkirnih mjesta sa stranice oglasa; jednokratno ponovno
