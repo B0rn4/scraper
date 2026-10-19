@@ -50,7 +50,7 @@ class Tg:
         return self.next
 
 
-def _runs(tmp_path, monkeypatch, batches):
+def _runs(tmp_path, monkeypatch, batches, tg=None):
     """Pokretanja s lažnim izvorom (svaki oglas nosi svoj portal) i lažnim Telegramom."""
     import scraper.runner as runner_mod
 
@@ -67,7 +67,7 @@ def _runs(tmp_path, monkeypatch, batches):
             return []
 
     monkeypatch.setitem(runner_mod.ALL, "fake", Src)
-    tg = Tg()
+    tg = tg or Tg()
     for _ in range(len(batches)):
         r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
         r.cfg["izvori"] = {"fake": True}
@@ -296,6 +296,78 @@ def test_listing_from_initial_list_gets_notes_not_messages(tmp_path, monkeypatch
     state.close()
 
 
+def old(source, sid, **kw):
+    """Stari oglas (agencija ga je osvježila): zabilježi se tiho, bez poruke."""
+    x = land(source, sid, **kw)
+    x.extra["stari_oglas"] = True
+    return x
+
+
+def test_copy_of_silently_recorded_old_listing_is_not_new(tmp_path, monkeypatch):
+    """Odluka korisnika 19. 10.: kopija tiho zabilježenog starog oglasa s drugog portala je i
+    dalje stari oglas – ne stiže; novo s nje (bolja lokacija, "ne odgovara") je napomena za
+    završni pregled, kao kod oglasa iz početnog popisa."""
+    precise = land("vender", "2", lat=45.16, lon=14.55, priblizna_lokacija=False)
+    farm = land("burza", "4", subtype="Poljoprivredno zemljište", title="Zemljište Njivice")
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [old("oglasnik", "1")], [precise, farm]])
+    assert tg.listings == [] and tg.replies == []
+    state = State(tmp_path / "s.db")
+    assert state.get("oglasnik:1")["notified_at"].startswith("tiho:")
+    assert state.get("vender:2")["notified_at"] == "dup:oglasnik:1"
+    assert state.get("burza:4")["notified_at"] == "dup:oglasnik:1"
+    notes = {n["kopija"]: n for n in state.notes()["oglasnik:1"]}
+    assert notes["vender:2"]["retci"][0].startswith("🗺 U građevinskom području naselja") and not notes["vender:2"]["ne_odgovara"]
+    assert notes["burza:4"]["retci"] == ["⚠ prema ovom oglasu ne odgovara kriterijima: nije građevinsko (Poljoprivredno zemljište)"]
+    state.close()
+
+
+def test_cheaper_copy_of_old_listing_has_button_for_older_one(tmp_path, monkeypatch):
+    """Jeftinija kopija starog oglasa stiže (📉 Već viđen … sad jeftiniji), s gumbom za stariji
+    oglas: prvi nije imao svoju poruku (odluka korisnika 19. 10.)."""
+    from scraper.notify import listing_markup
+
+    class Recording(Tg):
+        def send_listing(self, x, d, headline=""):
+            self.sent = getattr(self, "sent", []) + [(x, headline)]
+            return super().send_listing(x, d, headline)
+
+    cheaper = land("nekretnine_hr", "6", price=110_000)
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [old("index_oglasi", "1")], [cheaper]],
+               Recording())
+    [(x, headline)] = tg.sent
+    assert x.key == "nekretnine_hr:6" and headline == "📉 Već viđen na index.hr/oglasi za 120.000 € – sad jeftiniji"
+    assert x.extra["stariji_oglas"] == {"url": "https://index_oglasi/1", "izvor": "index.hr/oglasi"}
+    rows = json.loads(listing_markup(x))["inline_keyboard"]
+    assert rows == [[{"text": "Otvori oglas", "url": "https://nekretnine_hr/6"}],
+                    [{"text": "Stariji oglas (index.hr/oglasi)", "url": "https://index_oglasi/1"}]]
+
+
+def test_price_drop_of_sent_listing_is_not_hidden_by_silent_twin(tmp_path, monkeypatch):
+    """Poslan oglas pojeftini na cijenu tiho zabilježenog starog oglasa s drugog portala: sniženje
+    stiže – cijenu tiho zabilježenog korisnik nije vidio."""
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [land("oglasnik", "1", price=130_000)],
+                                       [old("index_oglasi", "3")], [land("oglasnik", "1", price=120_000)]])
+    assert tg.listings == ["oglasnik:1", "oglasnik:1"]
+    state = State(tmp_path / "s.db")
+    assert state.get("oglasnik:1")["notified_price"] == 120_000
+    state.close()
+
+
+def test_copy_prefers_twin_with_own_message_over_silent_one(tmp_path, monkeypatch):
+    """Isti oglas poslan porukom i (kasnije) tiho zabilježen kao star na drugom portalu: treća
+    kopija je "isti kao" poslani i dopuna je odgovor na njegovu poruku, a ne napomena."""
+    precise = land("vender", "2", lat=45.16, lon=14.55, priblizna_lokacija=False)
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [land("oglasnik", "1")],
+                                       [old("index_oglasi", "3")], [precise]])
+    assert tg.listings == ["oglasnik:1"]
+    assert [r["reply_to"] for r in tg.replies] == [101] and tg.replies[0]["url"] == "https://vender/2"
+    state = State(tmp_path / "s.db")
+    assert state.get("index_oglasi:3")["notified_at"].startswith("tiho:")
+    assert state.get("vender:2")["notified_at"] == "dup:oglasnik:1"
+    assert state.notes() == {}
+    state.close()
+
+
 def test_send_reply_is_reply_with_button_and_quiet(monkeypatch):
     from scraper import notify
     from scraper.notify import Telegram
@@ -450,4 +522,28 @@ def test_earlier_rejected_copies_become_notes_once(tmp_path):
     assert state.duplicates_since("2000") == []        # tjedni izvještaj: odbijena, ne "preskočena"
     assert [state.get(k)["notified_at"] for k in ("index_oglasi:5", "burza:6", "index_oglasi:7")] == [None] * 3
     assert state.meta_get("popravak:napomene_popisa")
+    state.close()
+
+
+def test_earlier_rejected_copies_of_silent_old_listing_become_notes_once(tmp_path):
+    """Jednokratno (odluka 19. 10.): isto za tiho zabilježene stare oglase – a samo za njih
+    (napomene za oglase iz popisa već su popunjene 13. 10.)."""
+    r = Runner(tmp_path / "s.db", tmp_path, send=False)
+    state = State(tmp_path / "s.db")
+    for source in ("oglasnik", "burza", "index_oglasi"):
+        state.meta_set(f"baseline:{source}", "2026-10-04T16:58:25+02:00")
+    silent, listed = land("oglasnik", "1"), land("oglasnik", "2", area=900, price=150_000)
+    for x, mark in ((silent, "tiho:2026-10-07T10:00:00+02:00"), (listed, "zbirno:2026-10-04T16:58:25+02:00")):
+        state.upsert(x, Decision(PASS, jls="Omišalj"), "2026-10-04T16:58:25+02:00")
+        state.mark_notified(x.key, x.price, mark)
+    farm = Decision(REJECT, ["nije građevinsko (Poljoprivredno zemljište)"], jls="Omišalj")
+    for x in (land("burza", "4"), land("index_oglasi", "7", area=900, price=150_000)):
+        state.upsert(x, farm, "2026-10-08T09:00:00+02:00")
+    seen = dedupe.Seen(r.locator)
+    seen.add_state(state)
+    r._repair_list_notes(state, seen, silent=True)
+    assert list(state.notes()) == ["oglasnik:1"] and state.notes()["oglasnik:1"][0]["kopija"] == "burza:4"
+    assert state.get("burza:4")["notified_at"] == "dup:oglasnik:1"
+    assert state.get("index_oglasi:7")["notified_at"] is None      # kopija oglasa iz popisa: već 13. 10.
+    assert state.meta_get("popravak:napomene_tiho") and not state.meta_get("popravak:napomene_popisa")
     state.close()

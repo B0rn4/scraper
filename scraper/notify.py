@@ -348,8 +348,13 @@ MUTED_INFO = "nz-info"                         # oznaka bez radnje (poništenje 
 def listing_markup(listing: Listing) -> str:
     """Gumb ispod oglasa: otvori oglas. "Ne zanima me" je reakcija 👎 na poruku: Telegram je
     čuva do sljedećeg pokretanja, a pritisak gumba izgubi se ako ga bot ne preuzme odmah."""
-    row = [{"text": "Otvori oglas" if listing.source != "fina" else "Otvori Očevidnik", "url": safe_url(listing.url)}]
-    return json.dumps({"inline_keyboard": [row]})
+    rows = [[{"text": "Otvori oglas" if listing.source != "fina" else "Otvori Očevidnik", "url": safe_url(listing.url)}]]
+    # "📉 Već viđen na … – sad jeftiniji": i stariji oglas (prvi nije morao imati svoju poruku).
+    older = listing.extra.get("stariji_oglas") or {}
+    if older.get("url"):
+        label = f"Stariji oglas ({older['izvor']})" if older.get("izvor") else "Stariji oglas"
+        rows.append([{"text": label, "url": safe_url(older["url"])}])
+    return json.dumps({"inline_keyboard": rows})
 
 
 def _link_buttons(message: dict) -> list[dict]:

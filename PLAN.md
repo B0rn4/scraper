@@ -710,6 +710,22 @@ bez stotina poruka.
   - Tablica sad odvaja: ✅ ⚠ ❌ samo novi (broj veći od najvećeg na početku), „stari ✅⚠” osvježeni
     stari koji odgovaraju (bez istih kao već viđeni). Za tjedan do 19. 10.: index.hr 3/3/179 i 189
     starih, Njuškalo 1/0/178 i 255 starih.
+- **(19. 10.) Kopija starog oglasa nije nova** (korisnik: „Za mene je to i dalje stari oglas, ne
+  treba doći. Jedino što treba doći je obavijest o novim informacijama … poruka s novim
+  informacijama sadrži i link na stariji oglas … vrijedi za sve oglase”). Tiho zabilježen stari
+  oglas (početak praćenja bez popisa – realestatecroatia, burza; osvježen stari – Njuškalo, index.hr)
+  sad je „viđen” (`Seen.known`): kopija s drugog portala je „isti kao” i ne stiže, a novo s nje
+  postaje napomena za završni pregled, kao kod oglasa iz početnog popisa (`Seen.quiet_root`).
+  Od 5. 10. bilo je 78 takvih poruka: 72 stara index oglasa (utišana već istog jutra), 6 s drugih
+  portala. Jeftinija kopija i dalje stiže („📉 Već viđen … sad jeftiniji”), sad s gumbom „Stariji
+  oglas” (url u sažetku viđenih oglasa). Kad isti oglas ima i vlastitu poruku, dopuna je odgovor na
+  nju (prednost pred tiho zabilježenim). Sniženje već javljenog oglasa stiže i kad tiho zabilježen
+  blizanac ima istu cijenu (tu cijenu korisnik nije vidio). Uklonjen popravak od 8. 10.
+  (`_repair_silent_twins`: kopije tiho zabilježenih stižu). Jednokratno: napomene iz ranijih odbijenih kopija tiho zabilježenih
+  oglasa (`popravak:napomene_tiho`; proba na kopiji baza: GitHub 99, Redmi 77 – „nije građevinsko”,
+  kuća u nizu, dvojna kuća). Otvoreno: ostale novosti za oglase bez vlastite poruke (⚠ „ne
+  odgovara”, bolja lokacija) i dalje su samo napomene (odluka 13. 10.) – bilo bi ih ~6–16 poruka
+  dnevno, 103 od 106 redaka je ⚠ „ne odgovara”; čeka odluku korisnika.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

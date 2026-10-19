@@ -1,8 +1,8 @@
 """Već viđeni oglasi: isti oglas na drugom portalu ili ponovno objavljen pod novim brojem.
 
-Oglas je "isti" kao već poslani (pojedinačno ili u početnom popisu; tiho zabilježen –
-početak praćenja bez popisa, stari oglas ponovno objavljen – se ne broji, jer ga korisnik
-nije vidio) ako su
+Oglas je "isti" kao već viđeni – poslan pojedinačno ili u početnom popisu, ili tiho zabilježen
+kao star (početak praćenja bez popisa, stari oglas ponovno objavljen): kopija starog oglasa nije
+nova (odluka korisnika 19. 10.), za korisnika je i dalje stari oglas – ako su
 vrsta i grad/općina isti, površina se razlikuje najviše 2 % (barem 1 m²), naselja
 spomenuta u naslovu se ne razlikuju (Vrh ≠ Krk-Centar), a uz to:
 - cijena je ista do eura i površina do pola kvadrata – a kod okruglih brojeva
@@ -10,7 +10,7 @@ spomenuta u naslovu se ne razlikuju (Vrh ≠ Krk-Centar), a uz to:
 - cijena se razlikuje najviše 1 % i oglasi dijele naselje ili riječi iz naslova, ili
 - oba su "cijena na upit" (1 ili 100 €), a dijele naselje ili riječi iz naslova.
 Ako je novi oglas jeftiniji od svih istih viđenih (više od 1 %), ipak stiže, s
-napomenom. Pravilo je namjerno oprezno: kad nije sigurno, oglas stiže (dobru ponudu
+napomenom i gumbom za stariji oglas. Pravilo je namjerno oprezno: kad nije sigurno, oglas stiže (dobru ponudu
 je gore propustiti nego dobiti dvaput)."""
 
 import gzip
@@ -27,9 +27,10 @@ _GENERIC = set("""kuca kuce kucu prodaja prodaje prodajem obiteljska obiteljsku 
 zemljista gradevinsko gradevinska otok otoku pogled pogledom more mora moru okucnica okucnicom nova novo
 novogradnja vila vile vilu centar centru blizini blizina mirnoj lokaciji lokacija prilika odlicna odlican
 atraktivna atraktivno prekrasna prekrasan lijepa sobe soba garazom garaza bazen bazenom parcela teren""".split())
-# podaci, poruka: za dopunu s drugog portala (dopuna.py). Starija datoteka ih nema (zip ih izostavi).
+# podaci, poruka: za dopunu s drugog portala (dopuna.py); url: gumb za stariji oglas. Starija
+# datoteka ih nema (zip ih izostavi).
 FIELDS = ("key", "source", "kind", "jls", "price", "area", "title", "settlement", "notified_at", "notified_price",
-          "podaci", "poruka", "status")
+          "podaci", "poruka", "status", "url")
 _PLACE_WORDS: set[str] = set()   # riječi iz naziva naselja i gradova/općina (nisu opis nekretnine)
 
 
@@ -106,7 +107,7 @@ def same_property(new: dict, old: dict, cheaper_ok: bool = False) -> bool:
 def row(listing: Listing, decision: Decision) -> dict:
     return {"key": listing.key, "source": listing.source, "kind": listing.kind, "jls": decision.jls,
             "price": listing.price, "area": listing.area, "title": listing.title,
-            "settlement": listing.settlement, "notified_at": None, "notified_price": None}
+            "settlement": listing.settlement, "notified_at": None, "notified_price": None, "url": listing.url}
 
 
 class Seen:
@@ -123,19 +124,30 @@ class Seen:
             self.rows.setdefault((r["kind"], r["jls"]), []).append(r)
             self.by_key[r["key"]] = r
 
-    def delivered(self, r: dict, key: str) -> bool:
-        """Je li poruka o ovom oglasu stvarno stigla? Kopija "dup:K" ("isti kao K") vrijedi
-        samo ako je K (ili kopija od koje je K kopija…) poslan – a nije ako je to upravo
-        oglas `key` čije slanje nije uspjelo, K u viđenima nema ili je K samo tiho zabilježen."""
+    def _end_mark(self, r: dict, key: str) -> str:
+        """Oznaka na kraju lanca kopija "dup:K" ("isti kao K"); prazna kad lanac vodi do upravo
+        oglasa `key` (npr. njegovo slanje nije uspjelo) ili do oglasa kojeg u viđenima nema."""
         for _ in range(10):
             mark = r.get("notified_at") or ""
             if not mark.startswith("dup:"):
-                return bool(mark) and not mark.startswith("tiho:")   # tiho zabilježen: korisnik ga nije vidio
+                return mark
             target = mark[4:]
             if target == key or target not in self.by_key:
-                return False
+                return ""
             r = self.by_key[target]
-        return False
+        return ""
+
+    def delivered(self, r: dict, key: str) -> bool:
+        """Je li poruka o ovom oglasu stvarno stigla (pojedinačno ili u datoteci s popisom)? Tiho
+        zabilježen oglas korisnik nije vidio (npr. neposlana obavijest ipak stiže)."""
+        mark = self._end_mark(r, key)
+        return bool(mark) and not mark.startswith("tiho:")
+
+    def known(self, r: dict, key: str) -> bool:
+        """Je li oglas već viđen za pravilo kopija: poslan (pojedinačno ili u datoteci s popisom)
+        ili tiho zabilježen kao star (početak praćenja bez popisa, stari oglas ponovno objavljen).
+        Kopija takvog oglasa s drugog portala nije nov oglas (odluka korisnika 19. 10.)."""
+        return bool(self._end_mark(r, key))
 
     def root(self, key: str) -> dict | None:
         """Oglas čija je poruka stvarno poslana: kraj lanca kopija "dup:K"."""
@@ -154,11 +166,12 @@ class Seen:
         mark = (r or {}).get("notified_at") or ""
         return r if mark and not mark.startswith(("zbirno:", "tiho:", "dup:")) else None
 
-    def list_root(self, key: str) -> dict | None:
-        """Prvi oglas, ako je stigao samo u datoteci s popisom (početni popis, "N novih
-        oglasa"): dopuna se ne šalje, nego se pamti kao napomena za završni pregled."""
+    def quiet_root(self, key: str) -> dict | None:
+        """Prvi oglas bez vlastite poruke: samo u datoteci s popisom (početni popis, "N novih
+        oglasa") ili tiho zabilježen kao star. Dopuna se ne šalje, nego se pamti kao napomena
+        za završni pregled (odluke korisnika 13. i 19. 10.)."""
         r = self.root(key)
-        return r if ((r or {}).get("notified_at") or "").startswith("zbirno:") else None
+        return r if ((r or {}).get("notified_at") or "").startswith(("zbirno:", "tiho:")) else None
 
     def family(self, key: str) -> list[dict]:
         """Kopije (izravne i preko druge kopije) zabilježene kao "isti kao `key`"."""

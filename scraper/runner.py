@@ -56,6 +56,9 @@ REOPEN_TOTAL_SECONDS = 180  # i ukupno za sve izvore u pokretanju (pokretanje ne
 # nekoliko. Noć (8–9 sati bez čitanja) Njuškalu ne smije biti dovoljna za upozorenje.
 NEW_LISTING_DAYS = {"njuskalo": 0.5, "index_oglasi": 2, "nekretnine_hr": 3, "oglasnik": 3,
                     "realestatecroatia": 3, "burza": 5}
+# Jednokratne napomene iz ranijih odbijenih kopija (_repair_list_notes): oglasi iz datoteke s
+# popisom (13. 10.) i tiho zabilježeni stari oglasi (19. 10.).
+NOTES_REPAIR = {False: "popravak:napomene_popisa", True: "popravak:napomene_tiho"}
 
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
@@ -198,8 +201,6 @@ class Runner:
             self.log(f"Tiho zabilježeni odbijeni oglasi više se ne smatraju viđenima: {n}")
         # Rezerva se uspoređuje sa zadnjim pokretanjem glavnog okidača, ne sa svojim: inače bi za
         # ispada cron-job.org radila svakih 40 umjesto 20 minuta.
-        if not state.meta_get("popravak:tiho_duplikati"):
-            self._repair_silent_twins(state)
         last = state.meta_get("glavni_okidac") or state.meta_get("last_run")
         if reserve and last and self._age(last) is not None and self._age(last) < timedelta(minutes=RESERVE_MINUTES):
             self.log(f"Rezervno pokretanje: glavni okidač radi (zadnje pokretanje {last[11:16]}), ništa se ne radi.")
@@ -219,11 +220,12 @@ class Runner:
         self._prev_unsent = self._load_unsent(state)
         self._supplements = self._load_supplements(state)
         seen = self._load_seen(state)
-        if not state.meta_get("popravak:napomene_popisa") and self._seen_complete:
-            try:
-                self._repair_list_notes(state, seen)
-            except Exception as exc:  # noqa: BLE001 – napomene nisu nužne za obavijesti (ponovno sljedeći put)
-                self.log(f"Napomene iz ranijih kopija: GREŠKA {type(exc).__name__}: {exc}")
+        for silent in (False, True):
+            if not state.meta_get(NOTES_REPAIR[silent]) and self._seen_complete:
+                try:
+                    self._repair_list_notes(state, seen, silent)
+                except Exception as exc:  # noqa: BLE001 – napomene nisu nužne za obavijesti (ponovno sljedeći put)
+                    self.log(f"Napomene iz ranijih kopija: GREŠKA {type(exc).__name__}: {exc}")
         prices = self._load_prices(state)
         to_notify: list[tuple[Listing, Decision, str]] = []
         baseline: list[tuple[object, list[tuple[Listing, Decision]], str]] = []
@@ -552,38 +554,11 @@ class Runner:
                 "Javi Claudeu ovu poruku.") is not False:
             state.mark_alerted("mail")
 
-    def _repair_silent_twins(self, state: State) -> None:
-        """Jednokratno: oglasi označeni "isti kao" tiho zabilježen oglas (početak praćenja,
-        stari oglas) smatrali su se poslanima, a korisnik nijedan nije vidio. Oznaka se briše,
-        pa stižu kad se ponovno pojave."""
-        marks = {k: m or "" for k, m in state.conn.execute("SELECT key, notified_at FROM listings")}
-        if self._redmi_usable():
-            other = State(self.redmi_db)
-            marks.update({k: m or "" for k, m in other.conn.execute("SELECT key, notified_at FROM listings")
-                          if k not in marks})
-            other.close()
-
-        def ends_silent(key: str) -> bool:
-            for _ in range(10):
-                mark = marks.get(key, "")
-                if not mark.startswith("dup:"):
-                    return mark.startswith("tiho:")
-                key = mark[4:]
-            return False
-
-        keys = [k for k, m in state.conn.execute("SELECT key, notified_at FROM listings WHERE notified_at LIKE 'dup:%' "
-                                                 "AND status != ?", (REJECT,)) if ends_silent(m[4:])]
-        for k in keys:
-            state.conn.execute("UPDATE listings SET notified_at = NULL, notified_price = NULL WHERE key = ?", (k,))
-        state.meta_set("popravak:tiho_duplikati", self.stamp)
-        state.conn.commit()
-        if keys:
-            self.log(f"Isti kao tiho zabilježen oglas (nije poslan): {len(keys)} oglasa opet može stići")
-
-    def _repair_list_notes(self, state: State, seen: dedupe.Seen) -> None:
-        """Jednokratno (odluka korisnika 13. 10.): odbijene kopije oglasa iz datoteke s popisom
-        zabilježene prije napomena – razlog s drugog portala postaje napomena uz prvi oglas, kao
-        da je kopija stigla sada (bolji podaci tih kopija se ne znaju: u bazi su samo razlozi)."""
+    def _repair_list_notes(self, state: State, seen: dedupe.Seen, silent: bool = False) -> None:
+        """Jednokratno: odbijene kopije oglasa bez vlastite poruke zabilježene prije napomena – razlog
+        s drugog portala postaje napomena uz prvi oglas, kao da je kopija stigla sada (bolji podaci
+        tih kopija se ne znaju: u bazi su samo razlozi). Odluka korisnika 13. 10.: oglasi iz
+        datoteke s popisom; 19. 10. (silent): tiho zabilježeni stari oglasi."""
         baselines, done, n = {}, {}, 0
         rows = state.conn.execute("SELECT * FROM listings WHERE status = ? AND notified_at IS NULL "
                                   "AND jls IS NOT NULL AND area IS NOT NULL ORDER BY first_seen", (REJECT,)).fetchall()
@@ -597,8 +572,9 @@ class Runner:
             if not reasons:
                 continue
             row = {f: r[f] for f in ("key", "source", "kind", "jls", "price", "area", "title", "settlement")}
-            roots = [root for t in seen.twins(row, cheaper_ok=False) if seen.delivered(t, r["key"])
-                     and (root := seen.list_root(t["key"])) and root.get("status") != REJECT]
+            roots = [root for t in seen.twins(row, cheaper_ok=False) if seen.known(t, r["key"])
+                     and (root := seen.quiet_root(t["key"])) and root.get("status") != REJECT
+                     and root["notified_at"].startswith("tiho:" if silent else "zbirno:")]
             if not roots:
                 continue
             root = roots[0]
@@ -615,9 +591,10 @@ class Runner:
             seen.add({**row, "notified_at": f"dup:{root['key']}", "notified_price": r["price"], "status": REJECT,
                       "podaci": json.dumps({"razlozi": reasons}, ensure_ascii=False)})   # i u ovom pokretanju
             n += 1
-        state.meta_set("popravak:napomene_popisa", self.stamp)
+        state.meta_set(NOTES_REPAIR[silent], self.stamp)
         state.conn.commit()
-        self.log(f"Napomene iz ranijih kopija oglasa s popisa (ne odgovaraju prema drugom portalu): {n}")
+        which = "tiho zabilježenih starih oglasa" if silent else "oglasa s popisa"
+        self.log(f"Napomene iz ranijih kopija {which} (ne odgovaraju prema drugom portalu): {n}")
 
     def _reopen_waiting(self, state: State) -> int:
         """Koliko izvora ima što ponovno otvarati (red nije prazan ili je popravak nov)."""
@@ -1350,11 +1327,16 @@ class Runner:
 
     def _check_seen(self, state: State, seen: dedupe.Seen, x: Listing, d: Decision, old: dict | None,
                     headline: str) -> str | None:
-        """Isti oglas već viđen (drugi portal, ponovna objava)? Stiže samo ako je sad jeftiniji."""
+        """Isti oglas već viđen (drugi portal, ponovna objava)? Stiže samo ako je sad jeftiniji.
+        Viđen je i tiho zabilježen stari oglas (početak praćenja, osvježen stari): njegova kopija
+        za korisnika nije nov oglas (odluka 19. 10.), a novo s nje čeka završni pregled."""
         new = dedupe.row(x, d)
         # Kopija zabilježena kao "isti kao ovaj oglas" (izravno ili preko druge kopije) ne znači
         # da je poruka stigla: ako slanje nije uspjelo, sljedeće pokretanje ga ponovno šalje.
-        twins = [t for t in seen.twins(new) if seen.delivered(t, x.key)]
+        # Sniženje već javljenog oglasa zadržava samo poslani blizanac iste cijene: cijenu tiho
+        # zabilježenog korisnik nije vidio.
+        fresh = old is None or not old.get("notified_at")
+        twins = [t for t in seen.twins(new) if (seen.known if fresh else seen.delivered)(t, x.key)]
         if twins:
             def lowest(r):                   # cijena do 100 € je zamjena za "cijena na upit"
                 values = [v for v in (r["price"], r.get("notified_price")) if v and v > 100]
@@ -1372,19 +1354,23 @@ class Runner:
                 twins = []
         if twins:
             if not x.price or low is None or x.price >= low * (1 - dedupe.PRICE_TOLERANCE):
+                # Prvi oglas s vlastitom porukom ima prednost: dopuna je odgovor na nju. Bez nje
+                # (datoteka s popisom, tiho zabilježen) novo se pamti kao napomena (završni pregled).
+                first = min(twins, key=lambda r: (seen.message_root(r["key"]) is None, lowest(r) or float("inf")))
                 if old is None or not old.get("notified_at"):
                     # Zabilježen kao viđen i kad je red već postojao (npr. nakon poništenja
                     # "Ne zanima me"): inače se provjerava svaki put, a kasnije sniženje stiže
                     # kao "sad odgovara kriterijima".
-                    state.mark_notified(x.key, x.price, f"dup:{cheapest['key']}")
-                    # Prvi oglas samo u datoteci s popisom: novo se pamti kao napomena (završni pregled).
-                    if seen.message_root(cheapest["key"]) or seen.list_root(cheapest["key"]):
-                        self._queue_supplement(state, x, d, cheapest["key"])
-                self.log(f"Već viđen ({cheapest['key']}): {x.title[:60]}")
+                    state.mark_notified(x.key, x.price, f"dup:{first['key']}")
+                    if seen.message_root(first["key"]) or seen.quiet_root(first["key"]):
+                        self._queue_supplement(state, x, d, first["key"])
+                self.log(f"Već viđen ({first['key']}): {x.title[:60]}")
                 return None
             if old is None:
                 where = SOURCE_LABELS.get(cheapest["source"], cheapest["source"])
                 headline = f"📉 Već viđen na {where} za {fmt_eur(low)} – sad jeftiniji"
+                if cheapest.get("url"):          # gumb "Stariji oglas" (odluka korisnika 19. 10.)
+                    x.extra["stariji_oglas"] = {"url": cheapest["url"], "izvor": where}
             x.extra["blizanci"] = [t["key"] for t in twins]   # usporedba cijena: bez same sebe
         new["notified_at"], new["notified_price"] = self.stamp, x.price
         seen.add(new)  # drugi portal u istom pokretanju ne šalje isti oglas ponovno
@@ -1498,23 +1484,26 @@ class Runner:
             return
         try:
             # Prvi oglas i danas odbijen (npr. promijenjena pravila): ovaj ne donosi ništa novo.
-            # Prvi oglas samo u datoteci s popisom: napomena za završni pregled (poruka ima prednost).
-            roots = [r for t in seen.twins(dedupe.row(x, d), cheaper_ok=False) if seen.delivered(t, x.key)
-                     and (r := seen.message_root(t["key"]) or seen.list_root(t["key"])) and r.get("status") != REJECT]
+            # Prvi oglas bez vlastite poruke (datoteka s popisom, tiho zabilježen): napomena za
+            # završni pregled (poruka ima prednost).
+            roots = [r for t in seen.twins(dedupe.row(x, d), cheaper_ok=False) if seen.known(t, x.key)
+                     and (r := seen.message_root(t["key"]) or seen.quiet_root(t["key"])) and r.get("status") != REJECT]
             roots.sort(key=lambda r: seen.message_root(r["key"]) is None)
         except Exception as exc:  # noqa: BLE001 – dopuna ne smije zadržati obradu oglasa
             self.log(f"Dopuna ({x.key}): {type(exc).__name__}: {exc}")
             return
         if roots:
-            where = "poslan" if seen.message_root(roots[0]["key"]) else "u datoteci s popisom"
+            where = ("poslan" if seen.message_root(roots[0]["key"]) else "tiho zabilježen"
+                     if (roots[0].get("notified_at") or "").startswith("tiho:") else "u datoteci s popisom")
             self.log(f"Odbijen, a isti je {where} ({roots[0]['key']}): {x.title[:60]}")
             self._queue_supplement(state, x, d, roots[0]["key"], rejected=True)
 
     def _send_supplements(self, state: State, seen: dedupe.Seen, waiting: set[str]) -> None:
         """Dopune: kratka poruka kao odgovor na prvu, samo s onim što je novo (dopuna.news).
         Čekaju (najviše SUPPLEMENT_DAYS) dok prva poruka nije poslana, dok ISPU nije stigao
-        provjeriti bolju lokaciju (najviše dan) i kad Telegram ne primi poruku. Za oglas iz
-        datoteke s popisom isto novo postaje napomena uz njega (State.notes, završni pregled)."""
+        provjeriti bolju lokaciju (najviše dan) i kad Telegram ne primi poruku. Za oglas bez vlastite
+        poruke (datoteka s popisom, tiho zabilježen star oglas) isto novo postaje napomena uz njega
+        (State.notes, završni pregled)."""
         if not self._supplements:
             return
         oldest = (self.now - timedelta(days=SUPPLEMENT_DAYS)).isoformat(timespec="seconds")
@@ -1530,14 +1519,15 @@ class Runner:
             if since < oldest:
                 self.log(f"Dopuna ({x.key}) čeka više od {SUPPLEMENT_DAYS} dana – odbačena")
                 continue
-            listed = seen.list_root(item["za"])
+            listed = seen.quiet_root(item["za"])
             root = seen.message_root(item["za"]) or listed
             if root is None or root["key"] in waiting:      # prva poruka još nije stigla
                 keep.append(item)
                 continue
             first, reply = self._sent_info.get(root["key"], (None, None))
-            # Prvi oglas samo u datoteci s popisom (početni popis, "N novih oglasa" – i u ovom
-            # pokretanju): dopuna se ne šalje, novo se pamti uz njega (odluka korisnika 13. 10.).
+            # Prvi oglas bez vlastite poruke (početni popis, "N novih oglasa" – i u ovom pokretanju –
+            # ili tiho zabilježen star): dopuna se ne šalje, novo se pamti uz njega (odluke
+            # korisnika 13. i 19. 10.).
             listed = bool(listed) or (root["key"] in self._sent_info and not reply)
             family = seen.family(root["key"])
             if {x.key, root["key"], *(r["key"] for r in family)} & self.muted:

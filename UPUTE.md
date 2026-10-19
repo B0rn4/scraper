@@ -12,6 +12,8 @@ detalji su u README.md (kako sustav radi) i REDMI.md (postavljanje Redmija).
 - **Mail**: tjedni izvještaj ponedjeljkom ujutro i upozorenja kad nešto ne radi.
 - Noću (23–7 h) ništa se ne čita; što se objavi noću stiže u 7 h.
 - Isti oglas na više portala stiže jednom. Ponovno stiže samo ako je negdje jeftiniji.
+- Stari oglas zabilježen bez poruke (npr. stari oglas koji je agencija osvježila) ne stiže ni
+  kad se pojavi na drugom portalu – i dalje je stari oglas i čeka završni pregled.
 
 ## 2. Poruka oglasa, redak po redak
 
@@ -44,7 +46,7 @@ Primjer (zemljište u Matuljima):
 | 📐 / 🏘 | usporedba s drugim oglasima iste vrste i veličine: cijelo područje / naselje (medijan od 8 oglasa; s 3–7 oglasa samo raspon i broj) |
 | ✂️ | oglas spominje parcelaciju – stiže neovisno o cijeni i površini |
 | ⚠ | nešto treba provjeriti (oglas je ipak stigao) |
-| 📉 | snižena cijena (u naslovu poruke: stara → nova) |
+| 📉 | snižena cijena (u naslovu poruke: stara → nova); „📉 Već viđen na … – sad jeftiniji”: isti oglas je jeftiniji na drugom portalu, gumb „Stariji oglas” otvara raniji |
 | 🔄 | prije odbijen, sad odgovara (izmijenjen oglas) |
 | ➕ | dopuna: isti oglas na drugom portalu donosi nešto novo (vidi poglavlje 4) |
 
@@ -68,7 +70,8 @@ Primjer (zemljište u Matuljima):
 
 ## 3. Što možeš napraviti s porukom
 
-- **Otvori oglas** – gumb ispod poruke.
+- **Otvori oglas** – gumb ispod poruke. Kod „📉 Već viđen … sad jeftiniji” ispod je i gumb
+  **Stariji oglas** (isti oglas na portalu gdje je bio skuplji; često nije imao svoju poruku).
 - **Ne zanima me**: dugi pritisak na poruku → reakcija **👎**. Za taj oglas (i isti oglas
   na drugim portalima) više ništa ne stiže, ni sniženje. Obradi se u sljedećem pokretanju
   (do 20 min); ispod poruke se pojavi „🔕 Ne zanima me”.
@@ -87,9 +90,10 @@ Primjer (zemljište u Matuljima):
     odgovara (npr. poljoprivredno zemljište, naselje koje nije na popisu).
 
   Gumb vodi na oglas s novog portala. Dopuna je tiha (bez zvuka), osim kad ima ⚠.
-  👎 na dopunu znači isto kao na prvu poruku. Za oglase iz datoteke s popisom (početni popis,
-  „N novih oglasa”) dopuna se ne šalje: ono što drugi portal pokaže – i da prema njemu oglas
-  ne odgovara – pamti se uz oglas i bit će uz njega u završnom pregledu.
+  👎 na dopunu znači isto kao na prvu poruku. Za oglase bez vlastite poruke (početni popis,
+  „N novih oglasa”, stari oglas zabilježen bez poruke) dopuna se ne šalje: ono što drugi portal
+  pokaže – i da prema njemu oglas ne odgovara – pamti se uz oglas i bit će uz njega u
+  završnom pregledu. Ako je na drugom portalu jeftiniji, stiže „📉 Već viđen … sad jeftiniji”.
 - **„N novih oglasa – previše za pojedinačne poruke”**: datoteka s popisom (više od 30
   odjednom, npr. nakon prekida). Otvori je u pregledniku.
 - **📜 Natječaji**: prodaja nekretnina gradova, općina, PGŽ-a i države na našem području
@@ -220,7 +224,7 @@ Actions → **Planovi – preuzimanje** → naredba `lokacija`, u „adrese” z
 
 **Zašto nije stigao oglas koji vidim na portalu?** Najčešće:
 - odbijen je (cijena, površina, naselje, vrsta kuće, opis) – vidi se u preglednom izvještaju;
-- isti oglas već je stigao s drugog portala;
+- isti oglas već je stigao s drugog portala ili je na drugom portalu zabilježen kao stari oglas;
 - „stari oglas”: agencija je ponovno objavila (osvježila) oglas objavljen prije početka
   praćenja (Njuškalo, index.hr) – takvi stižu u završnom pregledu, a tjedni izvještaj ih broji
   u stupcu „stari ✅⚠”;

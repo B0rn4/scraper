@@ -1500,9 +1500,10 @@ def test_weekly_labels_redmi_health_rows(tmp_path):
 
 # --- jedanaesta runda: nijedan oglas koji odgovara ne smije se tiho izgubiti ---
 
-def test_silently_recorded_twin_is_not_delivered_and_repair(tmp_path):
-    """Tiho zabilježen oglas (početak praćenja, stari oglas) korisnik nije vidio: isti oglas s
-    drugog portala nije "već poslan". Jednokratni popravak briše takve oznake "isti kao"."""
+def test_silently_recorded_twin_is_known_but_not_delivered(tmp_path):
+    """Tiho zabilježen oglas (početak praćenja, stari oglas) korisnik nije vidio, pa poruka o njemu
+    nije "stigla" (neposlana obavijest ipak stiže). Ali je viđen: njegova kopija s drugog portala
+    nije nov oglas (odluka korisnika 19. 10.), a novo s nje čeka završni pregled (napomena)."""
     from scraper.dedupe import Seen
     from scraper.locations import Locator
 
@@ -1515,16 +1516,10 @@ def test_silently_recorded_twin_is_not_delivered_and_repair(tmp_path):
     for r in (silent, copy, sent):
         seen.add(r)
     assert not seen.delivered(silent, "x") and not seen.delivered(copy, "x") and seen.delivered(sent, "x")
-
-    r = Runner(tmp_path / "s.db", tmp_path, send=False)
-    state = State(tmp_path / "s.db")
-    for sid, mark in (("1", "tiho:2026-10-06"), ("2", "dup:t:1"), ("3", "2026-10-06"), ("4", "dup:t:3")):
-        state.upsert(listing(sid=sid), Decision(PASS, jls="Punat"), "t1")
-        state.conn.execute("UPDATE listings SET notified_at = ? WHERE key = ?", (mark, f"t:{sid}"))
-    r._repair_silent_twins(state)
-    marks = dict(state.conn.execute("SELECT key, notified_at FROM listings"))
-    assert marks["t:2"] is None and marks["t:4"] == "dup:t:3" and marks["t:1"].startswith("tiho:")
-    state.close()
+    assert seen.known(silent, "x") and seen.known(copy, "x") and seen.known(sent, "x")
+    assert not seen.known(copy, "njuskalo:1")              # lanac do samog oglasa: nije viđen
+    assert seen.quiet_root("index_oglasi:2") is silent and seen.message_root("index_oglasi:2") is None
+    assert seen.quiet_root("oglasnik:3") is None and seen.message_root("oglasnik:3") is sent
 
 
 def test_incomplete_read_keeps_since_for_next_run(tmp_path):

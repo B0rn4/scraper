@@ -294,7 +294,8 @@ class State:
         rows = self.conn.execute(
             "SELECT l.key, source, kind, jls, price, area, title, settlement, notified_at, notified_price, "
             # Za dopunu: što je poruka rekla i njen broj (odgovor na nju).
-            "p.info AS podaci, (SELECT MIN(message_id) FROM messages m WHERE m.key = l.key) AS poruka, status "
+            "p.info AS podaci, (SELECT MIN(message_id) FROM messages m WHERE m.key = l.key) AS poruka, status, "
+            "l.url "                                       # gumb za stariji oglas ("📉 Već viđen …")
             # I bez cijene ("cijena na upit"): isti oglas na upit s drugog portala ne smije stići ponovno.
             "FROM listings l LEFT JOIN podaci p ON p.key = l.key "
             "WHERE notified_at IS NOT NULL AND area IS NOT NULL AND jls IS NOT NULL"
