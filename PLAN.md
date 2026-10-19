@@ -248,6 +248,25 @@ bez stotina poruka.
      (GitHub i Redmi), `report.entry(x, d, notes)` (redak ➕ s poveznicom na kopiju). Oglas s
      napomenom „ne odgovara” ostaje u pregledu, s ⚠ – ne izostavlja se. Pregled uz to može
      isti oglas povezati i među svježe pročitanima (napomene čuvaju i ono čega više nema).
+     **Odluka 19. 10.** (zamjenjuje „ne izostavlja se”; pregled je novi početni popis nakon
+     resetiranja oglasa): (1) svaki oglas ocjenjuje se po današnjim pravilima – početni popis
+     4. 10. ocijenjen je pravilima prvog dana, a od 3.605 oglasa iz njega 1.655 je kasnije
+     preocijenjeno kao „ne odgovara” (popis naselja, gradovi/općine, bazen, opis); stari oglas
+     koji se otada nije ponovno pročitao ima staru ocjenu (npr. realestatecroatia „Poljoprivredno
+     zemljište, Čižići”, ocijenjen 6. 10.); (2) postojeći podaci se koriste: oglas istog broja i
+     cijene ne otvara se ponovno (spremljeni zaključci: vrsta, upozorenja iz opisa, napomene),
+     otvaraju se samo novi i promijenjeni (opis se ne čuva – kad se pravila za opis promijene,
+     treba ga ponovno otvoriti); (3) kopije istog oglasa sa svih portala (i iz početnih čitanja,
+     i stari osvježeni) spajaju se u jedan redak s poveznicama na sve portale; (4) korisnik:
+     oglas za koji neki portal pokaže da ne odgovara ne ulazi među one koji prolaze. Kako
+     (prijedlog 19. 10.): izostavlja se kad je razlog iz polja portala ili naslova (vrsta kuće,
+     vrsta zemljišta, naselje) i veza je čvrsta (cijena i površina iste, ne „na upit”); slabija
+     veza („na upit”: samo površina i mjesto) ili portali koji se ne slažu (samostojeća /
+     dvojna) – ostaje s ⚠ i razlogom; izostavljeni su u sklopljenom odjeljku na dnu (razlog i
+     poveznice), da se ništa ne izgubi bez traga. Na podacima 19. 10.: od 4.446 oglasa koji
+     odgovaraju (obje baze, bez 👎) 761 ima kopiju koja ne odgovara – 343 dvojna / u nizu, 208
+     isključeno naselje, 178 nije građevinsko, 26 bazen, 6 ruševina; u 538 razlog je iz polja
+     portala. Pregledani primjeri: ista cijena i površina, često isti naslov iste agencije.
 4. **(gotovo 5. 10.)** Natječaji za prodaju nekretnina (`scraper/tenders.py`, popis
    stranica u `data/natjecaji.yaml`), jednom dnevno (prvo pokretanje od 7 h):
    - 13 gradova/općina + Matulji: WordPress tražilica (wp-json) ili RSS tražilica
