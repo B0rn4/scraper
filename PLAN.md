@@ -259,7 +259,7 @@ bez stotina poruka.
      treba ga ponovno otvoriti); (3) kopije istog oglasa sa svih portala (i iz početnih čitanja,
      i stari osvježeni) spajaju se u jedan redak s poveznicama na sve portale; (4) korisnik:
      oglas za koji neki portal pokaže da ne odgovara ne ulazi među one koji prolaze. Kako
-     (prijedlog 19. 10.): izostavlja se kad je razlog iz polja portala ili naslova (vrsta kuće,
+     (odluka korisnika 19. 10.): izostavlja se kad je razlog iz polja portala ili naslova (vrsta kuće,
      vrsta zemljišta, naselje) i veza je čvrsta (cijena i površina iste, ne „na upit”); slabija
      veza („na upit”: samo površina i mjesto) ili portali koji se ne slažu (samostojeća /
      dvojna) – ostaje s ⚠ i razlogom; izostavljeni su u sklopljenom odjeljku na dnu (razlog i
@@ -267,6 +267,12 @@ bez stotina poruka.
      odgovaraju (obje baze, bez 👎) 761 ima kopiju koja ne odgovara – 343 dvojna / u nizu, 208
      isključeno naselje, 178 nije građevinsko, 26 bazen, 6 ruševina; u 538 razlog je iz polja
      portala. Pregledani primjeri: ista cijena i površina, često isti naslov iste agencije.
+     **Nakon resetiranja** (odluka korisnika 19. 10.): novo s drugog portala za oglas bez vlastite
+     poruke (novi početni popis, datoteka „N novih oglasa”) stiže kao poruka s poveznicom na
+     stariji oglas (gumb „Stariji oglas”, kao kod „📉 Već viđen”), a ne kao napomena. Do
+     resetiranja ostaju napomene: sada bi to bilo 6–16 poruka dnevno, gotovo sve ⚠ „ne odgovara”
+     za oglase koje završni pregled ionako izostavlja. Pravilo „stari oglas” prestaje s pregledom
+     (odluka 7. 10.), pa tiho zabilježenih starih oglasa nakon resetiranja više nema.
 4. **(gotovo 5. 10.)** Natječaji za prodaju nekretnina (`scraper/tenders.py`, popis
    stranica u `data/natjecaji.yaml`), jednom dnevno (prvo pokretanje od 7 h):
    - 13 gradova/općina + Matulji: WordPress tražilica (wp-json) ili RSS tražilica
@@ -742,9 +748,10 @@ bez stotina poruka.
   blizanac ima istu cijenu (tu cijenu korisnik nije vidio). Uklonjen popravak od 8. 10.
   (`_repair_silent_twins`: kopije tiho zabilježenih stižu). Jednokratno: napomene iz ranijih odbijenih kopija tiho zabilježenih
   oglasa (`popravak:napomene_tiho`; proba na kopiji baza: GitHub 99, Redmi 77 – „nije građevinsko”,
-  kuća u nizu, dvojna kuća). Otvoreno: ostale novosti za oglase bez vlastite poruke (⚠ „ne
-  odgovara”, bolja lokacija) i dalje su samo napomene (odluka 13. 10.) – bilo bi ih ~6–16 poruka
-  dnevno, 103 od 106 redaka je ⚠ „ne odgovara”; čeka odluku korisnika.
+  kuća u nizu, dvojna kuća). Ostale novosti za oglase bez vlastite poruke (⚠ „ne odgovara”,
+  bolja lokacija) do resetiranja ostaju napomene (odluka 13. 10.; bilo bi ~6–16 poruka dnevno,
+  103 od 106 redaka ⚠ „ne odgovara”); **odluka korisnika 19. 10.:** nakon resetiranja (završni
+  pregled) stižu kao poruka s poveznicom na stariji oglas (vidi Završni pregled).
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
