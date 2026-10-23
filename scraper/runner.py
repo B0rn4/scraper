@@ -14,7 +14,7 @@ from zoneinfo import ZoneInfo
 
 import yaml
 
-from . import dedupe, dopuna, planwatch, report, risks, tenders, watch
+from . import dedupe, dopuna, planwatch, popis_polja, report, risks, tenders, watch
 from .ispu import APPROX_RADIUS_M, Ispu, check_land, gp_text, heritage_warning
 from .plans import Plans
 from .prices import MAX_AGE_DAYS, PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
@@ -209,6 +209,11 @@ class Runner:
         if not reserve:
             state.meta_set("glavni_okidac", self.stamp)
         self._main_trigger(state, reserve)
+        try:
+            popis_polja.save(state)            # revizija polja (Redmi: Njuškalo)
+            state.conn.commit()
+        except Exception as exc:  # noqa: BLE001 – popis nije nužan za rad
+            self.log(f"Popis polja: GREŠKA {type(exc).__name__}: {exc}")
         self._heartbeat(state)
         self._mail_health(state)
         try:

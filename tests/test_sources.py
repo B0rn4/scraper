@@ -1584,3 +1584,28 @@ def test_strip_contacts_croatian_formats():
         assert strip_contacts(f"Tel {phone}.") == "Tel [telefon].", phone
     assert strip_contacts("ivan(at)gmail.com, ivan.horvat [at] gmail.com") == "[e-adresa], [e-adresa]"
     assert strip_contacts("k.č. 2345/12 2345/13 k.o. Vrh, 0.523, 09.10.2026.") == "k.č. 2345/12 2345/13 k.o. Vrh, 0.523, 09.10.2026."
+
+
+def test_field_census_records_njuskalo_fields(tmp_path):
+    """Revizija 23. 10.: Redmi bilježi nazive polja sa stranica Njuškala (GitHub do njih ne dolazi)
+    u meta "popis_polja:njuskalo:VRSTA", najviše MAX_PAGES stranica po vrsti."""
+    import json
+
+    from scraper import popis_polja
+    from scraper.db import State
+    from scraper.models import Listing
+    from scraper.sources import njuskalo
+
+    popis_polja._seen.clear()
+    state = State(tmp_path / "s.db")
+    for _ in range(2):
+        njuskalo.parse_detail(read("njuskalo_kuca_oglas.html.gz"), Listing("njuskalo", "1", "u", "Kuća", HOUSE, price=1))
+    popis_polja.save(state)
+    data = json.loads(state.meta_get("popis_polja:njuskalo:kuca"))
+    assert data["stranica"] == 2 and data["polja"]["tip kuće"] == {"n": 2, "primjeri": ["Samostojeća"]}
+    assert data["polja"]["svojstvo: Gradski vodovod"]["n"] == 2 and not popis_polja._seen
+    state.meta_set("popis_polja:njuskalo:kuca", json.dumps({"stranica": popis_polja.MAX_PAGES, "polja": {}}))
+    njuskalo.parse_detail(read("njuskalo_kuca_oglas.html.gz"), Listing("njuskalo", "1", "u", "Kuća", HOUSE, price=1))
+    popis_polja.save(state)
+    assert json.loads(state.meta_get("popis_polja:njuskalo:kuca")) == {"stranica": popis_polja.MAX_PAGES, "polja": {}}
+    state.close()

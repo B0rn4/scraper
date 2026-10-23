@@ -4,7 +4,7 @@ import re
 import unicodedata
 
 from . import parking, prikljucci, risks
-from .locations import LocationResult, Locator
+from .locations import LocationResult, Locator, other_county
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
 from .text import areas_in_text, fmt_eur, fmt_m2, fold
 
@@ -348,6 +348,11 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
             county=listing.county,
             text=" ".join(filter(None, [listing.location_text, listing.title])),
         )
+    county = other_county(listing.title) if loc.included else None
+    if county:
+        # Mjesto s portala je naše, a naslov kaže drugu županiju (burza 63926: mjesto Matulji,
+        # naslov "Jovići (Zadarska županija)") – odluka korisnika 23. 10.: lokacija nesigurna.
+        loc = LocationResult(loc.jls, True, f"{loc.evidence}, a naslov kaže „{county}”", ambiguous=True)
     jls_name = loc.jls.name if loc.jls else ""
     if loc.included is False:
         reasons.append(f"lokacija nije na popisu ({jls_name or loc.evidence})")

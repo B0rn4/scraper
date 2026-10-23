@@ -22,7 +22,7 @@ import time
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
-from .. import prikljucci
+from .. import popis_polja, prikljucci
 from ..browser import Browser
 from ..models import HOUSE, LAND, Listing
 from ..text import areas_in_text, fmt_eur, fmt_m2, fold, parse_number
@@ -230,6 +230,8 @@ def parse_detail(page: str, listing: Listing) -> None:
         listing.location_text = fields["lokacija"]
     desc = re.search(r'<div class="ClassifiedDetailDescription-text"[^>]*>(.*?)</div>', page, re.S)
     groups = [_text(x) for x in re.findall(r'<li class="ClassifiedDetailPropertyGroups-groupListItem">(.*?)</li>', page, re.S)]
+    # Revizija 23. 10.: koja polja Njuškalo daje (GitHub do njega ne dolazi; vidi popis_polja).
+    popis_polja.record("njuskalo", listing.kind, {**fields, **{f"svojstvo: {g.split(':')[0].strip()}": g for g in groups}})
     text = _text(re.sub(r"<br\s*/?>", "\n", desc.group(1))) if desc else ""
     listing.description = "\n".join(filter(None, [text, "; ".join(groups)]))[:5000]
     coords = re.search(r'"coordinates":\{"latitude":([-\d.]+),"longitude":([-\d.]+)\},"isApproximateLocationOnMap":(\w+)', page)

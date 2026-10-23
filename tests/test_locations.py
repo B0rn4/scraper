@@ -98,3 +98,25 @@ def test_title_naming_other_town_makes_location_uncertain():
                        ("Rab", "Kuća u Loparu")):
         r = loc.resolve(municipality=muni, county="Primorsko-goranska", text=text)
         assert not r.ambiguous and r.jls.name == muni, text
+
+
+def test_title_naming_other_county_makes_location_uncertain():
+    """burza 63926 (23. 10.): mjesto s portala "Matulji", naslov "Jovići (Zadarska županija)" –
+    odluka korisnika: ⚠ "lokacija nesigurna". Naša županija i "pogled na Istru" nisu to."""
+    from scraper.filters import evaluate
+    from scraper.locations import other_county
+    from scraper.models import LAND, Listing
+    from scraper.runner import load_config
+
+    assert other_county("Jovići (Zadarska županija)") == "Zadarska županija"
+    assert other_county("ŠIBENSKO-KNINSKA ŽUPANIJA, kuća") == "Šibensko-kninska županija"
+    assert other_county("Kuća, Primorsko-goranska županija") is None and other_county("Pogled na Istru") is None
+    cfg = load_config()["kriteriji"]
+    x = Listing("burza", "63926", "u", "Jovići (Zadarska županija)", LAND, subtype="Građevinsko zemljište",
+                price=65_000, area=1031, settlement="Matulji", location_text="Matulji")
+    x.extra["samo_pgz"] = True
+    d = evaluate(x, cfg, Locator(), None)
+    assert d.status == "upozorenje" and not d.reasons
+    assert any(w.startswith("lokacija nesigurna") and w.endswith("a naslov kaže „Zadarska županija”") for w in d.warnings)
+    x.title = "Građevinsko zemljište, Primorsko-goranska županija"
+    assert not any(w.startswith("lokacija nesigurna") for w in evaluate(x, cfg, Locator(), None).warnings)

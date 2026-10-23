@@ -764,6 +764,14 @@ bez stotina poruka.
   jednom se ponovno otvaraju i tiho ocjenjuju (`reopen_once = "polja-2026-10"`, `Burza.reopen`).
   Usput: „gradilište” u naslovu / vrsti je građevinsko zemljište (bez ⚠ „vrsta nije navedena”);
   poljoprivredno koje u opisu spominje gradilište ostaje odbijeno.
+- **(23. 10.) Naslov s drugom županijom → ⚠ „lokacija nesigurna”** (odluka korisnika; burza 63926:
+  mjesto s portala „Matulji”, naslov „Jovići (Zadarska županija)” – prolazio je). Samo s riječju
+  „županija” (`locations.other_county`; „pogled na Istru” nije to), i samo kad je mjesto s
+  portala naše; oglas stiže s ⚠.
+- **(23. 10.) Revizija 2: tablice svih portala** (korisnik: „pogledaj sve tablice svih relevantnih
+  portala da vidimo propuštamo li još nešto”). Alat `polja:` sad i za burzu; Njuškalo: Redmi pri
+  čitanju bilježi nazive polja i svojstava (do 8 primjera, bez opisa i kontakata) u meta
+  `popis_polja:njuskalo:VRSTA` (`scraper/popis_polja.py`, najviše 80 stranica po vrsti).
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

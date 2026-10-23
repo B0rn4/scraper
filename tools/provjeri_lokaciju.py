@@ -9,7 +9,7 @@ portala ni do ISPU-a; rezultat ide na granu debug (planovi/lokacije/).
 index: podaci o lokaciji iz index.hr API-ja (koordinate, isPreciseLocation, sva polja s lokacijom);
 index-uzorak: N najnovijih oglasa kuća i zemljišta u PGŽ-u – dijele li neprecizni oglasi istog
 mjesta iste koordinate (središte mjesta) ili svaki ima svoje (približna lokacija oglasa).
-polja: koja polja daju stranice oglasa (IZVOR: nekretnine, rc, index, oglasnik, vender; IZVOR-zemljista
+polja: koja polja daju stranice oglasa (IZVOR: nekretnine, rc, index, oglasnik, vender, burza; IZVOR-zemljista
 samo zemljišta), N oglasa po vrsti: naziv polja, u koliko oglasa ga ima i do 40 kratkih primjera vrijednosti – bez opisa,
 naslova, adresa, slika i podataka o oglašivaču (repozitorij je javan). rc: i dijele li oglasi istog
 mjesta koordinate s karte (središte mjesta ili točna oznaka).
@@ -326,6 +326,17 @@ def field_sample(http: Http, source: str, n: int) -> dict:
             records.append({"property_meta": x.get("property_meta"),
                             "pojmovi": {t.get("taxonomy"): t.get("name") for t in terms if t.get("taxonomy") != "property_feature"},
                             "znacajke": [t.get("name") for t in terms if t.get("taxonomy") == "property_feature"]})
+    elif source == "burza":
+        from scraper.sources import burza
+        for slug, kind in burza.KINDS:
+            if land_only and kind != LAND:
+                continue
+            ads = []
+            for page in (1, 2):
+                ads += burza.parse_list(http.get(f"{burza.BASE}/oglasi/{slug}/{burza.REGION}"
+                                                 + (f"?stranica={page}" if page > 1 else "")).text, kind)
+            for x in ads[:n]:
+                records.append({"vrsta": kind, "polja": burza.parse_features(http.get(x.url).text)})
     else:
         return {"greska": f"nepoznat izvor {source}"}
     out = census(records)

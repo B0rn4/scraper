@@ -87,6 +87,27 @@ class LocationResult:
     ambiguous: bool = False
 
 
+# Druge županije (bez naše i Grada Zagreba), kako ih fold() zapiše → naziv za poruku.
+_OTHER_COUNTIES = {
+    "zagreback": "Zagrebačka", "krapinsko zagorsk": "Krapinsko-zagorska", "sisacko moslavack": "Sisačko-moslavačka",
+    "karlovack": "Karlovačka", "varazdinsk": "Varaždinska", "koprivnicko krizevack": "Koprivničko-križevačka",
+    "bjelovarsko bilogorsk": "Bjelovarsko-bilogorska", "licko senjsk": "Ličko-senjska",
+    "viroviticko podravsk": "Virovitičko-podravska", "pozesko slavonsk": "Požeško-slavonska",
+    "brodsko posavsk": "Brodsko-posavska", "zadarsk": "Zadarska", "osjecko baranjsk": "Osječko-baranjska",
+    "sibensko kninsk": "Šibensko-kninska", "vukovarsko srijemsk": "Vukovarsko-srijemska",
+    "splitsko dalmatinsk": "Splitsko-dalmatinska", "istarsk": "Istarska",
+    "dubrovacko neretvansk": "Dubrovačko-neretvanska", "medimursk": "Međimurska",
+}
+_OTHER_COUNTY = re.compile(r"\b(" + "|".join(_OTHER_COUNTIES) + r")\w*\s+zupanij")
+
+
+def other_county(text: str) -> str | None:
+    """Druga županija napisana u tekstu ("Jovići (Zadarska županija)") ili None. Samo s riječju
+    "županija": "pogled na Istru" ne znači da je nekretnina u Istri."""
+    m = _OTHER_COUNTY.search(fold(text or ""))
+    return f"{_OTHER_COUNTIES[m.group(1)]} županija" if m else None
+
+
 PASS_, WARN_, REJECT_ = "prolazi", "upozorenje", "odbijen"
 REASONS = ("daleko od mora", "daleko od Rijeke", "grad Rijeka")
 _DECISIONS = {"prolaz": PASS_, "upozorenje": WARN_, "upozorenje da je rijeka": WARN_, "odbijen": REJECT_}

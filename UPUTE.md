@@ -235,6 +235,11 @@ Ako misliš da je trebao stići, pošalji Claudeu poveznicu.
 **Stiže li i kad je cijena „na upit”?** Da, s procjenom prema medijanu u naselju (⚠), osim
 luksuznih (vila, bazen…) i golemih kuća.
 
+**Što znači ⚠ „lokacija nesigurna”?** Mjesto upisano na portalu i naslov oglasa se ne slažu: naslov
+kaže „u <drugom gradu ili općini>” (npr. polje „Rijeka”, naslov „Kuća u Kastvu”) ili spominje
+drugu županiju (npr. polje „Matulji”, naslov „Jovići (Zadarska županija)”). Oglas stiže, a
+lokaciju provjeri na karti ili u opisu.
+
 **Što s istekom oglasa na Njuškalu?** Oglas koji je u međuvremenu istekao stiže s
 upozorenjem „oglas je istekao” – prodavatelj je obično i dalje dostupan.
 
