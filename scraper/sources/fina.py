@@ -37,6 +37,10 @@ _STRUCTURE = re.compile(r"\bkuc[aeiu]\b|obiteljsk\w* kuc|\bstan\b|\bstana\b|stam
 _REGION_COURT = re.compile(r"\bu (rijeci|crikvenici)\b")
 _OTHER_AREA_SERVICE = re.compile(r"stalna sluzba u (rabu|malom losinju|delnicama)")
 _COMMERCIAL = re.compile(r"trgovack")
+# Napomena uz predmet prodaje: nekretnina nije slobodna ("U nekretnini stanuje ovršenik").
+_OCCUPIED = re.compile(r"stanuje|nastanjen|\bzivi\b|koristi|u posjedu|nije slobodn|zakup|najam|iznajmljen")
+_FREE = re.compile(r"(?<!nije )\bslobodn|\bnitko\b|\bne (stanuje|zivi|koristi)")
+_ROUNDS = {"prva": "prva", "druga": "druga", "treca": "treća", "cetvrta": "četvrta", "peta": "peta"}
 
 
 def _date(value: str):
@@ -187,6 +191,14 @@ class Fina(Source):
         if len(areas) > 1:
             warnings.append(f"više površina u opisu: {', '.join(f'{a:,.0f}'.replace(',', '.') for a in areas)} m² – uzeta najveća")
 
+        # Revizija 23. 10.: stupci CSV-a koji se dosad nisu koristili.
+        group = next((v for k, v in row.items() if (k or "").startswith("Složenost")), "") or ""
+        if fold(group).startswith("skupni"):
+            warnings.append("skupni predmet prodaje – cijena je za više nekretnina zajedno")
+        note = " ".join((row.get("Napomena uz detalje predmeta prodaje") or "").split())
+        if note and _OCCUPIED.search(fold(note)) and not _FREE.search(fold(note)):
+            warnings.append(f"napomena uz predmet prodaje: „{note if len(note) <= 150 else note[:147] + '…'}”")
+        auction = _ROUNDS.get(fold(row.get("Oznaka EJD") or ""), "")
         details = [
             ("Nadležno tijelo", court),
             ("Poslovni broj spisa", row.get("Poslovni broj spisa")),
@@ -197,6 +209,9 @@ class Fina(Source):
             ("Završetak nadmetanja", row.get("Datum i vrijeme završetka nadmetanja")),
             ("Jamčevina", row.get("Iznos jamčevine")),
             ("Razgledavanje", row.get("Razgledavanje")),
+            ("Dražba", f"{auction} e-dražba" if auction else ""),
+            ("Predmet prodaje", group),
+            ("Napomena", note),
         ]
         detail_text = "\n".join(f"{k}: {v}" for k, v in details if v)
         ident = "|".join([court, row.get("Poslovni broj spisa") or "", row.get("ID nadmetanja") or "", opis[:200]])
@@ -215,7 +230,7 @@ class Fina(Source):
             location_text="; ".join(f"k.o. {k}" for k in ko_names),
             description=f"{opis}\n\n{detail_text}",
             extra={"warnings": warnings, "reject": reject, "location_note": location_note, "ukupna_cijena": True,
-                   "sud": court, "spis": row.get("Poslovni broj spisa") or ""},
+                   "sud": court, "spis": row.get("Poslovni broj spisa") or "", "drazba": auction},
         )
 
     def search_links(self):

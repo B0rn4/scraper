@@ -69,6 +69,28 @@ def row(court, opis, price="90000.00"):
             "Vrsta predmeta prodaje": "nekretnina", "Početna cijena za nadmetanje": price}
 
 
+def test_fina_round_occupancy_and_group_lot(fina):
+    """Revizija 23. 10.: stupci CSV-a "Oznaka EJD" (koja dražba), "Napomena uz detalje predmeta
+    prodaje" (stanuje li tko) i "Složenost PP" (skupni predmet: cijena za više nekretnina)."""
+    from scraper.models import Decision
+    from scraper.notify import format_listing
+
+    r = row("Općinski sud u Crikvenici, Stalna služba u Krku",
+            "Građevinsko zemljište, k.č. 1234, k.o. Punat, površine 620 m2")
+    r.update({"Oznaka EJD": "Druga", "Napomena uz detalje predmeta prodaje": "U nekretnini stanuje ovršenik.",
+              "Složenost PP / opseg imovine": "Skupni predmet prodaje"})
+    x = fina.to_listing(r)
+    assert x.extra["drazba"] == "druga" and "Dražba: druga e-dražba" in x.description
+    assert "skupni predmet prodaje – cijena je za više nekretnina zajedno" in x.extra["warnings"]
+    assert "napomena uz predmet prodaje: „U nekretnini stanuje ovršenik.”" in x.extra["warnings"]
+    assert "⚖ Općinski sud u Crikvenici, Stalna služba u Krku Ovr-1/2026 · druga dražba" in format_listing(
+        x, Decision("prolazi", jls="Punat"), "", 4000)
+    for note in ("Nekretnina je slobodna od osoba i stvari.", "U nekretnini nitko ne stanuje.",
+                 "Nadležno tijelo nije dostavilo"):
+        r.update({"Napomena uz detalje predmeta prodaje": note, "Složenost PP / opseg imovine": "Pojedinačni predmet prodaje"})
+        assert not any("napomena" in w or "skupni" in w for w in fina.to_listing(r).extra["warnings"]), note
+
+
 def test_fina_regional_court_and_cadastral(fina):
     x = fina.to_listing(row("Općinski sud u Crikvenici, Stalna služba u Krku",
                             "Građevinsko zemljište, k.č. 1234, k.o. Punat, površine 620 m2"))
@@ -909,6 +931,26 @@ def test_burza_house_fields_from_table():
     only = Listing("burza", "2", "u", "Kuća", HOUSE, price=1)
     burza.parse_detail(page.replace("<li>Garaža</li>", "<li>Spremište</li>"), only)
     assert only.extra["parking"] == "2"                                   # "🚗 parkirnih mjesta: 2"
+
+
+def test_index_land_use_and_internet():
+    """index.hr "Namjena zemljišta" (landUse; nazivi iz ui-config: 1 komercijalno, 2 stambeno,
+    3 ostalo) i priključak internet."""
+    from scraper.filters import evaluate
+    from scraper.models import Listing
+    from scraper.sources import index_oglasi
+
+    x = Listing("index_oglasi", "1", "u", "Građevinsko zemljište Punat", LAND, price=150_000, area=600,
+                municipality="Punat", settlement="Punat")
+    index_oglasi.parse_single({"data": [{"description": "Zemljište.", "landType": 1, "landUse": 1, "internet": True,
+                                         "cityWaterSupply": True}]}, x)
+    assert x.extra["namjena"] == "Komercijalno" and x.extra["prikljucci"] == ["voda", "internet"]
+    d = evaluate(x, load_config()["kriteriji"], Locator(), None)
+    assert "namjena prema oglasu: Komercijalno – provjeri smije li se graditi kuća" in d.warnings
+    y = Listing("index_oglasi", "2", "u", "Građevinsko zemljište Punat", LAND, price=150_000, area=600)
+    index_oglasi.parse_single({"data": [{"description": "Zemljište.", "landType": 1, "landUse": 2}]}, y)
+    assert y.extra["namjena"] == "Stambeno"
+    assert not any(w.startswith("namjena") for w in evaluate(y, load_config()["kriteriji"], Locator(), None).warnings)
 
 
 def test_gradiliste_is_building_land():

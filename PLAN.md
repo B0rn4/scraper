@@ -779,9 +779,13 @@ bez stotina poruka.
   - burza: uz tablicu od istog dana i kvadratura kuće i okućnice, broj parkirnih mjesta, zadnja
     adaptacija, stanje („Starina” → za obnovu), pravni status pristupa („pravo služnosti”),
     čisto vlasništvo (→ vlasnički list); ponovno otvaranje `polja2-2026-10`.
-  - index.hr: i polje `internet` (priključak); namjena zemljišta (`landUse` 1–3) još bez naziva
-    šifri (ui-config vraća 400 bez kolačića – provjera u tijeku).
-  - Njuškalo i FINA: u tijeku (Redmi bilježi polja; FINA – stupci CSV-a).
+  - index.hr: i polje `internet` (priključak) i namjena zemljišta (`landUse`; nazivi iz
+    ui-config/hr/detail.json?v=…: 1 komercijalno, 2 stambeno, 3 ostalo) – nije stambena → ⚠ kao
+    na Njuškalu. Zapamćeni se ne otvaraju ponovno (završni pregled ionako ponovno ocjenjuje).
+  - FINA: CSV nema stupaca za mjesto (lokacija i dalje iz opisa); novo: koja je dražba
+    („Oznaka EJD” → „⚖ … · druga dražba”), skupni predmet prodaje → ⚠ (cijena za više nekretnina),
+    napomena da nekretnina nije slobodna („stanuje ovršenik”) → ⚠ s citatom.
+  - Njuškalo: u tijeku – Redmi bilježi polja pri čitanju (ujutro, kad stigne puno novih oglasa).
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

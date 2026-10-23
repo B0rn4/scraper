@@ -43,6 +43,7 @@ MAX_DETAILS = 25   # najviše otvorenih oglasa po pokretanju (ostali čekaju slj
 # Šifre iz index.hr ui-config/hr/detail.json
 HOUSE_TYPES = {1: "Samostojeća kuća", 2: "Dvojna kuća", 3: "Kuća u nizu", 4: "Stambeno-poslovna kuća"}
 LAND_TYPES = {1: "Građevinsko zemljište", 2: "Poljoprivredno zemljište"}
+LAND_USES = {1: "Komercijalno", 2: "Stambeno", 3: "Ostalo"}     # "Namjena zemljišta" (landUse)
 # Priključci (polja su samo kad postoje; struje nema ni u jednom od 70 zemljišta, 13. 10.).
 UTILITY_FIELDS = {"cityWaterSupply": "voda", "citySewerage": "kanalizacija", "cityGas": "plin", "asphaltRoad": "asfaltni put",
                   "internet": "internet"}
@@ -123,6 +124,8 @@ def parse_single(data: dict, listing: Listing) -> None:
         listing.extra["dozvole"] = permits
     if ad.get("swimmingPool"):
         listing.extra["bazen"] = True
+    if listing.kind == LAND and ad.get("landUse") in LAND_USES:     # nije stambena → ⚠ (filters)
+        listing.extra["namjena"] = LAND_USES[ad["landUse"]]
     utilities = [name for key, name in UTILITY_FIELDS.items() if ad.get(key)]
     if utilities:
         listing.extra["prikljucci"] = prikljucci.merge(utilities)

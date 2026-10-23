@@ -177,7 +177,8 @@ def _lines(listing: Listing, decision: Decision, headline: str) -> list[tuple[st
             lines.append(("upozorenje", f"⚠ {e(w if len(w) <= 200 else w[:197] + '…')}"))
     if listing.source == "fina":
         sud, spis = listing.extra.get("sud"), listing.extra.get("spis")
-        lines.append(("fina", f"⚖ {e(sud or '')} {e(spis or '')}".strip()))
+        auction = f" · {listing.extra['drazba']} dražba" if listing.extra.get("drazba") else ""
+        lines.append(("fina", f"⚖ {e(sud or '')} {e(spis or '')}".strip() + e(auction)))
     lines.append(("naslov_oglasa", f"<i>{e(listing.title[:150])}</i>"))
     return lines
 
