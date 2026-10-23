@@ -772,6 +772,16 @@ bez stotina poruka.
   portala da vidimo propuštamo li još nešto”). Alat `polja:` sad i za burzu; Njuškalo: Redmi pri
   čitanju bilježi nazive polja i svojstava (do 8 primjera, bez opisa i kontakata) u meta
   `popis_polja:njuskalo:VRSTA` (`scraper/popis_polja.py`, najviše 80 stranica po vrsti).
+  Nalazi (GitHub, 23. 10., 15–40 oglasa po portalu i vrsti):
+  - nekretnine.hr, oglasnik, vender, realestatecroatia: sve bitno se čita (vrsta, površine,
+    priključci, parking, bazen, dozvole i vlasnički list, stanje, godine). nekretnine.hr nema
+    vrstu dvojna / u nizu („Obiteljska / Seoska kuća, Vikendica…”); „Optičko vlakno” = internet.
+  - burza: uz tablicu od istog dana i kvadratura kuće i okućnice, broj parkirnih mjesta, zadnja
+    adaptacija, stanje („Starina” → za obnovu), pravni status pristupa („pravo služnosti”),
+    čisto vlasništvo (→ vlasnički list); ponovno otvaranje `polja2-2026-10`.
+  - index.hr: i polje `internet` (priključak); namjena zemljišta (`landUse` 1–3) još bez naziva
+    šifri (ui-config vraća 400 bez kolačića – provjera u tijeku).
+  - Njuškalo i FINA: u tijeku (Redmi bilježi polja; FINA – stupci CSV-a).
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

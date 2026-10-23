@@ -880,6 +880,37 @@ def test_burza_detail_reads_feature_table():
     assert (plain.subtype, plain.area) == ("", 600) and "prikljucci" not in plain.extra   # bez tablice: kao prije
 
 
+def test_burza_house_fields_from_table():
+    """Revizija 23. 10.: kvadratura kuće i okućnice, broj parkirnih mjesta, zadnja adaptacija, stanje
+    ("Starina" → za obnovu), pravni status pristupa, čisto vlasništvo."""
+    from scraper import parking
+    from scraper.filters import evaluate
+    from scraper.models import Listing
+    from scraper.sources import burza
+
+    page = """<h5>Lokacija:</h5><span class="place-name">Dramalj</span>
+<div class="bad-features"><table class="table"><tbody>
+<th>Vrsta kuće</th><td>Samostojeća kuća</td></tr><th>Kvadratura kuće</th><td>190</td></tr>
+<th>Kvadratura okućnice</th><td>477</td></tr><th>Broj parkirnih mjesta</th><td>2</td></tr>
+<th>Zadnja adaptacija</th><td>2015</td></tr><th>Stanje nekretnine</th><td>Starina</td></tr>
+<th>Pravni status pristupa</th><td>Pravo služnosti</td></tr>
+<tr><td colspan="2"><h6>Pristupni put</h6><ul><li>Asfaltni put</li></ul></td></tr>
+<tr><td colspan="2"><h6>Prateći objekti</h6><ul><li>Garaža</li></ul></td></tr>
+<tr><td colspan="2"><h6>Opremljenost i sadržaji</h6><ul><li>Čisto vlasništvo</li></ul></td></tr>
+</tbody></table></div><div class="bad-text"><p>Kuća 250 m2 na okućnici 600 m2.</p></div>"""
+    x = Listing("burza", "1", "https://burza.com.hr/oglasi/k/1", "Kuća Dramalj", HOUSE, price=280_000)
+    burza.parse_detail(page, x)
+    assert (x.subtype, x.area, x.plot_area) == ("Samostojeća kuća", 190, 477)     # polja, ne tekst
+    assert x.extra["parking"] == "garaža, parkirnih mjesta: 2" and x.extra["godina_obnove"] == 2015
+    assert x.extra["pristup"] == "Asfaltni put (pravo služnosti)" and x.extra["vlasnicki_list"]
+    assert x.extra["stanje"] == "starina"
+    evaluate(x, load_config()["kriteriji"], Locator(), None)
+    assert x.extra["za_obnovu"] and parking.check(x)[0] == "🚗 garaža, parkirnih mjesta: 2"
+    only = Listing("burza", "2", "u", "Kuća", HOUSE, price=1)
+    burza.parse_detail(page.replace("<li>Garaža</li>", "<li>Spremište</li>"), only)
+    assert only.extra["parking"] == "2"                                   # "🚗 parkirnih mjesta: 2"
+
+
 def test_gradiliste_is_building_land():
     """"Gradilište" u naslovu je građevinska čestica; "u blizini gradilišta" ne čini poljoprivredno građevinskim."""
     from scraper.filters import evaluate

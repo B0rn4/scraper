@@ -9,7 +9,8 @@ portala ni do ISPU-a; rezultat ide na granu debug (planovi/lokacije/).
 index: podaci o lokaciji iz index.hr API-ja (koordinate, isPreciseLocation, sva polja s lokacijom);
 index-uzorak: N najnovijih oglasa kuća i zemljišta u PGŽ-u – dijele li neprecizni oglasi istog
 mjesta iste koordinate (središte mjesta) ili svaki ima svoje (približna lokacija oglasa).
-polja: koja polja daju stranice oglasa (IZVOR: nekretnine, rc, index, oglasnik, vender, burza; IZVOR-zemljista
+polja: koja polja daju stranice oglasa (IZVOR: nekretnine, rc, index, oglasnik, vender, burza, fina – stupci
+CSV-a bez opisa i osobnih podataka; IZVOR-zemljista
 samo zemljišta), N oglasa po vrsti: naziv polja, u koliko oglasa ga ima i do 40 kratkih primjera vrijednosti – bez opisa,
 naslova, adresa, slika i podataka o oglašivaču (repozitorij je javan). rc: i dijele li oglasi istog
 mjesta koordinate s karte (središte mjesta ili točna oznaka).
@@ -337,6 +338,16 @@ def field_sample(http: Http, source: str, n: int) -> dict:
                                                  + (f"?stranica={page}" if page > 1 else "")).text, kind)
             for x in ads[:n]:
                 records.append({"vrsta": kind, "polja": burza.parse_features(http.get(x.url).text)})
+    elif source == "fina":
+        import csv
+        import io
+        from scraper.sources.fina import CSV_URL
+        text = http.get(CSV_URL).content.decode("utf-8-sig", errors="replace")
+        rows = [r for r in csv.DictReader(io.StringIO(text), delimiter=";")
+                if (r.get("Vrsta predmeta prodaje") or "").strip() == "nekretnina"]
+        hidden = re.compile(r"(?i)opis|ovr[sš]|vlasni|du[zž]ni|ste[cč]aj|\bime|oib|adres|kontakt|osob|naziv|stranka")
+        for r in rows[:n]:
+            records.append({k: ("(skriveno)" if hidden.search(k or "") else v) for k, v in r.items()})
     else:
         return {"greska": f"nepoznat izvor {source}"}
     out = census(records)

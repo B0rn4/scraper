@@ -39,7 +39,7 @@ _TEXT_WARN = [
 ]
 # Stanje iz polja oglasa ("Za renoviranje", "potrebna adaptacija"; ne "renovirano"): za obnovu.
 _POOR_CONDITION = re.compile(r"\bza (renovir|adaptacij|obnov|rekonstrukcij)|potrebn\w* (renovir|renovacij|adaptacij|obnov)"
-                             r"|zapust|\bruin")
+                             r"|zapust|\bruin|\bstarin(?!\w* stil)")       # burza: "Stanje nekretnine: Starina"
 # Namjena zemljišta iz polja oglasa: za kuću stambena ili mješovita; druga (poslovna,
 # turistička, ugostiteljska, industrijska…) → ⚠.
 _HOME_USE = re.compile(r"stamben|mjesovit|residential")

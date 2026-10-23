@@ -4,8 +4,9 @@ Popis: /oglasi/nekretnine-kuce-prodaja/<lokacija> i /oglasi/nekretnine-zemljista
 <lokacija>, 20 oglasa po stranici (?stranica=N); na vrhu su plaćeni oglasi, zatim po
 zadnjoj izmjeni. Popis daje naslov, cijenu i početak opisa; mjesto ("Lokacija"), puni
 opis, datum zadnje izmjene i tablica podataka su na stranici oglasa. Tablica (parse_features,
-kad je oglašivač ispuni): vrsta kuće ili zemljišta, godina izgradnje, kvadratura, pristupni
-put, priključci, prateći objekti (garaža), oprema (bazen). Površina bez kvadrature: iz teksta.
+kad je oglašivač ispuni): vrsta kuće ili zemljišta, godina izgradnje i zadnje adaptacije,
+stanje, kvadratura (kuće, okućnice), pristupni put i pravni status pristupa, priključci, broj
+parkirnih mjesta, prateći objekti (garaža, bazen), čisto vlasništvo. Bez kvadrature: iz teksta.
 
 Početno stanje (FULL): popisi naših mjesta (mjesto iz filtra) i prve dvije stranice
 cijelog Kvarnera i Istre (oglasi izvan naših popisa se otvore). Redovno: te dvije
@@ -122,29 +123,45 @@ def parse_features(page: str) -> dict[str, list[str]]:
     return out
 
 
-def _apply_features(x: Listing, features: dict[str, list[str]]) -> float | None:
-    """Podaci iz tablice u oglas; vraća površinu iz "Kvadrature" (None kad je nema)."""
+def _apply_features(x: Listing, features: dict[str, list[str]]) -> dict:
+    """Podaci iz tablice u oglas; vraća površine iz polja ({"area", "plot"}) – postavljaju se
+    nakon površina iz teksta (_set_area)."""
     def first(name: str) -> str:
         return (features.get(name) or [""])[0]
+
+    def number(name: str) -> float | None:
+        m = re.match(r"\s*(\d[\d.,]*)", first(name))      # "1334 m", "12.000 m", "477"
+        return parse_number(m.group(1)) if m else None
+
     kind = first("vrsta kuce" if x.kind == HOUSE else "vrsta zemljista")
     if kind:
         x.subtype = kind
-    year = re.fullmatch(r"(1[89]\d\d|20\d\d)\.?", first("godina izgradnje"))
-    if year:
-        x.extra["godina_izgradnje"] = int(year.group(1))
+    for name, key in (("godina izgradnje", "godina_izgradnje"), ("zadnja adaptacija", "godina_obnove")):
+        year = re.fullmatch(r"(1[89]\d\d|20\d\d)\.?", first(name))
+        if year:
+            x.extra[key] = int(year.group(1))
     utilities = prikljucci.from_labels(features.get("prikljucci"))
     if utilities:
         x.extra["prikljucci"] = utilities
-    if features.get("pristupni put"):
-        x.extra["pristup"] = ", ".join(features["pristupni put"])             # "Asfaltni put"
+    access, legal = ", ".join(features.get("pristupni put") or []), first("pravni status pristupa")
+    if access or legal:                                    # "Asfaltni put (pravo služnosti)"
+        x.extra["pristup"] = f"{access} ({legal.lower()})" if access and legal else access or legal
     things = (features.get("prateci objekti") or []) + (features.get("opremljenost i sadrzaji") or [])
     parking = [v.lower() for v in things if re.search(r"garaz|parking|parkirn", fold(v))]
-    if parking:
-        x.extra["parking"] = ", ".join(parking)
+    spaces = number("broj parkirnih mjesta")
+    if spaces:
+        parking.append(f"parkirnih mjesta: {int(spaces)}")
+    if parking:                                            # sam broj: "🚗 parkirnih mjesta: N"
+        x.extra["parking"] = str(int(spaces)) if len(parking) == 1 and spaces else ", ".join(parking)
     if any(re.search(r"\bbazen", fold(v)) and not prikljucci.DENIED.search(fold(v)) for v in things):
         x.extra["bazen"] = True
-    area = re.match(r"\s*(\d[\d.,]*)", first("kvadratura"))
-    return parse_number(area.group(1)) if area else None
+    if any(fold(v) == "cisto vlasnistvo" for v in things):
+        x.extra["vlasnicki_list"] = True
+    if first("stanje nekretnine"):                          # "Starina" → za obnovu (filters)
+        x.extra["stanje"] = first("stanje nekretnine").lower()
+    if x.kind == HOUSE:
+        return {"area": number("kvadratura kuce") or number("kvadratura"), "plot": number("kvadratura okucnice")}
+    return {"area": number("kvadratura"), "plot": None}
 
 
 def parse_detail(page: str, x: Listing) -> None:
@@ -166,10 +183,12 @@ def parse_detail(page: str, x: Listing) -> None:
     advertiser = re.search(r"Podaci o oglašivaču\s*</[^>]+>\s*(?:<[^>]+>\s*)*([^<]{3,80})<", page)
     if advertiser:
         x.extra["oglasivac"] = _clean(advertiser.group(1))
-    area = _apply_features(x, parse_features(page))
+    sizes = _apply_features(x, parse_features(page))
     _set_area(x)
-    if area and area >= 20:
-        x.area = area
+    if sizes["area"] and sizes["area"] >= 20:
+        x.area = sizes["area"]
+    if sizes["plot"]:
+        x.plot_area = sizes["plot"]
     x.extra.pop("povrsina_iz_teksta", None)
 
 
@@ -177,8 +196,9 @@ class Burza(Source):
     name = "burza"
     label = "burza.com.hr"
     baseline_report = False   # prvo pokretanje se samo zabilježi
-    # 23. 10.: tablica podataka (vrsta kuće/zemljišta, priključci, pristupni put…) dosad se nije čitala.
-    reopen_once = "polja-2026-10"
+    # 23. 10.: tablica podataka (vrsta kuće/zemljišta, priključci, pristupni put…) dosad se nije čitala;
+    # polja2: i kvadratura kuće/okućnice, parking, adaptacija, stanje, pravni status pristupa.
+    reopen_once = "polja2-2026-10"
 
     def _page(self, slug: str, location: str, page: int) -> str:
         return self.http.get(f"{BASE}/oglasi/{slug}/{location}" + (f"?stranica={page}" if page > 1 else "")).text

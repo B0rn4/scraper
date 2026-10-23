@@ -44,7 +44,8 @@ MAX_DETAILS = 25   # najviše otvorenih oglasa po pokretanju (ostali čekaju slj
 HOUSE_TYPES = {1: "Samostojeća kuća", 2: "Dvojna kuća", 3: "Kuća u nizu", 4: "Stambeno-poslovna kuća"}
 LAND_TYPES = {1: "Građevinsko zemljište", 2: "Poljoprivredno zemljište"}
 # Priključci (polja su samo kad postoje; struje nema ni u jednom od 70 zemljišta, 13. 10.).
-UTILITY_FIELDS = {"cityWaterSupply": "voda", "citySewerage": "kanalizacija", "cityGas": "plin", "asphaltRoad": "asfaltni put"}
+UTILITY_FIELDS = {"cityWaterSupply": "voda", "citySewerage": "kanalizacija", "cityGas": "plin", "asphaltRoad": "asfaltni put",
+                  "internet": "internet"}
 PARKING_FIELDS = {"garage": "garaža", "garageSpace": "garažno mjesto", "enclosedCarPark": "natkriveno parkirno mjesto",
                   "noEnclosedCarPark": "vanjsko parkirno mjesto", "onSiteParking": "parking na licu mjesta"}
 
