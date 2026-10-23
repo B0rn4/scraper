@@ -1,0 +1,10 @@
+[
+ {
+  "ulaz": "stranica:https://www.index.hr/oglasi/ui-config/hr/detail.json",
+  "greska": "FetchError: HTTP 400 za https://www.index.hr/oglasi/ui-config/hr/detail.json"
+ },
+ {
+  "ulaz": "stranica:https://www.index.hr/oglasi/ui-config/hr/advancedSearchModule.json",
+  "greska": "FetchError: HTTP 400 za https://www.index.hr/oglasi/ui-config/hr/advancedSearchModule.json"
+ }
+]
