@@ -165,7 +165,7 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
 | vender.hr | njihov API | svakih 20 min |
 | Njuškalo | s Redmija, pravim preglednikom ([REDMI.md](REDMI.md)) | svakih 20 min |
 | realestatecroatia.com (oglasi agencija iz sustava Agentor) | popis cijele PGŽ, najnoviji prvi; novi oglasi koji mogu proći otvaraju se radi površine, okućnice, broja parkirnih mjesta i opisa | svakih 20 min |
-| burza.com.hr (regionalni oglasnik, agencije i privatni) | prve dvije stranice Kvarnera i Istre; novi oglasi se otvaraju radi mjesta i površine (do 10 po pokretanju) | svakih 20 min |
+| burza.com.hr (regionalni oglasnik, agencije i privatni) | prve dvije stranice Kvarnera i Istre; novi oglasi se otvaraju radi mjesta, opisa i tablice podataka – vrsta kuće ili zemljišta, kvadratura, priključci, pristupni put, garaža, bazen (do 10 po pokretanju) | svakih 20 min |
 | Natječaji gradova i općina, PGŽ-a, CERP-a i Državnih nekretnina ([data/natjecaji.yaml](data/natjecaji.yaml)) | tražilica stranice, RSS ili stranica natječaja; tekst i priloženi PDF | jednom dnevno |
 | Banke ([data/banke.yaml](data/banke.yaml)): Zaba, OTP, HBOR, HPB, Croatia banka | stranice s prodajom preuzetih nekretnina; poruka samo za novi tekst koji spominje naše područje | jednom dnevno |
 

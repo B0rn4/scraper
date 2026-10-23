@@ -675,7 +675,8 @@ bez stotina poruka.
   - Njuškalo: bazen, vlasnički list i dozvole iz grupa svojstava, godina zadnje renovacije;
     namjena zemljišta (već čitana) sad daje ⚠ kad nije stambena ni mješovita; poznat oglas sa
     sniženjem ili bez površine (103 zemljišta) otvara se kad se pojavi na popisu;
-  - burza: oglasnik slobodnog teksta – čita se sve što ima.
+  - burza: oglasnik slobodnog teksta – čita se sve što ima. (23. 10.: krivo – stranica oglasa ima
+    tablicu podataka; vidi niže.)
   Filtri: bazen iz polja odbija kao i naslov; stanje za renoviranje → 🔨 i kategorija za obnovu;
   🏗 i dopuna navode dozvole. Zapamćeni oglasi s vendera, oglasnika i nekretnine.hr jednom se
   ponovno otvaraju (index ispočetka, s bazenom i dozvolama), tiho, najviše 3 minute po pokretanju.
@@ -752,6 +753,17 @@ bez stotina poruka.
   bolja lokacija) do resetiranja ostaju napomene (odluka 13. 10.; bilo bi ~6–16 poruka dnevno,
   103 od 106 redaka ⚠ „ne odgovara”); **odluka korisnika 19. 10.:** nakon resetiranja (završni
   pregled) stižu kao poruka s poveznicom na stariji oglas (vidi Završni pregled).
+- **(23. 10.) burza.com.hr: tablica podataka sa stranice oglasa** (korisnik: oglas 351078 navodi
+  priključke i pristupni put, a poruka ih nema). Stranica oglasa ima tablicu (`parse_features`):
+  redci naziv – vrijednost („Vrsta kuće”, „Godina izgradnje”, „Kvadratura”) i popisi („Vrsta
+  zemljišta”, „Pristupni put”, „Priključci”, „Prateći objekti”, „Opremljenost i sadržaji”, „U
+  blizini”). Dosad se čitali samo mjesto i opis, pa je poruka imala ⚠ „vrsta zemljišta nije
+  navedena”, a 🔌 samo iz opisa. Sad: vrsta kuće (dvojna / u nizu odbija se kao na drugim
+  portalima) i zemljišta, kvadratura (prije teksta), godina izgradnje, priključci (i internet),
+  pristupni put („pristup: asfaltni put”), garaža (parking), bazen. Neodbijeni burzini oglasi (24)
+  jednom se ponovno otvaraju i tiho ocjenjuju (`reopen_once = "polja-2026-10"`, `Burza.reopen`).
+  Usput: „gradilište” u naslovu / vrsti je građevinsko zemljište (bez ⚠ „vrsta nije navedena”);
+  poljoprivredno koje u opisu spominje gradilište ostaje odbijeno.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

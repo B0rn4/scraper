@@ -1,6 +1,6 @@
 """Priključci zemljišta (struja, voda, kanalizacija…): redak 🔌 u poruci (odluka korisnika 13. 10.).
 
-Iz polja oglasa kad ih portal ima (index.hr, vender, nekretnine.hr, Njuškalo; oglasnik i
+Iz polja oglasa kad ih portal ima (index.hr, vender, nekretnine.hr, Njuškalo, burza; oglasnik i
 realestatecroatia ih za zemljišta nemaju). Inače rečenica iz opisa koja ih spominje – kao citat,
 jer opis zna reći i "nema struje" ili "voda na 50 m od parcele". Kad ih ni pun opis ne spominje:
 "nisu navedeni". Portal navodi samo ono što postoji: priključak koji nije naveden nije "nema"
@@ -21,6 +21,7 @@ KINDS = [
     ("plin", re.compile(r"\bplin|\bgas\b")),
     ("asfaltni put", re.compile(r"asfalt")),
     ("javna rasvjeta", re.compile(r"rasvjet|illuminazione")),
+    ("internet", re.compile(r"internet|\boptick")),          # burza: "Priključci: … Internet"
 ]
 _NOT_UTILITY = re.compile(r"grijanj|bojler|klima")              # "električno grijanje" nije priključak
 # Nijekanje u nazivu polja (nakon fold(), bez dvotočke): "Struja: Ne" → "struja ne", "bez struje".

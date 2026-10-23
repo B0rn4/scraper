@@ -39,7 +39,7 @@ Primjer (zemljište u Matuljima):
 | 💶 | cijena po m², portal, vrsta |
 | 🏗 / 🔨 | godina izgradnje i obnove, vlasnički list, građevinska i uporabna dozvola / kuća za obnovu ili starina – iz opisa ili polja oglasa („stanje: za renoviranje”) (ruševina koja nije za obnovu ne stiže; ruševina s dozvolom ili na građevinskoj čestici stiže kao zemljište s ⚠) |
 | 🚗 | parking ili garaža (kuće) |
-| 🔌 | priključci zemljišta: struja, voda, kanalizacija, plin, asfaltni put… iz polja oglasa (✔), inače rečenica iz opisa koja ih spominje (citat – zna reći i „nema struje” ili „voda na 50 m”), inače „nisu navedeni”; nekretnine.hr i pristup („na makadamskoj cesti”). Portal navodi samo ono što postoji: što nije navedeno, ne znači da nema (index.hr npr. nema polje za struju) |
+| 🔌 | priključci zemljišta: struja, voda, kanalizacija, plin, asfaltni put… iz polja oglasa (✔), inače rečenica iz opisa koja ih spominje (citat – zna reći i „nema struje” ili „voda na 50 m”), inače „nisu navedeni”; nekretnine.hr i burza i pristup („na makadamskoj cesti”, „asfaltni put”). Portal navodi samo ono što postoji: što nije navedeno, ne znači da nema (index.hr npr. nema polje za struju) |
 | 🗺 | građevinsko područje prema ISPU-u (vidi niže) |
 | 📏 | uvjeti gradnje iz prostornog plana: najmanja čestica, kig, kis (zemljišta i čestice iz natječaja) |
 | 🏛 | PPV: ostvarene cijene građevinskog zemljišta (Ministarstvo), na lokaciji ili za naselje |

@@ -169,7 +169,10 @@ def not_ready(text: str) -> bool:
 
 
 # "Negrađevinsko" i "izvan građevinskog (područja)" nisu građevinsko zemljište.
-_BUILDING_LAND = re.compile(r"(?<!\bne)(?<!\bne )(?<!\bizvan )(?<!\bvan )gradevinsk")
+_BUILDING_WORD = re.compile(r"(?<!\bne)(?<!\bne )(?<!\bizvan )(?<!\bvan )gradevinsk")
+# Vrsta zemljišta (polje, naslov, opis): i "gradilište" (građevinska čestica). Za poljoprivredno
+# koje opisom ipak spominje građevinsko vrijedi samo "građevinsk" ("u blizini gradilišta" nije to).
+_BUILDING_LAND = re.compile(_BUILDING_WORD.pattern + r"|\bgradilist")
 _AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|maslinik|vocnjak"
                            r"|\bne ?gradevinsk|\b(izvan|van) gradevinsk")
 
@@ -320,7 +323,7 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
             if _AGRICULTURAL.search(land_type):
                 warnings.append(f"mješovito zemljište ({listing.subtype or listing.title})")
         elif _AGRICULTURAL.search(land_type):
-            if _BUILDING_LAND.search(text):
+            if _BUILDING_WORD.search(text):
                 warnings.append(f"{listing.subtype or 'poljoprivredno'}, ali opis spominje građevinsko")
             else:
                 reasons.append(f"nije građevinsko ({shown})")

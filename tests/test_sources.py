@@ -834,6 +834,85 @@ def test_burza_list_detail_and_fetch():
     assert sorted(u.split("/")[-1] for u in http.urls if u.split("/")[-1].isdigit()) == ["347113", "350118"]
 
 
+BURZA_FEATURES = """<html><h5>Lokacija:</h5><span class="place-name">Cizici</span>
+<div class="bad-features"><table class="table"><tbody>
+<th>Godina izgradnje</th><td>1975</td></tr>
+<th>Kvadratura</th><td>1334 m<sup>2</sup></td></tr>
+<tr><td colspan="2"><h6>Vrsta zemljišta</h6><ul><li>Građevinsko zemljište</li></ul></td></tr>
+<tr><td colspan="2"><h6>Pristupni put</h6><ul><li>Asfaltni put</li></ul></td></tr>
+<tr><td colspan="2"><h6>Priključci</h6><ul><li>Struja</li><li>Voda</li><li>Kanalizacija</li><li>Internet</li></ul></td></tr>
+<tr><td colspan="2"><h6>Prateći objekti</h6><ul><li>Garaža</li><li>Podrum</li></ul></td></tr>
+<tr><td colspan="2"><h6>Opremljenost i sadržaji</h6><ul><li>Bazen</li></ul></td></tr>
+<tr><td colspan="2"><h6>U blizini</h6><ul><li>More</li></ul></td></tr>
+</tbody></table></div><!-- .bad-features -->
+<div class="bad-text"><hr><h5>Opis:</h5><p>Prodajem gradilište 430 m2, centar naselja.</p></div>
+<div>Zadnja izmjena: <strong>23.10.2026.</strong></div></html>"""
+
+
+def test_burza_detail_reads_feature_table():
+    """Korisnik 23. 10. (burza 351078): stranica oglasa ima tablicu – priključci, pristupni put,
+    vrsta zemljišta – a poruka ih nije imala (⚠ "vrsta zemljišta nije navedena")."""
+    from scraper import prikljucci
+    from scraper.filters import evaluate
+    from scraper.models import Listing
+    from scraper.sources import burza
+
+    x = Listing("burza", "351078", "https://burza.com.hr/oglasi/gradiliste/351078", "Gradilište otok Krk, Čižići",
+                LAND, price=160_000)
+    burza.parse_detail(BURZA_FEATURES, x)
+    assert (x.subtype, x.area, x.settlement) == ("Građevinsko zemljište", 1334, "Cizici")   # kvadratura, ne tekst
+    assert x.extra["prikljucci"] == ["struja", "voda", "kanalizacija", "internet"]
+    assert x.extra["pristup"] == "Asfaltni put" and x.extra["godina_izgradnje"] == 1975
+    assert x.extra["parking"] == "garaža" and x.extra["bazen"]
+    assert prikljucci.check(x) == "🔌 priključci: struja ✔ · voda ✔ · kanalizacija ✔ · internet ✔ · pristup: asfaltni put"
+    cfg = load_config()["kriteriji"]
+    assert "vrsta zemljišta nije navedena" not in evaluate(x, cfg, Locator(), None).warnings
+
+    house = Listing("burza", "2", "https://burza.com.hr/oglasi/kuca/2", "Kuća Matulji", HOUSE, price=300_000)
+    burza.parse_detail(BURZA_FEATURES.replace("<th>Godina izgradnje</th><td>1975</td>",
+                                              "<th>Vrsta kuće</th><td>Dvojna kuća</td>"), house)
+    assert house.subtype == "Dvojna kuća" and "godina_izgradnje" not in house.extra
+    assert any(r.startswith("dvojna kuća (vrsta") for r in evaluate(house, cfg, Locator(), None).reasons)
+
+    plain = Listing("burza", "3", "https://burza.com.hr/oglasi/x/3", "Zemljište", LAND, price=100_000)
+    burza.parse_detail('<h5>Lokacija:</h5><span class="place-name">Krk</span>'
+                       '<div class="bad-text"><p>Zemljište 600 m2.</p></div>', plain)
+    assert (plain.subtype, plain.area) == ("", 600) and "prikljucci" not in plain.extra   # bez tablice: kao prije
+
+
+def test_gradiliste_is_building_land():
+    """"Gradilište" u naslovu je građevinska čestica; "u blizini gradilišta" ne čini poljoprivredno građevinskim."""
+    from scraper.filters import evaluate
+    from scraper.models import Listing
+
+    cfg = load_config()["kriteriji"]
+    plot = Listing("index_oglasi", "1", "u", "Gradilište Čižići 430 m2", LAND, price=160_000, area=430,
+                   municipality="Dobrinj", settlement="Čižići", description="Prodaje se, pogled na more.")
+    assert "vrsta zemljišta nije navedena" not in evaluate(plot, cfg, Locator(), None).warnings
+    farm = Listing("index_oglasi", "2", "u", "Poljoprivredno zemljište Čižići", LAND, price=60_000, area=900,
+                   municipality="Dobrinj", settlement="Čižići", description="U blizini gradilišta nove ceste.")
+    assert "nije građevinsko (naslov)" in evaluate(farm, cfg, Locator(), None).reasons
+
+
+def test_burza_reopen_reads_page_and_missing_listing():
+    from scraper.http import FetchError
+    from scraper.sources import burza
+
+    class Http:
+        def get(self, url, **kw):
+            if url.endswith("/404"):
+                raise FetchError(f"HTTP 404 za {url}")
+            return type("R", (), {"text": BURZA_FEATURES})()
+
+    src = burza.Burza(Http(), Locator(), load_config()["kriteriji"])
+    assert src.reopen_once
+    row = {"source_id": "351078", "url": "https://burza.com.hr/oglasi/g/351078", "title": "Gradilište", "kind": LAND,
+           "price": 160_000}
+    x = src.reopen(row)
+    assert x.subtype == "Građevinsko zemljište" and x.extra["samo_pgz"] and "opis_skracen" not in x.extra
+    assert src.reopen({**row, "url": "https://burza.com.hr/oglasi/g/404"}) is None
+
+
 def test_burza_opens_known_listing_with_lower_price():
     """15. 10. (kao realestatecroatia 989420, gdje je "dvojna kuća" bila samo u punom opisu): poznat
     oglas sa sniženom cijenom otvara se, da poruka o sniženju ima pun opis; ostali poznati ne."""
