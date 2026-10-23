@@ -1,0 +1,969 @@
+[
+ {
+  "ulaz": "polja:index:1",
+  "rezultat": {
+   "zapisa": 2,
+   "polja": {
+    "postedTime": {
+     "n": 2,
+     "primjeri": [
+      "2026-10-23T02:00:14.59Z",
+      "2026-10-05T07:46:18.774Z"
+     ]
+    },
+    "id": {
+     "n": 2,
+     "primjeri": [
+      "fdb8bb9d-afe2-487a-9d16-60b511b4de7b",
+      "06786bb7-03ec-44d7-b005-85a67654bdf4"
+     ]
+    },
+    "favoriteCount": {
+     "n": 2,
+     "primjeri": [
+      0
+     ]
+    },
+    "code": {
+     "n": 2,
+     "primjeri": [
+      7648146,
+      7607182
+     ]
+    },
+    "module": {
+     "n": 2,
+     "primjeri": [
+      "real-estate"
+     ]
+    },
+    "category": {
+     "n": 2,
+     "primjeri": [
+      "houses-for-sale",
+      "lands-for-sale"
+     ]
+    },
+    "smartLink": {
+     "n": 2,
+     "primjeri": []
+    },
+    "creatorId": {
+     "n": 2,
+     "primjeri": []
+    },
+    "status": {
+     "n": 2,
+     "primjeri": [
+      1
+     ]
+    },
+    "renewalTime": {
+     "n": 2,
+     "primjeri": [
+      "2026-10-21T19:20:20.814Z"
+     ]
+    },
+    "expirationPeriod": {
+     "n": 2,
+     "primjeri": [
+      999999,
+      90
+     ]
+    },
+    "externalUrl": {
+     "n": 2,
+     "primjeri": []
+    },
+    "sharingConfiguration.description": {
+     "n": 2,
+     "primjeri": []
+    },
+    "sharingConfiguration.header": {
+     "n": 2,
+     "primjeri": []
+    },
+    "sharingConfiguration.imageId": {
+     "n": 2,
+     "primjeri": []
+    },
+    "sharingConfiguration.createdAt": {
+     "n": 2,
+     "primjeri": [
+      "2026-10-23T02:00:14.59Z",
+      "2026-10-05T07:46:18.774Z"
+     ]
+    },
+    "sharingConfiguration.lastModifiedDate": {
+     "n": 2,
+     "primjeri": [
+      "2026-10-23T02:00:14.59Z",
+      "2026-10-05T07:46:18.774Z"
+     ]
+    },
+    "sharingConfiguration.id": {
+     "n": 2,
+     "primjeri": [
+      "dee401d3-a8ba-4a11-9712-2ff77b017021",
+      "2dad69fc-8c3a-416e-ad66-b00c45d8d253"
+     ]
+    },
+    "sharingConfiguration.isDeleted": {
+     "n": 2,
+     "primjeri": [
+      false
+     ]
+    },
+    "is18Old": {
+     "n": 2,
+     "primjeri": [
+      false
+     ]
+    },
+    "cityId": {
+     "n": 2,
+     "primjeri": [
+      "84408878-6c27-41b9-9acc-d6c6511512b6",
+      "36bd1dbc-f301-4ae7-988e-171765d599f7"
+     ]
+    },
+    "countryId": {
+     "n": 2,
+     "primjeri": [
+      "1d0ed9f8-c5b3-47f8-8ca1-7feb948d5aef"
+     ]
+    },
+    "countyId": {
+     "n": 2,
+     "primjeri": [
+      "95c57539-6835-4b89-8ddd-a5de2100686e"
+     ]
+    },
+    "settlementId": {
+     "n": 2,
+     "primjeri": [
+      "e89956cd-553f-42e5-9eb9-78dcc6367468",
+      "f2a8c2a2-1e6c-4d40-802a-5b09d513282a"
+     ]
+    },
+    "title": {
+     "n": 2,
+     "primjeri": []
+    },
+    "description": {
+     "n": 2,
+     "primjeri": []
+    },
+    "images[]": {
+     "n": 2,
+     "primjeri": []
+    },
+    "floorPlans[]": {
+     "n": 2,
+     "primjeri": []
+    },
+    "price": {
+     "n": 2,
+     "primjeri": [
+      340000,
+      375000
+     ]
+    },
+    "priceM2": {
+     "n": 2,
+     "primjeri": [
+      4250,
+      268
+     ]
+    },
+    "previousPrice": {
+     "n": 2,
+     "primjeri": []
+    },
+    "priceReductionPercentage": {
+     "n": 2,
+     "primjeri": []
+    },
+    "videoUrl": {
+     "n": 2,
+     "primjeri": []
+    },
+    "isPromoted": {
+     "n": 2,
+     "primjeri": [
+      true
+     ]
+    },
+    "promotionStartDate": {
+     "n": 2,
+     "primjeri": [
+      "2026-10-23T07:29:12.737Z",
+      "2026-10-21T19:20:20.814Z"
+     ]
+    },
+    "promotionExpirationDate": {
+     "n": 2,
+     "primjeri": [
+      "2026-10-30T07:29:12.737Z",
+      "2026-11-20T19:20:20.814Z"
+     ]
+    },
+    "hasPhones": {
+     "n": 2,
+     "primjeri": []
+    },
+    "latitude": {
+     "n": 2,
+     "primjeri": [
+      45.1294898,
+      45.3480254532642
+     ]
+    },
+    "longitude": {
+     "n": 2,
+     "primjeri": [
+      14.6043626,
+      14.357652037638298
+     ]
+    },
+    "isPreciseLocation": {
+     "n": 2,
+     "primjeri": [
+      false
+     ]
+    },
+    "featuredProperty": {
+     "n": 2,
+     "primjeri": []
+    },
+    "priceCurrency": {
+     "n": 2,
+     "primjeri": [
+      "EUR"
+     ]
+    },
+    "area": {
+     "n": 2,
+     "primjeri": [
+      80,
+      1397
+     ]
+    },
+    "cityWaterSupply": {
+     "n": 2,
+     "primjeri": [
+      true
+     ]
+    },
+    "legalEntity": {
+     "n": 2,
+     "primjeri": [
+      2,
+      1
+     ]
+    },
+    "countryName": {
+     "n": 2,
+     "primjeri": [
+      "HRVATSKA"
+     ]
+    },
+    "countyName": {
+     "n": 2,
+     "primjeri": [
+      "Primorsko-goranska"
+     ]
+    },
+    "cityName": {
+     "n": 2,
+     "primjeri": [
+      "Dobrinj",
+      "Rijeka"
+     ]
+    },
+    "settlementName": {
+     "n": 2,
+     "primjeri": [
+      "Dobrinj",
+      "Bivio"
+     ]
+    },
+    "locationName": {
+     "n": 2,
+     "primjeri": [
+      "Dobrinj",
+      "Rijeka"
+     ]
+    },
+    "settlementLatitude": {
+     "n": 2,
+     "primjeri": [
+      45.12948979999999,
+      45.344579
+     ]
+    },
+    "settlementLongitude": {
+     "n": 2,
+     "primjeri": [
+      14.6043626,
+      14.3587093
+     ]
+    },
+    "permutiveData.adCode": {
+     "n": 2,
+     "primjeri": [
+      7648146,
+      7607182
+     ]
+    },
+    "permutiveData.module": {
+     "n": 2,
+     "primjeri": [
+      "nekretnine"
+     ]
+    },
+    "permutiveData.categories[]": {
+     "n": 2,
+     "primjeri": [
+      "prodaja-kuca",
+      "prodaja-zemljista"
+     ]
+    },
+    "permutiveData.location[]": {
+     "n": 2,
+     "primjeri": [
+      "HRVATSKA",
+      "Primorsko-goranska",
+      "Dobrinj",
+      "Rijeka",
+      "Bivio"
+     ]
+    },
+    "permutiveData.priceFrom": {
+     "n": 2,
+     "primjeri": [
+      340000,
+      375000
+     ]
+    },
+    "permutiveData.priceTo": {
+     "n": 2,
+     "primjeri": []
+    },
+    "houseType": {
+     "n": 1,
+     "primjeri": [
+      2
+     ]
+    },
+    "numberOfStories": {
+     "n": 1,
+     "primjeri": [
+      3
+     ]
+    },
+    "numberOfRooms": {
+     "n": 1,
+     "primjeri": [
+      3
+     ]
+    },
+    "propertyCode": {
+     "n": 1,
+     "primjeri": [
+      "17235"
+     ]
+    },
+    "gardenHouse": {
+     "n": 1,
+     "primjeri": [
+      true
+     ]
+    },
+    "barbecue": {
+     "n": 1,
+     "primjeri": [
+      true
+     ]
+    },
+    "gardenArea": {
+     "n": 1,
+     "primjeri": [
+      450
+     ]
+    },
+    "garden": {
+     "n": 1,
+     "primjeri": [
+      true
+     ]
+    },
+    "priceTo": {
+     "n": 1,
+     "primjeri": []
+    },
+    "categoryLv1Id": {
+     "n": 1,
+     "primjeri": [
+      "[telefon]-[telefon]-[telefon]"
+     ]
+    },
+    "categoryLv2Id": {
+     "n": 1,
+     "primjeri": [
+      "[telefon]-[telefon]-[telefon]"
+     ]
+    },
+    "makeId": {
+     "n": 1,
+     "primjeri": [
+      "[telefon]-[telefon]-[telefon]"
+     ]
+    },
+    "modelId": {
+     "n": 1,
+     "primjeri": [
+      "[telefon]-[telefon]-[telefon]"
+     ]
+    },
+    "makeYear": {
+     "n": 1,
+     "primjeri": []
+    },
+    "averagePriceM2": {
+     "n": 1,
+     "primjeri": [
+      3806
+     ]
+    },
+    "lowerRangePriceM2": {
+     "n": 1,
+     "primjeri": [
+      576
+     ]
+    },
+    "higherRangePriceM2": {
+     "n": 1,
+     "primjeri": [
+      12088
+     ]
+    },
+    "landType": {
+     "n": 1,
+     "primjeri": [
+      1
+     ]
+    },
+    "landUse": {
+     "n": 1,
+     "primjeri": [
+      2
+     ]
+    },
+    "citySewerage": {
+     "n": 1,
+     "primjeri": [
+      true
+     ]
+    },
+    "asphaltRoad": {
+     "n": 1,
+     "primjeri": [
+      true
+     ]
+    },
+    "ownershipCertificate": {
+     "n": 1,
+     "primjeri": []
+    },
+    "validDataGuarantee": {
+     "n": 1,
+     "primjeri": [
+      true
+     ]
+    }
+   }
+  }
+ },
+ {
+  "ulaz": "stranica:https://www.index.hr/oglasi/api/ui-config/hr/detail.json",
+  "greska": "FetchError: HTTP 404 za https://www.index.hr/oglasi/api/ui-config/hr/detail.json"
+ },
+ {
+  "ulaz": "https://www.index.hr/oglasi/ui-config/hr/detail.json?v=1790847579758",
+  "bajtova": 1434107,
+  "isjecci": []
+ },
+ {
+  "ulaz": "https://www.index.hr/oglasi/ui-config/hr/advancedSearchModule.json?v=1790847579758",
+  "bajtova": 565566,
+  "isjecci": []
+ },
+ {
+  "ulaz": "polja:fina:60",
+  "rezultat": {
+   "zapisa": 60,
+   "polja": {
+    "Nadležno tijelo": {
+     "n": 60,
+     "primjeri": [
+      "Trgovački sud u Rijeci",
+      "Trgovački sud u Varaždinu",
+      "Općinski sud u Šibeniku",
+      "Trgovački sud u Zadru",
+      "Općinski sud u Karlovcu, Stalna služba u Ogulinu",
+      "Općinski sud u Čakovcu",
+      "Općinski sud u Novom Zagrebu",
+      "Općinski sud u Vukovaru, Stalna služba u Vinkovcima ",
+      "Općinski sud u Virovitici, Stalna služba u Slatini",
+      "Trgovački sud u Zagrebu, Stalna služba u Karlovcu",
+      "Općinski sud u Puli-Pola, Stalna služba u Poreču-Parenzo",
+      "Trgovački sud u Zagrebu",
+      "Općinski sud u Puli-Pola, Stalna služba u Labinu",
+      "Općinski sud u Rijeci"
+     ]
+    },
+    "Poslovni broj spisa": {
+     "n": 60,
+     "primjeri": [
+      "ST-352/2013",
+      "ST-25/2012",
+      "OVR-1951/2015",
+      "ST-13/2016",
+      "OVR-375/2016",
+      "OVR-1117/2015",
+      "OVR-6961/2015",
+      "OVR-1043/2015",
+      "ST-30/2014",
+      "OVR-1024/2016",
+      "OVR-1462/2015",
+      "ST-3093/2016",
+      "OVR-110/2016",
+      "ST-6631/2015",
+      "OVR-2129/2016",
+      "OVR-249/2016"
+     ]
+    },
+    "Opis": {
+     "n": 60,
+     "primjeri": [
+      "(skriveno)"
+     ]
+    },
+    "Vrsta predmeta prodaje": {
+     "n": 60,
+     "primjeri": [
+      "nekretnina"
+     ]
+    },
+    "Složenost PP / opseg imovine": {
+     "n": 60,
+     "primjeri": [
+      "Pojedinačni predmet prodaje",
+      "Skupni predmet prodaje"
+     ]
+    },
+    "Utvrđena vrijednost": {
+     "n": 60,
+     "primjeri": [
+      "39816.84",
+      "41144.07",
+      "78160.46",
+      "523856.92",
+      "48484.41",
+      "1485919.44",
+      "8609.73",
+      "6184.88",
+      "371.62",
+      "490503.68",
+      "422058.53",
+      "522343.75",
+      "521704.55",
+      "6667.49",
+      "2449.65",
+      "2300.54",
+      "4132.46",
+      "9459.89",
+      "23537.97",
+      "642235.22",
+      "514427.21",
+      "144614.76",
+      "220362.30",
+      "18638.67",
+      "20023.25",
+      "61731.27",
+      "53381.14",
+      "44711.50",
+      "63179.76",
+      "237637.68",
+      "37277.33",
+      "41547.28",
+      "168690.69",
+      "169619.75",
+      "174397.77",
+      "167628.91",
+      "166168.96",
+      "165638.06",
+      "164841.73",
+      "166036.23"
+     ]
+    },
+    "Napomena uz detalje predmeta prodaje": {
+     "n": 60,
+     "primjeri": [
+      "Nadležno tijelo nije dostavilo podatke o naznakama prava koj",
+      "Nekretnina je slobodna od osoba i stvari.",
+      "U nekretnini stanuje ovršenik, nije u zakupu niti u najmu. ",
+      "Nekretnina je slobodna. Nema prava koja ne prestaju prodajom",
+      "Na nekretnini nema prava koja ne prestaju prodajom. Nekretni",
+      "Na nekretnini je upisana osobna uslužnost - pravo doživotnog",
+      "Nekretnina je slobodna.",
+      "Na nekretnini nema upisanih prava koja ne prestaju prodajom.",
+      "Nema naznaka prava koja ne prestaju prodajom. Nadležno tijel",
+      "Naznaka prava koja ne prestaju prodajom: pravo služnosti izg",
+      "Nekretnina je u zakupu do prodaje.",
+      "Sva prava prestaju prodajom. Ovršenik stanuje u nekretnini.",
+      "Sva prava prestaju prodajom. Nadležno tijelo nije utvrdilo d"
+     ]
+    },
+    "Način prodaje": {
+     "n": 60,
+     "primjeri": [
+      "Sudska e-Dražba"
+     ]
+    },
+    "ID nadmetanja": {
+     "n": 60,
+     "primjeri": [
+      "697",
+      "1167",
+      "1630",
+      "1638",
+      "1763",
+      "1832",
+      "1910",
+      "2490",
+      "2491",
+      "2566",
+      "2670",
+      "3076",
+      "3192",
+      "3193",
+      "3196",
+      "3198",
+      "3199",
+      "3200",
+      "3201",
+      "3202",
+      "3203",
+      "3204",
+      "3212",
+      "3214",
+      "3215",
+      "3216",
+      "3217",
+      "3218",
+      "3219",
+      "3220",
+      "3222",
+      "3223",
+      "3505",
+      "3506",
+      "3507",
+      "3509",
+      "3510",
+      "3512",
+      "3513",
+      "3515"
+     ]
+    },
+    "Oznaka EJD": {
+     "n": 60,
+     "primjeri": [
+      "Prva",
+      "Treća",
+      "Druga",
+      "Četvrta"
+     ]
+    },
+    "Datum odluke o prodaji": {
+     "n": 60,
+     "primjeri": [
+      "2016-05-13",
+      "2016-02-05",
+      "2016-08-18",
+      "2016-07-18",
+      "2016-10-26",
+      "2016-09-23",
+      "2016-10-11",
+      "2016-10-03",
+      "2016-07-06",
+      "2017-02-07",
+      "2017-03-08",
+      "2017-03-17",
+      "2017-04-11",
+      "2017-04-21",
+      "2017-04-27",
+      "2017-05-10"
+     ]
+    },
+    "Datum i vrijeme početka": {
+     "n": 60,
+     "primjeri": [
+      "[telefon]:00:00"
+     ]
+    },
+    "Datum i vrijeme početka nadmetanja": {
+     "n": 60,
+     "primjeri": [
+      "[telefon]:00:00"
+     ]
+    },
+    "Datum i vrijeme završetka nadmetanja": {
+     "n": 60,
+     "primjeri": [
+      "[telefon]:59:59"
+     ]
+    },
+    "Mogućnost produljenja nadmetanja (za dodatnih 10 minuta)": {
+     "n": 60,
+     "primjeri": [
+      "Ne"
+     ]
+    },
+    "Ostali uvjeti prodaje": {
+     "n": 60,
+     "primjeri": [
+      "Nadležno tijelo nije dostavilo podatke."
+     ]
+    },
+    "Minimalna zakonska cijena ispod koje se predmet prodaje ne može prodati": {
+     "n": 60,
+     "primjeri": [
+      "29862.63",
+      "10286.02",
+      "46896.28",
+      ".13",
+      "38787.53",
+      "891551.66",
+      "5165.84",
+      "3710.93",
+      "222.97",
+      "122625.92",
+      "253235.12",
+      "313406.25",
+      "391278.41",
+      "5000.62",
+      "1837.24",
+      "1725.41",
+      "3099.34",
+      "7094.91",
+      "17653.48",
+      "481676.41",
+      "385820.41",
+      "108461.07",
+      "165271.72",
+      "13979.00",
+      "15017.44",
+      "46298.45",
+      "40035.86",
+      "33533.63",
+      "47384.82",
+      "178228.26",
+      "27958.00",
+      "33237.83",
+      "134952.55",
+      "135695.80",
+      "139518.22",
+      "134103.13",
+      "132935.16",
+      "132510.45",
+      "131873.38",
+      "132828.99"
+     ]
+    },
+    "Početna cijena za nadmetanje": {
+     "n": 60,
+     "primjeri": [
+      "29862.63",
+      "10286.02",
+      "46896.28",
+      "0.13",
+      "38787.53",
+      "891551.66",
+      "5165.84",
+      "3710.93",
+      "222.97",
+      "122625.92",
+      "253235.12",
+      "313406.25",
+      "391278.41",
+      "5000.62",
+      "1837.24",
+      "1725.41",
+      "3099.34",
+      "7094.91",
+      "17653.48",
+      "481676.41",
+      "385820.41",
+      "108461.07",
+      "165271.72",
+      "13979.00",
+      "15017.44",
+      "46298.45",
+      "40035.86",
+      "33533.63",
+      "47384.82",
+      "178228.26",
+      "27958.00",
+      "33237.83",
+      "134952.55",
+      "135695.80",
+      "139518.22",
+      "134103.13",
+      "132935.16",
+      "132510.45",
+      "131873.38",
+      "132828.99"
+     ]
+    },
+    "Iznos dražbenog koraka": {
+     "n": 60,
+     "primjeri": [
+      "132.72",
+      "663.61",
+      "1327.23",
+      "66.36",
+      "26.54",
+      "6.64"
+     ]
+    },
+    "Rok u kojem je kupac dužan položiti kupovninu": {
+     "n": 60,
+     "primjeri": [
+      "30 dana od dana pravomoćnosti rješenja o dosudi",
+      "U roku od 30 dana od dana zaključenja dražbe.",
+      "Najkasnije 3 mjeseca od dana dosude",
+      "30 dana od dostave rješenja o dosudi.",
+      "Kupac je dužan položiti kupovninu u roku od 60 dana od donoš",
+      "Kupac je dužan položiti kupovninu u roku od 30 dana od dosta",
+      "Kupac je dužan položiti kupovninu u roku od 30 dana od dana ",
+      "30 dana nakon ročišta za dražbu",
+      "30 dana od dana primitka rješenja o dosudi.",
+      "Kupac je dužan uplatiti kupovninu u roku od 30 (trideset) da",
+      "30 dana od dana završetka elektroničke javne dražbe",
+      "60 dana od pravomoćnosti rješenja o dosudi",
+      "Nekretnina se može razgledati po prethodnom dogovoru sa steč",
+      "60 dana od pravomoćnosti rješenja o dosudi\n",
+      "45 dana od dana prodaje.",
+      "45 dana od dana prodaje.\n",
+      "15 dana od pravomoćnosti rješenja o dosudi.",
+      "60 dana od dana prodaje.",
+      "30 dana od dana prodaje"
+     ]
+    },
+    "Iznos jamčevine": {
+     "n": 60,
+     "primjeri": [
+      "3981.68",
+      "2057.20",
+      "7817.37",
+      "52385.69",
+      "4848.44",
+      "148591.94",
+      "860.97",
+      "618.49",
+      "37.16",
+      "49050.37",
+      "42205.85",
+      "52234.38",
+      "26085.23",
+      "333.37",
+      "122.48",
+      "115.03",
+      "206.62",
+      "472.99",
+      "1176.90",
+      "32111.76",
+      "25721.36",
+      "7230.74",
+      "11018.12",
+      "931.93",
+      "1001.16",
+      "3086.56",
+      "2669.06",
+      "2235.58",
+      "3158.99",
+      "5245.74",
+      "1863.87",
+      "4154.62",
+      "16869.07",
+      "16961.97",
+      "17439.78",
+      "16762.89",
+      "16616.90",
+      "16563.81",
+      "16484.17",
+      "16603.62"
+     ]
+    },
+    "Ostali uvjeti za jamčevinu": {
+     "n": 60,
+     "primjeri": []
+    },
+    "Razgledavanje": {
+     "n": 60,
+     "primjeri": [
+      "Nekretnina se može razgledati uz prethodni dogovor sa stečaj",
+      "Zainteresirane osobe mogu razgledati nekretninu po dogovoru ",
+      "Svaki radni dan od 09:00 do 14:00 sati, Ivanka Bosotina kont",
+      "Osobe zainteresirane za kupnju nekretnine mogu razgledati ne",
+      "Zainteresirani kupci nekretninu mogu razgledati po prethodno",
+      "Osobe zainteresirane za kupnju mogu razgledati nekretninu na",
+      "Svakog četvrtka u vremenu od 11,00 do 13,00 sati uz sudskog ",
+      "Svaki radni dan od 09:00 do 14:00 Ante Vukašin kontakt br. [",
+      "Zainteresirane osobe mogu razgledati predmetnu nekretninu pr",
+      "Nekretnina se može razgledati na adresi Sermageova ulica 11 ",
+      "Nekretnina se može razgledati po prethodnom dogovoru sa steč",
+      "Svi zainteresirani se moraju najaviti sudskom ovršitelju u s",
+      "Određuje se razgledavanje nekretnine koja je predmet prodaje",
+      "Svaki radni dan od 08,00 do 14,00 sati uz prethodni dogovor "
+     ]
+    },
+    "Napomena uz uvjete prodaje": {
+     "n": 60,
+     "primjeri": [
+      "Nema.",
+      "Ovršitelj se plaća.",
+      "Na dražbi mogu sudjelovati osim trećih osoba i ovrhovoditelj",
+      "Na drtažbi mogu sudjelovati osim trećih osoba i ovrhovoditel",
+      "Nekretnine se prodaju zajedno, čine zajedno jedinstvenu gosp",
+      "U nadmetanju može sudjelovati i ovršenik obzirom se radi o p",
+      "Predmet prodaje je 11 nekretnina koje se prodaju kao cjelina",
+      "Nekretnina se može razgledati po prethodnom dogovoru sa steč",
+      "Predmet prodaje je 7 nekretnina koje se prodaju kao cjelina ",
+      "Predmet prodaje je 6 nekretnina koje se prodaju kao cjelina ",
+      "Predmet prodaje je 10 nekretnina koje se prodaju kao cjelina",
+      "Predmet prodaje su 4 nekretnina koje se prodaju kao cjelina ",
+      "Predmet prodaje su 2 nekretnine koje se prodaju kao cjelina ",
+      "Predmet prodaje je 12 nekretnina koje se prodaju kao cjelina",
+      "Predmet prodaje su 2 nekretnina koje se prodaju kao cjelina ",
+      "Prodaju se sve etaže kao cjelina."
+     ]
+    },
+    "Stanje na dan": {
+     "n": 60,
+     "primjeri": [
+      "2026-10-22"
+     ]
+    },
+    "Datum valute jamčevine": {
+     "n": 60,
+     "primjeri": [
+      "[telefon]:00:00"
+     ]
+    }
+   }
+  }
+ }
+]
