@@ -2066,3 +2066,36 @@ def test_weekly_counts_separate_old_republished_listings(tmp_path):
     assert state.counts_since("2026-10-12T00:00:00+02:00") == {"t": {"stari": 2, PASS: 1, REJECT: 1}}
     assert state.start_max_id("t") == 1050 and state.meta_get("pocetni_broj:t") == "1050"
     state.close()
+
+
+def test_field_census_is_saved_after_sources_are_read(tmp_path, monkeypatch):
+    """Popis polja (Redmi: Njuškalo) sprema se nakon čitanja izvora – 23. 10. spremao se prije
+    njega, pa je uvijek bio prazan."""
+    import json
+
+    import scraper.runner as runner_mod
+    from scraper import popis_polja
+
+    class Src:
+        name, label, daily = "fake", "fake", False
+
+        def __init__(self, *a, **k):
+            pass
+
+        def fetch(self, mode, known_ids):
+            popis_polja.record("njuskalo", "kuca", {"tip kuće": "Samostojeća"})
+            return [listing(sid="1")]
+
+        def search_links(self):
+            return []
+
+    popis_polja._seen.clear()
+    monkeypatch.setitem(runner_mod.ALL, "fake", Src)
+    r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+    r.cfg["izvori"] = {"fake": True}
+    r._send_report = lambda *a, **k: None
+    r._banks = r._tenders = r._ppv_reminder = lambda *a, **k: None
+    r.run(force=True)
+    state = State(tmp_path / "s.db")
+    assert json.loads(state.meta_get("popis_polja:njuskalo:kuca"))["polja"]["tip kuće"]["n"] == 1
+    state.close()

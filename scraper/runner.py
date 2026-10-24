@@ -209,11 +209,6 @@ class Runner:
         if not reserve:
             state.meta_set("glavni_okidac", self.stamp)
         self._main_trigger(state, reserve)
-        try:
-            popis_polja.save(state)            # revizija polja (Redmi: Njuškalo)
-            state.conn.commit()
-        except Exception as exc:  # noqa: BLE001 – popis nije nužan za rad
-            self.log(f"Popis polja: GREŠKA {type(exc).__name__}: {exc}")
         self._heartbeat(state)
         self._mail_health(state)
         try:
@@ -421,6 +416,10 @@ class Runner:
                 self.log(f"PPV podsjetnik: GREŠKA {type(exc).__name__}: {exc}")
             self._retry_weekly(state)
             self._retry_alerts(state)
+            try:
+                popis_polja.save(state)        # revizija polja (Redmi: Njuškalo), nakon čitanja izvora
+            except Exception as exc:  # noqa: BLE001 – popis nije nužan za rad
+                self.log(f"Popis polja: GREŠKA {type(exc).__name__}: {exc}")
             state.meta_set("last_run", self.stamp)
             if self.redmi_db:
                 self._check_redmi(state)

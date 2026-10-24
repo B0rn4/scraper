@@ -785,7 +785,9 @@ bez stotina poruka.
   - FINA: CSV nema stupaca za mjesto (lokacija i dalje iz opisa); novo: koja je dražba
     („Oznaka EJD” → „⚖ … · druga dražba”), skupni predmet prodaje → ⚠ (cijena za više nekretnina),
     napomena da nekretnina nije slobodna („stanuje ovršenik”) → ⚠ s citatom.
-  - Njuškalo: u tijeku – Redmi bilježi polja pri čitanju (ujutro, kad stigne puno novih oglasa).
+  - Njuškalo: u tijeku – Redmi bilježi polja pri čitanju. (24. 10.: popis se spremao prije čitanja
+    izvora – `_main_trigger` je samo nadzor cron-job.org-a – pa je ostao prazan; sad se sprema na
+    kraju pokretanja. Stranice se otvaraju samo za nove oglase koji bi mogli proći, nekoliko dnevno.)
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
