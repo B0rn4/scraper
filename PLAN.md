@@ -785,9 +785,16 @@ bez stotina poruka.
   - FINA: CSV nema stupaca za mjesto (lokacija i dalje iz opisa); novo: koja je dražba
     („Oznaka EJD” → „⚖ … · druga dražba”), skupni predmet prodaje → ⚠ (cijena za više nekretnina),
     napomena da nekretnina nije slobodna („stanuje ovršenik”) → ⚠ s citatom.
-  - Njuškalo: u tijeku – Redmi bilježi polja pri čitanju. (24. 10.: popis se spremao prije čitanja
-    izvora – `_main_trigger` je samo nadzor cron-job.org-a – pa je ostao prazan; sad se sprema na
-    kraju pokretanja. Stranice se otvaraju samo za nove oglase koji bi mogli proći, nekoliko dnevno.)
+  - Njuškalo (26. 10., Redmi: 16 stranica zemljišta od 24. 10.): lokacija, tip zemljišta, površina,
+    namjena, svojstva asfaltni put, gradski vodovod, struja, gradska kanalizacija, vlasnički list,
+    građevinska dozvola – sve se već čita; ne koriste se samo telefon, „agencijsku proviziju plaća”
+    i šifra objekta. Kuće: nijedna stranica (tip kuće dolazi već s popisa, pa se dvojne / u nizu
+    odbiju bez otvaranja; ostale nove su ispale po cijeni, mjestu ili bazenu); polja kuća provjerena
+    13. 10. na snimkama stranica (tip, površine, parking, godine, bazen, vlasnički list, dozvole,
+    vodovod). Redmi i dalje bilježi (do 80 stranica po vrsti). (24. 10.: popis se spremao prije
+    čitanja izvora pa je bio prazan; sad se sprema na kraju pokretanja.)
+  Namjerno se ne čita (ne utječe na kriterije): energetski razred, broj soba i kupaonica, oprema,
+  provizija, telefon, „u blizini”.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
