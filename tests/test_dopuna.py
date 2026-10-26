@@ -344,9 +344,10 @@ def test_cheaper_copy_of_old_listing_has_button_for_older_one(tmp_path, monkeypa
 
 def test_price_drop_of_sent_listing_is_not_hidden_by_silent_twin(tmp_path, monkeypatch):
     """Poslan oglas pojeftini na cijenu tiho zabilježenog starog oglasa s drugog portala: sniženje
-    stiže – cijenu tiho zabilježenog korisnik nije vidio."""
-    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [land("oglasnik", "1", price=130_000)],
-                                       [old("index_oglasi", "3")], [land("oglasnik", "1", price=120_000)]])
+    stiže – cijenu tiho zabilježenog korisnik nije vidio. (Stari oglas zabilježen prije poslanog:
+    zabilježen poslije, jeftiniji bi i sam stigao kao "📉 Već viđen", 14. runda.)"""
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [old("index_oglasi", "3")],
+                                       [land("oglasnik", "1", price=130_000)], [land("oglasnik", "1", price=120_000)]])
     assert tg.listings == ["oglasnik:1", "oglasnik:1"]
     state = State(tmp_path / "s.db")
     assert state.get("oglasnik:1")["notified_price"] == 120_000
@@ -354,11 +355,11 @@ def test_price_drop_of_sent_listing_is_not_hidden_by_silent_twin(tmp_path, monke
 
 
 def test_copy_prefers_twin_with_own_message_over_silent_one(tmp_path, monkeypatch):
-    """Isti oglas poslan porukom i (kasnije) tiho zabilježen kao star na drugom portalu: treća
-    kopija je "isti kao" poslani i dopuna je odgovor na njegovu poruku, a ne napomena."""
-    precise = land("vender", "2", lat=45.16, lon=14.55, priblizna_lokacija=False)
-    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [land("oglasnik", "1")],
-                                       [old("index_oglasi", "3")], [precise]])
+    """Isti oglas tiho zabilježen kao star i (kasnije, jeftiniji) poslan porukom s drugog portala:
+    treća kopija je "isti kao" poslani i dopuna je odgovor na njegovu poruku, a ne napomena."""
+    precise = land("vender", "2", price=110_000, lat=45.16, lon=14.55, priblizna_lokacija=False)
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [old("index_oglasi", "3")],
+                                       [land("oglasnik", "1", price=110_000)], [precise]])
     assert tg.listings == ["oglasnik:1"]
     assert [r["reply_to"] for r in tg.replies] == [101] and tg.replies[0]["url"] == "https://vender/2"
     state = State(tmp_path / "s.db")
@@ -366,6 +367,59 @@ def test_copy_prefers_twin_with_own_message_over_silent_one(tmp_path, monkeypatc
     assert state.get("vender:2")["notified_at"] == "dup:oglasnik:1"
     assert state.notes() == {}
     state.close()
+
+
+class Recording(Tg):
+    def send_listing(self, x, d, headline=""):
+        self.sent = getattr(self, "sent", []) + [(x, headline)]
+        return super().send_listing(x, d, headline)
+
+
+def test_old_listing_cheaper_than_sent_copy_arrives(tmp_path, monkeypatch):
+    """14. runda: osvježen stari oglas jeftiniji od istog koji je korisnik već dobio stiže kao
+    "📉 Već viđen … sad jeftiniji" s gumbom za stariji oglas – dosad se bilježio tiho (Risika
+    22. 10.: Njuškalo 235.000 €, a poruka 12. 10. s index.hr 250.000 €)."""
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [land("index_oglasi", "1", price=250_000)],
+                                       [old("njuskalo", "2", price=235_000)]], Recording())
+    assert [(x.key, h) for x, h in tg.sent] == [
+        ("index_oglasi:1", ""), ("njuskalo:2", "📉 Već viđen na index.hr/oglasi za 250.000 € – sad jeftiniji")]
+    assert tg.sent[1][0].extra["stariji_oglas"]["url"] == "https://index_oglasi/1"
+
+
+def test_old_listing_copy_of_sent_one_is_same_and_brings_only_news(tmp_path, monkeypatch):
+    """Stari oglas iste cijene kao poslani je "isti kao" (a ne "tiho"): novo s njega (točna oznaka)
+    stiže kao dopuna na poruku, a tjedna tablica ga ne broji među stare ("bez istih kao već viđeni")."""
+    precise = old("njuskalo", "2", lat=45.16, lon=14.55, priblizna_lokacija=False)
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [land("index_oglasi", "1")], [precise]])
+    assert tg.listings == ["index_oglasi:1"]
+    assert [r["reply_to"] for r in tg.replies] == [101] and tg.replies[0]["url"] == "https://njuskalo/2"
+    state = State(tmp_path / "s.db")
+    assert state.get("njuskalo:2")["notified_at"] == "dup:index_oglasi:1"
+    assert "njuskalo" not in state.counts_since("2000-01-01")
+    state.close()
+
+
+def test_copy_of_old_listing_in_same_run_is_not_new(tmp_path, monkeypatch):
+    """Stari oglas bez istog viđenog bilježi se tiho i odmah je "viđen": njegova kopija s drugog
+    portala u istom pokretanju nije nov oglas (prije je stizala)."""
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)],
+                                       [old("index_oglasi", "3"), land("nekretnine_hr", "6")]])
+    assert tg.listings == [] and tg.replies == []
+    state = State(tmp_path / "s.db")
+    assert state.get("index_oglasi:3")["notified_at"].startswith("tiho:")
+    assert state.get("nekretnine_hr:6")["notified_at"] == "dup:index_oglasi:3"
+    state.close()
+
+
+def test_rejected_old_listing_copy_of_sent_one_adds_warning(tmp_path, monkeypatch):
+    """Odbijen stari oglas (vrsta "poljoprivredno") isti kao poslani: dopuna s ⚠ na poruku, kao
+    kod odbijene kopije s bilo kojeg portala (prije ništa)."""
+    farm = old("njuskalo", "4", subtype="Poljoprivredno zemljište", title="Zemljište Njivice")
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [land("index_oglasi", "1")], [farm]])
+    assert tg.listings == ["index_oglasi:1"]
+    [warn] = tg.replies
+    assert warn["reply_to"] == 101 and not warn["silent"]
+    assert "⚠ prema ovom oglasu ne odgovara kriterijima: nije građevinsko (Poljoprivredno zemljište)" in warn["text"]
 
 
 def test_send_reply_is_reply_with_button_and_quiet(monkeypatch):

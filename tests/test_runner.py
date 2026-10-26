@@ -5,7 +5,7 @@ from types import SimpleNamespace
 
 from scraper import report
 from scraper.db import State
-from scraper.models import HOUSE, PASS, REJECT, WARN, Decision, Listing
+from scraper.models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
 from scraper.runner import Runner
 
 
@@ -317,6 +317,73 @@ def test_list_snippet_keeps_warning_from_full_description(tmp_path, monkeypatch)
     assert sent[0][0] == "" and dual in sent[0][1]                                # nov oglas
     assert sent[1][0].startswith("📉 Snižena cijena") and dual in sent[1][1]     # isječak, upozorenje ostaje
     assert sent[2][0].startswith("📉 Snižena cijena") and dual not in sent[2][1]  # novi pun opis
+
+
+def test_list_snippet_keeps_warning_after_rejection(tmp_path, monkeypatch):
+    """14. runda: pun opis kaže "dvojna kuća", a oglas je preskup (odbijen). Kasnije pojeftini dok
+    izvor ima samo isječak s popisa: "📉 … sad odgovara kriterijima" mora imati ⚠ iz punog opisa,
+    i kad je između još jedno čitanje popisa s odbijanjem (upozorenje ostaje u bazi)."""
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    full = listing(480_000, sid="4")
+    full.description = "Prodaje se vrlo interesantna dvojna kuća. Krov je terasa s pogledom na more."
+    short, cheaper = listing(470_000, sid="4"), listing(390_000, sid="4")
+    for x in (short, cheaper):
+        x.description, x.extra["opis_skracen"] = "Kuća s pogledom na more.", True
+    FakeSource.modes = []
+    FakeSource.batches = [[listing(sid="1")], [full], [short], [cheaper]]
+    sent, statuses = [], []
+
+    def notify(state, items):
+        for x, d, h in items:
+            sent.append((h, d.warnings))
+            state.mark_notified(x.key, x.price, "2026-10-26T12:01:04+01:00")
+
+    for _ in range(4):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r._send_report = lambda *a, **k: None
+        r._send_notifications = notify
+        r.run(force=True)
+        state = State(tmp_path / "s.db")
+        row = state.get("t:4")
+        statuses.append((row["status"], json.loads(row["reasons"])) if row else None)
+        state.close()
+    dual = "opis spominje dvojnu kuću ili kuću u nizu"
+    assert [(status, dual in reasons) for status, reasons in statuses[1:]] == [
+        (REJECT, True), (REJECT, True), (WARN, True)]
+    [(headline, warnings)] = sent
+    assert headline.endswith("sad odgovara kriterijima") and dual in warnings
+
+
+def test_ruin_sent_as_land_keeps_price_drop_from_list(tmp_path, monkeypatch):
+    """14. runda: ruševina s dozvolom stigla je kao zemljište. Sniženje koje izvor pročita samo s
+    popisa (bez opisa) stiže – prije je oglas postao "kuća od 60 m²", odbijen, a nova cijena se
+    tiho zapisala."""
+    import scraper.runner as runner_mod
+
+    monkeypatch.setitem(runner_mod.ALL, "fake", FakeSource)
+    full = listing(150_000, sid="5", area=60, title="Stara kuća Punat")
+    full.description = "Ruševna kuća za rušenje. Ishođena je građevinska dozvola za novu obiteljsku kuću. Okućnica 600 m2."
+    cheaper = listing(130_000, sid="5", area=60, title="Stara kuća Punat")
+    cheaper.extra["samo_popis"] = True
+    FakeSource.modes = []
+    FakeSource.batches = [[listing(sid="1")], [full], [cheaper]]
+    sent = []
+
+    def notify(state, items):
+        for x, d, h in items:
+            sent.append((h, x.kind, x.area))
+            state.mark_notified(x.key, x.price, "2026-10-26T12:01:04+01:00")
+
+    for _ in range(3):
+        r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+        r.cfg["izvori"] = {"fake": True}
+        r._send_report = lambda *a, **k: None
+        r._send_notifications = notify
+        r.run(force=True)
+    assert sent == [("", LAND, 600), ("📉 Snižena cijena: 150.000 € → 130.000 €", LAND, 600)]
 
 
 def test_known_listing_gets_place_from_earlier_fetch(tmp_path, monkeypatch):
@@ -1987,7 +2054,7 @@ def test_interrupt_after_listings_keeps_records_of_sent_messages(tmp_path, monke
 def test_reopen_known_listings_once_silently(tmp_path, monkeypatch):
     """Jednokratni popravak (index.hr): zapamćeni oglasi koji nisu odbijeni ponovno se otvaraju,
     REOPEN_PER_RUN po pokretanju, i tiho ocjenjuju ispočetka – dvojna kuća postaje odbijena, bez
-    poruke; zadnje viđenje i cijena ostaju. Stranica oglasa ne odgovara → isti oglasi sljedeći put."""
+    poruke; zadnje viđenje i cijena ostaju. Stranica oglasa ne odgovara → ti oglasi na kraj reda."""
     import scraper.runner as runner_mod
 
     calls, down = [], [False]
@@ -2020,9 +2087,36 @@ def test_reopen_known_listings_once_silently(tmp_path, monkeypatch):
     assert state.get("fake:3")["status"] != REJECT and state.get("fake:4")["status"] != REJECT
     assert json.loads(state.meta_get("ponovno_otvori:fake")) == []
     state.close()
-    # 2. pokretanje: stranica ne odgovara (2 pokušaja, ništa otvoreno) → ista dva u 3. pokretanju;
-    # 3. i 4.: po dva; 5.: popravak je gotov.
-    assert len(calls) == 6 and calls[:2] == calls[2:4] and sorted(calls[2:]) == ["1", "2", "3", "4"]
+    # 2. pokretanje: stranica ne odgovara (2 pokušaja, ništa otvoreno) → ta dva na kraj reda;
+    # 3.: sljedeća dva; 4.: ona dva ponovno; 5.: popravak je gotov.
+    assert len(calls) == 6 and calls[:2] == calls[4:6] and sorted(calls[2:]) == ["1", "2", "3", "4"]
+
+
+def test_reopen_queue_does_not_stall_on_broken_listings(tmp_path, monkeypatch):
+    """14. runda: oglasi na početku reda koji se nikad ne daju otvoriti (greška baš na njima) nisu
+    smjeli zaustaviti cijeli red – isti su se pokušavali zauvijek. Sad idu na kraj reda, ostali se
+    otvaraju, a nakon REOPEN_TRIES neuspjeha ispadaju."""
+    import scraper.runner as runner_mod
+
+    calls = []
+
+    def reopen(src, row):
+        calls.append(row["source_id"])
+        if row["source_id"] in ("1", "2"):
+            raise ValueError("neočekivana stranica oglasa")
+        return listing(sid=row["source_id"], source="fake", price=1, title=row["title"])
+
+    monkeypatch.setattr(FakeSource, "reopen_once", "v1", raising=False)
+    monkeypatch.setattr(FakeSource, "reopen", reopen, raising=False)
+    monkeypatch.setattr(runner_mod, "REOPEN_PER_RUN", 2)
+    houses = [listing(sid=str(i), source="fake", price=200_000 + i * 10_000, title=f"Kuća {i} Punat") for i in range(1, 5)]
+    _runs(tmp_path, monkeypatch, [houses] + [[houses[0]]] * 6)
+    assert calls[2:4] == ["3", "4"]                       # odmah sljedeći, ne opet ista dva
+    assert calls.count("1") == calls.count("2") == runner_mod.REOPEN_TRIES
+    state = State(tmp_path / "s.db")
+    assert json.loads(state.meta_get("ponovno_otvori:fake")) == []
+    assert json.loads(state.meta_get("ponovno_otvori_greske:fake")) == {}
+    state.close()
 
 
 def test_reopen_time_is_shared_between_sources(tmp_path):

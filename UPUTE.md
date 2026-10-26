@@ -13,7 +13,9 @@ detalji su u README.md (kako sustav radi) i REDMI.md (postavljanje Redmija).
 - Noću (23–7 h) ništa se ne čita; što se objavi noću stiže u 7 h.
 - Isti oglas na više portala stiže jednom. Ponovno stiže samo ako je negdje jeftiniji.
 - Stari oglas zabilježen bez poruke (npr. stari oglas koji je agencija osvježila) ne stiže ni
-  kad se pojavi na drugom portalu – i dalje je stari oglas i čeka završni pregled.
+  kad se pojavi na drugom portalu – i dalje je stari oglas i čeka završni pregled. I za stari
+  oglas vrijedi: ako je jeftiniji od istog oglasa koji je već viđen, stiže „📉 Već viđen … sad
+  jeftiniji”.
 
 ## 2. Poruka oglasa, redak po redak
 
@@ -226,8 +228,8 @@ Actions → **Planovi – preuzimanje** → naredba `lokacija`, u „adrese” z
 - odbijen je (cijena, površina, naselje, vrsta kuće, opis) – vidi se u preglednom izvještaju;
 - isti oglas već je stigao s drugog portala ili je na drugom portalu zabilježen kao stari oglas;
 - „stari oglas”: agencija je ponovno objavila (osvježila) oglas objavljen prije početka
-  praćenja (Njuškalo, index.hr) – takvi stižu u završnom pregledu, a tjedni izvještaj ih broji
-  u stupcu „stari ✅⚠”;
+  praćenja (Njuškalo, index.hr) – takvi stižu u završnom pregledu (odmah samo kad su jeftiniji
+  od istog već viđenog oglasa), a tjedni izvještaj ih broji u stupcu „stari ✅⚠”;
 - označio si ga s 👎.
 
 Ako misliš da je trebao stići, pošalji Claudeu poveznicu.

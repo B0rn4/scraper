@@ -86,9 +86,22 @@ def test_fina_round_occupancy_and_group_lot(fina):
     assert "⚖ Općinski sud u Crikvenici, Stalna služba u Krku Ovr-1/2026 · druga dražba" in format_listing(
         x, Decision("prolazi", jls="Punat"), "", 4000)
     for note in ("Nekretnina je slobodna od osoba i stvari.", "U nekretnini nitko ne stanuje.",
-                 "Nadležno tijelo nije dostavilo"):
+                 "Nadležno tijelo nije dostavilo", "Nekretnina nije u zakupu niti u najmu.",
+                 "Na nekretnini nema prava koja ne prestaju prodajom.", "Najmanje 100 m2 je ravno."):
         r.update({"Napomena uz detalje predmeta prodaje": note, "Složenost PP / opseg imovine": "Pojedinačni predmet prodaje"})
-        assert not any("napomena" in w or "skupni" in w for w in fina.to_listing(r).extra["warnings"]), note
+        assert fina.to_listing(r).extra["warnings"] == [], note
+    # 14. runda: nijekanje samo uz sam izraz; "slobodna" ne poništava zakup spomenut uz nju.
+    for note in ("Nekretnina je slobodna od osoba, ali je u zakupu do 2027.",
+                 "U nekretnini stanuje ovršenik, nije u zakupu niti u najmu.", "Nekretnina je dana u najam."):
+        r["Napomena uz detalje predmeta prodaje"] = note
+        assert fina.to_listing(r).extra["warnings"] == [f"napomena uz predmet prodaje: „{note}”"], note
+    # Prava koja ne prestaju prodajom (napomena je u opisu oglasa): ⚠ iz pravila za opis, jednom.
+    from scraper.filters import evaluate
+    r["Napomena uz detalje predmeta prodaje"] = "Na nekretnini je upisana osobna služnost - pravo doživotnog plodouživanja."
+    d = evaluate(fina.to_listing(r), load_config()["kriteriji"], Locator(), None)
+    assert [w for w in d.warnings if "plodouživanje" in w] == [
+        "pravo stanovanja / plodouživanje: „Napomena: Na nekretnini je upisana osobna služnost - pravo doživotnog "
+        "plodouživanja.”"]
 
 
 def test_fina_regional_court_and_cadastral(fina):
@@ -633,6 +646,30 @@ def test_njuskalo_opens_known_ad_with_price_drop_or_without_area(fina):
     assert opened and x.extra.get("detalji")
 
 
+def test_vender_odd_feature_does_not_break_source(monkeypatch):
+    """14. runda: "Tip kuće" bez slova ("-", "/") rušio je cijelo čitanje vendera (IndexError); a
+    i druga neobična značajka sad samo izostaje – oglas stiže s podacima s popisa."""
+    from scraper.sources import vender
+
+    def item(value):
+        feat = ('a:1:{i:0;a:2:{s:29:"fave_additional_feature_title";s:9:"Tip kuće";'
+                f's:29:"fave_additional_feature_value";s:{len(value.encode())}:"{value}";}}}}')
+        return {"id": 2, "link": "https://vender.hr/2", "title": {"rendered": "Kuća Njivice"}, "property_type": [62],
+                "content": {"rendered": "Kuća."}, "property_meta": {"fave_property_price": ["300000"],
+                                                                  "fave_property_size": ["120"], "additional_features": [feat]},
+                "_embedded": {"wp:term": [[{"taxonomy": "property_city", "name": "OMIŠALJ"}]]}}
+
+    for value in ("-", "/", "–"):
+        [x] = vender.parse_items([item(value)])
+        assert x.subtype == "Kuća" and "detalji_greska" not in x.extra, value
+
+    def broken(labels):
+        raise ValueError("neočekivana značajka")
+    monkeypatch.setattr(vender.prikljucci, "from_labels", broken)
+    [x] = vender.parse_items([item("dvojna")])
+    assert x.price == 300_000 and x.extra["detalji_greska"].startswith("dodatne značajke: ValueError")
+
+
 def test_reopen_vender_oglasnik_nekretnine():
     """Jednokratno ponovno otvaranje zapamćenih oglasa (nova polja): vender (API jednog oglasa),
     oglasnik (stranica oglasa ima i druge oglase), nekretnine.hr (podaci stranice oglasa)."""
@@ -900,6 +937,25 @@ def test_burza_detail_reads_feature_table():
     burza.parse_detail('<h5>Lokacija:</h5><span class="place-name">Krk</span>'
                        '<div class="bad-text"><p>Zemljište 600 m2.</p></div>', plain)
     assert (plain.subtype, plain.area) == ("", 600) and "prikljucci" not in plain.extra   # bez tablice: kao prije
+
+
+def test_burza_mixed_land_type_is_not_cut_to_first():
+    """14. runda: "Vrsta zemljišta" je popis – "Poljoprivredno, Građevinsko" je mješovito zemljište
+    (⚠), a ne odbijeno poljoprivredno (uzimala se samo prva vrijednost)."""
+    from scraper.filters import evaluate
+    from scraper.models import WARN, Listing
+    from scraper.sources import burza
+
+    page = """<h5>Lokacija:</h5><span class="place-name">Cizici</span>
+<div class="bad-features"><table class="table"><tbody>
+<tr><td colspan="2"><h6>Vrsta zemljišta</h6><ul><li>Poljoprivredno zemljište</li><li>Građevinsko zemljište</li></ul></td></tr>
+<th>Kvadratura</th><td>900</td></tr>
+</tbody></table></div><div class="bad-text"><p>Zemljište uz cestu.</p></div>"""
+    x = Listing("burza", "3", "https://burza.com.hr/oglasi/z/3", "Zemljište Čižići", LAND, price=120_000)
+    burza.parse_detail(page, x)
+    assert x.subtype == "Poljoprivredno zemljište, Građevinsko zemljište"
+    d = evaluate(x, load_config()["kriteriji"], Locator(), None)
+    assert d.status == WARN and any(w.startswith("mješovito zemljište") for w in d.warnings)
 
 
 def test_burza_house_fields_from_table():
@@ -1657,6 +1713,28 @@ def test_strip_contacts_croatian_formats():
         assert strip_contacts(f"Tel {phone}.") == "Tel [telefon].", phone
     assert strip_contacts("ivan(at)gmail.com, ivan.horvat [at] gmail.com") == "[e-adresa], [e-adresa]"
     assert strip_contacts("k.č. 2345/12 2345/13 k.o. Vrh, 0.523, 09.10.2026.") == "k.č. 2345/12 2345/13 k.o. Vrh, 0.523, 09.10.2026."
+
+
+def test_field_census_hides_free_text_and_addresses():
+    """14. runda: popis polja (javna grana debug; Redmijev popis Njuškala) ne prikazuje slobodan
+    tekst – u FINA-inom stupcu "Razgledavanje" bila su imena osoba – ni adresu."""
+    import sys
+
+    from scraper import popis_polja
+    sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "tools"))
+    import provjeri_lokaciju
+
+    polja = provjeri_lokaciju.census([{"Razgledavanje": "Svaki radni dan od 9 do 14 sati, Ivan Horvat kontakt",
+                                       "Adresa": "Ulica Ive Horvata 11", "Oznaka EJD": "Prva", "Iznos": 1200.5}])["polja"]
+    assert polja["Razgledavanje"] == {"n": 1, "primjeri": ["(slobodan tekst)"]}
+    assert polja["Adresa"] == {"n": 1, "primjeri": []}
+    assert polja["Oznaka EJD"]["primjeri"] == ["Prva"] and polja["Iznos"]["primjeri"] == [1200.5]
+    popis_polja._seen.clear()
+    popis_polja.record("njuskalo", "kuca", {"napomena": "Kuću pokazuje gospodin Ivan Horvat svakog vikenda",
+                                            "tip kuće": "Samostojeća"})
+    seen = popis_polja._seen["njuskalo:kuca"]["polja"]
+    assert seen["napomena"]["primjeri"] == ["(slobodan tekst)"] and seen["tip kuće"]["primjeri"] == ["Samostojeća"]
+    popis_polja._seen.clear()
 
 
 def test_field_census_records_njuskalo_fields(tmp_path):

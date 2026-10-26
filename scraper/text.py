@@ -33,6 +33,13 @@ def strip_contacts(text: str) -> str:
     text = _PHONE_HR.sub("[telefon]", text)
     return _PHONE.sub(lambda m: "[telefon]" if sum(c.isdigit() for c in m.group(0)) >= 9 else m.group(0), text)
 
+
+def free_text(value) -> bool:
+    """Slobodan tekst (više od 6 riječi, npr. "Razgledavanje" u FINA-inom CSV-u): u javnim popisima
+    polja ne prikazuje se primjer – imena osoba strip_contacts ne prepoznaje (14. runda)."""
+    return isinstance(value, str) and len(value.split()) > 6
+
+
 _FOLD = str.maketrans({"đ": "d", "Đ": "D"})
 _SAINT = re.compile(r"\b(?:sv|sveti|sveta|sveto|svetog|svetoga|svetom|svetoj|svete|svetu)\b\.?", re.I)
 

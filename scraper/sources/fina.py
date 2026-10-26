@@ -38,9 +38,19 @@ _REGION_COURT = re.compile(r"\bu (rijeci|crikvenici)\b")
 _OTHER_AREA_SERVICE = re.compile(r"stalna sluzba u (rabu|malom losinju|delnicama)")
 _COMMERCIAL = re.compile(r"trgovack")
 # Napomena uz predmet prodaje: nekretnina nije slobodna ("U nekretnini stanuje ovršenik").
-_OCCUPIED = re.compile(r"stanuje|nastanjen|\bzivi\b|koristi|u posjedu|nije slobodn|zakup|najam|iznajmljen")
-_FREE = re.compile(r"(?<!nije )\bslobodn|\bnitko\b|\bne (stanuje|zivi|koristi)")
+_OCCUPIED = re.compile(r"stanuje|nastanjen|\bzivi\b|koristi|u posjedu|nije slobodn|zakup|\bnaj(?:am|mu|mom|ma)\b"
+                       r"|iznajmljen")
+# Nijekanje neposredno ispred ("nije u zakupu niti u najmu", "nitko ne stanuje") – ne cijela napomena:
+# "slobodna od osoba, ali je u zakupu do 2027." je zauzeta (14. runda).
+_NEGATED = re.compile(r"\b(?:ne|nije|niti|nisu|nema|bez)\s+(?:\w+\s+){0,2}$")
 _ROUNDS = {"prva": "prva", "druga": "druga", "treca": "treća", "cetvrta": "četvrta", "peta": "peta"}
+
+
+def _occupied(note: str) -> bool:
+    """Napomena uz predmet prodaje kaže da netko koristi nekretninu (stanuje, zakup, najam)."""
+    folded = fold(note)
+    return any(m.group(0) == "nije slobodn" or not _NEGATED.search(folded[max(0, m.start() - 30):m.start()])
+               for m in _OCCUPIED.finditer(folded))
 
 
 def _date(value: str):
@@ -196,7 +206,7 @@ class Fina(Source):
         if fold(group).startswith("skupni"):
             warnings.append("skupni predmet prodaje – cijena je za više nekretnina zajedno")
         note = " ".join((row.get("Napomena uz detalje predmeta prodaje") or "").split())
-        if note and _OCCUPIED.search(fold(note)) and not _FREE.search(fold(note)):
+        if note and _occupied(note):
             warnings.append(f"napomena uz predmet prodaje: „{note if len(note) <= 150 else note[:147] + '…'}”")
         auction = _ROUNDS.get(fold(row.get("Oznaka EJD") or ""), "")
         details = [

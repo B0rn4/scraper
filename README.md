@@ -178,7 +178,8 @@ iz kriterija), za ručnu provjeru propuštenih oglasa: `python tools/stranice.py
 Njuškalo blokira GitHub i zahtjeve bez preglednika, pa ga čita Redmi s kućne mreže.
 Javljaju se samo novi oglasi (novi broj oglasa) i sniženja; stari oglasi koje agencije
 ponovno objave bilježe se bez poruke (oglas s brojem većim od najvećeg na početku praćenja
-nikad nije star). Isto na index.hr (13. i 19. 10.): nepoznat oglas objavljen prije početka
+nikad nije star), osim kad su jeftiniji od istog već viđenog oglasa („📉 Već viđen”), a kopija
+već viđenog je „isti kao” (dopuna ili napomena, kao s drugih portala). Isto na index.hr (13. i 19. 10.): nepoznat oglas objavljen prije početka
 praćenja (agencija ga je obnovila, a početni popis ga nije stigao pročitati; broj oglasa do
 najvećeg na početku) bilježi se bez poruke. Takvi oglasi čekaju završni pregled; tjedni izvještaj
 ih broji u stupcu „stari ✅⚠”. Realitica je izostavljena (njezini oglasi gotovo

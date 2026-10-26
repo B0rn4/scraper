@@ -138,19 +138,25 @@ def _buildable(folded: str) -> bool:
 
 def ruin_as_land(listing: Listing) -> None:
     """Kuća-ruševina na kojoj se može graditi postaje zemljište: površina je okućnica (iz polja
-    ili teksta), vrsta "ruševina na građevinskom zemljištu"; ruševina se pamti za ⚠."""
+    ili teksta), vrsta "ruševina na građevinskom zemljištu"; ruševina se pamti za ⚠. Popis bez
+    opisa (runner: extra "rusevina_ranije") zadržava raniju odluku sa stranice oglasa – inače bi
+    oglas bio "kuća od 60 m²" i njegovo sniženje bi se izgubilo (14. runda)."""
     if listing.kind != HOUSE:
         return
     broken = ruin(listing)
     text = f"{listing.title}. {listing.description}"
+    size = listing.area
     if not broken or not _buildable(fold(text)):
-        return
+        earlier = listing.extra.get("rusevina_ranije")
+        if not earlier:
+            return
+        broken, size = earlier["recenica"], earlier.get("m2") or listing.area
     plot = listing.plot_area or listing.extra.get("okucnica_ranije")   # ranije: stranica oglasa
     if not plot:
         m = _PLOT_AREA.search(fold(text))
         found = areas_in_text(m.group(1)) if m else []
         plot = found[0] if found else None
-    listing.extra["rusevina_kao_zemljiste"] = {"m2": listing.area, "recenica": broken}
+    listing.extra["rusevina_kao_zemljiste"] = {"m2": size, "recenica": broken}
     listing.kind, listing.subtype = LAND, "ruševina na građevinskom zemljištu"
     listing.area, listing.plot_area = plot, None
     listing.extra.pop("povrsina_iz_teksta", None)
@@ -252,6 +258,26 @@ def stored_rejections(items: list[str]) -> list[str]:
             or any(item.startswith(f"{label} (vrsta: ") or item == f"{label} (naslov)" for label in kinds)]
 
 
+def _ruin_warning(broken: dict) -> str:
+    size = f" ({fmt_m2(broken['m2'])})" if broken.get("m2") else ""
+    return (f"ruševina{size} na građevinskom zemljištu ili s dozvolom – stiže kao zemljište "
+            f"(površina je okućnica), provjeri: „{broken['recenica']}”")
+
+
+_RUIN_WARNING = re.compile(r"ruševina(?: \((\d[\d.]*) m²\))? na građevinskom zemljištu ili s dozvolom – stiže kao "
+                           r"zemljište \(površina je okućnica\), provjeri: „(.*)”", re.S)
+
+
+def earlier_ruin(items: list[str]) -> dict | None:
+    """Ruševina koja je stigla kao zemljište (⚠ iz _ruin_warning) među spremljenim razlozima i
+    upozorenjima: za ruin_as_land kad ovaj put imamo samo podatke s popisa."""
+    for item in items:
+        m = _RUIN_WARNING.fullmatch(item)
+        if m:
+            return {"m2": float(m.group(1).replace(".", "")) if m.group(1) else None, "recenica": m.group(2)}
+    return None
+
+
 def text_warnings(items: list[str]) -> list[str]:
     """Upozorenja iz punog opisa i polja sa stranice oglasa (dvojna kuća ili bazen u opisu,
     suvlasništvo, namjena…) među spremljenima: popis ih ne može ponoviti (runner ih zadržava)."""
@@ -269,10 +295,7 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
     warnings: list[str] = list(listing.extra.get("warnings", []))
     reasons.extend(listing.extra.get("reject", []))
     if listing.extra.get("rusevina_kao_zemljiste"):
-        broken = listing.extra["rusevina_kao_zemljiste"]
-        size = f" ({fmt_m2(broken['m2'])})" if broken.get("m2") else ""
-        warnings.append(f"ruševina{size} na građevinskom zemljištu ili s dozvolom – stiže kao zemljište "
-                        f"(površina je okućnica), provjeri: „{broken['recenica']}”")
+        warnings.append(_ruin_warning(listing.extra["rusevina_kao_zemljiste"]))
     near_miss_only = not reasons
     pct = criteria.get("za_dlaku_posto", 15) / 100
 

@@ -133,7 +133,8 @@ def _apply_features(x: Listing, features: dict[str, list[str]]) -> dict:
         m = re.match(r"\s*(\d[\d.,]*)", first(name))      # "1334 m", "12.000 m", "477"
         return parse_number(m.group(1)) if m else None
 
-    kind = first("vrsta kuce" if x.kind == HOUSE else "vrsta zemljista")
+    # "Vrsta zemljišta" je popis: "Građevinsko, Poljoprivredno" je mješovito (⚠), ne samo prva vrsta.
+    kind = ", ".join(v for v in features.get("vrsta kuce" if x.kind == HOUSE else "vrsta zemljista") or [] if v)
     if kind:
         x.subtype = kind
     for name, key in (("godina izgradnje", "godina_izgradnje"), ("zadnja adaptacija", "godina_obnove")):

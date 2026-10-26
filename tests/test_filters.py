@@ -431,6 +431,29 @@ def test_ruin_with_building_signal_arrives_as_land(ctx, title, text, area, plot,
         assert x.kind != LAND and any(r.startswith("ruševina: „") for r in d.reasons)
 
 
+def test_ruin_as_land_is_kept_when_only_list_data(ctx):
+    """14. runda: ruševina s dozvolom stigla je kao zemljište (okućnica). Popis bez opisa (index,
+    Njuškalo) zadržava tu odluku (runner: rusevina_ranije iz spremljenog ⚠) – inače bi bila
+    "kuća od 60 m²", odbijena, a njeno sniženje izgubljeno."""
+    from scraper.filters import earlier_ruin
+    full = house(title="Stara kuća Punat", description="Ruševna kuća za rušenje. Ishođena je građevinska dozvola "
+                 "za novu obiteljsku kuću. Okućnica 600 m2.", area=60, price=150_000)
+    d = evaluate(full, *ctx)
+    assert full.kind == LAND and full.area == 600 and d.notify
+    earlier = earlier_ruin(d.reasons + d.warnings)
+    assert earlier == {"m2": 60, "recenica": "Ruševna kuća za rušenje."}
+    listed = house(title="Stara kuća Punat", area=60, price=130_000)
+    listed.extra.update(okucnica_ranije=600, rusevina_ranije=earlier)
+    again = evaluate(listed, *ctx)
+    assert listed.kind == LAND and listed.area == 600 and again.notify
+    assert [w for w in again.warnings if "kao zemljište" in w] == [w for w in d.warnings if "kao zemljište" in w]
+    assert earlier_ruin(["ruševina (1.250 m²) na građevinskom zemljištu ili s dozvolom – stiže kao zemljište "
+                         "(površina je okućnica), provjeri: „Ruševina.”"]) == {"m2": 1250, "recenica": "Ruševina."}
+    assert earlier_ruin(["opis spominje bazen", "ruševina: „Ruševina.”"]) is None
+    plain = house(title="Stara kuća Punat", area=60, price=130_000)       # bez ranijeg zapisa: kuća
+    assert evaluate(plain, *ctx).status == REJECT and plain.kind == HOUSE
+
+
 def test_ruin_only_rejection_opens_listing_page(ctx):
     """Isječak kaže "ruševina": stranica oglasa se otvara (pun opis može reći "za obnovu" ili dozvolu),
     a ocjena na popisu ne mijenja oglas prije nego stranica upiše površinu."""

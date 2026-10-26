@@ -19,7 +19,7 @@ from .ispu import APPROX_RADIUS_M, Ispu, check_land, gp_text, heritage_warning
 from .plans import Plans
 from .prices import MAX_AGE_DAYS, PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
 from .db import State
-from .filters import effective_price, evaluate, stored_rejections, text_warnings
+from .filters import earlier_ruin, effective_price, evaluate, stored_rejections, text_warnings
 from .http import Http, blocked
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
@@ -47,6 +47,7 @@ LISTING_ERROR_RUNS = 3      # isti izvor toliko pokretanja zaredom ima oglase ko
 DEEP_ALERT_DAYS = 3         # dnevno dublje čitanje toliko dana zaredom ne uspijeva → upozorenje
 CODE_ALERT_RUNS = 18        # Redmi toliko GitHubovih pokretanja (~6 sati) radi s drukčijim kodom → upozorenje
 REOPEN_PER_RUN = 30         # jednokratno ponovno otvaranje zapamćenih oglasa (Source.reopen_once) po izvoru i pokretanju
+REOPEN_TRIES = 3            # oglas koji se toliko puta ne da otvoriti (a nijedan drugi nije otvoren) ispada iz reda
 REOPEN_SECONDS = 120        # i najdulje toliko sekundi po izvoru
 REOPEN_TOTAL_SECONDS = 180  # i ukupno za sve izvore u pokretanju (pokretanje ne smije postati predugo),
                             # podijeljeno na izvore koji imaju što otvarati (inače prvi zauzmu sve)
@@ -295,6 +296,8 @@ class Runner:
                         partial = x.extra.get("opis_skracen") or x.extra.get("samo_popis")
                         if prev and partial and "spominje parcelaciju" in (prev.get("reasons") or ""):
                             x.extra["parcelacija_ranije"] = True     # opis je bio na stranici oglasa
+                        if partial and x.extra.get("okucnica_ranije"):
+                            self._keep_ruin_as_land(x, prev)
                         d = evaluate(x, self.criteria, self.locator, prices)
                         if prev and prev.get("category") and "kategorija" not in x.extra:
                             x.extra["kategorija"] = prev["category"]   # iz opisa ranijeg dohvata
@@ -303,14 +306,20 @@ class Runner:
                                 x.price, x.area, bool(x.extra.get("ukupna_cijena")), x.kind) is None)
                         if prev and partial and d.status == REJECT and prev.get("status") != REJECT:
                             d = self._drop_snippet_ruin(d, prev)
-                        if prev and partial and d.status != REJECT and prev.get("status") != REJECT:
+                        if prev and partial:
+                            # I kad je oglas bio odbijen (npr. preskup) ili je sad odbijen: upozorenje
+                            # iz punog opisa ne smije nestati prije sniženja (14. runda).
                             d = self._keep_text_warnings(d, prev)
                         old = state.upsert(x, d, self.stamp)
                         decided.append((x, d))
-                        if silent_baseline or (old is None and x.extra.get("stari_oglas")):
-                            # Bez obavijesti (početak praćenja ili stari oglas ponovno objavljen),
-                            # ali zabilježeno – sniženje cijene kasnije i dalje stiže. Odbijeni se ne
-                            # bilježe: kad počne odgovarati (izmjena oglasa ili pravila), stiže poruka.
+                        # Stari oglas ponovno objavljen (Njuškalo, index.hr): bez poruke, kao i
+                        # početak praćenja, ali tek nakon provjere viđenih (_check_seen) – jeftinija
+                        # kopija već viđenog oglasa stiže ("📉 Već viđen"), a ista je "isti kao".
+                        stale = old is None and bool(x.extra.get("stari_oglas"))
+                        if silent_baseline or (first and stale):
+                            # Bez obavijesti, ali zabilježeno – sniženje cijene kasnije i dalje stiže.
+                            # Odbijeni se ne bilježe: kad počne odgovarati (izmjena oglasa ili
+                            # pravila), stiže poruka.
                             if d.notify:
                                 state.mark_notified(x.key, x.price, f"tiho:{self.stamp}")
                             continue
@@ -321,7 +330,7 @@ class Runner:
                             if headline is not None and self._is_muted(state, seen, x, d, old):
                                 headline = None
                             if headline is not None:
-                                headline = self._check_seen(state, seen, x, d, old, headline)
+                                headline = self._check_seen(state, seen, x, d, old, headline, stale)
                             if headline is not None:
                                 self._enrich(x, d, prices)
                                 to_notify.append((x, d, headline))
@@ -633,7 +642,7 @@ class Runner:
             self.log(f"{src.label}: ponovno otvaranje čeka sljedeće pokretanje (preostalo {len(codes)})")
             return
         deadline = started + budget
-        tried, opened, errors, rejected = 0, 0, [], 0
+        tried, opened, errors, rejected, failed = 0, 0, [], 0, []
         for code in codes[:REOPEN_PER_RUN]:
             if time.monotonic() > deadline or (len(errors) >= 3 and not opened):
                 break
@@ -641,27 +650,41 @@ class Runner:
             row = state.get(f"{src.name}:{code}")
             if row is None or row.get("status") == REJECT:
                 continue
+            failed.append(code)
             try:
                 x = src.reopen(row)
                 opened += 1
+                failed.pop()
                 if x is None:                       # oglasa više nema
                     continue
                 if row.get("kind") == LAND and x.kind == HOUSE and row.get("area"):
                     x.extra["okucnica_ranije"] = row["area"]   # ruševina kao zemljište (okućnica)
+                    if x.extra.get("opis_skracen") or x.extra.get("samo_popis"):
+                        self._keep_ruin_as_land(x, row)
                 d = evaluate(x, self.criteria, self.locator, prices)
-                if d.status != REJECT and (x.extra.get("opis_skracen") or x.extra.get("samo_popis")):
+                if x.extra.get("opis_skracen") or x.extra.get("samo_popis"):
                     d = self._keep_text_warnings(d, row)        # stranica bez opisa: ne briše ranija upozorenja
                 state.reassess(x, d)
                 rejected += d.status == REJECT
             except Exception as exc:  # noqa: BLE001 – oglas ostaje kakav je bio
                 errors.append(f"{code}: {type(exc).__name__}: {exc}")
+        rest = codes[tried:]
         if errors and not opened:
-            tried = 0                               # stranica oglasa ne odgovara: isti oglasi sljedeći put
+            # Stranica oglasa ne odgovara (ili baš ti oglasi): oni na kraj reda, a nakon REOPEN_TRIES
+            # neuspjeha ispadaju – prije su se isti pokušavali zauvijek i red je stao (14. runda).
+            try:
+                fails = json.loads(state.meta_get(f"ponovno_otvori_greske:{src.name}") or "{}")
+            except ValueError:
+                fails = {}
+            for code in failed:
+                fails[code] = fails.get(code, 0) + 1
+            rest += [c for c in failed if fails[c] < REOPEN_TRIES]
+            state.meta_set(f"ponovno_otvori_greske:{src.name}", json.dumps({c: n for c, n in fails.items() if c in rest}))
         if hasattr(self, "_reopen_left"):
             self._reopen_left -= time.monotonic() - started
-        state.meta_set(queue, json.dumps(codes[tried:]))
+        state.meta_set(queue, json.dumps(rest))
         self.log(f"{src.label}: ponovno otvoreno {opened} zapamćenih oglasa, sad odbijeno {rejected}, "
-                 f"preostalo {len(codes) - tried}" + (f"; greške {len(errors)} – {errors[0]}" if errors else ""))
+                 f"preostalo {len(rest)}" + (f"; greške {len(errors)} – {errors[0]}" if errors else ""))
 
     def _prune(self, state: State) -> None:
         """Jednom dnevno: odbijeni oglasi koji se dugo ne pojavljuju (State.prune); s našeg
@@ -897,6 +920,15 @@ class Runner:
         return Decision(WARN if d.warnings else PASS, [], d.warnings, d.jls, d.location_evidence)
 
     @staticmethod
+    def _keep_ruin_as_land(x: Listing, prev: dict) -> None:
+        """Ruševina koja je stigla kao zemljište (pun opis: ruševina i dozvola) ostaje zemljište kad
+        ovaj put imamo samo podatke s popisa (filters.ruin_as_land) – inače bi bila "kuća od 60 m²",
+        odbijena, a njeno sniženje izgubljeno (14. runda)."""
+        earlier = earlier_ruin(json.loads(prev.get("reasons") or "[]"))
+        if earlier:
+            x.extra["rusevina_ranije"] = earlier
+
+    @staticmethod
     def _keep_text_warnings(d: Decision, prev: dict) -> Decision:
         """Upozorenja iz punog opisa ili polja sa stranice oglasa (npr. "opis spominje dvojnu kuću")
         ostaju kad ovaj put imamo samo podatke s popisa: inače ih briše prvo sljedeće čitanje popisa
@@ -905,7 +937,9 @@ class Runner:
         kept = [w for w in text_warnings(json.loads(prev.get("reasons") or "[]")) if dopuna.warning_key(w) not in known]
         if not kept:
             return d
-        return Decision(WARN, d.reasons, d.warnings + kept, d.jls, d.location_evidence, d.near_miss)
+        # Odbijen oglas ih isto pamti (u bazi), da stignu s kasnijim sniženjem.
+        return Decision(REJECT if d.status == REJECT else WARN, d.reasons, d.warnings + kept, d.jls,
+                        d.location_evidence, d.near_miss)
 
     def _load_seen(self, state: State) -> dedupe.Seen:
         """Već viđeni oglasi: ova baza, baza s Redmija (na GitHubu) i sažetak s GitHuba (na Redmiju)."""
@@ -1330,10 +1364,11 @@ class Runner:
             return None
 
     def _check_seen(self, state: State, seen: dedupe.Seen, x: Listing, d: Decision, old: dict | None,
-                    headline: str) -> str | None:
+                    headline: str, stale: bool = False) -> str | None:
         """Isti oglas već viđen (drugi portal, ponovna objava)? Stiže samo ako je sad jeftiniji.
         Viđen je i tiho zabilježen stari oglas (početak praćenja, osvježen stari): njegova kopija
-        za korisnika nije nov oglas (odluka 19. 10.), a novo s nje čeka završni pregled."""
+        za korisnika nije nov oglas (odluka 19. 10.), a novo s nje čeka završni pregled.
+        stale: osvježen stari oglas (Njuškalo, index.hr) – bez istog viđenog bilježi se tiho."""
         new = dedupe.row(x, d)
         # Kopija zabilježena kao "isti kao ovaj oglas" (izravno ili preko druge kopije) ne znači
         # da je poruka stigla: ako slanje nije uspjelo, sljedeće pokretanje ga ponovno šalje.
@@ -1376,6 +1411,13 @@ class Runner:
                 if cheapest.get("url"):          # gumb "Stariji oglas" (odluka korisnika 19. 10.)
                     x.extra["stariji_oglas"] = {"url": cheapest["url"], "izvor": where}
             x.extra["blizanci"] = [t["key"] for t in twins]   # usporedba cijena: bez same sebe
+        elif stale:
+            # Stari oglas bez istog viđenog: bez poruke, za završni pregled (odluka 19. 10.).
+            # I u viđenima, da ga kopija s drugog portala u istom pokretanju prepozna.
+            state.mark_notified(x.key, x.price, f"tiho:{self.stamp}")
+            new["notified_at"], new["notified_price"] = f"tiho:{self.stamp}", x.price
+            seen.add(new)
+            return None
         new["notified_at"], new["notified_price"] = self.stamp, x.price
         seen.add(new)  # drugi portal u istom pokretanju ne šalje isti oglas ponovno
         return headline

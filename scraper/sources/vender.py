@@ -83,7 +83,10 @@ def parse_items(items: list[dict]) -> list[Listing]:
             image_url=media.get("source_url", "") if isinstance(media, dict) else "",
             published=x.get("date") or "",
         ))
-        _features(out[-1], meta, [t["name"] for t in terms if t.get("taxonomy") == "property_feature"])
+        try:
+            _features(out[-1], meta, [t["name"] for t in terms if t.get("taxonomy") == "property_feature"])
+        except Exception as exc:  # noqa: BLE001 – neobična značajka ne smije srušiti cijeli izvor
+            out[-1].extra["detalji_greska"] = f"dodatne značajke: {type(exc).__name__}: {exc}"[:200]
         coords = re.match(r"\s*(-?\d+\.\d+)\s*,\s*(-?\d+\.\d+)", _meta(meta, "fave_property_location") or "")
         if coords and _meta(meta, "fave_property_map") == "1":
             # Oznaka na karti oglasa; agencija je može staviti i približno.
@@ -99,7 +102,8 @@ def _features(x: Listing, meta: dict, features: list[str]) -> None:
     extra = {html.unescape(k).strip().lower(): html.unescape(v).strip()
              for k, v in _EXTRA_FEATURE.findall(str(_meta(meta, "additional_features") or ""))}
     kind_type = extra.get("tip kuće" if x.kind == HOUSE else "tip zemljišta", "")
-    if x.kind in (HOUSE, LAND) and kind_type and fold(kind_type).split()[0] not in fold(x.subtype):
+    words = fold(kind_type).split()          # "-" ili "/" (agencija upisuje slobodan tekst): ništa
+    if x.kind in (HOUSE, LAND) and words and words[0] not in fold(x.subtype):
         x.subtype = f"{x.subtype} ({kind_type})" if x.subtype else kind_type   # npr. "Kuća (dvojna)"
     for name, key in (("godina izgradnje", "godina_izgradnje"), ("godina zadnje adaptacije", "godina_obnove"),
                       ("godina zadnje renovacije", "godina_obnove")):

@@ -823,6 +823,43 @@ Nepotvrđeno, zapisano: dublje čitanje RC-a kad obje vrste traže više od 240 
 obrisa s GeoServera (dodana zaštita); utrka GitHub/Redmi za istu dopunu; dopuna na krivi
 original kad kopija odgovara dvama poslanim oglasima; dva 👎 od 7. 10. na poruke prije pamćenja.
 
+## Četrnaesta runda pregleda (26. 10., izmjene od 9. 10.)
+
+Svježa instanca, 6 potvrđenih nalaza (svaki reproduciran, i na kopijama stvarnih baza), svi
+popravljeni, uz testove koji padaju na starom kodu:
+- F-1 osvježen „stari” oglas (Njuškalo, index.hr) bilježio se tiho prije provjere viđenih
+  oglasa: jeftiniji od istog oglasa koji je korisnik već dobio nije stizao kao „📉 Već viđen …
+  sad jeftiniji” (UPUTE: „ponovno stiže samo ako je negdje jeftiniji”). Od 13. 10. takvih 9
+  (npr. Risika: Njuškalo 235.000 €, a poruka 12. 10. s index.hr 250.000 €; Rijeka-Drenova
+  360.000 € prema 400.000 € u početnom popisu). Sad stari oglas prolazi `_check_seen`: jeftiniji
+  stiže s gumbom „Stariji oglas”, isti je „isti kao” (dopuna na poruku ili napomena), bez istog
+  viđenog ostaje tiho – i odmah je „viđen” (kopija u istom pokretanju nije nova). Odbijena stara
+  kopija javljenog oglasa daje ⚠ dopunu. Na podacima od 19. 10.: ~4 poruke tjedno više, 146
+  starih oglasa postalo bi „isti kao”, 30 ostaje tiho.
+- F-6 (isti uzrok) tjedna tablica „stari ✅⚠ (bez istih kao već viđeni)” brojala je i kopije
+  već viđenih (index.hr 107 od 134, Njuškalo 39 od 46) – sad su one „isti kao” i ne broje se.
+- F-2 privatnost: alat `polja:fina` objavio je na javnu granu `debug` (datoteka
+  `planovi/lokacije/lokacije-1023-1859.json`, 23. 10.) dva imena osoba za razgledavanje i jednu
+  adresu iz FINA-inog stupca „Razgledavanje”. Sad popis polja ne prikazuje slobodan tekst
+  (`text.free_text`, više od 6 riječi; i Redmijev popis Njuškala), FINA-ine napomene i uvjete
+  ni stupce s adresom („adres”). Čišćenje grane `debug` čeka odluku korisnika (prepisivanje
+  povijesti).
+- F-3 vender: „Tip kuće” bez slova („-”, „/”) rušio je cijelo čitanje vendera (IndexError); sad
+  se preskače, a i druga neobična značajka samo izostaje (oglas stiže, `detalji_greska`).
+- F-4 upozorenja iz punog opisa (dvojna kuća…) gubila su se kad je oglas prošli put bio odbijen
+  (npr. preskup) ili je čitanje popisa bilo odbijeno: sniženje „sad odgovara” stizalo je bez ⚠.
+  Sad ostaju uvijek kad je ovaj put samo popis (i u bazi kod odbijenih).
+- F-5 ruševina poslana kao zemljište (okućnica) postajala je pri čitanju samo popisa „kuća od
+  60 m²”, odbijena, a sniženje se tiho zapisivalo. Sad zadržava raniju odluku
+  (`filters.earlier_ruin` iz spremljenog ⚠).
+Usput (nepotvrđene sumnje koje je bilo lako zatvoriti): burzina „Vrsta zemljišta” je popis –
+uzimala se samo prva vrijednost („Poljoprivredno, Građevinsko” bilo bi odbijeno, sad je mješovito
+s ⚠); red ponovnog otvaranja stajao je zauvijek kad prvi oglasi u njemu uvijek bacaju grešku (sad
+idu na kraj reda, nakon 3 neuspjeha ispadaju); FINA-ina napomena „nije u zakupu niti u najmu”
+davala je lažni ⚠, a „slobodna od osoba, ali je u zakupu do 2027.” nije davala ⚠ (sad nijekanje
+vrijedi samo uz sam izraz). Ostaje (samo izgled): nakon 👎 na „📉 Već viđen” nestaje gumb
+„Stariji oglas” (poruka pamti jedan gumb).
+
 ## Zadaci za korisnika
 
 - Njuškalo: spremljene pretrage s obavijestima u aplikaciji.

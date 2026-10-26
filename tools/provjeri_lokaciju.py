@@ -10,9 +10,9 @@ index: podaci o lokaciji iz index.hr API-ja (koordinate, isPreciseLocation, sva 
 index-uzorak: N najnovijih oglasa kuća i zemljišta u PGŽ-u – dijele li neprecizni oglasi istog
 mjesta iste koordinate (središte mjesta) ili svaki ima svoje (približna lokacija oglasa).
 polja: koja polja daju stranice oglasa (IZVOR: nekretnine, rc, index, oglasnik, vender, burza, fina – stupci
-CSV-a bez opisa i osobnih podataka; IZVOR-zemljista
+CSV-a bez opisa, napomena i osobnih podataka; IZVOR-zemljista
 samo zemljišta), N oglasa po vrsti: naziv polja, u koliko oglasa ga ima i do 40 kratkih primjera vrijednosti – bez opisa,
-naslova, adresa, slika i podataka o oglašivaču (repozitorij je javan). rc: i dijele li oglasi istog
+naslova, adresa, slika, podataka o oglašivaču i slobodnog teksta (imena; repozitorij je javan). rc: i dijele li oglasi istog
 mjesta koordinate s karte (središte mjesta ili točna oznaka).
 
 Za adresu oglasa koordinate i vrsta oznake ("marker": točna, "only_area": približna) čitaju se
@@ -208,7 +208,7 @@ def index_sample(http: Http, n: int) -> dict:
 
 
 _PRIVATE = re.compile(r"(?i)phone|mail|agent|advertiser|user|contact|kontakt|owner|creator|person|company|agenc"
-                      r"|descr|caption|title|url|link|href|image|photo|media|video|seo|address|street|ulica|thumb")
+                      r"|descr|caption|title|url|link|href|image|photo|media|video|seo|address|adres|street|ulica|thumb")
 
 
 def _flat(value, path=""):
@@ -225,9 +225,10 @@ def _flat(value, path=""):
 
 
 def census(records: list) -> dict:
-    """Polja zapisa: u koliko zapisa je polje i do 40 kratkih primjera (bez osobnih podataka)."""
+    """Polja zapisa: u koliko zapisa je polje i do 40 kratkih primjera (bez osobnih podataka;
+    slobodan tekst, gdje mogu biti imena, samo kao oznaka)."""
     from collections import Counter
-    from scraper.text import strip_contacts
+    from scraper.text import free_text, strip_contacts
     count, examples = Counter(), {}
     for record in records:
         seen = set()
@@ -237,7 +238,8 @@ def census(records: list) -> dict:
                 count[path] += 1
             if value in (None, "") or _PRIVATE.search(path):
                 continue
-            shown = value if isinstance(value, (bool, int, float)) else strip_contacts(str(value))[:60]
+            shown = value if isinstance(value, (bool, int, float)) else (
+                "(slobodan tekst)" if free_text(value) else strip_contacts(str(value))[:60])
             known = examples.setdefault(path, [])
             if shown not in known and len(known) < 40:
                 known.append(shown)
@@ -345,7 +347,8 @@ def field_sample(http: Http, source: str, n: int) -> dict:
         text = http.get(CSV_URL).content.decode("utf-8-sig", errors="replace")
         rows = [r for r in csv.DictReader(io.StringIO(text), delimiter=";")
                 if (r.get("Vrsta predmeta prodaje") or "").strip() == "nekretnina"]
-        hidden = re.compile(r"(?i)opis|ovr[sš]|vlasni|du[zž]ni|ste[cč]aj|\bime|oib|adres|kontakt|osob|naziv|stranka")
+        hidden = re.compile(r"(?i)opis|ovr[sš]|vlasni|du[zž]ni|ste[cč]aj|\bime|oib|adres|kontakt|osob|naziv|stranka"
+                            r"|razgled|napomen|uvjet")
         for r in rows[:n]:
             records.append({k: ("(skriveno)" if hidden.search(k or "") else v) for k, v in r.items()})
     else:

@@ -1,14 +1,14 @@
 """Popis polja sa stranica oglasa (revizija 23. 10.: što portal daje, a ne čitamo).
 
 Izvor ga puni pri čitanju stranice oglasa: nazivi polja i do PRIMJERA kratkih primjera
-vrijednosti (bez opisa; kontakti se brišu). Runner ga na kraju pokretanja spaja u meta
+vrijednosti (bez opisa i slobodnog teksta; kontakti se brišu). Runner ga na kraju pokretanja spaja u meta
 "popis_polja:IZVOR:VRSTA" – tako Redmi javlja polja Njuškala, do kojeg GitHub ne dolazi
 (alat tools/provjeri_lokaciju.py "polja:" za ostale portale). Puni se dok nema MAX_PAGES
 stranica po vrsti, pa ne raste."""
 
 import json
 
-from .text import strip_contacts
+from .text import free_text, strip_contacts
 
 MAX_PAGES = 80
 PRIMJERA = 8
@@ -21,7 +21,7 @@ def record(source: str, kind: str, fields: dict[str, str]) -> None:
     for name, value in fields.items():
         field = entry["polja"].setdefault(str(name)[:60], {"n": 0, "primjeri": []})
         field["n"] += 1
-        shown = strip_contacts(str(value or ""))[:40]
+        shown = "(slobodan tekst)" if free_text(value) else strip_contacts(str(value or ""))[:40]
         if shown and shown not in field["primjeri"] and len(field["primjeri"]) < PRIMJERA:
             field["primjeri"].append(shown)
 
