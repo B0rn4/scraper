@@ -842,8 +842,8 @@ popravljeni, uz testove koji padaju na starom kodu:
   `planovi/lokacije/lokacije-1023-1859.json`, 23. 10.) dva imena osoba za razgledavanje i jednu
   adresu iz FINA-inog stupca „Razgledavanje”. Sad popis polja ne prikazuje slobodan tekst
   (`text.free_text`, više od 6 riječi; i Redmijev popis Njuškala), FINA-ine napomene i uvjete
-  ni stupce s adresom („adres”). Čišćenje grane `debug` čeka odluku korisnika (prepisivanje
-  povijesti).
+  ni stupce s adresom („adres”). Grana `debug` očišćena (odluka korisnika 26. 10.): zadnji commit
+  zamijenjen istim bez te datoteke.
 - F-3 vender: „Tip kuće” bez slova („-”, „/”) rušio je cijelo čitanje vendera (IndexError); sad
   se preskače, a i druga neobična značajka samo izostaje (oglas stiže, `detalji_greska`).
 - F-4 upozorenja iz punog opisa (dvojna kuća…) gubila su se kad je oglas prošli put bio odbijen
