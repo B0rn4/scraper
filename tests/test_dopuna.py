@@ -422,6 +422,103 @@ def test_rejected_old_listing_copy_of_sent_one_adds_warning(tmp_path, monkeypatc
     assert "⚠ prema ovom oglasu ne odgovara kriterijima: nije građevinsko (Poljoprivredno zemljište)" in warn["text"]
 
 
+def test_copy_rejected_on_other_portal_is_not_sent(tmp_path, monkeypatch):
+    """Odluka korisnika 28. 10. (realestatecroatia "Kraljevica - negrađevinski teren", a nekretnine.hr
+    ga je večer prije odbio kao "Poljoprivredno zemljište"): kad je ista nekretnina (ista cijena i
+    površina) na drugom portalu odbijena zbog vrste, naselja ili bazena, ne šalje se – bilježi se
+    kao odbijena s tim razlogom."""
+    farm = land("nekretnine_hr", "1", subtype="Poljoprivredno zemljište", title="Poljoprivredno zemljište Njivice")
+    plain = land("realestatecroatia", "2", subtype="Zemljište", title="Zemljište Njivice, pogled na more")
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [farm], [plain]])
+    assert tg.listings == [] and tg.replies == []
+    state = State(tmp_path / "s.db")
+    row = state.get("realestatecroatia:2")
+    assert row["status"] == REJECT and json.loads(row["reasons"])[0] == (
+        "nije građevinsko (Poljoprivredno zemljište) – prema nekretnine.hr")
+    state.close()
+
+
+def test_copy_rejected_elsewhere_warns_when_link_weak_or_portals_disagree(tmp_path, monkeypatch):
+    """Portali se ne slažu (ovaj kaže građevinsko), veza nije čvrsta (oba "na upit") ili je razlog iz
+    opisa (rečenica): oglas stiže, s ⚠ i razlogom s drugog portala. Odbijen oglas na istom portalu
+    se ne računa (ovaj ima novije podatke)."""
+    class Recording(Tg):
+        def send_listing(self, x, d, headline=""):
+            self.sent = getattr(self, "sent", []) + [(x.key, list(d.warnings))]
+            return super().send_listing(x, d, headline)
+
+    farm = land("nekretnine_hr", "1", subtype="Poljoprivredno zemljište", title="Poljoprivredno zemljište Njivice")
+    says_building = land("realestatecroatia", "2")                                   # "Građevinsko zemljište"
+    asked_farm = land("nekretnine_hr", "3", price=1, area=800, subtype="Poljoprivredno zemljište",
+                      title="Poljoprivredno zemljište Njivice")
+    asked = land("vender", "4", price=1, area=800, subtype="Zemljište", title="Zemljište Njivice")
+    shared = land("oglasnik", "5", area=900, description="Prodaje se suvlasnički dio 1/2 zemljišta.")
+    whole = land("burza", "6", area=900, subtype="Građevinsko zemljište")
+    same_portal = land("burza", "7", area=1000, subtype="Poljoprivredno zemljište", title="Poljoprivredno zemljište Njivice")
+    newer = land("burza", "8", area=1000, subtype="Zemljište", title="Zemljište Njivice")
+    tg = _runs(tmp_path, monkeypatch, [[land("oglasnik", "0", area=100)], [farm, asked_farm, shared, same_portal],
+                                       [says_building, asked, whole, newer]], Recording())
+    sent = dict(tg.sent)
+    assert set(sent) == {"realestatecroatia:2", "vender:4", "burza:6", "burza:8"}
+    assert "prema nekretnine.hr ne odgovara: nije građevinsko (Poljoprivredno zemljište)" in sent["realestatecroatia:2"]
+    assert "prema nekretnine.hr ne odgovara: nije građevinsko (Poljoprivredno zemljište)" in sent["vender:4"]
+    assert any(w.startswith("prema oglasnik.hr ne odgovara: prodaje se suvlasnički dio: „") for w in sent["burza:6"])
+    assert not any(w.startswith("prema ") for w in sent["burza:8"])
+    state = State(tmp_path / "s.db")
+    assert state.get("realestatecroatia:2")["status"] == WARN
+    assert "prema nekretnine.hr ne odgovara" in state.get("realestatecroatia:2")["reasons"]
+    state.close()
+
+
+def test_copy_rejection_is_checked_against_todays_rules(tmp_path):
+    """Razlog odbijene kopije zapisan je kad je kopija viđena; pravila su se mijenjala (4. 10.
+    "lokacija nije na popisu (Matulji)" – sad se Matulji ocjenjuju po naselju; "Soline,
+    građevinsko" nije bilo prepoznato). Odlučuje razlog po današnjim pravilima."""
+    from scraper.filters import still_rejects
+
+    r = Runner(tmp_path / "s.db", tmp_path / "out", send=False)
+    assert r._place_reason({"jls": "Matulji", "settlement": "Matulji", "title": "Matulji, samostojeća kuća"}) is None
+    assert r._place_reason({"jls": "Matulji", "settlement": "Mučići", "title": "Mučići, kuća"}) == (
+        "Mučići (Matulji): prihvaća se samo Matulji")
+    assert still_rejects("nije građevinsko (Poljoprivredno zemljište)", "Zemljište")
+    assert not still_rejects("nije građevinsko (naslov)", "Soline, građevinsko zemljište 800 m2")
+    assert still_rejects("nije građevinsko (naslov)", "Kraljevica - negrađevinski teren")
+    assert still_rejects("dvojna kuća (vrsta: Dvojni objekt)", "Kuća")
+    assert not still_rejects("dvojna kuća (vrsta: Samostojeća kuća)", "Kuća")
+    assert not still_rejects("s bazenom (naslov)", "Kuća s mogućnošću izgradnje bazena")
+    assert still_rejects("s bazenom (podaci oglasa)", "Kuća")
+    # Portali se ne slažu: ovaj oglas kaže samostojeća, ili ima drugo točno naselje → samo ⚠.
+    house = Listing("index_oglasi", "1", "u", "Kuća Jurdani", HOUSE, subtype="Samostojeća kuća")
+    assert Runner._disagrees(house, Decision(PASS), "dvojna kuća (vrsta: Dvojni objekt)")
+    assert not Runner._disagrees(Listing("index_oglasi", "2", "u", "Kuća", HOUSE), Decision(PASS),
+                                 "dvojna kuća (vrsta: Dvojni objekt)")
+    house.extra["mjere"] = {"naselje": "Jurdani", "tocno": True}
+    assert Runner._disagrees(house, Decision(PASS), "Mučići (Matulji): prihvaća se samo Matulji")
+    house.extra["mjere"] = {"naselje": "Matulji", "tocno": True}
+    assert not Runner._disagrees(house, Decision(PASS), "Mučići (Matulji): prihvaća se samo Matulji")
+
+
+def test_rejected_copies_reach_redmi_in_summary(tmp_path):
+    """GitHub šalje Redmiju i odbijene oglase s razlogom koji vrijedi za kopiju (sažetak viđenih),
+    pa i Njuškalo na Redmiju zna da je isti oglas drugdje odbijen."""
+    state = State(tmp_path / "s.db")
+    farm = land("nekretnine_hr", "1", subtype="Poljoprivredno zemljište", title="Poljoprivredno zemljište Njivice")
+    state.upsert(farm, Decision(REJECT, ["nije građevinsko (Poljoprivredno zemljište)"], jls="Omišalj"),
+                 "2026-10-27T17:40:00+01:00")
+    state.upsert(land("nekretnine_hr", "2", area=700), Decision(REJECT, ["cijena 400.000 € > 300.000 €"], jls="Omišalj"),
+                 "2026-10-27T17:40:00+01:00")
+    state.conn.commit()
+    dedupe.export(state, tmp_path / "seen.json.gz", "2026-10-01")
+    state.close()
+    seen = dedupe.Seen()
+    seen.add_file(tmp_path / "seen.json.gz")
+    copy = dedupe.row(land("njuskalo", "9", subtype="Zemljište", title="Zemljište Njivice"), Decision(WARN, jls="Omišalj"))
+    [(twin, strong)] = seen.rejected_twins(copy)
+    assert twin["key"] == "nekretnine_hr:1" and strong
+    assert twin["_razlozi"] == (["nije građevinsko (Poljoprivredno zemljište)"], [])
+    assert not seen.by_key                                   # odbijeni nisu "viđeni" (poslani)
+
+
 def test_send_reply_is_reply_with_button_and_quiet(monkeypatch):
     from scraper import notify
     from scraper.notify import Telegram

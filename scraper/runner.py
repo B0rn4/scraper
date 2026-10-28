@@ -19,8 +19,8 @@ from .ispu import APPROX_RADIUS_M, Ispu, check_land, gp_text, heritage_warning
 from .plans import Plans
 from .prices import MAX_AGE_DAYS, PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
 from .db import State
-from .filters import (TYPE_UNKNOWN, earlier_ruin, effective_price, evaluate, stored_rejections, text_warnings,
-                      title_says_not_building)
+from .filters import (TYPE_UNKNOWN, earlier_ruin, effective_price, evaluate, land_says_building, still_rejects,
+                      stored_rejections, text_warnings, title_says_not_building)
 from .http import Http, blocked
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
@@ -62,6 +62,8 @@ NEW_LISTING_DAYS = {"njuskalo": 0.5, "index_oglasi": 2, "nekretnine_hr": 3, "ogl
 # popisom (13. 10.) i tiho zabilježeni stari oglasi (19. 10.).
 NOTES_REPAIR = {False: "popravak:napomene_popisa", True: "popravak:napomene_tiho"}
 LAND_TITLE_REPAIR = "popravak:vrsta_iz_naslova"   # 28. 10.: zemljište bez vrste, naslov kaže poljoprivredno
+# Razlog odbijanja kopije koji se tiče naselja (runner._place_reason ga provjerava po današnjem popisu).
+_PLACE_REASON = re.compile(r"^lokacija nije na popisu \(|\): prihvaća se samo |: isključeno po popisu naselja")
 
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
@@ -882,7 +884,7 @@ class Runner:
     def _export(self, state: State) -> None:
         """Za Redmi: sažetak viđenih oglasa, zadnje pokretanje (nadzor GitHuba) i oglasi
         označeni "Ne zanima me"."""
-        dedupe.export(state, Path(self.db_path).with_name("seen.json.gz"))
+        dedupe.export(state, Path(self.db_path).with_name("seen.json.gz"), self._rejected_since(), self._area())
         info = Path(self.db_path).with_name("github.json.tmp")
         info.write_text(json.dumps({"zadnje_pokretanje": self.stamp, "pocetak": self.stamp,
                                     "glavni_okidac": state.meta_get("glavni_okidac"), "utisani": sorted(state.muted())},
@@ -978,10 +980,10 @@ class Runner:
     def _load_seen(self, state: State) -> dedupe.Seen:
         """Već viđeni oglasi: ova baza, baza s Redmija (na GitHubu) i sažetak s GitHuba (na Redmiju)."""
         seen = dedupe.Seen(self.locator)
-        seen.add_state(state)
+        seen.add_state(state, self._rejected_since(), self._area())
         if self._redmi_usable():
             other = State(self.redmi_db)
-            seen.add_state(other)
+            seen.add_state(other, self._rejected_since(), self._area())
             other.close()
         self._seen_complete = not self.seen_file or Path(self.seen_file).exists()
         if not self._seen_complete:
@@ -992,6 +994,84 @@ class Runner:
             self._seen_complete = False
             self.log(f"Sažetak viđenih oglasa nije učitan: {type(exc).__name__}: {exc}")
         return seen
+
+    def _rejected_since(self) -> str:
+        return (self.now - timedelta(days=dedupe.REJECTED_TWIN_DAYS)).isoformat(timespec="seconds")
+
+    def _area(self) -> set[str]:
+        """Gradovi/općine našeg područja (i oni u kojima se prihvaćaju samo neka naselja)."""
+        return {j.name for j in self.locator.jls.values() if j.included}
+
+    def _rejected_twin(self, state: State, seen: dedupe.Seen, x: Listing, d: Decision, new: dict) -> bool:
+        """Isti oglas na drugom portalu već je odbijen (odluka korisnika 28. 10., isto pravilo kao za
+        završni pregled 19. 10.). Razlog iz polja portala ili naslova (vrsta kuće ili zemljišta,
+        naselje, bazen) i čvrsta veza (ista cijena i površina): oglas se ne šalje, nego bilježi kao
+        odbijen s tim razlogom ("… – prema nekretnine.hr", vidi se u preglednom izvještaju).
+        Slabija veza ("na upit"), razlog iz opisa ili portali koji se ne slažu (samostojeća /
+        dvojna, građevinsko / poljoprivredno): stiže s ⚠ i razlogom. True: ne šalje se."""
+        try:
+            twins = seen.rejected_twins(new)
+        except Exception as exc:  # noqa: BLE001 – provjera ne smije zadržati obavijest
+            self.log(f"Odbijene kopije ({x.key}): {type(exc).__name__}: {exc}")
+            return False
+        warnings = []
+        for t, strong in twins:
+            fields, texts = t["_razlozi"]
+            where = SOURCE_LABELS.get(t.get("source"), t.get("source") or "drugi portal")
+            for reason in fields:
+                # Zapisan razlog može biti star (kopija je ocijenjena kad je viđena): naselje po
+                # današnjem popisu naselja, vrsta i bazen po današnjim pravilima.
+                if _PLACE_REASON.search(reason):
+                    reason = self._place_reason(t)
+                    if not reason:
+                        continue
+                elif not still_rejects(reason, t.get("title") or ""):
+                    continue
+                if strong and not self._disagrees(x, d, reason):
+                    state.conn.execute(
+                        "UPDATE listings SET status = ?, reasons = ?, near_miss = 0 WHERE key = ?",
+                        (REJECT, json.dumps([f"{reason} – prema {where}"] + d.reasons + d.warnings, ensure_ascii=False),
+                         x.key))
+                    self.log(f"Ne odgovara prema {where} ({t['key']}: {reason}): {x.title[:60]}")
+                    return True
+                warnings.append(f"prema {where} ne odgovara: {reason}")
+            warnings += [f"prema {where} ne odgovara: {reason}" for reason in texts]
+        added = [w for w in dict.fromkeys(warnings) if w not in d.warnings]
+        if added:
+            d.warnings.extend(added)
+            if d.status == PASS:
+                d.status = WARN
+            state.conn.execute("UPDATE listings SET status = ?, reasons = ? WHERE key = ?",
+                               (d.status, json.dumps(d.reasons + d.warnings, ensure_ascii=False), x.key))
+        return False
+
+    def _place_reason(self, t: dict) -> str | None:
+        """Razlog odbijanja za naselje kopije po današnjem popisu naselja ("lokacija nije na
+        popisu (Matulji)" s početka praćenja više ne vrijedi – Matulji se sad ocjenjuju po naselju)."""
+        title, settlement = t.get("title") or "", t.get("settlement") or ""
+        loc = self.locator.resolve(municipality=t.get("jls") or "", settlement=settlement, text=title)
+        if loc.included is False:
+            return f"lokacija nije na popisu ({loc.jls.name if loc.jls else loc.evidence})"
+        if loc.included and loc.jls:
+            verdict = self.locator.settlement_verdict(loc.jls.name, settlement, title)
+            if verdict and verdict[0] == REJECT:
+                return verdict[1]
+        return None
+
+    @staticmethod
+    def _disagrees(x: Listing, d: Decision, reason: str) -> bool:
+        """Kaže li ovaj oglas sam suprotno od razloga odbijanja kopije (portali se ne slažu)?"""
+        own = fold(f"{x.subtype} {x.title}")
+        if reason.startswith("nije građevinsko ("):
+            return x.kind == LAND and land_says_building(x)
+        if "(vrsta: " in reason or reason.endswith("(naslov)"):
+            return bool(re.search(r"samostojec", own))
+        if reason.startswith("s bazenom ("):
+            return False
+        # Naselje: kopija ga zna točnije (npr. "Mučići (Matulji)"), osim kad ovaj oglas ima drugo
+        # točno naselje koje se prihvaća.
+        found = x.extra.get("mjere") or {}
+        return bool(found.get("tocno") and found.get("naselje") and fold(found["naselje"]) not in fold(reason))
 
     def _check_land(self, x: Listing, d: Decision, deadline: float | None = None) -> None:
         """Zemljište i kuća: građevinsko područje na točnoj lokaciji (ISPU), za zemljište i
@@ -1452,6 +1532,8 @@ class Runner:
             new["notified_at"], new["notified_price"] = f"tiho:{self.stamp}", x.price
             seen.add(new)
             return None
+        if fresh and self._rejected_twin(state, seen, x, d, new):
+            return None             # isti oglas drugi portal pokazuje kao neodgovarajući
         new["notified_at"], new["notified_price"] = self.stamp, x.price
         seen.add(new)  # drugi portal u istom pokretanju ne šalje isti oglas ponovno
         return headline

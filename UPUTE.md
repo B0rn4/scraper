@@ -12,6 +12,10 @@ detalji su u README.md (kako sustav radi) i REDMI.md (postavljanje Redmija).
 - **Mail**: tjedni izvještaj ponedjeljkom ujutro i upozorenja kad nešto ne radi.
 - Noću (23–7 h) ništa se ne čita; što se objavi noću stiže u 7 h.
 - Isti oglas na više portala stiže jednom. Ponovno stiže samo ako je negdje jeftiniji.
+- Ako je isti oglas (ista cijena i površina) na drugom portalu već odbijen zbog vrste kuće ili
+  zemljišta, naselja ili bazena, ne stiže (u preglednom izvještaju piše „… – prema portal”).
+  Kad veza nije sigurna („na upit”), kad se portali ne slažu (samostojeća / dvojna) ili je
+  razlog iz opisa, stiže s ⚠ „prema portal ne odgovara: …”.
 - Stari oglas zabilježen bez poruke (npr. stari oglas koji je agencija osvježila) ne stiže ni
   kad se pojavi na drugom portalu – i dalje je stari oglas i čeka završni pregled. I za stari
   oglas vrijedi: ako je jeftiniji od istog oglasa koji je već viđen, stiže „📉 Već viđen … sad
@@ -227,6 +231,8 @@ Actions → **Planovi – preuzimanje** → naredba `lokacija`, u „adrese” z
 **Zašto nije stigao oglas koji vidim na portalu?** Najčešće:
 - odbijen je (cijena, površina, naselje, vrsta kuće, opis) – vidi se u preglednom izvještaju;
 - isti oglas već je stigao s drugog portala ili je na drugom portalu zabilježen kao stari oglas;
+- isti oglas drugi portal pokazuje kao neodgovarajući (vrsta, naselje, bazen) – u preglednom
+  izvještaju razlog završava s „– prema portal”;
 - „stari oglas”: agencija je ponovno objavila (osvježila) oglas objavljen prije početka
   praćenja (Njuškalo, index.hr) – takvi stižu u završnom pregledu (odmah samo kad su jeftiniji
   od istog već viđenog oglasa), a tjedni izvještaj ih broji u stupcu „stari ✅⚠”;

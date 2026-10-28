@@ -27,10 +27,11 @@ _GENERIC = set("""kuca kuce kucu prodaja prodaje prodajem obiteljska obiteljsku 
 zemljista gradevinsko gradevinska otok otoku pogled pogledom more mora moru okucnica okucnicom nova novo
 novogradnja vila vile vilu centar centru blizini blizina mirnoj lokaciji lokacija prilika odlicna odlican
 atraktivna atraktivno prekrasna prekrasan lijepa sobe soba garazom garaza bazen bazenom parcela teren""".split())
-# podaci, poruka: za dopunu s drugog portala (dopuna.py); url: gumb za stariji oglas. Starija
-# datoteka ih nema (zip ih izostavi).
+# podaci, poruka: za dopunu s drugog portala (dopuna.py); url: gumb za stariji oglas; razlozi:
+# odbijene kopije (Seen.rejected_twins). Starija datoteka ih nema (zip ih izostavi).
 FIELDS = ("key", "source", "kind", "jls", "price", "area", "title", "settlement", "notified_at", "notified_price",
-          "podaci", "poruka", "status", "url")
+          "podaci", "poruka", "status", "url", "razlozi")
+REJECTED_TWIN_DAYS = 90   # odbijena kopija starija od toga ne odlučuje (možda ocijenjena starim pravilima)
 _PLACE_WORDS: set[str] = set()   # riječi iz naziva naselja i gradova/općina (nisu opis nekretnine)
 
 
@@ -117,6 +118,7 @@ class Seen:
         self.locator = locator
         self.rows: dict[tuple, list[dict]] = {}
         self.by_key: dict[str, dict] = {}
+        self.rejected: dict[tuple, list[dict]] = {}     # odbijeni oglasi (vidi rejected_twins)
 
     def add(self, r: dict) -> None:
         if r.get("jls") and r.get("area"):          # i bez cijene (na upit; vidi same_property)
@@ -191,14 +193,52 @@ class Seen:
                 todo.append(r["key"])
         return out
 
-    def add_state(self, state) -> None:
+    def add_rejected(self, r: dict) -> None:
+        """Odbijen oglas: njegov razlog vrijedi i za kopiju na drugom portalu (rejected_twins).
+        Mjesta iz naslova i razlozi računaju se tek kad zatreba (oglas za slanje)."""
+        if r.get("jls") and r.get("area") and r.get("razlozi"):
+            self.rejected.setdefault((r["kind"], r["jls"]), []).append(r)
+
+    def rejected_twins(self, new: dict) -> list[tuple[dict, bool]]:
+        """Odbijene kopije oglasa s drugih portala: (redak, čvrsta veza). Čvrsta je ista cijena i
+        površina (kao same_property), slabija oba "na upit" (samo površina i mjesto). Redak nosi
+        "_razlozi" (filters.twin_rejection: iz polja ili naslova, iz opisa)."""
+        from .filters import twin_rejection     # filters ne uvozi dedupe; ovdje da uvoz ostane lak
+        places(new, self.locator)
+        out = []
+        for r in self.rejected.get((new["kind"], new.get("jls")), []):
+            if r["key"] == new["key"] or r.get("source") == new.get("source"):
+                continue                # isti portal: ovaj oglas ima novije podatke od odbijenog
+            if "_razlozi" not in r:
+                try:
+                    r["_razlozi"] = twin_rejection(json.loads(r["razlozi"]))
+                except (TypeError, ValueError):
+                    r["_razlozi"] = ([], [])
+            if not any(r["_razlozi"]):
+                continue
+            places(r, self.locator)
+            if same_property(new, r):
+                asked = any(not p or p <= 100 for p in (new.get("price"), r.get("price")))
+                out.append((r, not asked))
+        return out
+
+    def add_state(self, state, rejected_since: str | None = None, area: set[str] | None = None) -> None:
+        """area: gradovi/općine našeg područja (odbijeni drugdje ne mogu biti kopija poslanog)."""
         for r in state.seen_rows():
             self.add(r)
+        if rejected_since is not None:
+            for r in state.rejected_rows(rejected_since):
+                if area is None or r["jls"] in area:
+                    self.add_rejected(r)
 
     def add_file(self, path: Path) -> None:
         if path and Path(path).exists():
             for values in json.loads(gzip.decompress(Path(path).read_bytes())):
-                self.add(dict(zip(FIELDS, values)))
+                r = dict(zip(FIELDS, values))
+                if r.get("status") == "odbijen" and r.get("razlozi"):
+                    self.add_rejected(r)
+                if r.get("notified_at"):
+                    self.add(r)
 
     def twins(self, new: dict, cheaper_ok: bool = True) -> list[dict]:
         places(new, self.locator)
@@ -206,9 +246,20 @@ class Seen:
                 if r["key"] != new["key"] and same_property(new, r, cheaper_ok)]
 
 
-def export(state, path: Path) -> int:
-    """Sažetak viđenih oglasa za drugi uređaj (GitHub → Redmi)."""
-    rows = [[r[f] for f in FIELDS] for r in state.seen_rows()]
+def export(state, path: Path, rejected_since: str | None = None, area: set[str] | None = None) -> int:
+    """Sažetak viđenih oglasa za drugi uređaj (GitHub → Redmi); i odbijeni na našem području
+    (area) s razlogom koji vrijedi za kopiju (rejected_since: zadnje viđeni od tada) – samo ti
+    razlozi, da datoteka ostane mala."""
+    from .filters import twin_rejection
+    rows = [[r.get(f) for f in FIELDS] for r in state.seen_rows()]
+    if rejected_since is not None:
+        for r in state.rejected_rows(rejected_since):
+            if r.get("notified_at") or (area is not None and r["jls"] not in area):
+                continue
+            fields, texts = twin_rejection(json.loads(r["razlozi"] or "[]"))
+            if fields or texts:
+                r["razlozi"], r["url"] = json.dumps(fields + texts, ensure_ascii=False), None   # gumb ne treba
+                rows.append([r.get(f) for f in FIELDS])
     tmp = Path(f"{path}.tmp")                 # prekid usred pisanja ne ostavlja pola datoteke
     tmp.write_bytes(gzip.compress(json.dumps(rows, ensure_ascii=False).encode("utf-8")))
     tmp.replace(path)

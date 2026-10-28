@@ -31,7 +31,7 @@ _TITLE_REJECT = [
 # Bazen (korisnik 7. 10.: kuću s bazenom ne želi). Naslov, vrsta ili polje oglasa (bazen: da) →
 # odbija se; opis → ⚠ (opis zna spominjati i "mogućnost izgradnje bazena", "gradski bazen u blizini").
 _POOL = re.compile(r"\bbazen\w*|\bpool\b")
-_NO_POOL = re.compile(r"\bbez bazen|mogucnost\w* (izgradnje |gradnje |izvedbe )?(i )?bazen|(prostor|mjest|predviden)\w* "
+_NO_POOL = re.compile(r"\bbez bazen|mogucnos\w* (izgradnje |gradnje |izvedbe )?(i )?bazen|(prostor|mjest|predviden)\w* "
                       r"(\w+ )?(za )?bazen|blizin\w* (\w+ )?bazen|gradsk\w* bazen|javn\w* bazen|bazen\w* u (naselju|blizini)")
 _TEXT_WARN = [
     (re.compile(r"\bdvojn\w* (kuc|objekt)|\bkuc\w* u nizu\b"), "opis spominje dvojnu kuću ili kuću u nizu"),
@@ -256,6 +256,54 @@ def stored_rejections(items: list[str]) -> list[str]:
     rules = tuple(f"{rule.label}: „" for rule in risks.RULES if rule.reject)
     return [item for item in items if _STORED_REJECTION.search(item) or item.startswith(rules)
             or any(item.startswith(f"{label} (vrsta: ") or item == f"{label} (naslov)" for label in kinds)]
+
+
+_FROM_OTHER = re.compile(r" – prema [^–]+$")   # razlog preuzet s kopije ("… – prema nekretnine.hr")
+
+
+def twin_rejection(items: list[str]) -> tuple[list[str], list[str]]:
+    """Razlozi odbijanja kopije istog oglasa (runner._rejected_twin, odluka korisnika 28. 10.):
+    (iz polja portala ili naslova – vrsta kuće ili zemljišta, naselje, bazen; iz opisa – ruševina,
+    rečenica). Prvi isključuju i ovaj oglas kad je veza čvrsta, drugi daju samo ⚠."""
+    fields, texts = [], []
+    texts_start = ("ruševina: „", *(f"{rule.label}: „" for rule in risks.RULES if rule.reject))
+    for item in items:
+        base = _FROM_OTHER.sub("", item)
+        if base.startswith(texts_start):
+            texts.append(base)
+        elif stored_rejections([base]) or base.startswith("lokacija nije na popisu ("):
+            fields.append(base)
+    return fields, texts
+
+
+def still_rejects(reason: str, title: str) -> bool:
+    """Vrijedi li razlog odbijanja vrste ili bazena, spremljen uz kopiju istog oglasa, i po
+    današnjim pravilima? Kopija je ocijenjena kad je viđena, a pravila su se mijenjala."""
+    folded = fold(title or "")
+    m = re.fullmatch(r"nije građevinsko \((.*)\)", reason, re.S)
+    if m:
+        if m.group(1) == "naslov":
+            return title_says_not_building(title)
+        named = fold(m.group(1))
+        return bool(_AGRICULTURAL.search(named)) and not _BUILDING_LAND.search(named)
+    for rx, label in _HOUSE_SUBTYPE_REJECT:
+        if reason.startswith(f"{label} (vrsta: ") and reason.endswith(")"):
+            return bool(rx.search(fold(reason[len(label) + len(" (vrsta: "):-1])))
+    for rx, label in _TITLE_REJECT:
+        if reason == f"{label} (naslov)":
+            return bool(rx.search(folded))
+    if reason == "s bazenom (naslov)":
+        return bool(_POOL.search(folded)) and not _NO_POOL.search(folded)
+    return True                      # npr. "s bazenom (podaci oglasa)": polje portala
+
+
+def land_says_building(listing: Listing) -> bool:
+    """Kaže li oglas sam (vrsta, a bez nje naslov) da je zemljište građevinsko – onda se s portalom
+    koji kaže "nije građevinsko" ne slaže, pa stiže s ⚠ umjesto da se izostavi."""
+    subtype, title = fold(listing.subtype), fold(listing.title)
+    typed = bool(_BUILDING_LAND.search(subtype) or _AGRICULTURAL.search(subtype))
+    land_type = subtype if typed else f"{subtype} {title}"
+    return bool(_BUILDING_LAND.search(land_type)) and not _AGRICULTURAL.search(land_type)
 
 
 def _ruin_warning(broken: dict) -> str:

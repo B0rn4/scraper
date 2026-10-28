@@ -289,6 +289,15 @@ class State:
             return {r[0] for r in rows}
         return set(remote) | {r[0] for r in rows if (r[1] or "").removeprefix("isti kao ") in remote}
 
+    def rejected_rows(self, since: str) -> list[dict]:
+        """Odbijeni oglasi s mjestom i površinom, zadnje viđeni od `since` (za kopije istog oglasa
+        na drugom portalu, dedupe.Seen.rejected_twins)."""
+        rows = self.conn.execute(
+            "SELECT key, source, kind, jls, price, area, title, settlement, notified_at, notified_price, status, url, "
+            "reasons AS razlozi FROM listings WHERE status = ? AND jls IS NOT NULL AND area IS NOT NULL "
+            "AND last_seen >= ?", (REJECT, since))
+        return [dict(r) for r in rows]
+
     def seen_rows(self) -> list[dict]:
         """Oglasi koje smo već "vidjeli" (poslani, u početnom popisu ili tiho zabilježeni)."""
         rows = self.conn.execute(

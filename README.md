@@ -17,6 +17,11 @@ korištenje (poruke, upozorenja, što napraviti): [UPUTE.md](UPUTE.md).**
   drugom portalu i dalje je stari oglas (odluka 19. 10.). Ako je negdje jeftiniji, stiže s
   napomenom „📉 Već viđen na … – sad jeftiniji” i gumbom „Stariji oglas”. Preskočeni su
   popisani u tjednom izvještaju. Kad pravilo nije sigurno, oglas stiže.
+- **Odbijena kopija na drugom portalu (odluka 28. 10.):** kad je ista nekretnina (ista cijena i
+  površina) drugdje odbijena zbog vrste kuće ili zemljišta, naselja ili bazena, oglas ne stiže,
+  nego se bilježi kao odbijen („… – prema nekretnine.hr”); razlog kopije provjerava se po
+  današnjim pravilima. Slabija veza („na upit”), razlog iz opisa ili portali koji se ne slažu →
+  ⚠ „prema … ne odgovara”. GitHub šalje Redmiju i takve odbijene oglase (sažetak viđenih).
 - **Dopuna s drugog portala (➕):** kad isti oglas stigne s portala koji zna više, kratka
   poruka kao odgovor na prvu – samo gumb za taj oglas i ono što je novo: bolja lokacija
   (broj čestice > točna oznaka > krug oko približne) s 🗺, PPV-om na lokaciji i 📏; podaci

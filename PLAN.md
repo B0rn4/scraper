@@ -809,6 +809,20 @@ bez stotina poruka.
   (`popravak:vrsta_iz_naslova`; spremljeni ⚠ ne dokazuje da ni pun opis ne spominje građevinsko).
   Usporedba cijena ih je većinom već izostavljala („poljopriv” u naslovu); ušlo ih je 24
   (medijan zemljišta od 2.500 m²: 54 → 58 €/m² bez njih).
+  **Odluka korisnika 28. 10.:** pravilo završnog pregleda (19. 10.) vrijedi odmah i za nove
+  poruke – oglas se ne šalje kad je ista nekretnina na drugom portalu odbijena zbog polja ili
+  naslova (vrsta kuće ili zemljišta, naselje, bazen) i veza je čvrsta (ista cijena i površina,
+  ne „na upit”); bilježi se kao odbijen („… – prema nekretnine.hr”). Slabija veza, razlog iz
+  opisa (ruševina, rečenica) ili portali koji se ne slažu (samostojeća / dvojna, građevinsko /
+  poljoprivredno, drugo točno naselje) → poruka s ⚠ „prema … ne odgovara: …”. Kopija s istog
+  portala i odbijena prije više od 90 dana ne odlučuju. Razlog kopije provjerava se po
+  današnjim pravilima: 223 oglasa iz Matulja imaju „lokacija nije na popisu (Matulji)” s
+  početka praćenja, a danas se Matulji ocjenjuju po naselju (`Runner._place_reason`,
+  `filters.still_rejects`). Do sada je ⚠ stizao samo kad je odbijena kopija došla poslije
+  poruke (dopuna). Na porukama od 5. 10. (350): 14 ne bi stiglo (3 poljoprivredna s
+  realestatecroatia, 2 bazena, 3 dvojne / u nizu, šuma, 4 naselja oko Matulja koja se ne
+  prihvaćaju, Novi Vinodolski), 1 bi stigla s ⚠ (ruševina iz opisa). Usput: „s mogućnošću
+  izgradnje bazena” nije bilo prepoznato kao bez bazena (u bazama nijedan takav).
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
