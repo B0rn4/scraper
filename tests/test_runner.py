@@ -2119,6 +2119,51 @@ def test_reopen_queue_does_not_stall_on_broken_listings(tmp_path, monkeypatch):
     state.close()
 
 
+def test_land_without_type_and_farm_title_is_reopened_once(tmp_path, monkeypatch):
+    """28. 10. (realestatecroatia 1332766 "Kraljevica - negrađevinski teren"): zapamćena zemljišta s
+    ⚠ "vrsta zemljišta nije navedena" čiji naslov kaže da nisu građevinska jednom se ponovno otvaraju
+    i tiho ocjenjuju po novom pravilu – pun opis odlučuje (odbijeno ili ⚠ "…, ali opis spominje
+    građevinsko"). Ostala zemljišta se ne otvaraju."""
+    import scraper.runner as runner_mod
+    from scraper.models import LAND
+
+    def plot(sid, title, description=""):
+        return Listing(source="fake", source_id=sid, url=f"https://x/{sid}", title=title, kind=LAND,
+                       subtype="Zemljište", price=60_000, area=5025, county="Primorsko-goranska",
+                       municipality="Kraljevica", description=description)
+
+    pages = {"1": plot("1", "Kraljevica - negrađevinski teren", "Teren uz cestu, pogled na more."),
+             "2": plot("2", "Kraljevica - poljoprivredno zemljište", "Dio zemljišta je u građevinskoj zoni."),
+             "3": plot("3", "Kraljevica - zemljište uz more", "Teren uz cestu.")}
+    calls = []
+
+    def reopen(src, row):
+        calls.append(row["source_id"])
+        return pages[row["source_id"]]
+
+    monkeypatch.setattr(FakeSource, "reopen_once", "v1", raising=False)
+    monkeypatch.setattr(FakeSource, "reopen", reopen, raising=False)
+    state = State(tmp_path / "s.db")
+    state.meta_set("baseline:fake", "2026-10-06T10:00:00+02:00")
+    state.meta_set("popravak:fake", "v1")                       # raniji popravak gotov, red prazan
+    state.meta_set("ponovno_otvori:fake", "[]")
+    for sid, x in pages.items():
+        state.upsert(x, Decision(WARN, warnings=["vrsta zemljišta nije navedena"], jls="Kraljevica"),
+                     "2026-10-06T10:00:00+02:00")
+        state.mark_notified(x.key, x.price, "tiho:2026-10-06T10:00:00+02:00")
+    state.conn.commit()
+    state.close()
+    sent = _runs(tmp_path, monkeypatch, [[listing(sid="9", source="fake")], [listing(sid="9", source="fake")]])
+    assert [k for run in sent for k, _ in run] == ["fake:9"] and sorted(calls) == ["1", "2"]   # bez poruka o njima
+    state = State(tmp_path / "s.db")
+    assert (state.get("fake:1")["status"], json.loads(state.get("fake:1")["reasons"])) == (
+        REJECT, ["nije građevinsko (naslov)"])
+    assert state.get("fake:2")["status"] == WARN and "poljoprivredno, ali opis spominje građevinsko" in \
+        state.get("fake:2")["reasons"]
+    assert state.get("fake:3")["status"] == WARN and state.meta_get("popravak:vrsta_iz_naslova")
+    state.close()
+
+
 def test_reopen_time_is_shared_between_sources(tmp_path):
     """Vrijeme za ponovno otvaranje dijeli se na izvore koji imaju što otvarati – inače bi prvi
     izvori u popisu zauzeli sve i ostali bi čekali danima."""

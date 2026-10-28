@@ -795,6 +795,20 @@ bez stotina poruka.
     čitanja izvora pa je bio prazan; sad se sprema na kraju pokretanja.)
   Namjerno se ne čita (ne utječe na kriterije): energetski razred, broj soba i kupaonica, oprema,
   provizija, telefon, „u blizini”.
+- **(28. 10.) „Kraljevica - negrađevinski teren” stigao kao građevinsko zemljište** (korisnik:
+  realestatecroatia 1332766, „nigdje se ne spominje da je građevinsko”). Isto zemljište (5.025 m²,
+  60.000 €) bilo je na pet portala: nekretnine.hr (27. 10.), index.hr, oglasnik.hr i Njuškalo su
+  ga odbili („nije građevinsko”), a realestatecroatia daje za sva zemljišta samo vrstu „Zemljište”
+  – vrsta se uzimala iz tog polja, pa naslov nije odlučivao, i oglas je prošao s ⚠ „vrsta
+  zemljišta nije navedena”, a poruka je u naslovu pisala „Građevinsko zemljište” (stalno, za sva
+  zemljišta). Sad: kad vrsta s portala ništa ne kaže, odlučuje i naslov (poljoprivredno,
+  maslinik, šuma, negrađevinsko → „nije građevinsko (naslov)”, osim kad opis spominje građevinsko
+  – onda ⚠); „šuma” u naslovu nije građevinsko; poruka piše „Zemljište” kad je vrsta upitna. Na
+  stvarnim podacima: 153 takva zemljišta s realestatecroatia (većinom tiho s početka praćenja, 3
+  poruke: 10., 27. i 28. 10.) i 1 s index.hr – jednom se ponovno otvaraju i tiho ocjenjuju
+  (`popravak:vrsta_iz_naslova`; spremljeni ⚠ ne dokazuje da ni pun opis ne spominje građevinsko).
+  Usporedba cijena ih je većinom već izostavljala („poljopriv” u naslovu); ušlo ih je 24
+  (medijan zemljišta od 2.500 m²: 54 → 58 €/m² bez njih).
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

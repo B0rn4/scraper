@@ -257,6 +257,30 @@ def test_third_review_land_rules(ctx):
     assert evaluate(house(description="Prodajem 1/2 kuće."), *ctx).status == REJECT
 
 
+def test_generic_land_type_lets_title_decide(ctx):
+    """28. 10. (realestatecroatia 1332766): vrsta s portala samo "Zemljište", a naslov kaže
+    "Kraljevica - negrađevinski teren" – stiglo je kao zemljište bez navedene vrste, pod naslovom
+    poruke "Građevinsko zemljište", a na četiri druga portala bilo je odbijeno. Sad odlučuje naslov,
+    a naslov poruke piše "Zemljište" kad vrsta nije sigurna."""
+    from scraper.notify import format_listing
+
+    d = evaluate(land(subtype="Zemljište", title="Kraljevica - negrađevinski teren"), *ctx)
+    assert d.status == REJECT and "nije građevinsko (naslov)" in d.reasons
+    d = evaluate(land(subtype="Zemljište", title="Građevinsko zemljište, Omišalj"), *ctx)
+    assert "vrsta zemljišta nije navedena" not in d.warnings
+    assert format_listing(land(subtype="Zemljište", title="Građevinsko zemljište, Omišalj"), d).startswith(
+        "🌳 <b>Građevinsko zemljište</b>")
+    unknown = land(subtype="Zemljište", title="Zemljište s pogledom na more")
+    d = evaluate(unknown, *ctx)
+    assert d.status == WARN and "vrsta zemljišta nije navedena" in d.warnings
+    assert format_listing(unknown, d).startswith("🌳 <b>Zemljište</b> · ")
+    d = evaluate(land(subtype="Zemljište", title="Zemljište građevinsko i poljoprivredno"), *ctx)
+    assert "mješovito zemljište (Zemljište građevinsko i poljoprivredno)" in d.warnings
+    # "šuma" u naslovu (index 7089324 "Omišalj, šuma blizu mora", poslan 16. 10.) nije građevinsko.
+    assert evaluate(land(subtype="", title="Omišalj, šuma blizu mora"), *ctx).reasons == ["nije građevinsko (naslov)"]
+    assert evaluate(land(subtype="", title="Građevinsko zemljište uz šumu"), *ctx).warnings == []
+
+
 def test_fourth_review_rules(ctx):
     """"Soline, građevinsko" i "Atraktivan građevinski teren" jesu građevinsko; kuća za 3.000 €
     uz 180 m² je cijena po m²; suvlasnički dio zajedničkog puta/dvorišta nije prodaja dijela."""

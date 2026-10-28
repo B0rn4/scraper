@@ -13,7 +13,7 @@ from urllib.parse import quote
 
 import requests
 
-from .filters import effective_price
+from .filters import effective_price, land_type_doubtful
 from .models import HOUSE, LAND, WARN, Decision, Listing
 from .text import fmt_eur, fmt_m2
 
@@ -120,7 +120,12 @@ def format_parts(listing: Listing, decision: Decision, headline: str = "", limit
 
 def _lines(listing: Listing, decision: Decision, headline: str) -> list[tuple[str, str]]:
     e = html.escape
-    kind = "🏠 <b>Kuća</b>" if listing.kind == HOUSE else "🌳 <b>Građevinsko zemljište</b>" if listing.kind == LAND else "<b>Nekretnina</b>"
+    if listing.kind == HOUSE:
+        kind = "🏠 <b>Kuća</b>"
+    elif listing.kind == LAND:   # "Građevinsko" samo kad vrsta nije upitna (inače ⚠ kaže zašto)
+        kind = "🌳 <b>Zemljište</b>" if land_type_doubtful(decision.warnings) else "🌳 <b>Građevinsko zemljište</b>"
+    else:
+        kind = "<b>Nekretnina</b>"
     total = effective_price(listing.price, listing.area, bool(listing.extra.get("ukupna_cijena")), listing.kind)
     if total is None:
         shown = "cijena nije navedena"

@@ -19,7 +19,8 @@ from .ispu import APPROX_RADIUS_M, Ispu, check_land, gp_text, heritage_warning
 from .plans import Plans
 from .prices import MAX_AGE_DAYS, PPV_YEAR, AskingPrices, Ppv, land_note, land_short, place_of
 from .db import State
-from .filters import earlier_ruin, effective_price, evaluate, stored_rejections, text_warnings
+from .filters import (TYPE_UNKNOWN, earlier_ruin, effective_price, evaluate, stored_rejections, text_warnings,
+                      title_says_not_building)
 from .http import Http, blocked
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
@@ -60,6 +61,7 @@ NEW_LISTING_DAYS = {"njuskalo": 0.5, "index_oglasi": 2, "nekretnine_hr": 3, "ogl
 # Jednokratne napomene iz ranijih odbijenih kopija (_repair_list_notes): oglasi iz datoteke s
 # popisom (13. 10.) i tiho zabilježeni stari oglasi (19. 10.).
 NOTES_REPAIR = {False: "popravak:napomene_popisa", True: "popravak:napomene_tiho"}
+LAND_TITLE_REPAIR = "popravak:vrsta_iz_naslova"   # 28. 10.: zemljište bez vrste, naslov kaže poljoprivredno
 
 
 def load_config(path: Path = ROOT / "config.yaml") -> dict:
@@ -227,6 +229,11 @@ class Runner:
                     self._repair_list_notes(state, seen, silent)
                 except Exception as exc:  # noqa: BLE001 – napomene nisu nužne za obavijesti (ponovno sljedeći put)
                     self.log(f"Napomene iz ranijih kopija: GREŠKA {type(exc).__name__}: {exc}")
+        if not state.meta_get(LAND_TITLE_REPAIR):
+            try:
+                self._repair_land_titles(state)
+            except Exception as exc:  # noqa: BLE001 – popravak baze ne smije zaustaviti obavijesti
+                self.log(f"Vrsta zemljišta iz naslova: GREŠKA {type(exc).__name__}: {exc}")
         prices = self._load_prices(state)
         to_notify: list[tuple[Listing, Decision, str]] = []
         baseline: list[tuple[object, list[tuple[Listing, Decision]], str]] = []
@@ -566,6 +573,33 @@ class Runner:
                 "Dok se ne upišu, ne stiže tjedni izvještaj, a ni upozorenje kad Telegram ne radi. "
                 "Javi Claudeu ovu poruku.") is not False:
             state.mark_alerted("mail")
+
+    def _repair_land_titles(self, state: State) -> None:
+        """Jednokratno (28. 10.): zemljišta koja su prošla s ⚠ "vrsta zemljišta nije navedena", a
+        naslov kaže poljoprivredno, maslinik, šuma ili negrađevinsko (realestatecroatia daje samo
+        vrstu "Zemljište"), ponovno se otvaraju (red za Source.reopen) i tiho ocjenjuju po novom
+        pravilu: pun opis odlučuje – odbijen ("nije građevinsko (naslov)") ili ⚠ ("…, ali opis
+        spominje građevinsko"). Spremljeni ⚠ ne dokazuje da opis ne spominje građevinsko (mogao je
+        doći iz čitanja samo popisa), pa se baza ne mijenja bez stranice oglasa. Bez poruka."""
+        queued: dict[str, list[str]] = {}
+        for row in state.conn.execute("SELECT source, source_id, title, reasons FROM listings WHERE kind = ? "
+                                      "AND status != ? AND reasons LIKE ?", (LAND, REJECT, f"%{TYPE_UNKNOWN}%")):
+            row = dict(row)
+            if TYPE_UNKNOWN in json.loads(row["reasons"] or "[]") and title_says_not_building(row["title"]):
+                queued.setdefault(row["source"], []).append(str(row["source_id"]))
+        for name, codes in sorted(queued.items()):
+            if not getattr(ALL.get(name), "reopen_once", ""):
+                self.log(f"Vrsta zemljišta iz naslova: {name} ne otvara oglase ponovno ({len(codes)}; završni pregled)")
+                continue
+            key = f"ponovno_otvori:{name}"
+            try:
+                waiting = json.loads(state.meta_get(key) or "[]")
+            except ValueError:
+                waiting = []
+            state.meta_set(key, json.dumps(waiting + [c for c in codes if c not in waiting]))
+            self.log(f"Vrsta zemljišta iz naslova: {name} – {len(codes)} zemljišta ponovno se otvara")
+        state.meta_set(LAND_TITLE_REPAIR, self.stamp)
+        state.conn.commit()
 
     def _repair_list_notes(self, state: State, seen: dedupe.Seen, silent: bool = False) -> None:
         """Jednokratno: odbijene kopije oglasa bez vlastite poruke zabilježene prije napomena – razlog

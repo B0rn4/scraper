@@ -179,7 +179,7 @@ _BUILDING_WORD = re.compile(r"(?<!\bne)(?<!\bne )(?<!\bizvan )(?<!\bvan )gradevi
 # Vrsta zemljišta (polje, naslov, opis): i "gradilište" (građevinska čestica). Za poljoprivredno
 # koje opisom ipak spominje građevinsko vrijedi samo "građevinsk" ("u blizini gradilišta" nije to).
 _BUILDING_LAND = re.compile(_BUILDING_WORD.pattern + r"|\bgradilist")
-_AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|oranic|livad|pasnjak|vinograd|maslinik|vocnjak"
+_AGRICULTURAL = re.compile(r"poljoprivredn|sumsk|\bsuma\b|oranic|livad|pasnjak|vinograd|maslinik|vocnjak"
                            r"|\bne ?gradevinsk|\b(izvan|van) gradevinsk")
 
 
@@ -278,6 +278,23 @@ def earlier_ruin(items: list[str]) -> dict | None:
     return None
 
 
+TYPE_UNKNOWN = "vrsta zemljišta nije navedena"
+
+
+def title_says_not_building(title: str) -> bool:
+    """Naslov kaže poljoprivredno, maslinik, šuma ili negrađevinsko (a ne i građevinsko): za
+    zemljište bez vrste odbija ga evaluate ("nije građevinsko (naslov)")."""
+    folded = fold(title or "")
+    return bool(_AGRICULTURAL.search(folded)) and not _BUILDING_LAND.search(folded)
+
+
+def land_type_doubtful(warnings: list[str]) -> bool:
+    """Je li vrsta zemljišta upitna (⚠ iz evaluate ili FINA-e)? Poruka tada piše "Zemljište", a ne
+    "Građevinsko zemljište" (28. 10.: zemljište bez navedene vrste stiglo je pod tim naslovom)."""
+    return any(w == TYPE_UNKNOWN or w.startswith(("mješovito zemljište (", "opis spominje i poljoprivredno"))
+               or w.endswith(", ali opis spominje građevinsko") for w in warnings)
+
+
 def text_warnings(items: list[str]) -> list[str]:
     """Upozorenja iz punog opisa i polja sa stranice oglasa (dvojna kuća ili bazen u opisu,
     suvlasništvo, namjena…) među spremljenima: popis ih ne može ponoviti (runner ih zadržava)."""
@@ -340,19 +357,23 @@ def evaluate(listing: Listing, criteria: dict, locator: Locator, prices=None, ig
             warnings.append("opis spominje bazen")
     elif listing.kind == LAND:
         limits = criteria["zemljiste"]
-        land_type = subtype or title  # bez vrste (popis index.hr, neotvoren oglas): naslov
-        shown = listing.subtype or "naslov"
+        # Bez vrste (popis index.hr, neotvoren oglas) ili vrsta koja ništa ne kaže ("Zemljište" na
+        # realestatecroatia): odlučuje i naslov – 28. 10. "Kraljevica - negrađevinski teren" stigao je
+        # kao zemljište bez navedene vrste, a na četiri druga portala bio je odbijen.
+        typed = bool(_BUILDING_LAND.search(subtype) or _AGRICULTURAL.search(subtype))
+        land_type = subtype if typed else f"{subtype} {title}".strip()
+        shown = listing.subtype if typed else "naslov"
         if _BUILDING_LAND.search(land_type):
             if _AGRICULTURAL.search(land_type):
-                warnings.append(f"mješovito zemljište ({listing.subtype or listing.title})")
+                warnings.append(f"mješovito zemljište ({listing.subtype if typed else listing.title})")
         elif _AGRICULTURAL.search(land_type):
             if _BUILDING_WORD.search(text):
-                warnings.append(f"{listing.subtype or 'poljoprivredno'}, ali opis spominje građevinsko")
+                warnings.append(f"{listing.subtype if typed else 'poljoprivredno'}, ali opis spominje građevinsko")
             else:
                 reasons.append(f"nije građevinsko ({shown})")
                 near_miss_only = False
         elif not _BUILDING_LAND.search(text):
-            warnings.append("vrsta zemljišta nije navedena")
+            warnings.append(TYPE_UNKNOWN)
         use = listing.extra.get("namjena") or ""
         if use and not _HOME_USE.search(fold(use)):
             warnings.append(f"namjena prema oglasu: {use} – provjeri smije li se graditi kuća")

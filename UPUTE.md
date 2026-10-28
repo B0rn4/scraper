@@ -35,7 +35,7 @@ Primjer (zemljište u Matuljima):
 
 | Oznaka | Značenje |
 |---|---|
-| 🏠 / 🌳 | kuća / građevinsko zemljište, cijena, površina |
+| 🏠 / 🌳 | kuća / građevinsko zemljište, cijena, površina (samo „Zemljište” kad vrsta nije sigurna – ⚠ kaže zašto) |
 | 📊 | sažetak: more (zračno), vožnja do Rijeke, koliko je skuplji od drugih oglasa, PPV, broj upozorenja |
 | 📍 | mjesto (naselje, grad/općina) |
 | 💶 | cijena po m², portal, vrsta |
