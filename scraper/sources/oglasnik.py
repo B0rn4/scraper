@@ -5,10 +5,11 @@ vrsta, površine, opis, godina izgradnje, parking, dozvole, okućnica/oprema (ba
 
 import json
 import re
+import time
 from datetime import datetime
 from zoneinfo import ZoneInfo
 
-from ..http import FetchError
+from ..http import FetchError, blocked
 from ..models import HOUSE, LAND, Listing
 from ..text import fmt_eur, fmt_m2, fold, parse_number
 from .base import FULL, Source
@@ -22,6 +23,19 @@ _PUSH = re.compile(r'self\.__next_f\.push\(\[1,"(.*?)"\]\)</script>', re.S)
 _AD_START = re.compile(r'"ad":\{"id":(\d+)')
 _TEXT_CHUNK = re.compile(rb"(?:^|\n)([0-9a-f]+):T([0-9a-f]+),")
 _HREF = re.compile(r'href="(/(?:kuce-prodaja|zemljista-prodajem)/[^"]*?-oglas-(\d+))"')
+RETRY_PAUSE = 20      # s: prva stranica bez oglasa (prolazna greška portala) – još jedan pokušaj
+_AD_MARK = r'\"ad\":{\"id\":'     # oglas u RSC-u kako stoji u HTML-u (navodnici s kosom crtom)
+
+
+def describe(page: str) -> str:
+    """Što je stiglo umjesto popisa (za poruku o grešci, bez sadržaja oglasa): naslov, veličina,
+    dijelovi s podacima (RSC), oznake oglasa u njima i poveznice na oglase."""
+    title = " ".join((re.search(r"(?is)<title[^>]*>(.*?)</title>", page) or [None, ""])[1].split())[:80]
+    guard = blocked(page)
+    note = f" ({guard})" if guard and guard != title else ""
+    return (f"naslov „{title or 'bez naslova'}”{note}, {len(page) // 1024} kB, "
+            f"dijelova s podacima {len(_PUSH.findall(page))}, oznaka oglasa {page.count(_AD_MARK)}, "
+            f"poveznica na oglase {len(set(_HREF.findall(page)))}")
 
 
 def rsc_payload(html: str) -> str:
@@ -163,9 +177,18 @@ class Oglasnik(Source):
             page = 1
             while page <= max_pages:
                 url = f"{BASE}/{category}?sort=newest&page={page}&f%5B4%5D%5B{PGZ_LOCATION_ID}%5D=true"
-                listings = parse_page(self.http.get(url).text, kind)
-                if page == 1 and not listings:   # kuća i zemljišta u PGŽ-u uvijek ima
-                    raise RuntimeError(f"oglasnik.hr: na stranici {category} nema oglasa (promjena stranice?)")
+                html = self.http.get(url).text
+                listings = parse_page(html, kind)
+                if page == 1 and not listings:
+                    # Kuća i zemljišta u PGŽ-u uvijek ima: stranica bez oglasa je greška portala
+                    # (29. 10.: tri pokretanja zaredom, a nekoliko minuta kasnije ispravna) – još
+                    # jedan pokušaj nakon stanke; tek onda greška, s opisom onoga što je stiglo.
+                    time.sleep(RETRY_PAUSE)
+                    html = self.http.get(url).text
+                    listings = parse_page(html, kind)
+                    if not listings:
+                        raise RuntimeError(f"oglasnik.hr: na stranici {category} nema oglasa (promjena stranice?) "
+                                           f"– {describe(html)}")
                 new = [x for x in listings if x.source_id not in known_ids and x.source_id not in found]
                 for x in listings:
                     found.setdefault(x.source_id, x)

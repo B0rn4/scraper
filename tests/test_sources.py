@@ -49,6 +49,34 @@ def test_oglasnik_land():
     assert len(items) > 50 and any(x.area for x in items)
 
 
+def test_oglasnik_empty_first_page_is_retried_and_described(monkeypatch):
+    """29. 10.: prva stranica tri pokretanja zaredom bez oglasa ("izvor ne radi"), a nekoliko
+    minuta kasnije ispravna. Sad još jedan pokušaj nakon stanke; tek onda greška, s opisom
+    onoga što je stiglo (naslov, veličina, dijelovi s podacima) – bez sadržaja oglasa."""
+    monkeypatch.setattr(oglasnik, "RETRY_PAUSE", 0)
+    good, land = read("oglasnik_kuce.html.gz"), read("oglasnik_zemljista.html.gz")
+    empty = "<html><head><title>Plavi oglasnik</title></head><body></body></html>"
+
+    class Http:
+        def __init__(self, pages):
+            self.pages, self.urls = list(pages), []
+
+        def get(self, url, **kw):
+            self.urls.append(url)
+            text = land if "zemljista" in url else self.pages.pop(0) if self.pages else good
+            return type("R", (), {"text": text})()
+
+    http = Http([empty, good])
+    src = oglasnik.Oglasnik(http, Locator(), load_config()["kriteriji"])
+    src.since = None
+    found = src.fetch("incremental", set())
+    assert len(found) >= 150 and http.urls[0] == http.urls[1]          # ista stranica, drugi pokušaj
+    src = oglasnik.Oglasnik(Http([empty, empty]), Locator(), load_config()["kriteriji"])
+    src.since = None
+    with pytest.raises(RuntimeError, match="nema oglasa .* – naslov „Plavi oglasnik”, 0 kB, dijelova s podacima 0"):
+        src.fetch("incremental", set())
+
+
 def test_index_items():
     data = json.loads(read("index_kuce.json.gz"))
     items = index_oglasi.parse_items(data, "prodaja-kuca", HOUSE)

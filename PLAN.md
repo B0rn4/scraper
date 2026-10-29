@@ -823,6 +823,13 @@ bez stotina poruka.
   realestatecroatia, 2 bazena, 3 dvojne / u nizu, šuma, 4 naselja oko Matulja koja se ne
   prihvaćaju, Novi Vinodolski), 1 bi stigla s ⚠ (ruševina iz opisa). Usput: „s mogućnošću
   izgradnje bazena” nije bilo prepoznato kao bez bazena (u bazama nijedan takav).
+- **(29. 10.) oglasnik.hr: „nema oglasa” tri pokretanja zaredom** (mail „izvor ne radi”, 12:01).
+  Prva stranica kuća u 10:20, 10:40 i 11:01 UTC nije imala nijedan oglas, a snimka iste stranice
+  s GitHuba u 11:04 ima svih 100 u uobičajenom obliku (parser ih čita) – prolazna greška portala.
+  Sad: prva stranica bez oglasa još se jednom dohvaća nakon 20 s, a tek onda greška, s opisom
+  onoga što je stiglo (naslov, veličina, dijelova s podacima, oznaka oglasa, poveznica na oglase
+  – bez sadržaja), da se sljedeći put vidi uzrok. Usput: snimke stranica (alat `stranica:`)
+  brisanjem kontakata kvare dugačke brojeve i navodnike u podacima – za parser nisu vjerne.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
