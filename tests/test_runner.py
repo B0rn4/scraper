@@ -1190,6 +1190,78 @@ def test_telegram_down_is_reported_by_mail_once(tmp_path):
     state.close()
 
 
+def test_secrets_are_hidden_in_stored_errors_log_and_alerts(tmp_path, monkeypatch):
+    """1. 11.: greška veze s Telegramom (14. 10.) spremila je u stanje adresu s tokenom bota, a stanje
+    je u javnom repozitoriju. Tajne se maskiraju prije spremanja, ispisa i slanja, a stari zapisi
+    čiste se pri otvaranju stanja. (Lažni token se sastavlja ovdje – u repozitoriju nema niza
+    koji izgleda kao token.)"""
+    from scraper.text import hide_secrets
+
+    fake = "123456789:" + "AbC-d_" * 6
+    error = ("ConnectionError: HTTPSConnectionPool(host='api.telegram.org', port=443): Max retries exceeded "
+             f"with url: /bot{fake}/sendMessage (Caused by NewConnectionError)")
+    monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
+    assert fake not in hide_secrets(error) and "/bot***/sendMessage" in hide_secrets(error)   # i bez okruženja
+    assert "123456789:" not in hide_secrets(error[:error.index(fake) + 30])                   # odrezan token
+    git = "https://x-access-token:ghs_" + "b" * 36 + "@github.com/B0rn4/scraper.git"
+    assert hide_secrets(f"push nije uspio: {git}") == "push nije uspio: https://***@github.com/B0rn4/scraper.git"
+    for plain in ("FetchError: Timeout: curl: (28) Connection timed out after 40001 milliseconds. za "
+                  "https://www.pgz.hr/dokumenti/natjecaji/", "Ne odgovara prema index.hr/oglasi (index_oglasi:6880272: "
+                  "Rukavac (Matulji))", "zadnje pokretanje 2026-11-01T07:01:02+01:00", "Kuća Rijeka, 188m2"):
+        assert hide_secrets(plain) == plain
+    monkeypatch.setenv("TELEGRAM_BOT_TOKEN", fake)
+    monkeypatch.setenv("SMTP_PASSWORD", "lozinka-za-mail")
+    monkeypatch.setenv("EMAIL_TO", "osoba@example.com")
+    assert hide_secrets("535 login osoba@example.com / lozinka-za-mail") == "535 login *** / ***"
+
+    # Stari zapis (prije maskiranja) čisti se pri otvaranju stanja; novi se sprema maskiran.
+    state = State(tmp_path / "s.db")
+    state.conn.execute("INSERT INTO health (source, last_ok, failures, last_error, alerted) VALUES (?, ?, 0, ?, 0)",
+                       ("telegram", "2026-10-14T12:20:33+02:00", error))
+    state.conn.commit()
+    state.close()
+    state = State(tmp_path / "s.db")
+    stored = state.conn.execute("SELECT last_error FROM health WHERE source = 'telegram'").fetchone()[0]
+    assert fake not in stored and "api.telegram.org" in stored
+    state.health_fail("vender", f"RuntimeError: {error}")
+    assert all(fake not in (h["last_error"] or "") for h in state.health_all())
+
+    # Ispis rada i upozorenja (mail koji korisnik prosljeđuje Claudeu).
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner.log(f"Upozorenje nije poslano: {error}")
+    mails = []
+    runner.email = SimpleNamespace(send=lambda subject, text, *a: mails.append(text))
+    for _ in range(3):
+        runner._telegram_health(state, error)
+    assert mails and fake not in mails[0] and "/bot***/" in mails[0]
+    assert all(fake not in line for line in runner.log_lines)
+    assert all(fake not in (h["last_error"] or "") for h in state.health_all())
+    state.close()
+
+
+def test_telegram_connection_error_does_not_carry_token(monkeypatch):
+    """Greška veze (requests) nosi adresu s tokenom: Telegram je baca bez nje i bez izvorne greške."""
+    import pytest
+    import requests
+
+    from scraper import notify
+    from scraper.notify import Telegram
+
+    fake = "987654321:" + "xY_z-0" * 6
+    monkeypatch.delenv("TELEGRAM_BOT_TOKEN", raising=False)
+
+    def post(url, **kwargs):
+        raise requests.ConnectionError(f"HTTPSConnectionPool(host='api.telegram.org', port=443): Max retries "
+                                       f"exceeded with url: {url.split('.org', 1)[1]}")
+
+    monkeypatch.setattr(notify.requests, "post", post)
+    monkeypatch.setattr(notify.time, "sleep", lambda s: None)
+    with pytest.raises(requests.RequestException) as caught:
+        Telegram(fake, "1").send_text("x")
+    assert fake not in str(caught.value) and "sendMessage" in str(caught.value)
+    assert caught.value.__cause__ is None and caught.value.__suppress_context__
+
+
 def test_telegram_rejected_message_sent_as_plain_text_and_long_flood_wait(monkeypatch):
     """Telegram odbije poruku (400: neispravan HTML, adresa gumba): ista poruka stiže kao
     običan tekst s adresom. Dugo čekanje (429, retry_after 900 s) ne zaustavlja pokretanje."""

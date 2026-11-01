@@ -186,6 +186,9 @@ Skripta pita za:
 
 Na kraju stiže probna poruka na Telegram. Tajne ostaju samo na Redmiju.
 
+Ponovno pokretanje skripte (npr. nov token bota): na pitanje za vrijednost koja se ne mijenja
+samo Enter – ostaje postojeća iz `~/.scraper.env`.
+
 ### 2.2 Prvo pokretanje (u Ubuntuu)
 
 ```

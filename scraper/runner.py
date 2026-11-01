@@ -28,7 +28,7 @@ from .notify import (DISLIKE, MUTE_PREFIX, SOURCE_LABELS, UNMUTE_PREFIX, Email, 
                      safe_url, summary_text, unmuted_markup)
 from .sources import ALL
 from .sources.base import FULL, INCREMENTAL
-from .text import fmt_eur, fold, plural, strip_contact_block
+from .text import fmt_eur, fold, hide_secrets, plural, strip_contact_block
 
 ROOT = Path(__file__).resolve().parent.parent
 LAND_CHECK_SECONDS = 120   # najdulje trajanje provjera građevinskog područja po pokretanju
@@ -120,7 +120,7 @@ class Runner:
     # --- pomoćno ---
 
     def log(self, msg: str) -> None:
-        line = f"[{datetime.now(self.tz):%H:%M:%S}] {msg}"
+        line = f"[{datetime.now(self.tz):%H:%M:%S}] {hide_secrets(msg)}"
         print(line, flush=True)
         self.log_lines.append(line)
 
@@ -159,6 +159,7 @@ class Runner:
         if not self.email:
             self.log(f"(mail nije poslan – nema postavki) {subject}")
             return True
+        subject, text = hide_secrets(subject), hide_secrets(text)
         try:
             self.email.send(subject, text, html_body, list(attachments))
             return True
@@ -1176,7 +1177,19 @@ class Runner:
         bilježe bez poruke."""
         cfg = self.cfg.get("natjecaji") or {}
         today = self.now.date().isoformat()
-        if not cfg.get("ukljuceno", True) or self.device != "github" or not self.telegram:
+        if not cfg.get("ukljuceno", True) or not self.telegram:
+            return
+        # Stranica s "uredjaj: redmi" (PGŽ ne prima veze s GitHuba) čita se samo na Redmiju; ovdje
+        # se briše njezino zdravlje s drugog uređaja (inače bi tjedni izvještaj zauvijek javljao grešku).
+        sites = []
+        for site in tenders.load_sites():
+            if (site.get("uredjaj") or "github") == self.device:
+                sites.append(site)
+            else:
+                name = f"natjecaji: {site['naziv']}"
+                state.conn.execute("DELETE FROM health WHERE source = ?", (name,))
+                state.conn.execute("DELETE FROM meta WHERE key = ?", (f"greska_dan:{name}",))
+        if not sites:
             return
         if not state.meta_get("natjecaji:pravilo2"):
             # Jednokratno: prvi dan je prešutio i objave starije od 45 dana kojima rok još traje.
@@ -1190,7 +1203,7 @@ class Runner:
         reader = tenders.Reader(self.http, self.locator)
         new: list[tenders.Tender] = []
         first_sites: set[str] = set()   # stranice pročitane prvi put (početno stanje po stranici)
-        for site in tenders.load_sites():
+        for site in sites:
             name = f"natjecaji: {site['naziv']}"
             try:
                 items = reader.fetch(site)
@@ -1328,6 +1341,7 @@ class Runner:
         """Greška stranice koja se čita jednom dnevno broji se najviše jednom dnevno: ponovno
         čitanje istog dana (prekinuto pokretanje) ne skraćuje "tri dana zaredom"."""
         today = self.now.date().isoformat()
+        error = hide_secrets(error)
         row = next((h for h in state.health_all() if h["source"] == name), None)
         if row and row.get("failures") and state.meta_get(f"greska_dan:{name}") == today:
             state.conn.execute("UPDATE health SET last_error = ? WHERE source = ?", (error[:1000], name))
@@ -1759,6 +1773,7 @@ class Runner:
                 if row.get("alerted"):
                     self.email_ok("Scraper: Telegram ponovno radi", "Obavijesti ponovno stižu na Telegram; neposlane su poslane.")
             return
+        error = hide_secrets(error)
         failures, alerted = state.health_fail("telegram", error[:300])
         if failures < 3 or alerted:
             return
@@ -1859,7 +1874,7 @@ class Runner:
         return out
 
     def _source_failed(self, state: State, src, exc: Exception) -> None:
-        detail = f"{type(exc).__name__}: {exc}"
+        detail = hide_secrets(f"{type(exc).__name__}: {exc}")
         failures, alerted = state.health_fail(src.name, detail)
         self.log(f"{src.label}: GREŠKA ({failures}. zaredom): {detail}")
         traceback.print_exc()
@@ -1963,7 +1978,7 @@ class Runner:
                                 "Greška pri obradi oglasa više se ne javlja. Oglasi iz upozorenja ne stižu "
                                 "naknadno – ako ih nisi pogledao, pogledaj ih ručno.")
             return
-        failures, alerted = state.health_fail(key, errors[0][:300])
+        failures, alerted = state.health_fail(key, hide_secrets(errors[0])[:300])
         if failures >= LISTING_ERROR_RUNS and not alerted and self._alert(
                 f"Scraper: {src.label} – oglasi se ne daju obraditi",
                 f"{src.label}: {plural(len(errors), 'oglas nije obrađen', 'oglasa nisu obrađena', 'oglasa nije obrađeno')} "
@@ -2018,7 +2033,7 @@ class Runner:
         error = getattr(src, "deep_error", "")
         if error:
             self.log(f"{src.label}: dublje čitanje stalo – {error}")
-            state.meta_set(f"dubinsko_greska:{src.name}", error)
+            state.meta_set(f"dubinsko_greska:{src.name}", hide_secrets(error))
         if done:
             state.meta_set(f"dubinsko_greska:{src.name}", "")
             if row and row.get("failures"):
@@ -2089,6 +2104,7 @@ class Runner:
                 self.log(f"(upozorenje nije poslano – nema ni maila ni Telegrama) {subject}")
                 return False
             return self._email(subject, text)
+        subject, text = hide_secrets(subject), hide_secrets(text)
         if len(text) > 3000:                 # Telegram prima najviše 4096 znakova
             text = text[:3000] + "…"
         try:
@@ -2191,7 +2207,8 @@ class Runner:
             row = mine.get(key)
             label = health_label(h["source"])
             base, _, suffix = h["source"].partition(":")
-            needed = thresholds.get(suffix, 1) if suffix else (1 if base == "sat" else limit)
+            needed = (3 if base in ("natjecaji", "banke") else thresholds.get(suffix, 1)) if suffix \
+                else (1 if base == "sat" else limit)
             recovered = (h.get("failures") or 0) < needed
             if recovered or h.get("alerted"):
                 if row and row.get("failures") and (recovered or not row.get("alerted")):
@@ -2200,7 +2217,7 @@ class Runner:
                         self._alert(f"Scraper: Redmi – {label} ponovno u redu", f"Redmi javlja da je {label} ponovno u redu.")
                 continue
             # Redmi je trebao javiti, a nije uspio: čeka se još jedno njegovo pokretanje.
-            failures, alerted = state.health_fail(key, (h.get("last_error") or "")[:300])
+            failures, alerted = state.health_fail(key, hide_secrets(h.get("last_error"))[:300])
             if failures >= 2 and not alerted and self._alert(
                     f"Scraper: Redmi javlja – {label}",
                     f"Redmi: {label} – {h.get('failures')} grešaka zaredom.\nZadnja greška: {h.get('last_error') or '—'}\n\n"
@@ -2242,7 +2259,7 @@ class Runner:
             return
         if row and row.get("alerted"):
             return                       # već javljeno; čeka se oporavak (brojač ne raste svakim pokretanjem)
-        error = telegram.get("last_error") or ""
+        error = hide_secrets(telegram.get("last_error"))
         _, alerted = state.health_fail("redmi:telegram", error[:300])
         if not alerted and self._alert(
                 "Scraper: Redmi ne može slati na Telegram",

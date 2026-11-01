@@ -1,7 +1,27 @@
 """Pomoćne funkcije za tekst: normalizacija i čitanje brojeva."""
 
+import os
 import re
 import unicodedata
+
+# Tajne i osobne vrijednosti iz okruženja (GitHub Secrets, ~/.scraper.env).
+SECRET_ENV = ("TELEGRAM_BOT_TOKEN", "SMTP_PASSWORD", "GITHUB_TOKEN", "SMTP_USER", "EMAIL_TO", "TELEGRAM_CHAT_ID")
+_SECRET_FORMS = re.compile(
+    r"(?<!\d)\d{6,12}:[\w-]{20,}"                      # token Telegram bota (adresa …/bot<token>/sendMessage)
+    r"|gh[pousr]_\w{30,}|github_pat_\w{30,}"           # GitHubov token
+    r"|(?<=://)[^/\s:@]+:[^/\s@]+(?=@)")               # korisnik:lozinka@ u adresi (x-access-token:…@github.com)
+
+
+def hide_secrets(text) -> str:
+    """Tekst bez tajni (token bota, lozinka maila, GitHubov token) i osobnih vrijednosti iz okruženja
+    (e-adresa, broj razgovora). Greške se spremaju u stanje, a ono je u javnom repozitoriju: 14. 10.
+    greška veze s Telegramom spremila je adresu s tokenom bota."""
+    text = "" if text is None else str(text)
+    for name in SECRET_ENV:
+        value = os.environ.get(name, "").strip()
+        if len(value) >= 6:
+            text = text.replace(value, "***")
+    return _SECRET_FORMS.sub("***", text)
 
 _EMAIL = re.compile(r"[\w.%+-]+\s*(?:@|\(at\)|\[at\]|\{at\})\s*[\w-]+(?:\.[\w-]+)+")
 # Telefon: 9+ znamenki u skupinama s razmacima, crticama ili kosim crtama ("091/503-2253",

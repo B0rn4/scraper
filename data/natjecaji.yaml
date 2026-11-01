@@ -9,6 +9,7 @@
 #      (Rijeka: natječaji su na /bidding/, ostalo su stranice izbornika).
 # jls: grad/općina kojoj objava pripada. Bez jls (PGŽ, CERP, državne nekretnine) objava se
 #      zadržava samo ako spominje naše područje.
+# uredjaj: redmi – stranicu čita Redmi (hrvatska IP adresa), ne GitHub; poruke šalje on.
 
 - naziv: Općina Baška
   jls: Baška
@@ -88,6 +89,8 @@
 - naziv: Primorsko-goranska županija
   nacin: stranica
   url: https://www.pgz.hr/dokumenti/natjecaji/
+  # Od 30. 10. pgz.hr, www2.pgz.hr i zavod.pgz.hr ne primaju veze s GitHuba (SAD); sn.pgz.hr radi.
+  uredjaj: redmi
 - naziv: CERP (državna imovina)
   nacin: stranica
   url: https://www.cerp.hr/natjecaji/11?tip=9   # Javni pozivi – nekretnine

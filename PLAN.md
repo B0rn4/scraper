@@ -830,6 +830,32 @@ bez stotina poruka.
   onoga što je stiglo (naslov, veličina, dijelova s podacima, oznaka oglasa, poveznica na oglase
   – bez sadržaja), da se sljedeći put vidi uzrok. Usput: snimke stranica (alat `stranica:`)
   brisanjem kontakata kvare dugačke brojeve i navodnike u podacima – za parser nisu vjerne.
+- **(1. 11.) Natječaji PGŽ: „tri dana zaredom vraća grešku”** (mail, 07:06). Od 30. 10.
+  www.pgz.hr ne prima veze s GitHuba (curl 28 „Connection timed out”, 3 × 40 s – 2,5 min
+  svako jutro); zadnje uspješno čitanje 29. 10. u 07:01. Proba s GitHuba (alat `stranica:`,
+  1. 11. u 20:12): ne odgovaraju ni pgz.hr, http://www.pgz.hr, www2.pgz.hr ni zavod.pgz.hr,
+  a www.sn.pgz.hr radi (drugi poslužitelj); sve ostale stranice natječaja rade. Najvjerojatnije
+  PGŽ ne prima veze iz inozemstva ili s podatkovnih centara (vijesti o padu stranica nema).
+  Sad: polje `uredjaj: redmi` u `data/natjecaji.yaml` – stranicu PGŽ-a čita Redmi (hrvatska
+  IP adresa) i sam šalje poruke; GitHub je preskače i briše svoj stari zapis greške. Prvo
+  čitanje na Redmiju je početno (poruke samo za objave s rokom koji traje ili iz zadnjih 45
+  dana), pa se ne gubi ništa objavljeno od 30. 10. Usput: Redmijevu grešku dnevne provjere
+  (`natjecaji: …`) GitHub bi prosljeđivao već nakon prve greške umjesto nakon 3 dana. Ostaje:
+  tjedni pregled planova čita Registar prostornih planova sa zavod.pgz.hr – dok PGŽ ne prima
+  GitHub, u tjednom izvještaju piše greška za registar (odluke sa sn.pgz.hr i dalje stižu).
+- **(1. 11.) Token Telegram bota bio je u stanju u javnom repozitoriju.** Pri provjeri
+  zdravlja izvora: greška veze s Telegramom od 14. 10. (`requests` ConnectionError) sadrži
+  adresu `…/bot<token>/sendMessage` i spremljena je u `health.last_error` – `state.db` na
+  grani `state` i u 7 dnevnih kopija na grani `state-kopija` (sve javno). Drugih tajni nema
+  (pretraga po obliku: Redmijeva baza, `seen.json.gz`, `cijene.json`, `github.json`, grana
+  `debug` i glavna grana su čiste). Sad: `text.hide_secrets` maskira token bota, lozinku
+  maila, GitHubov token, `korisnik:lozinka@` u adresama i vrijednosti tajni iz okruženja
+  (i e-adresu i ID razgovora) – u svakoj spremljenoj grešci (`health_fail`, dnevne
+  provjere, dublje čitanje), ispisu rada, mailu i upozorenju, prije skraćivanja; Telegram
+  baca grešku veze bez adrese i bez izvorne greške (`from None`); stari zapisi čiste se pri
+  otvaranju stanja. Kopije na `state-kopija` s tokenom ispadaju same u 7 dana. **Korisnik
+  mora opozvati token** (BotFather) i upisati novi na GitHub i Redmi (UPUTE.md, odjeljak 10;
+  `tools/redmi_setup.py` sad Enterom ostavlja postojeće vrijednosti).
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
@@ -902,6 +928,8 @@ vrijedi samo uz sam izraz). Ostaje (samo izgled): nakon 👎 na „📉 Već vi�
 - (gotovo) Telegram bot i GitHub Secrets (prije faze 1).
 - (gotovo) Gmail lozinka za aplikacije za slanje maila (prije faze 1).
 - (gotovo 8. 10.) Token za cron-job.org s rokom „No expiration”.
+- (1. 11.) Opozvati token Telegram bota (BotFather → Revoke) i novi upisati na GitHub
+  (`TELEGRAM_BOT_TOKEN`) i Redmi (`tools/redmi_setup.py`) – UPUTE.md, odjeljak 10.
 - Provjere koje može samo korisnik (7.5): izgled poruka na mobitelu, tjedni izvještaj nije
   u neželjenoj pošti, Redmi nakon nestanka struje / ponovnog paljenja, obavijesti
   cron-job.org kod neuspjeha, ručna usporedba s portalima (popis praćenih stranica).

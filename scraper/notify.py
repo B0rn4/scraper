@@ -15,7 +15,7 @@ import requests
 
 from .filters import effective_price, land_type_doubtful
 from .models import HOUSE, LAND, WARN, Decision, Listing
-from .text import fmt_eur, fmt_m2
+from .text import fmt_eur, fmt_m2, hide_secrets
 
 SOURCE_LABELS = {
     "nekretnine_hr": "nekretnine.hr",
@@ -190,6 +190,7 @@ def _lines(listing: Listing, decision: Decision, headline: str) -> list[tuple[st
 class Telegram:
     def __init__(self, token: str, chat_id: str):
         self.base = f"https://api.telegram.org/bot{token}"
+        self._token = token
         self.chat_id = chat_id
         self._last = 0.0
 
@@ -204,7 +205,13 @@ class Telegram:
             if wait > 0:
                 time.sleep(wait)
             self._last = time.monotonic()
-            resp = requests.post(f"{self.base}/{method}", data=data, files=files, timeout=60)
+            try:
+                resp = requests.post(f"{self.base}/{method}", data=data, files=files, timeout=60)
+            except requests.RequestException as exc:
+                # Greška veze sadrži adresu s tokenom bota (…/bot<token>/sendMessage), a sprema se
+                # u stanje (javni repozitorij): bez nje, i bez izvorne greške u ispisu traga (from None).
+                text = str(exc).replace(self._token, "***") if self._token else str(exc)
+                raise requests.ConnectionError(f"Telegram {method}: {type(exc).__name__}: {hide_secrets(text)}") from None
             body = resp.json() if resp.headers.get("content-type", "").startswith("application/json") else {}
             if resp.status_code == 429:
                 retry = int(body.get("parameters", {}).get("retry_after", 5))

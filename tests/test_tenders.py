@@ -596,3 +596,71 @@ def test_tender_parcel_rules_use_own_lot_text(tmp_path):
     first = runner._tender_rules(t, found[0], "Omišalj", "Njivice", None, single=False)
     second = runner._tender_rules(t, found[1], "Omišalj", "Njivice", None, single=False)
     assert not first[0].startswith("📏 UPU Njivice") and second[0].startswith("📏 UPU Njivice")
+
+
+def test_tender_site_for_redmi_is_read_only_there(tmp_path, monkeypatch):
+    """1. 11.: pgz.hr od 30. 10. ne prima veze s GitHuba (SAD) – stranicu s "uredjaj: redmi" čita
+    samo Redmi (hrvatska IP adresa). GitHub je preskače i briše njezin stari zapis greške
+    (inače bi tjedni izvještaj zauvijek javljao "3 greške zaredom")."""
+    from scraper.db import State
+    from scraper.runner import Runner
+
+    read = []
+
+    class FakeReader:
+        def __init__(self, *a):
+            pass
+
+        def fetch(self, site):
+            read.append(site["naziv"])
+            return []
+
+    class FakeTelegram:
+        def send_text(self, text, silent=False, url=""):
+            pass
+
+    sites = [{"naziv": "Grad Krk", "jls": "Krk", "nacin": "wp", "url": "u"},
+             {"naziv": "Primorsko-goranska županija", "nacin": "stranica", "url": "p", "uredjaj": "redmi"}]
+    monkeypatch.setattr(tenders, "Reader", FakeReader)
+    monkeypatch.setattr(tenders, "load_sites", lambda: sites)
+    github = Runner(tmp_path / "s.db", tmp_path, send=False)
+    github.telegram = FakeTelegram()
+    state = State(tmp_path / "s.db")
+    name = "natjecaji: Primorsko-goranska županija"
+    for _ in range(3):
+        state.health_fail(name, "FetchError: Timeout: curl: (28) Connection timed out")
+    state.meta_set(f"greska_dan:{name}", "2026-11-01")
+    github._tenders(state)
+    assert read == ["Grad Krk"]
+    assert name not in {h["source"] for h in state.health_all()} and state.meta_get(f"greska_dan:{name}") is None
+    state.close()
+
+    redmi = Runner(tmp_path / "r.db", tmp_path / "out", send=False, device="redmi")
+    redmi.telegram = FakeTelegram()
+    state = State(tmp_path / "r.db")
+    redmi._tenders(state)
+    assert read == ["Grad Krk", "Primorsko-goranska županija"]
+    assert {h["source"] for h in state.health_all()} == {name}
+    state.close()
+
+
+def test_redmi_daily_check_error_is_relayed_after_three_days(tmp_path):
+    """Redmijeva dnevna provjera (natječaji) javlja se nakon 3 dana grešaka (kao na GitHubu); GitHub je
+    prosljeđuje mailom samo ako je Redmi nije uspio poslati – ne već nakon prve greške."""
+    from scraper.db import State
+    from scraper.runner import Runner
+
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    mails = []
+    runner._alert = lambda subject, text: mails.append(subject) or True
+    state = State(tmp_path / "s.db")
+    row = {"source": "natjecaji: Primorsko-goranska županija", "failures": 1, "alerted": 0,
+           "last_error": "FetchError: Timeout", "last_ok": "2026-10-29T07:01:07+01:00"}
+    for _ in range(3):
+        runner._redmi_relay(state, [row])
+    assert mails == []
+    row = dict(row, failures=3)
+    for _ in range(2):
+        runner._redmi_relay(state, [row])
+    assert mails == ["Scraper: Redmi javlja – natjecaji: Primorsko-goranska županija"]
+    state.close()

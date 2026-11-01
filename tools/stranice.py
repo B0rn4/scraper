@@ -84,7 +84,8 @@ def build() -> str:
 
     tenders, region = [], []
     for site in yaml.safe_load((DATA / "natjecaji.yaml").read_text(encoding="utf-8")):
-        item = row(f"n-{site['naziv']}", site["naziv"], "jednom dnevno",
+        item = row(f"n-{site['naziv']}", site["naziv"],
+                   "jednom dnevno, s Redmija" if site.get("uredjaj") == "redmi" else "jednom dnevno",
                    "pretraga stranice za „prodaj”" if site.get("nacin") in ("wp", "rss") else "",
                    [("otvori", human_url(site))])
         (tenders if site.get("jls") else region).append(item)

@@ -225,6 +225,16 @@ Actions → **Planovi – preuzimanje** → naredba `lokacija`, u „adrese” z
 - Token za cron-job.org ima rok **No expiration**. Ako ga ikad mijenjaš, ostavi isto.
 - Redmijev GITHUB_TOKEN (u `~/.scraper.env`) služi za slanje stanja i preuzimanje koda.
   Ako istekne, stiže „Redmi ne preuzima stanje s GitHuba”.
+- **Nov token bota** (stari je procurio ili ga želiš promijeniti):
+  1. Telegram → @BotFather → /mybots → bot → API Token → **Revoke current token**. Stari
+     token odmah prestaje vrijediti; BotFather pokaže novi.
+  2. GitHub → Settings → Secrets and variables → Actions → `TELEGRAM_BOT_TOKEN` → Update →
+     zalijepi novi token.
+  3. Redmi, u Ubuntuu: `cd ~/scraper && . ~/venv/bin/activate && python tools/redmi_setup.py`
+     – zalijepi novi token, a na ostala pitanja samo Enter (ostaju postojeće vrijednosti).
+     Stiže probna poruka.
+  Dok novi token nije upisan na oba mjesta, poruke ne stižu, nego čekaju (najviše 7 dana).
+  Bot, razgovor i gumbi ostaju isti.
 
 ## 11. Česta pitanja
 

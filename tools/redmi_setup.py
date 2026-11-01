@@ -4,7 +4,8 @@
 
 Pita za token Telegram bota, ID razgovora i GitHub token (ništa se ne prikazuje dok
 lijepiš), provjeri ih, pošalje probnu poruku na Telegram i zapiše datoteku koju
-čita samo vlasnik (chmod 600). Tajne ne idu nikamo drugamo."""
+čita samo vlasnik (chmod 600). Tajne ne idu nikamo drugamo. Kad je Redmi već postavljen,
+Enter ostavlja postojeću vrijednost (npr. samo nov token bota nakon opoziva u BotFatheru)."""
 
 import getpass
 import os
@@ -21,6 +22,17 @@ def ask(prompt: str, secret: bool = True) -> str:
     return (getpass.getpass(prompt) if secret else input(prompt)).strip()
 
 
+def existing() -> dict[str, str]:
+    """Vrijednosti iz postojeće ~/.scraper.env (ponovno postavljanje: Enter ih ostavlja)."""
+    values = {}
+    if ENV.exists():
+        for line in ENV.read_text(encoding="utf-8").splitlines():
+            name, sep, value = line.partition("=")
+            if sep and name.strip():
+                values[name.strip()] = value.strip()
+    return values
+
+
 def telegram_chat_id(token: str) -> str:
     """ID razgovora iz zadnjih poruka botu (ako mu je korisnik nešto napisao)."""
     try:
@@ -34,7 +46,10 @@ def telegram_chat_id(token: str) -> str:
 
 def main() -> int:
     print("Postavljanje Redmija. Vrijednosti lijepi dugim pritiskom → Paste, pa Enter.\n")
-    tg = ask("1/3 Token Telegram bota (BotFather → /mybots → bot → API Token): ")
+    old = existing()
+    keep = " (Enter = ostaje postojeći)"
+    tg = ask("1/3 Token Telegram bota (BotFather → /mybots → bot → API Token)"
+             f"{keep if old.get('TELEGRAM_BOT_TOKEN') else ''}: ") or old.get("TELEGRAM_BOT_TOKEN", "")
     me = requests.get(f"https://api.telegram.org/bot{tg}/getMe", timeout=30).json()
     if not me.get("ok"):
         print("Telegram ne prihvaća token. Provjeri ga i pokreni ponovno.")
@@ -43,6 +58,9 @@ def main() -> int:
     chat = telegram_chat_id(tg)
     if chat:
         print(f"   ID razgovora pronađen iz tvoje poruke botu: {chat}")
+    elif old.get("TELEGRAM_CHAT_ID"):
+        chat = old["TELEGRAM_CHAT_ID"]
+        print("   ID razgovora: postojeći iz ~/.scraper.env")
     else:
         # GitHub svakih 20 minuta pročita (i potvrdi) poruke botu, pa ih skripta poslije ne vidi.
         print("   ID razgovora nije pronađen: napiši botu bilo što (npr. „bok”) i ODMAH pokreni skriptu\n"
@@ -57,7 +75,8 @@ def main() -> int:
         return 1
     print("   Probna poruka poslana na Telegram.")
 
-    gh = ask("3/3 GitHub token (redmi-scraper, Contents: Read and write): ")
+    gh = ask("3/3 GitHub token (redmi-scraper, Contents: Read and write)"
+             f"{keep if old.get('GITHUB_TOKEN') else ''}: ") or old.get("GITHUB_TOKEN", "")
     r = requests.get(f"https://api.github.com/repos/{REPO}", timeout=30,
                      headers={"Authorization": f"Bearer {gh}", "Accept": "application/vnd.github+json"})
     if r.status_code != 200 or not r.json().get("permissions", {}).get("push"):
@@ -65,7 +84,8 @@ def main() -> int:
         return 1
     print("   GitHub token u redu.")
 
-    ENV.write_text(f"TELEGRAM_BOT_TOKEN={tg}\nTELEGRAM_CHAT_ID={chat}\nGITHUB_TOKEN={gh}\n", encoding="utf-8")
+    other = "".join(f"{k}={v}\n" for k, v in old.items() if k not in ("TELEGRAM_BOT_TOKEN", "TELEGRAM_CHAT_ID", "GITHUB_TOKEN"))
+    ENV.write_text(f"TELEGRAM_BOT_TOKEN={tg}\nTELEGRAM_CHAT_ID={chat}\nGITHUB_TOKEN={gh}\n{other}", encoding="utf-8")
     os.chmod(ENV, 0o600)
     print(f"\nSpremljeno u {ENV}. Sljedeći korak u REDMI.md: prvo ručno pokretanje.")
     return 0

@@ -5,6 +5,7 @@ import sqlite3
 from pathlib import Path
 
 from .models import HOUSE, LAND, REJECT, Decision, Listing
+from .text import hide_secrets
 
 SCHEMA = """
 CREATE TABLE IF NOT EXISTS listings (
@@ -94,6 +95,23 @@ class State:
             self.conn.execute("ALTER TABLE listings ADD COLUMN category TEXT")
         if "url" not in {r[1] for r in self.conn.execute("PRAGMA table_info(messages)")}:
             self.conn.execute("ALTER TABLE messages ADD COLUMN url TEXT")   # gumb poruke (dopuna: drugi portal)
+        self._hide_stored_secrets()
+
+    def _hide_stored_secrets(self) -> None:
+        """Tajne u već spremljenim greškama (stanje je u javnom repozitoriju): zapisi od prije
+        maskiranja (1. 11.: token bota u grešci Telegrama od 14. 10.)."""
+        rows = [("health", "last_error", "source", r[0], r[1]) for r in
+                self.conn.execute("SELECT source, last_error FROM health WHERE last_error IS NOT NULL")]
+        rows += [("meta", "value", "key", r[0], r[1]) for r in
+                 self.conn.execute("SELECT key, value FROM meta WHERE key LIKE 'dubinsko_greska:%'")]
+        changed = False
+        for table, column, key_column, key, value in rows:
+            clean = hide_secrets(value)
+            if clean != value:
+                self.conn.execute(f"UPDATE {table} SET {column} = ? WHERE {key_column} = ?", (clean, key))
+                changed = True
+        if changed:
+            self.conn.commit()
 
     def close(self) -> None:
         self.conn.commit()
@@ -384,7 +402,7 @@ class State:
         self.conn.execute(
             """INSERT INTO health (source, failures, last_error) VALUES (?, 1, ?)
                ON CONFLICT(source) DO UPDATE SET failures = failures + 1, last_error = excluded.last_error""",
-            (source, error[:1000]),
+            (source, hide_secrets(error)[:1000]),
         )
         row = self.conn.execute("SELECT failures, alerted FROM health WHERE source = ?", (source,)).fetchone()
         return row[0], bool(row[1])
