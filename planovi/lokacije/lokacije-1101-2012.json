@@ -1,0 +1,27 @@
+[
+ {
+  "ulaz": "stranica:https://www.pgz.hr/dokumenti/natjecaji/",
+  "greska": "FetchError: Timeout: Failed to perform, curl: (28) Connection timed out after 40000 milliseconds. See https://curl.se/libcurl/c/libcurl-errors.html first for more details. za https://www.pgz.hr/dokumenti/natjecaji/"
+ },
+ {
+  "ulaz": "stranica:https://pgz.hr/",
+  "greska": "FetchError: Timeout: Failed to perform, curl: (28) Connection timed out after 40000 milliseconds. See https://curl.se/libcurl/c/libcurl-errors.html first for more details. za https://pgz.hr/"
+ },
+ {
+  "ulaz": "stranica:http://www.pgz.hr/",
+  "greska": "FetchError: Timeout: Failed to perform, curl: (28) Connection timed out after 40000 milliseconds. See https://curl.se/libcurl/c/libcurl-errors.html first for more details. za http://www.pgz.hr/"
+ },
+ {
+  "ulaz": "stranica:https://www2.pgz.hr/",
+  "greska": "FetchError: Timeout: Failed to perform, curl: (28) Connection timed out after 40001 milliseconds. See https://curl.se/libcurl/c/libcurl-errors.html first for more details. za https://www2.pgz.hr/"
+ },
+ {
+  "ulaz": "https://www.sn.pgz.hr/",
+  "bajtova": 16826,
+  "isjecci": []
+ },
+ {
+  "ulaz": "stranica:https://zavod.pgz.hr/",
+  "greska": "FetchError: Timeout: Failed to perform, curl: (28) Connection timeout after 40000 ms. See https://curl.se/libcurl/c/libcurl-errors.html first for more details. za https://zavod.pgz.hr/"
+ }
+]
