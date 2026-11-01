@@ -834,8 +834,9 @@ bez stotina poruka.
   www.pgz.hr ne prima veze s GitHuba (curl 28 „Connection timed out”, 3 × 40 s – 2,5 min
   svako jutro); zadnje uspješno čitanje 29. 10. u 07:01. Proba s GitHuba (alat `stranica:`,
   1. 11. u 20:12): ne odgovaraju ni pgz.hr, http://www.pgz.hr, www2.pgz.hr ni zavod.pgz.hr,
-  a www.sn.pgz.hr radi (drugi poslužitelj); sve ostale stranice natječaja rade. Najvjerojatnije
-  PGŽ ne prima veze iz inozemstva ili s podatkovnih centara (vijesti o padu stranica nema).
+  a www.sn.pgz.hr radi (drugi poslužitelj); sve ostale stranice natječaja rade. PGŽ ne prima
+  veze iz inozemstva ili s podatkovnih centara: Redmi je istu stranicu pročitao bez greške
+  (1. 11. u 21:30, prvo čitanje; nijedna objava o prodaji s našeg područja).
   Sad: polje `uredjaj: redmi` u `data/natjecaji.yaml` – stranicu PGŽ-a čita Redmi (hrvatska
   IP adresa) i sam šalje poruke; GitHub je preskače i briše svoj stari zapis greške. Prvo
   čitanje na Redmiju je početno (poruke samo za objave s rokom koji traje ili iz zadnjih 45
