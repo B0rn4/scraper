@@ -39,7 +39,10 @@ class Http:
     def get(self, url: str, retries: int | None = None, timeout: float | None = None, **kwargs):
         host = urlparse(url).netloc
         error = None
-        for attempt in range((self.retries if retries is None else retries) + 1):
+        tries = (self.retries if retries is None else retries) + 1
+        cookie_retry = True
+        attempt = 0
+        while attempt < tries:
             wait = self.delay - (time.monotonic() - self._last.get(host, 0))
             if wait > 0:
                 time.sleep(wait)
@@ -51,9 +54,15 @@ class Http:
                 error = f"{type(exc).__name__}: {exc}"
             else:
                 if resp.status_code < 500 and resp.status_code != 429:
+                    if resp.status_code == 403 and cookie_retry and resp.headers.get("set-cookie"):
+                        # Zaštita od robota (DataDome na nekretnine.hr od 5. 11.): prvi zahtjev nove
+                        # sesije dobije 403 i kolačić, a isti zahtjev s tim kolačićem prolazi.
+                        cookie_retry = False
+                        continue
                     if resp.status_code >= 400:
                         raise FetchError(f"HTTP {resp.status_code} za {url}")
                     return resp
                 error = f"HTTP {resp.status_code}"
-            time.sleep(5 * (attempt + 1))
+            attempt += 1
+            time.sleep(5 * attempt)
         raise FetchError(f"{error} za {url}")

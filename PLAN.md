@@ -857,6 +857,16 @@ bez stotina poruka.
   otvaranju stanja. Kopije na `state-kopija` s tokenom ispadaju same u 7 dana. **Korisnik
   mora opozvati token** (BotFather) i upisati novi na GitHub i Redmi (UPUTE.md, odjeljak 10;
   `tools/redmi_setup.py` sad Enterom ostavlja postojeće vrijednosti).
+- **(5. 11.) nekretnine.hr: HTTP 403 od 07:00** (mail „izvor ne radi”, 07:40; zadnji uspjeh
+  4. 11. u 22:40). Portal je uključio zaštitu od robota DataDome: prvi zahtjev nove sesije s
+  GitHuba dobije 403 („Please enable JS and disable any ad blocker”, 776 B) i kolačić
+  `datadome`, a isti i svi sljedeći zahtjevi s tim kolačićem prolaze (alat `odgovor:`, dvije
+  probe: 403 je uvijek samo prvi zahtjev, bez obzira na stranicu; popisi i stranica oglasa
+  200). Scraper je na 403 odmah odustajao. Sad `Http.get`: 403 s novim kolačićem još se jednom
+  ponavlja (ne troši ponovne pokušaje); stalni 403 i 403 bez kolačića i dalje su greška. Ako
+  DataDome postane stroži (captcha), ostaje čitanje s Redmija (kao Njuškalo). Usput, korisnik
+  je pitao staje li scraper nakon upozorenja dok se ne javi – ne staje; tekst upozorenja i
+  UPUTE.md to sad kažu.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 
