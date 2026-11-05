@@ -1,0 +1,97 @@
+[
+ {
+  "ulaz": "https://www.nekretnine.hr/",
+  "status": 403,
+  "konacna_adresa": "https://www.nekretnine.hr/",
+  "zaglavlja": {
+   "content-type": "text/html;charset=utf-8",
+   "content-length": "776"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "nekretnine.hr",
+  "bajtova": 776,
+  "tekst": "nekretnine.hr Please enable JS and disable any ad blocker"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/?criterio=data&ordine=desc&pag=2",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/?criterio=data&ordine=desc&pag=2",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish03"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja zemljišta Primorsko-goranska županija - Stranica 2 - Nekretnine.hr",
+  "bajtova": 384176,
+  "tekst": "Prodaja zemljišta Primorsko-goranska županija - Stranica 2 - Nekretnine.hr Primorsko-goranska • Županija Primorsko-goranska • Županija Objavite oglase objavite Prijavite se spremite Nekretnine.hr Primorsko-goranska Odaberite grad ili općinu Rijeka Bakar Baška Brod Moravice Čabar Čavle Cres Crikvenica Delnice Dobrinj Fužine Jelenje Kastav Klana Kostrena Kraljevica Krk Lokve Lopar Lovran Mali Lošinj Malinska-Dubašnica Matulji Mošćenička Draga Mrkopalj Novi Vinodolski Omišalj Opatija Punat Rab Ravna Gora Skrad Vinodolska općina Viškovo Vrbnik Vrbovsko 4.215 rezultata Prodaja zemljišta Primorsko-g"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/?pag=2",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/?pag=2",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish02"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja zemljišta Primorsko-goranska županija - Stranica 2 - Nekretnine.hr",
+  "bajtova": 410188,
+  "tekst": "Prodaja zemljišta Primorsko-goranska županija - Stranica 2 - Nekretnine.hr Primorsko-goranska • Županija Primorsko-goranska • Županija Objavite oglase objavite Prijavite se spremite Nekretnine.hr Primorsko-goranska Odaberite grad ili općinu Rijeka Bakar Baška Brod Moravice Čabar Čavle Cres Crikvenica Delnice Dobrinj Fužine Jelenje Kastav Klana Kostrena Kraljevica Krk Lokve Lopar Lovran Mali Lošinj Malinska-Dubašnica Matulji Mošćenička Draga Mrkopalj Novi Vinodolski Omišalj Opatija Punat Rab Ravna Gora Skrad Vinodolska općina Viškovo Vrbnik Vrbovsko 4.215 rezultata Prodaja zemljišta Primorsko-g"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/?criterio=data&ordine=desc&pag=1",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/?criterio=data&ordine=desc",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish02"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja zemljišta Primorsko-goranska županija - Nekretnine.hr",
+  "bajtova": 390391,
+  "tekst": "Prodaja zemljišta Primorsko-goranska županija - Nekretnine.hr Primorsko-goranska • Županija Primorsko-goranska • Županija Objavite oglase objavite Prijavite se spremite Nekretnine.hr Primorsko-goranska Odaberite grad ili općinu Rijeka Bakar Baška Brod Moravice Čabar Čavle Cres Crikvenica Delnice Dobrinj Fužine Jelenje Kastav Klana Kostrena Kraljevica Krk Lokve Lopar Lovran Mali Lošinj Malinska-Dubašnica Matulji Mošćenička Draga Mrkopalj Novi Vinodolski Omišalj Opatija Punat Rab Ravna Gora Skrad Vinodolska općina Viškovo Vrbnik Vrbovsko 4.215 rezultata Prodaja zemljišta Primorsko-goranska župan"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/?criterio=data&ordine=desc&pag=2",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/?criterio=data&ordine=desc&pag=2",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish03"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja samostojećih kuća Primorsko-goranska županija - Stranica 2 - Nekretnine.hr",
+  "bajtova": 458294,
+  "tekst": "Prodaja samostojećih kuća Primorsko-goranska županija - Stranica 2 - Nekretnine.hr Primorsko-goranska • Županija Primorsko-goranska • Županija Objavite oglase objavite Prijavite se spremite Nekretnine.hr Primorsko-goranska Odaberite grad ili općinu Rijeka Bakar Baška Brod Moravice Čabar Čavle Cres Crikvenica Delnice Dobrinj Fužine Jelenje Kastav Klana Kostrena Kraljevica Krk Lokve Lopar Lovran Mali Lošinj Malinska-Dubašnica Matulji Mošćenička Draga Mrkopalj Novi Vinodolski Omišalj Opatija Punat Rab Ravna Gora Skrad Vinodolska općina Viškovo Vrbnik Vrbovsko 6.175 rezultata Prodaja samostojećih "
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/?criterio=dataModifica&ordine=desc&pag=2",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/?criterio=dataModifica&ordine=desc&pag=2",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish02"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja zemljišta Primorsko-goranska županija - Stranica 2 - Nekretnine.hr",
+  "bajtova": 410722,
+  "tekst": "Prodaja zemljišta Primorsko-goranska županija - Stranica 2 - Nekretnine.hr Primorsko-goranska • Županija Primorsko-goranska • Županija Objavite oglase objavite Prijavite se spremite Nekretnine.hr Primorsko-goranska Odaberite grad ili općinu Rijeka Bakar Baška Brod Moravice Čabar Čavle Cres Crikvenica Delnice Dobrinj Fužine Jelenje Kastav Klana Kostrena Kraljevica Krk Lokve Lopar Lovran Mali Lošinj Malinska-Dubašnica Matulji Mošćenička Draga Mrkopalj Novi Vinodolski Omišalj Opatija Punat Rab Ravna Gora Skrad Vinodolska općina Viškovo Vrbnik Vrbovsko 4.215 rezultata Prodaja zemljišta Primorsko-g"
+ }
+]
