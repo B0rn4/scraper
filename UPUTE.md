@@ -113,7 +113,9 @@ Primjer (zemljište u Matuljima):
 Upozorenje stiže **jednom**, a kad prođe, stiže i poruka „ponovno radi”. GitHubova
 upozorenja idu mailom (ako mail ne radi, na Telegram); Redmijeva na Telegram (ako ga
 Redmi ne može poslati, GitHub ga šalje mailom). Kad piše **„Javi Claudeu ovu poruku”**,
-proslijedi je (snimka zaslona je dovoljna).
+proslijedi je (snimka zaslona je dovoljna). Scraper zbog upozorenja **ne staje**: izvor
+koji ne radi pokušava čitati u svakom pokretanju (dnevne provjere svaki dan), a kad
+proradi, stižu i oglasi objavljeni u međuvremenu.
 
 **Izvori oglasa**
 

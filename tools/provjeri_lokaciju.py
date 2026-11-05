@@ -3,7 +3,7 @@
 Pokreće GitHub (radnja "Planovi", naredba "lokacija"), jer okruženje za razvoj ne dolazi do
 portala ni do ISPU-a; rezultat ide na granu debug (planovi/lokacije/).
 
-    python tools/provjeri_lokaciju.py IZLAZ ADRESA_OGLASA|LAT,LON|radijus:ADRESA|stranica:ADRESA|js:ADRESA
+    python tools/provjeri_lokaciju.py IZLAZ ADRESA_OGLASA|LAT,LON|radijus:ADRESA|stranica:ADRESA|js:ADRESA|odgovor:ADRESA
                                          |index:BROJ[,BROJ…]|index-uzorak:N|polja:IZVOR:N [...]
 
 index: podaci o lokaciji iz index.hr API-ja (koordinate, isPreciseLocation, sva polja s lokacijom);
@@ -83,6 +83,27 @@ def save_page(http: Http, url: str, out_dir: Path) -> dict:
         r"(?i)latitude|longitude|\blat\b|\blng\b|\blon\b|maps\.google|google\.com/maps|leaflet|mapbox|openstreetmap|"
         r"approximate|precise|radius|circle", page)]
     return {"ulaz": url, "bajtova": len(page), "isjecci": hits[:60]}
+
+
+_GUARD_HEADERS = ("server", "content-type", "content-length", "location", "retry-after", "cf-ray", "cf-mitigated",
+                  "cf-cache-status", "x-cache", "x-served-by", "via", "x-sucuri-id", "x-iinfo", "x-cdn", "x-akamai-transformed")
+
+
+def raw_response(http: Http, url: str, out_dir: Path) -> dict:
+    """Odgovor kakav jest i kad je greška ("izvor vraća 403"): status, zaglavlja zaštite (Cloudflare i
+    sl.), nazivi kolačića, naslov i početak teksta; stranica se sprema bez kontakata."""
+    from scraper.text import strip_contacts
+    resp = http.session.get(url, timeout=http.timeout)
+    text = strip_contacts(resp.text or "")
+    name = re.sub(r"[^\w.-]+", "_", url.split("//", 1)[-1])[:80]
+    (out_dir / f"odgovor_{resp.status_code}_{name}.html.gz").write_bytes(gzip.compress(text.encode("utf-8", "replace")))
+    title = (re.search(r"(?is)<title[^>]*>(.*?)</title>", text) or [None, ""])[1]
+    body = re.sub(r"(?is)<(script|style)[^>]*>.*?</\1>|<[^>]+>", " ", text)
+    return {"ulaz": url, "status": resp.status_code, "konacna_adresa": str(resp.url),
+            "zaglavlja": {k: resp.headers.get(k) for k in _GUARD_HEADERS if resp.headers.get(k)},
+            "kolacici": sorted({c.split("=", 1)[0].strip() for c in resp.headers.get_list("set-cookie") or []}),
+            "naslov": " ".join(title.split())[:120], "bajtova": len(resp.content or b""),
+            "tekst": " ".join(body.split())[:600]}
 
 
 def outline_formats(ispu: Ispu, lat: float, lon: float, out_dir: Path) -> dict:
@@ -402,6 +423,14 @@ def main() -> int:
         if arg.startswith("obrisi:"):
             lat, lon = map(float, arg[len("obrisi:"):].split(","))
             results.append({"ulaz": arg, "oblici": outline_formats(ispu, lat, lon, out_dir)})
+            continue
+        if arg.startswith("odgovor:"):
+            try:
+                item = raw_response(http, arg[len("odgovor:"):], out_dir)
+            except Exception as exc:  # noqa: BLE001
+                item = {"ulaz": arg, "greska": f"{type(exc).__name__}: {exc}"}
+            print(json.dumps(item, ensure_ascii=False, indent=1))
+            results.append(item)
             continue
         if arg.startswith(("stranica:", "js:")):
             kind, _, url = arg.partition(":")

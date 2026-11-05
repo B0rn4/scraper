@@ -1212,7 +1212,8 @@ class Runner:
                 self.log(f"{name}: GREŠKA ({failures}. dan zaredom): {exc}")
                 if failures >= 3 and not alerted and self._alert(
                         f"Scraper: natječaji – {site['naziv']} ne rade",
-                        f"Stranica {site['url']} tri dana zaredom vraća grešku:\n{exc}\n\nJavi Claudeu ovu poruku.") is not False:
+                        f"Stranica {site['url']} tri dana zaredom vraća grešku:\n{exc}\n\nProvjera se i dalje ponavlja "
+                        "svaki dan; kad stranica proradi, stižu i objave iz međuvremena. Javi Claudeu ovu poruku.") is not False:
                     state.mark_alerted(name)
                 continue
             state.health_ok(name, self.stamp)
@@ -1309,7 +1310,8 @@ class Runner:
                 self.log(f"{name}: GREŠKA ({failures}. dan zaredom): {exc}")
                 if failures >= 3 and not alerted and self._alert(
                         f"Scraper: banke – {page['naziv']} ne radi",
-                        f"Stranica {page['url']} tri dana zaredom vraća grešku:\n{exc}\n\nJavi Claudeu ovu poruku.") is not False:
+                        f"Stranica {page['url']} tri dana zaredom vraća grešku:\n{exc}\n\nProvjera se i dalje ponavlja "
+                        "svaki dan. Javi Claudeu ovu poruku.") is not False:
                     state.mark_alerted(name)
                 continue
             state.health_ok(name, self.stamp)
@@ -1882,7 +1884,9 @@ class Runner:
         if failures >= limit and not alerted and self._alert(
             f"Scraper: izvor {src.label} ne radi",
             f"Izvor {src.label} je {failures} puta zaredom vratio grešku.\n\nZadnja greška:\n{detail}\n\n"
-            "Dok se ne popravi, s ovog izvora ne stižu obavijesti. Javi Claudeu ovu poruku.",
+            "Scraper ga i dalje pokušava čitati u svakom pokretanju (svakih 20 minuta). Dok ne proradi, s ovog "
+            "izvora ne stižu obavijesti; kad proradi, stižu i oglasi objavljeni u međuvremenu, a stiže i poruka "
+            f"„Scraper: izvor {src.label} ponovno radi”. Ako ne prođe za sat-dva, javi Claudeu ovu poruku.",
         ) is not False:                     # neuspjelo upozorenje se ponavlja sljedeće pokretanje
             state.mark_alerted(src.name)
 
