@@ -1,0 +1,81 @@
+[
+ {
+  "ulaz": "https://www.nekretnine.hr/",
+  "status": 403,
+  "konacna_adresa": "https://www.nekretnine.hr/",
+  "zaglavlja": {
+   "content-type": "text/html;charset=utf-8",
+   "content-length": "776"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "nekretnine.hr",
+  "bajtova": 776,
+  "tekst": "nekretnine.hr Please enable JS and disable any ad blocker"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/?criterio=data&ordine=desc&pag=1",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/?criterio=data&ordine=desc",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish01"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja samostojećih kuća Primorsko-goranska županija - Nekretnine.hr",
+  "bajtova": 457371,
+  "tekst": "Prodaja samostojećih kuća Primorsko-goranska županija - Nekretnine.hr Primorsko-goranska • Županija Primorsko-goranska • Županija Objavite oglase objavite Prijavite se spremite Nekretnine.hr Primorsko-goranska Odaberite grad ili općinu Rijeka Bakar Baška Brod Moravice Čabar Čavle Cres Crikvenica Delnice Dobrinj Fužine Jelenje Kastav Klana Kostrena Kraljevica Krk Lokve Lopar Lovran Mali Lošinj Malinska-Dubašnica Matulji Mošćenička Draga Mrkopalj Novi Vinodolski Omišalj Opatija Punat Rab Ravna Gora Skrad Vinodolska općina Viškovo Vrbnik Vrbovsko 6.174 rezultata Prodaja samostojećih kuća Primorsk"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish01"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja samostojećih kuća Primorsko-goranska županija - Nekretnine.hr",
+  "bajtova": 506963,
+  "tekst": "Prodaja samostojećih kuća Primorsko-goranska županija - Nekretnine.hr Primorsko-goranska • Županija Primorsko-goranska • Županija Objavite oglase objavite Prijavite se spremite Nekretnine.hr Primorsko-goranska Odaberite grad ili općinu Rijeka Bakar Baška Brod Moravice Čabar Čavle Cres Crikvenica Delnice Dobrinj Fužine Jelenje Kastav Klana Kostrena Kraljevica Krk Lokve Lopar Lovran Mali Lošinj Malinska-Dubašnica Matulji Mošćenička Draga Mrkopalj Novi Vinodolski Omišalj Opatija Punat Rab Ravna Gora Skrad Vinodolska općina Viškovo Vrbnik Vrbovsko 6.175 rezultata Prodaja samostojećih kuća Primorsk"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/prodaja-zemljista/primorsko-goranska-zupanija/",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish02"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja zemljišta Primorsko-goranska županija - Nekretnine.hr",
+  "bajtova": 402134,
+  "tekst": "Prodaja zemljišta Primorsko-goranska županija - Nekretnine.hr Primorsko-goranska • Županija Primorsko-goranska • Županija Objavite oglase objavite Prijavite se spremite Nekretnine.hr Primorsko-goranska Odaberite grad ili općinu Rijeka Bakar Baška Brod Moravice Čabar Čavle Cres Crikvenica Delnice Dobrinj Fužine Jelenje Kastav Klana Kostrena Kraljevica Krk Lokve Lopar Lovran Mali Lošinj Malinska-Dubašnica Matulji Mošćenička Draga Mrkopalj Novi Vinodolski Omišalj Opatija Punat Rab Ravna Gora Skrad Vinodolska općina Viškovo Vrbnik Vrbovsko 4.215 rezultata Prodaja zemljišta Primorsko-goranska župan"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/oglasi/792879/",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/oglasi/792879/",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish03"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja Obiteljska kuća Baška. Parkirno mjesto, s terasom, 130 m², ref. 792879",
+  "bajtova": 239457,
+  "tekst": "Prodaja Obiteljska kuća Baška. Parkirno mjesto, s terasom, 130 m², ref. 792879 Agencije Cijene nekretnina Objavite oglase objavite Prijavite se 1 / 25 Obiteljska kuća 130 m², Baška Baška € 690.000 4 130 m² 2 Da Balkon Terasa Namješteno Bilješka dodati Oglas ažuriran 04. 11. 2026. Opis referenca : k-502 KUĆA S POGLEDOM NA MORE SAMO 150 M OD PLAŽE Nekretnine otok Krk, Baška - na atraktivnoj lokaciji samo 150 m od prekrasne plaže, prodaje se dvojna kuća s pogledom na more i uređenom okućnicom. Kuća zauzima stambenu površinu od 130 m2 te se prostire na prizemlje i kat. U prizemlju se nalazi ulazni"
+ }
+]
