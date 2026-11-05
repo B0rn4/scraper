@@ -1,0 +1,63 @@
+[
+ {
+  "ulaz": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/?criterio=data&ordine=desc&pag=1",
+  "status": 403,
+  "konacna_adresa": "https://www.nekretnine.hr/prodaja-samostojeca-kuce/primorsko-goranska-zupanija/?criterio=data&ordine=desc&pag=1",
+  "zaglavlja": {
+   "content-type": "text/html;charset=utf-8",
+   "content-length": "776"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "nekretnine.hr",
+  "bajtova": 776,
+  "tekst": "nekretnine.hr Please enable JS and disable any ad blocker"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish02"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja kuća u Hrvatskoj - Nekretnine.hr",
+  "bajtova": 229976,
+  "tekst": "Prodaja kuća u Hrvatskoj - Nekretnine.hr Hrvatska | Hrvatski Objavite oglase objavite Prijavite se Br. 1 za kupnju i prodaju u Hrvatskoj Kupnja Najam Agencije Cijene Kuće - Stanovi pretraga Započnite novu pretragu AI Pretraga Objavite Cijene O nama Agencije Česte pretrage prodaja Kuće Zagreb Zagreb Stambeno prodaja Kuće Zadar Zadar Stambeno prodaja Kuće Osijek Osijek Stambeno prodaja Kuće Rijeka Rijeka Stambeno Tražite dom? Mi ćemo vam pomoći! Crtajte Usporedite cijene Crtanje na karti Nacrtajte na karti područje u kojem želite živjeti i pronađite nekretnine savršene za vas. Nacrtajte sada Usp"
+ },
+ {
+  "ulaz": "https://www.nekretnine.hr/robots.txt",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/robots.txt",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/plain",
+   "via": "varnish03"
+  },
+  "kolacici": [],
+  "naslov": "",
+  "bajtova": 405,
+  "tekst": "User-Agent: * Disallow: *idmacroarea= Disallow: /ricerca-mappa/ Disallow: /search-map Disallow: /search-list Disallow: /ricerca.php Disallow: /ricerca_agenzie.php Disallow: /track-events/ Disallow: /nav-ads/ Disallow: /mutui/calcolatore?prezzo= Disallow: /utente/ Disallow: /dettaglio.php Disallow: /dettaglio_progetto.php Disallow: *?lang= Disallow: *slau= Disallow: /demo-home/ Disallow: /demo-detail/"
+ },
+ {
+  "ulaz": "https://nekretnine.hr/",
+  "status": 200,
+  "konacna_adresa": "https://www.nekretnine.hr/",
+  "zaglavlja": {
+   "server": "nginx",
+   "content-type": "text/html; charset=utf-8",
+   "via": "varnish01"
+  },
+  "kolacici": [
+   "datadome"
+  ],
+  "naslov": "Prodaja kuća u Hrvatskoj - Nekretnine.hr",
+  "bajtova": 229976,
+  "tekst": "Prodaja kuća u Hrvatskoj - Nekretnine.hr Hrvatska | Hrvatski Objavite oglase objavite Prijavite se Br. 1 za kupnju i prodaju u Hrvatskoj Kupnja Najam Agencije Cijene Kuće - Stanovi pretraga Započnite novu pretragu AI Pretraga Objavite Cijene O nama Agencije Česte pretrage prodaja Kuće Zagreb Zagreb Stambeno prodaja Kuće Zadar Zadar Stambeno prodaja Kuće Osijek Osijek Stambeno prodaja Kuće Rijeka Rijeka Stambeno Tražite dom? Mi ćemo vam pomoći! Crtajte Usporedite cijene Crtanje na karti Nacrtajte na karti područje u kojem želite živjeti i pronađite nekretnine savršene za vas. Nacrtajte sada Usp"
+ }
+]
