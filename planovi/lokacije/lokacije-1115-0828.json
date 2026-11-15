@@ -1,0 +1,89 @@
+[
+ {
+  "ulaz": "https://www.zaba.hr/home/o-nama/javni-poziv",
+  "status": 404,
+  "konacna_adresa": "https://www.zaba.hr/home/o-nama/javni-poziv",
+  "zaglavlja": {
+   "content-type": "text/html; charset=UTF-8",
+   "content-length": "14817"
+  },
+  "kolacici": [
+   "AMWEBJCT!%2Fhome!JSESSIONID",
+   "AMWEBJCT!%2Fhome!TS01a1a251",
+   "AMWEBJCT!%2Fhome!org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE",
+   "PD_STATEFUL_f019ca58-ef5b-11e5-9107-462f99196802",
+   "ak_bmsc"
+  ],
+  "naslov": "Zagrebačka banka – Korporativne stranice Banke",
+  "bajtova": 84765,
+  "tekst": "--> --> --> --> --> --> Zagrebačka banka – Korporativne stranice Banke Stranice zaba.hr koriste kolačiće (cookies). Neophodni kolačići nužni su za njihov rad. Ostali kolačići omogućavaju praćenje posjetitelja u svrhu poboljšanja naših usluga te boljega marketinškog iskustva. Ako odbacite ostale kolačiće, naše internetske stranice mogu raditi drugačije i korištenje može biti manje ugodno. Više o kolačićima i promjena njihovih postavki Prihvati sve kolačiće Prihvati samo nužne Postavke kolačića Preskoči na glavni sadržaj Građani Poslovni subjekti Mali poduzetnici Srednja i velika poduzeća Banke "
+ },
+ {
+  "ulaz": "https://www.zaba.hr/home/o-nama/javni-poziv-za-kupnju-nekretnina-26-09-2024",
+  "status": 404,
+  "konacna_adresa": "https://www.zaba.hr/home/o-nama/javni-poziv-za-kupnju-nekretnina-26-09-2024",
+  "zaglavlja": {
+   "content-type": "text/html; charset=UTF-8",
+   "content-length": "14843"
+  },
+  "kolacici": [
+   "AMWEBJCT!%2Fhome!TS01a1a251",
+   "AMWEBJCT!%2Fhome!org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE",
+   "bm_sv"
+  ],
+  "naslov": "Zagrebačka banka – Korporativne stranice Banke",
+  "bajtova": 84829,
+  "tekst": "--> --> --> --> --> --> Zagrebačka banka – Korporativne stranice Banke Stranice zaba.hr koriste kolačiće (cookies). Neophodni kolačići nužni su za njihov rad. Ostali kolačići omogućavaju praćenje posjetitelja u svrhu poboljšanja naših usluga te boljega marketinškog iskustva. Ako odbacite ostale kolačiće, naše internetske stranice mogu raditi drugačije i korištenje može biti manje ugodno. Više o kolačićima i promjena njihovih postavki Prihvati sve kolačiće Prihvati samo nužne Postavke kolačića Preskoči na glavni sadržaj Građani Poslovni subjekti Mali poduzetnici Srednja i velika poduzeća Banke "
+ },
+ {
+  "ulaz": "https://www.zaba.hr/home/o-nama/press/novosti",
+  "status": 200,
+  "konacna_adresa": "https://www.zaba.hr/home/o-nama/press/novosti",
+  "zaglavlja": {
+   "content-type": "text/html; charset=UTF-8",
+   "content-length": "12586"
+  },
+  "kolacici": [
+   "AMWEBJCT!%2Fhome!TS01a1a251",
+   "AMWEBJCT!%2Fhome!org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE",
+   "bm_sv"
+  ],
+  "naslov": "Novosti - Zagrebačka banka",
+  "bajtova": 62273,
+  "tekst": "Novosti - Zagrebačka banka Stranice zaba.hr koriste kolačiće (cookies). Neophodni kolačići nužni su za njihov rad. Ostali kolačići omogućavaju praćenje posjetitelja u svrhu poboljšanja naših usluga te boljega marketinškog iskustva. Ako odbacite ostale kolačiće, naše internetske stranice mogu raditi drugačije i korištenje može biti manje ugodno. Više o kolačićima i promjena njihovih postavki Prihvati sve kolačiće Prihvati samo nužne Postavke kolačića Građani Poslovni subjekti Mali poduzetnici Srednja i velika poduzeća Banke Privatno bankarstvo --> Prime Digitalna sigurnost Uvjeti poslovanja O n"
+ },
+ {
+  "ulaz": "https://www.zaba.hr/home/o-nama",
+  "status": 200,
+  "konacna_adresa": "https://www.zaba.hr/home/o-nama",
+  "zaglavlja": {
+   "content-type": "text/html; charset=UTF-8",
+   "content-length": "13050"
+  },
+  "kolacici": [
+   "AMWEBJCT!%2Fhome!TS01a1a251",
+   "AMWEBJCT!%2Fhome!org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE",
+   "bm_sv"
+  ],
+  "naslov": "Kolačići - Zagrebačka banka",
+  "bajtova": 67173,
+  "tekst": "Kolačići - Zagrebačka banka Stranice zaba.hr koriste kolačiće (cookies). Neophodni kolačići nužni su za njihov rad. Ostali kolačići omogućavaju praćenje posjetitelja u svrhu poboljšanja naših usluga te boljega marketinškog iskustva. Ako odbacite ostale kolačiće, naše internetske stranice mogu raditi drugačije i korištenje može biti manje ugodno. Više o kolačićima i promjena njihovih postavki Prihvati sve kolačiće Prihvati samo nužne Postavke kolačića Građani Poslovni subjekti Mali poduzetnici Srednja i velika poduzeća Banke Privatno bankarstvo --> Prime Digitalna sigurnost Uvjeti poslovanja O "
+ },
+ {
+  "ulaz": "https://www.zaba.hr/home/o-nama/javni-poziv-za-kupnju-nekretnina",
+  "status": 404,
+  "konacna_adresa": "https://www.zaba.hr/home/o-nama/javni-poziv-za-kupnju-nekretnina",
+  "zaglavlja": {
+   "content-type": "text/html; charset=UTF-8",
+   "content-length": "14833"
+  },
+  "kolacici": [
+   "AMWEBJCT!%2Fhome!TS01a1a251",
+   "AMWEBJCT!%2Fhome!org.springframework.web.servlet.i18n.CookieLocaleResolver.LOCALE",
+   "bm_sv"
+  ],
+  "naslov": "Zagrebačka banka – Korporativne stranice Banke",
+  "bajtova": 84807,
+  "tekst": "--> --> --> --> --> --> Zagrebačka banka – Korporativne stranice Banke Stranice zaba.hr koriste kolačiće (cookies). Neophodni kolačići nužni su za njihov rad. Ostali kolačići omogućavaju praćenje posjetitelja u svrhu poboljšanja naših usluga te boljega marketinškog iskustva. Ako odbacite ostale kolačiće, naše internetske stranice mogu raditi drugačije i korištenje može biti manje ugodno. Više o kolačićima i promjena njihovih postavki Prihvati sve kolačiće Prihvati samo nužne Postavke kolačića Preskoči na glavni sadržaj Građani Poslovni subjekti Mali poduzetnici Srednja i velika poduzeća Banke "
+ }
+]
