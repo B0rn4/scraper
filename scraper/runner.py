@@ -21,7 +21,7 @@ from .prices import MAX_AGE_DAYS, PPV_YEAR, AskingPrices, Ppv, land_note, land_s
 from .db import State
 from .filters import (TYPE_UNKNOWN, earlier_ruin, effective_price, evaluate, land_says_building, still_rejects,
                       stored_rejections, text_warnings, title_says_not_building)
-from .http import Http, blocked
+from .http import FetchError, Http, blocked
 from .locations import Locator
 from .models import HOUSE, LAND, PASS, REJECT, WARN, Decision, Listing
 from .notify import (DISLIKE, MUTE_PREFIX, SOURCE_LABELS, UNMUTE_PREFIX, Email, Telegram, health_label, muted_markup,
@@ -1300,7 +1300,16 @@ class Runner:
         for page in watch.load_pages():
             name, key = f"banke: {page['naziv']}", f"banke:{page['naziv']}"
             try:
-                body = self.http.get(page["url"]).text
+                try:
+                    body = self.http.get(page["url"]).text
+                except FetchError as exc:
+                    if not (page.get("samo_dok_traje") and str(exc).startswith(("HTTP 404", "HTTP 410"))):
+                        raise
+                    # Stranica postoji samo dok traje poziv (Zaba, 13. 11.): nema poziva, nije greška.
+                    # Zapamćeni tekst ostaje – kad stranica opet bude, javlja se samo novo.
+                    state.health_ok(name, self.stamp)
+                    self.log(f"{name}: trenutno nema poziva (stranica uklonjena)")
+                    continue
                 if blocked(body):
                     raise RuntimeError(f"stranica zaštite ili održavanja: {blocked(body)}")
                 if not watch.segments(body):

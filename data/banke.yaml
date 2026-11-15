@@ -3,9 +3,13 @@
 # područje. Pregled 6. 10.: na našem području trenutno ništa; leasing kuće nude samo
 # vozila i opremu; Addiko objavljuje na Njuškalu (već pratimo); prisilne prodaje idu kroz
 # FINA e-dražbe (već pratimo).
+# samo_dok_traje: stranica postoji samo dok traje poziv – 404 je „trenutno nema poziva”.
 
 - naziv: Zagrebačka banka – javni poziv za kupnju nekretnina
   url: https://www.zaba.hr/home/o-nama/javni-poziv
+  # Stranica postoji samo dok traje poziv (rujanski poziv uklonjen 13. 11. 2026., stari poziv iz
+  # 2024. također): 404 znači „trenutno nema poziva”, a ne grešku. Novosti banke pozive ne navode.
+  samo_dok_traje: true
 - naziv: OTP banka – javni natječaji
   url: https://www.otpbanka.hr/javni-natjecaji-otp-banke
 - naziv: OTP nekretnine – prodaja (preuzete nekretnine)

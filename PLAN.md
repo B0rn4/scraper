@@ -867,6 +867,13 @@ bez stotina poruka.
   DataDome postane stroži (captcha), ostaje čitanje s Redmija (kao Njuškalo). Usput, korisnik
   je pitao staje li scraper nakon upozorenja dok se ne javi – ne staje; tekst upozorenja i
   UPUTE.md to sad kažu.
+- **(15. 11.) Banke: Zagrebačka banka – javni poziv „ne radi”** (mail 07:05; HTTP 404 od
+  13. 11., zadnji uspjeh 12. 11.). Proba s GitHuba (`odgovor:`): uklonjena je stranica
+  `/home/o-nama/javni-poziv` (poziv od 4. 9. 2026.: Zagreb, Pula, Đurđevac, Slatina) i stari
+  poziv iz 2024. (Split); novosti banke pozive ne navode, pa nema popisa koji bi se pratio.
+  Sad: polje `samo_dok_traje` u `data/banke.yaml` – za takvu stranicu 404/410 znači „trenutno
+  nema poziva” (zdravlje u redu, bez upozorenja), a kad se stranica vrati, poruka stiže za novi
+  tekst s našim mjestom (zapamćeni tekst ostaje). Ostalim stranicama 404 je i dalje greška.
 
 ## Trinaesta runda pregleda (9. 10., izmjene od 8. 10.)
 

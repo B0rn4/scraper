@@ -91,7 +91,8 @@ def build() -> str:
         (tenders if site.get("jls") else region).append(item)
 
     banks = [row(f"b-{p['naziv']}", p["naziv"], "jednom dnevno",
-                 "mail kod svake promjene" if p.get("svaka_promjena") else "poruka kad se pojavi naše mjesto",
+                 "mail kod svake promjene" if p.get("svaka_promjena") else "poruka kad se pojavi naše mjesto"
+                 + ("; stranica postoji samo dok traje poziv" if p.get("samo_dok_traje") else ""),
                  [("otvori", p["url"])]) for p in load_pages()]
 
     def skipped_item(name, url, why):

@@ -664,3 +664,54 @@ def test_redmi_daily_check_error_is_relayed_after_three_days(tmp_path):
         runner._redmi_relay(state, [row])
     assert mails == ["Scraper: Redmi javlja – natjecaji: Primorsko-goranska županija"]
     state.close()
+
+
+def test_bank_call_page_missing_is_not_an_error(tmp_path, monkeypatch):
+    """15. 11.: Zabina stranica javnog poziva postoji samo dok poziv traje (od 13. 11. 404). Uz
+    "samo_dok_traje" 404 znači "trenutno nema poziva": bez greške i upozorenja; kad se stranica
+    vrati s novim pozivom na našem području, stiže poruka. Druge stranice: 404 je i dalje greška."""
+    from scraper import watch
+    from scraper.db import State
+    from scraper.http import FetchError
+    from scraper.runner import Runner
+
+    old = "<ul><li>Poslovni prostor: Pula, Matka Laginje 1, 3. kat.</li></ul>"
+    pages = {"https://zaba.hr/poziv": old}
+
+    class Resp:
+        def __init__(self, text):
+            self.text = text
+
+    class Http:
+        def get(self, url, **kw):
+            if pages.get(url) is None:
+                raise FetchError(f"HTTP 404 za {url}")
+            return Resp(pages[url])
+
+    sent, alerts = [], []
+
+    class FakeTelegram:
+        def send_text(self, text, silent=False, url=""):
+            sent.append(text)
+
+    monkeypatch.setattr(watch, "load_pages", lambda: [
+        {"naziv": "Zaba – javni poziv", "url": "https://zaba.hr/poziv", "samo_dok_traje": True},
+        {"naziv": "Banka Y", "url": "https://y.hr/prodaja"}])
+    runner = Runner(tmp_path / "s.db", tmp_path, send=False)
+    runner.telegram, runner.http = FakeTelegram(), Http()
+    runner._alert = lambda subject, text: alerts.append(subject) or True
+    state = State(tmp_path / "s.db")
+    runner._banks(state)                                         # prvo čitanje poziva: zabilježi
+    pages["https://zaba.hr/poziv"] = None                        # poziv završio, stranica uklonjena
+    for _ in range(4):
+        state.meta_set("daily:banke", "2000-01-01")
+        runner.now += __import__("datetime").timedelta(days=1)
+        runner._banks(state)
+    health = {h["source"]: h for h in state.health_all()}
+    assert health["banke: Zaba – javni poziv"]["failures"] == 0
+    assert health["banke: Banka Y"]["failures"] == 5 and alerts == ["Scraper: banke – Banka Y ne radi"]
+    pages["https://zaba.hr/poziv"] = old.replace("</ul>", "<li>Stan: Crikvenica, Strossmayerova 5.</li></ul>")
+    state.meta_set("daily:banke", "2000-01-01")
+    runner._banks(state)
+    assert len(sent) == 1 and "Crikvenica" in sent[0] and "Pula" not in sent[0]
+    state.close()
